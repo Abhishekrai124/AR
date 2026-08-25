@@ -1,5 +1,6 @@
-document.getElementById('welcomeBtn').addEventListener('click', function() {
-    alert('Welcome to arrai.in! Official portal managed by Abhishek Rai, Founder & CEO 🚀');
+document.getElementById('magicMotionBtn').addEventListener('click', function() {
+    alert('✨ Magic Motion Activated! Welcome to Abhishek Rai\'s digital empire at arrai.in 🚀');
 });
 
-console.log("arrai.in loaded successfully! Developed by Abhishek Rai.");
+// Dynamic interaction / console log
+console.log("arrai.in motion engine initialized successfully by Abhishek Rai.");
