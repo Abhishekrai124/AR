@@ -3,49 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR | Official Portal</title>
-    <!-- Linking the external CSS file -->
+    <title>arrai.in | Official Portal</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <!-- Header with Center Switcher -->
-    <header>
-        <div class="logo">AR.IN</div>
-        <div class="nav-switcher">
-            <button class="nav-btn active" onclick="switchProfile('personal', event)">Personal</button>
-            <button class="nav-btn" onclick="switchProfile('biz', event)">Biz</button>
-        </div>
-        <button class="login-trigger-btn" onclick="toggleLoginModal(true)">Login</button>
-    </header>
-
-    <!-- Main Content Area -->
-    <main>
-        <h1 id="title">AR Universe</h1>
-        <p id="subtitle">Welcome to the official digital core of Abhishek Rai.</p>
-    </main>
-
-    <!-- Cute Virtual Anime AI Widget -->
-    <div class="ai-companion-wrapper">
-        <div class="ai-speech-bubble" id="ai-speech">Konnichiwa! Need any help exploring? ✨</div>
-        <div class="ai-avatar-circle" onclick="interactAI()" title="Click to talk with AI-chan">
-            <div class="ai-face">🥺</div>
+    <div class="container">
+        <div class="glow-box">
+            <h1>arrai.in</h1>
+            <p>The digital empire is live and evolving.</p>
+            <button id="magicBtn">Click Me 🚀</button>
         </div>
     </div>
-
-    <!-- Soft-Wall Login Modal (Instagram Style) -->
-    <div class="modal-overlay" id="loginModal">
-        <div class="modal-box">
-            <button class="close-modal" onclick="toggleLoginModal(false)">&times;</button>
-            <h2>Secure Portal Access</h2>
-            <p style="margin-bottom: 20px; font-size: 13px;">Enter your credentials or use OTP verification.</p>
-            <input type="text" placeholder="Email or Mobile Number">
-            <input type="password" placeholder="Password / OTP Code">
-            <button class="submit-btn">Verify & Proceed</button>
-        </div>
-    </div>
-
-    <!-- Linking the external JavaScript file -->
     <script src="script.js"></script>
 </body>
 </html>
