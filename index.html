@@ -3,23 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>arrai.in | Official Portal</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0f172a; color: #f8fafc; line-height: 1.6; }
-        header { background: rgba(30, 41, 59, 0.9); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(56, 189, 248, 0.2); position: sticky; top: 0; backdrop-filter: blur(10px); z-index: 100; }
-        .logo { font-size: 1.5rem; font-weight: bold; background: linear-gradient(45deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        nav a { color: #94a3b8; text-decoration: none; margin-left: 20px; transition: color 0.3s; }
-        nav a:hover { color: #38bdf8; }
-        .hero { text-align: center; padding: 100px 20px; }
-        h1 { font-size: 3rem; margin-bottom: 15px; background: linear-gradient(45deg, #38bdf8, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        p { font-size: 1.1rem; color: #94a3b8; margin-bottom: 30px; }
-        .btn { background: linear-gradient(45deg, #0284c7, #4f46e5); color: white; border: none; padding: 12px 28px; font-size: 1rem; border-radius: 8px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; display: inline-block; }
-        .btn:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
-        section { padding: 60px 20px; max-width: 800px; margin: 0 auto; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        h2 { font-size: 2rem; margin-bottom: 20px; color: #38bdf8; }
-        footer { text-align: center; padding: 40px; color: #64748b; font-size: 0.9rem; background: #090d16; }
-    </style>
+    <title>Abhishek Rai | arrai.in</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -28,26 +13,49 @@
         <nav>
             <a href="#home">Home</a>
             <a href="#about">About</a>
+            <a href="#socials">Socials</a>
             <a href="#contact">Contact Us</a>
             <a href="#terms">Terms & Policy</a>
         </nav>
     </header>
 
     <div id="home" class="hero">
-        <h1>Welcome to arrai.in 🚀</h1>
-        <p>The digital empire is live, secure, and evolving.</p>
-        <a href="#contact" class="btn">Get in Touch</a>
+        <div class="profile-container">
+            <!-- Apni image ka naam 'profile.jpg' rakh kar project folder mein daal dena -->
+            <img src="profile.jpg" alt="Abhishek Rai" class="profile-pic" id="profileImg">
+        </div>
+        <h1>Welcome, Abhishek Rai 🚀</h1>
+        <div class="title-tag">Founder & CEO | arrai.in</div>
+        <p>The digital empire is live, secure, and evolving. Building modern web platforms and creative digital ecosystems.</p>
+        
+        <div class="social-links">
+            <a href="https://instagram.com/abhishekyadav312_" target="_blank" class="social-btn">Instagram</a>
+            <a href="https://linkedin.com/in/abhishekrai1576" target="_blank" class="social-btn">LinkedIn</a>
+            <a href="https://x.com/abhishekrai781" target="_blank" class="social-btn">X (Twitter)</a>
+            <a href="https://facebook.com/iiabhishekrai" target="_blank" class="social-btn">Facebook</a>
+            <a href="https://youtube.com/@abhishekyadavrai" target="_blank" class="social-btn">YouTube</a>
+            <a href="https://chess.com/member/abhishekrai14" target="_blank" class="social-btn">Chess.com</a>
+        </div>
+        <div style="margin-top: 20px;">
+            <button id="welcomeBtn" class="social-btn" style="cursor: pointer; background: linear-gradient(45deg, #0284c7, #4f46e5); color: white; border: none;">Say Hello 👋</button>
+        </div>
     </div>
 
     <section id="about">
         <h2>About Us</h2>
-        <p>arrai.in is an independent digital platform focused on modern web solutions, graphic design, creative projects, and digital content distribution.</p>
+        <p>arrai.in is an independent digital platform focused on modern web solutions, graphic design, creative projects, and digital content distribution, spearheaded by Abhishek Rai.</p>
+    </section>
+
+    <section id="socials">
+        <h2>Connect With Me</h2>
+        <p>Feel free to connect or follow across platforms for tech updates, projects, and collaboration:</p>
+        <p><strong>Email:</strong> <a href="mailto:abhishekrai@arrai.in" style="color: #38bdf8; text-decoration: none;">abhishekrai@arrai.in</a></p>
     </section>
 
     <section id="contact">
         <h2>Contact Us</h2>
-        <p>If you have any questions, queries, or support issues regarding our digital services, feel free to reach out:</p>
-        <p><strong>Email:</strong> support@arrai.in</p>
+        <p>For inquiries, support, or business proposals, reach out directly:</p>
+        <p><strong>Email:</strong> abhishekrai@arrai.in</p>
         <p><strong>Location:</strong> Ludhiana, Punjab, India</p>
     </section>
 
@@ -58,8 +66,9 @@
     </section>
 
     <footer>
-        <p>&copy; 2026 arrai.in. All rights reserved.</p>
+        <p>&copy; 2026 arrai.in. Abhishek Rai. All rights reserved.</p>
     </footer>
 
+    <script src="script.js"></script>
 </body>
 </html>
