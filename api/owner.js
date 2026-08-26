@@ -63,9 +63,19 @@ export default async function handler(request, response) {
     }
     if (request.body.action === "set-vip") {
       const id = String(request.body.id || ""); const isVip = request.body.isVip === true;
+      const vipType = request.body.vipType === "purchased" ? "purchased" : "owner_granted";
       if (!id) return response.status(400).json({ error: "Profile is required." });
-      const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ is_vip: isVip, vip_granted_at: isVip ? new Date().toISOString() : null }) });
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ is_vip: isVip, vip_badge: isVip ? vipType : "none", vip_granted_at: isVip ? new Date().toISOString() : null }) });
       if (!upstream.ok) throw new Error("Could not update VIP access.");
+      return response.status(200).json({ ok: true });
+    }
+    if (request.body.action === "delete-content") {
+      const kind = String(request.body.kind || ""); const id = String(request.body.id || "");
+      const table = ({ post: "posts", comment: "comments", reel: "reels" })[kind];
+      if (!table || !id) return response.status(400).json({ error: "Invalid content target." });
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/${table}?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", headers: { ...adminHeaders(), Prefer: "return=minimal" } });
+      if (!upstream.ok) throw new Error("Could not remove this content.");
+      await fetch(`${supabaseUrl}/rest/v1/moderation_events`, { method: "POST", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ profile_id: owner.id, action: "dismissed", note: `Owner removed ${kind} ${id}` }) });
       return response.status(200).json({ ok: true });
     }
     if (request.body.action === "delete-account") {

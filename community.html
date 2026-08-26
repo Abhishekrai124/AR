@@ -39,6 +39,8 @@
         </aside>
         <section class="community-feed">
           <form class="social-card post-composer" id="postForm"><p class="eyebrow">Daily update</p><textarea name="body" maxlength="500" placeholder="Share a little moment, thought or update…"></textarea><div><label class="upload-label">Add image<input name="image" type="file" accept="image/png,image/jpeg,image/webp" /></label><button class="button primary" type="submit">Share update <b>↗</b></button></div></form>
+          <form class="social-card post-composer" id="reelForm"><p class="eyebrow">Reel</p><textarea name="caption" maxlength="500" placeholder="Add a caption to your reel…"></textarea><div><label class="upload-label">Upload video<input name="video" type="file" accept="video/mp4,video/webm,video/quicktime" required /></label><button class="button" type="submit">Share reel <b>↗</b></button></div></form>
+          <div id="reelFeed" class="reel-feed"></div>
           <div id="postFeed" class="post-feed"></div>
         </section>
         <aside class="social-card messages-panel"><div class="message-heading"><div><p class="eyebrow">Dreamy messages</p><h2 id="chatTitle">Choose a person</h2></div><button class="text-button" id="callButton" disabled>Start call</button></div><div id="messageList" class="message-list"><p>Search for a person, then press Message.</p></div><div id="messageShortcuts" class="message-shortcuts" hidden><button type="button">Hey ✦</button><button type="button">Love this!</button><button type="button">Let’s create ♡</button></div><form id="messageForm" class="message-form" hidden><textarea name="body" placeholder="Write a sweet message…" required></textarea><button type="submit">Send</button></form></aside>

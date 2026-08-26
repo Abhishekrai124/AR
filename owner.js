@@ -59,11 +59,12 @@ editor.addEventListener("submit", async (event) => {
 });
 editor.addEventListener("click", async (event) => {
   const status = event.target.dataset.status;
-  const vip = event.target.matches("[data-vip-toggle]");
-  if (!status && !vip) return;
+  const vipType = event.target.dataset.vipType;
+  const removeVip = event.target.matches("[data-vip-remove]");
+  if (!status && !vipType && !removeVip) return;
   try {
     if (!confirm(`Confirm this Owner Studio action for ${selectedProfile.display_name}?`)) return;
-    await ownerRequest(vip ? "set-vip" : "moderate", vip ? { id: selectedProfile.id, isVip: !selectedProfile.is_vip } : { id: selectedProfile.id, moderationAction: status });
+    await ownerRequest(vipType || removeVip ? "set-vip" : "moderate", vipType || removeVip ? { id: selectedProfile.id, isVip: !removeVip, vipType } : { id: selectedProfile.id, moderationAction: status });
     ownerStatus.textContent = "Member state updated. ✦";
     await Promise.all([searchProfiles(), loadAnalytics()]);
     openEditor(window.ownerProfiles.get(selectedProfile.id) || selectedProfile);

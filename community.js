@@ -31,10 +31,11 @@ function avatar(profileData) {
   if (profileData.avatar_url) return profileData.avatar_url;
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.display_name)}&background=38bdf8&color=0f172a&bold=true`;
 }
+const badge = (profileData) => profileData?.vip_badge === "purchased" ? '<span class="verified gold" title="Gold VIP">✓</span>' : profileData?.vip_badge === "owner_granted" ? '<span class="verified blue" title="Owner VIP">✓</span>' : "";
 
 async function openProfile(profileId) {
   const [{ data: person, error }, { count: followerCount }, { count: followingCount }, { data: posts, error: postError }, { data: followers, error: followerError }, { data: following, error: followingError }] = await Promise.all([
-    db.from("profiles").select("id, username, display_name, bio, avatar_url, is_vip, created_at").eq("id", profileId).single(),
+    db.from("profiles").select("id, username, display_name, bio, avatar_url, is_vip, vip_badge, created_at").eq("id", profileId).single(),
     db.from("follows").select("*", { count: "exact", head: true }).eq("following_id", profileId),
     db.from("follows").select("*", { count: "exact", head: true }).eq("follower_id", profileId),
     db.from("posts").select("id, body, image_url, created_at").eq("author_id", profileId).order("created_at", { ascending: false }).limit(24),
@@ -77,6 +78,7 @@ async function loadProfile() {
   $("#myName").textContent = profile.display_name;
   $("#myHandle").textContent = `@${profile.username}`;
   $("#membershipBadge").textContent = profile.is_vip ? "✦ VIP member" : "Standard member";
+  $("#membershipBadge").innerHTML = isOwner() ? "♛ Owner · all access" : profile.is_vip ? `${badge(profile)} VIP member` : "Standard member";
   $("#themeSelect").value = profile.theme || "midnight";
   document.body.dataset.theme = profile.theme || "midnight";
   say("You’re connected.", "success");
@@ -86,7 +88,7 @@ async function loadProfile() {
 async function loadPosts() {
   const { data, error } = await db
     .from("posts")
-    .select("id, body, image_url, created_at, profiles!posts_author_id_fkey(id, username, display_name, avatar_url)")
+    .select("id, author_id, body, image_url, created_at, profiles!posts_author_id_fkey(id, username, display_name, avatar_url, vip_badge)")
     .order("created_at", { ascending: false })
     .limit(30);
   if (error) throw error;
@@ -107,7 +109,7 @@ async function loadPosts() {
             const postComments = commentsByPost[post.id] || [];
             const postReactions = reactionsByPost[post.id] || [];
             const liked = postReactions.some((reaction) => reaction.user_id === user.sub);
-            return `<article class="social-card post" id="post-${post.id}"><img class="post-avatar" src="${avatar(post.profiles)}" alt="" /><div><button type="button" class="profile-link" data-profile="${post.profiles.id}">${escapeHtml(post.profiles.display_name)}</button><span>@${escapeHtml(post.profiles.username)} · ${new Date(post.created_at).toLocaleDateString()}</span><p>${escapeHtml(post.body)}</p>${post.image_url ? `<img class="post-image" src="${post.image_url}" alt="Post image" />` : ""}<div class="post-tools"><button type="button" data-like="${post.id}" class="${liked ? "liked" : ""}">♡ ${postReactions.length || ""}</button><button type="button" data-share="${post.id}" data-share-text="${escapeHtml(post.body.slice(0, 160))}">↗ Share</button><span>${postComments.length} comment${postComments.length === 1 ? "" : "s"}</span></div><div class="comment-list">${postComments.slice(-3).map((comment) => `<p><b>${escapeHtml(comment.profiles?.display_name || "Member")}</b> ${escapeHtml(comment.body)}</p>`).join("")}</div><form class="comment-form" data-comment-form="${post.id}"><input maxlength="500" required placeholder="Write a kind comment…" /><button type="submit">Send</button></form></div></article>`;
+            return `<article class="social-card post" id="post-${post.id}"><img class="post-avatar" src="${avatar(post.profiles)}" alt="" /><div><button type="button" class="profile-link" data-profile="${post.profiles.id}">${escapeHtml(post.profiles.display_name)} ${badge(post.profiles)}</button><span>@${escapeHtml(post.profiles.username)} · ${new Date(post.created_at).toLocaleDateString()}</span><p>${escapeHtml(post.body)}</p>${post.image_url ? `<img class="post-image" src="${post.image_url}" alt="Post image" />` : ""}<div class="post-tools"><button type="button" data-like="${post.id}" class="${liked ? "liked" : ""}">♡ ${postReactions.length || ""}</button><button type="button" data-share="${post.id}" data-share-text="${escapeHtml(post.body.slice(0, 160))}">↗ Share</button>${post.author_id === user.sub ? `<button type="button" data-delete-post="${post.id}">Delete</button>` : ""}<span>${postComments.length} comment${postComments.length === 1 ? "" : "s"}</span></div><div class="comment-list">${postComments.slice(-3).map((comment) => `<p><b>${escapeHtml(comment.profiles?.display_name || "Member")}</b> ${escapeHtml(comment.body)} ${comment.author_id === user.sub ? `<button type="button" data-delete-comment="${comment.id}">Delete</button>` : ""}</p>`).join("")}</div><form class="comment-form" data-comment-form="${post.id}"><input maxlength="500" required placeholder="Write a kind comment…" /><button type="submit">Send</button></form></div></article>`;
           },
         )
         .join("")
@@ -305,7 +307,7 @@ $("#avatarInput").addEventListener("change", async (event) => {
 
 $("#themeSelect").addEventListener("change", async (event) => {
   const theme = event.target.value;
-  if (theme !== "midnight" && !profile.is_vip) { event.target.value = profile.theme || "midnight"; return say("Exclusive themes are available with VIP membership.", "error"); }
+  if (theme !== "midnight" && !profile.is_vip && !isOwner()) { event.target.value = profile.theme || "midnight"; return say("Exclusive themes are available with VIP membership.", "error"); }
   const { error } = await db.from("profiles").update({ theme }).eq("id", user.sub);
   if (error) return say(error.message, "error");
   profile.theme = theme; document.body.dataset.theme = theme; say("Your theme has been updated. ✦", "success");
@@ -324,12 +326,40 @@ $("#postForm").addEventListener("submit", async (event) => {
   } catch (error) { say(error.message, "error"); }
 });
 
+async function loadReels() {
+  const { data, error } = await db.from("reels").select("id, author_id, video_url, caption, profiles!reels_author_id_fkey(id, username, display_name, avatar_url, vip_badge)").order("created_at", { ascending: false }).limit(18);
+  if (error) throw error;
+  $("#reelFeed").innerHTML = data.map((reel) => `<article class="social-card reel"><video src="${reel.video_url}" controls playsinline preload="metadata"></video><p><button type="button" class="profile-link" data-profile="${reel.profiles.id}">${escapeHtml(reel.profiles.display_name)} ${badge(reel.profiles)}</button> @${escapeHtml(reel.profiles.username)}</p><p>${escapeHtml(reel.caption)}</p>${reel.author_id === user.sub ? `<button class="follow-button" type="button" data-delete-reel="${reel.id}">Delete reel</button>` : ""}</article>`).join("");
+}
+$("#reelForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    const data = new FormData(event.currentTarget), video = data.get("video");
+    if (video.size > 75 * 1024 * 1024) throw new Error("Reels must be 75 MB or smaller.");
+    const videoUrl = await uploadImage("reel-media", video);
+    const { error } = await db.from("reels").insert({ author_id: user.sub, video_url: videoUrl, caption: data.get("caption").trim() });
+    if (error) throw error;
+    event.currentTarget.reset(); await loadReels(); say("Reel published. ✦", "success");
+  } catch (error) { say(error.message, "error"); }
+});
+$("#reelFeed").addEventListener("click", async (event) => {
+  const profileButton = event.target.closest("[data-profile]"), remove = event.target.closest("[data-delete-reel]");
+  try {
+    if (profileButton) return openProfile(profileButton.dataset.profile);
+    if (remove && confirm("Delete your reel?")) { const { error } = await db.from("reels").delete().eq("id", remove.dataset.deleteReel).eq("author_id", user.sub); if (error) throw error; await loadReels(); }
+  } catch (error) { say(error.message, "error"); }
+});
+
 $("#postFeed").addEventListener("click", async (event) => {
   const like = event.target.closest("[data-like]");
   const share = event.target.closest("[data-share]");
   const profileButton = event.target.closest("[data-profile]");
+  const deletePost = event.target.closest("[data-delete-post]");
+  const deleteComment = event.target.closest("[data-delete-comment]");
   try {
     if (profileButton) return openProfile(profileButton.dataset.profile);
+    if (deletePost && confirm("Delete your post?")) { const { error } = await db.from("posts").delete().eq("id", deletePost.dataset.deletePost).eq("author_id", user.sub); if (error) throw error; return loadPosts(); }
+    if (deleteComment && confirm("Delete your comment?")) { const { error } = await db.from("comments").delete().eq("id", deleteComment.dataset.deleteComment).eq("author_id", user.sub); if (error) throw error; return loadPosts(); }
     if (like) {
       const postId = like.dataset.like;
       const alreadyLiked = like.classList.contains("liked");
@@ -400,7 +430,7 @@ $("#closeProfile").addEventListener("click", () => $("#profileDialog").close());
     user = auth.user;
     db = await window.createArraiSupabase();
     if (await loadProfile()) {
-      await Promise.all([loadPosts(), searchPeople()]);
+      await Promise.all([loadPosts(), loadReels(), searchPeople()]);
       subscribeToCalls();
     }
   } catch (error) { say(error.message || "Could not load the community.", "error"); }

@@ -7,6 +7,7 @@ alter table public.profiles
   add column if not exists privacy text not null default 'public' check (privacy in ('public', 'private')),
   add column if not exists theme text not null default 'midnight' check (theme in ('midnight', 'sakura', 'ocean', 'royal')),
   add column if not exists is_vip boolean not null default false,
+  add column if not exists vip_badge text not null default 'none' check (vip_badge in ('none', 'owner_granted', 'purchased')),
   add column if not exists vip_granted_at timestamptz,
   add column if not exists account_status text not null default 'active' check (account_status in ('active', 'suspended', 'banned', 'dismissed')),
   add column if not exists identity_locked boolean not null default false,
@@ -39,6 +40,18 @@ create table if not exists public.moderation_events (
   actor_id text,
   created_at timestamptz not null default now()
 );
+
+create table if not exists public.reels (
+  id uuid primary key default gen_random_uuid(), author_id text not null references public.profiles(id) on delete cascade,
+  video_url text not null, caption text not null default '', created_at timestamptz not null default now()
+);
+alter table public.reels enable row level security;
+create policy "Reels visible to signed-in users" on public.reels for select to authenticated using (true);
+create policy "Users create their own reels" on public.reels for insert to authenticated with check (author_id = auth.jwt() ->> 'sub');
+create policy "Users delete their own reels" on public.reels for delete to authenticated using (author_id = auth.jwt() ->> 'sub');
+insert into storage.buckets (id, name, public) values ('reel-media', 'reel-media', true) on conflict (id) do nothing;
+create policy "Signed-in users view reels" on storage.objects for select to authenticated using (bucket_id = 'reel-media');
+create policy "Users upload their reels" on storage.objects for insert to authenticated with check (bucket_id = 'reel-media' and (storage.foldername(name))[1] = auth.jwt() ->> 'sub');
 
 create or replace function public.lock_profile_identity()
 returns trigger language plpgsql as $$
