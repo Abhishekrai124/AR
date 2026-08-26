@@ -7,6 +7,12 @@ let user;
 let profile;
 let activeChat;
 let realtimeChannel;
+let callChannel;
+let peerConnection;
+let localStream;
+let activeCall;
+let pendingCall;
+let queuedCandidates = [];
 
 function say(message, type = "") {
   status.textContent = message;
@@ -125,13 +131,124 @@ async function loadMessages() {
   $("#messageList").scrollTop = $("#messageList").scrollHeight;
 }
 
+async function sendCallSignal(recipientId, kind, payload = {}) {
+  const { error } = await db.from("call_signals").insert({ call_id: activeCall?.id || pendingCall?.id, sender_id: user.sub, recipient_id: recipientId, kind, payload });
+  if (error) throw error;
+}
+
+async function getPeerConnection() {
+  const response = await fetch("/api/turn");
+  if (!response.ok) throw new Error("Call service is unavailable. Please try again.");
+  const iceServers = await response.json();
+  peerConnection = new RTCPeerConnection({ iceServers });
+  localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+  $("#localVideo").srcObject = localStream;
+  localStream.getTracks().forEach((track) => peerConnection.addTrack(track, localStream));
+  peerConnection.ontrack = (event) => { $("#remoteVideo").srcObject = event.streams[0]; };
+  peerConnection.onicecandidate = (event) => {
+    if (event.candidate && activeCall) sendCallSignal(activeCall.otherId, "candidate", event.candidate.toJSON()).catch(() => {});
+  };
+  peerConnection.onconnectionstatechange = () => {
+    if (["failed", "disconnected"].includes(peerConnection.connectionState)) endCall(false);
+  };
+  return peerConnection;
+}
+
+function showCallDialog() {
+  const dialog = $("#callDialog");
+  if (!dialog.open) dialog.showModal();
+}
+
+async function startCall() {
+  try {
+    activeCall = { id: crypto.randomUUID(), otherId: activeChat.id };
+    $("#callState").textContent = "Connecting secure video call";
+    $("#callTitle").textContent = `Calling ${activeChat.name}…`;
+    $("#acceptCall").hidden = true;
+    showCallDialog();
+    const connection = await getPeerConnection();
+    const offer = await connection.createOffer();
+    await connection.setLocalDescription(offer);
+    await sendCallSignal(activeChat.id, "offer", { description: offer, callerName: profile.display_name });
+  } catch (error) { endCall(false); say(error.message, "error"); }
+}
+
+async function acceptCall() {
+  if (!pendingCall) return;
+  try {
+    activeCall = { id: pendingCall.id, otherId: pendingCall.sender_id };
+    $("#callState").textContent = "Connecting secure video call";
+    $("#callTitle").textContent = `Calling ${pendingCall.payload.callerName || "friend"}…`;
+    $("#acceptCall").hidden = true;
+    const connection = await getPeerConnection();
+    await connection.setRemoteDescription(pendingCall.payload.description);
+    for (const candidate of queuedCandidates) await connection.addIceCandidate(candidate);
+    queuedCandidates = [];
+    const answer = await connection.createAnswer();
+    await connection.setLocalDescription(answer);
+    await sendCallSignal(activeCall.otherId, "answer", { description: answer });
+    pendingCall = null;
+  } catch (error) { endCall(false); say(error.message, "error"); }
+}
+
+async function handleCallSignal(signal) {
+  if (signal.recipient_id !== user.sub) return;
+  if (signal.kind === "offer") {
+    pendingCall = signal;
+    queuedCandidates = [];
+    $("#callState").textContent = "Incoming video call";
+    $("#callTitle").textContent = `${signal.payload.callerName || "Someone"} is calling`;
+    $("#acceptCall").hidden = false;
+    showCallDialog();
+    return;
+  }
+  if (signal.kind === "candidate" && pendingCall && signal.call_id === pendingCall.id) {
+    queuedCandidates.push(signal.payload);
+    return;
+  }
+  if (!activeCall || signal.call_id !== activeCall.id) return;
+  if (signal.kind === "answer") {
+    await peerConnection.setRemoteDescription(signal.payload.description);
+    for (const candidate of queuedCandidates) await peerConnection.addIceCandidate(candidate);
+    queuedCandidates = [];
+  }
+  if (signal.kind === "candidate") {
+    if (peerConnection?.remoteDescription) await peerConnection.addIceCandidate(signal.payload);
+    else queuedCandidates.push(signal.payload);
+  }
+  if (signal.kind === "hangup") endCall(false);
+}
+
+async function endCall(notify = true) {
+  const otherId = activeCall?.otherId || pendingCall?.sender_id;
+  if (notify && otherId && (activeCall || pendingCall)) {
+    try { await sendCallSignal(otherId, "hangup"); } catch {}
+  }
+  peerConnection?.close();
+  localStream?.getTracks().forEach((track) => track.stop());
+  peerConnection = null;
+  localStream = null;
+  activeCall = null;
+  pendingCall = null;
+  queuedCandidates = [];
+  $("#localVideo").srcObject = null;
+  $("#remoteVideo").srcObject = null;
+  if ($("#callDialog").open) $("#callDialog").close();
+}
+
+function subscribeToCalls() {
+  callChannel = db.channel(`calls:${user.sub}`).on("postgres_changes", { event: "INSERT", schema: "public", table: "call_signals" }, (payload) => handleCallSignal(payload.new).catch((error) => say(error.message, "error"))).subscribe();
+}
+
 $("#profileForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
   const { error } = await db.from("profiles").insert({ id: user.sub, username: data.get("username").trim().toLowerCase(), display_name: data.get("displayName").trim(), bio: data.get("bio").trim() });
   if (error) return say(error.code === "23505" ? "That username is already taken." : error.message, "error");
-  await loadProfile();
-  await Promise.all([loadPosts(), searchPeople()]);
+  if (await loadProfile()) {
+    await Promise.all([loadPosts(), searchPeople()]);
+    subscribeToCalls();
+  }
 });
 
 $("#avatarInput").addEventListener("change", async (event) => {
@@ -175,7 +292,10 @@ $("#messageForm").addEventListener("submit", async (event) => {
   await loadMessages();
 });
 
-$("#callButton").addEventListener("click", () => say(`Call controls are ready for @${activeChat.name}; WebRTC calling needs a TURN server before public launch.`, "error"));
+$("#callButton").addEventListener("click", startCall);
+$("#acceptCall").addEventListener("click", acceptCall);
+$("#endCall").addEventListener("click", () => endCall());
+$("#closeCall").addEventListener("click", () => endCall());
 $("#logoutButton").addEventListener("click", () => window.logoutWithAuth0());
 
 (async () => {
@@ -184,6 +304,9 @@ $("#logoutButton").addEventListener("click", () => window.logoutWithAuth0());
     if (!auth.isAuthenticated) return window.location.assign("auth.html");
     user = auth.user;
     db = await window.createArraiSupabase();
-    if (await loadProfile()) await Promise.all([loadPosts(), searchPeople()]);
+    if (await loadProfile()) {
+      await Promise.all([loadPosts(), searchPeople()]);
+      subscribeToCalls();
+    }
   } catch (error) { say(error.message || "Could not load the community.", "error"); }
 })();

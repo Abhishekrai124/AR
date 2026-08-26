@@ -35,10 +35,21 @@ create table if not exists public.direct_messages (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.call_signals (
+  id uuid primary key default gen_random_uuid(),
+  call_id uuid not null,
+  sender_id text not null references public.profiles(id) on delete cascade,
+  recipient_id text not null references public.profiles(id) on delete cascade,
+  kind text not null check (kind in ('offer', 'answer', 'candidate', 'hangup')),
+  payload jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
 alter table public.profiles enable row level security;
 alter table public.posts enable row level security;
 alter table public.follows enable row level security;
 alter table public.direct_messages enable row level security;
+alter table public.call_signals enable row level security;
 
 create policy "Profiles are visible to signed-in users" on public.profiles for select to authenticated using (true);
 create policy "Users create their own profile" on public.profiles for insert to authenticated with check (id = auth.jwt() ->> 'sub');
@@ -56,6 +67,10 @@ create policy "Users remove their own follows" on public.follows for delete to a
 create policy "Participants read their DMs" on public.direct_messages for select to authenticated using (sender_id = auth.jwt() ->> 'sub' or recipient_id = auth.jwt() ->> 'sub');
 create policy "Users send their own DMs" on public.direct_messages for insert to authenticated with check (sender_id = auth.jwt() ->> 'sub');
 
+create policy "Call participants read signals" on public.call_signals for select to authenticated using (sender_id = auth.jwt() ->> 'sub' or recipient_id = auth.jwt() ->> 'sub');
+create policy "Users send their own call signals" on public.call_signals for insert to authenticated with check (sender_id = auth.jwt() ->> 'sub');
+create policy "Call participants remove signals" on public.call_signals for delete to authenticated using (sender_id = auth.jwt() ->> 'sub' or recipient_id = auth.jwt() ->> 'sub');
+
 insert into storage.buckets (id, name, public) values ('avatars', 'avatars', true) on conflict (id) do nothing;
 insert into storage.buckets (id, name, public) values ('post-media', 'post-media', true) on conflict (id) do nothing;
 
@@ -65,3 +80,4 @@ create policy "Users update only their own media" on storage.objects for update 
 create policy "Users delete only their own media" on storage.objects for delete to authenticated using (bucket_id in ('avatars', 'post-media') and (storage.foldername(name))[1] = auth.jwt() ->> 'sub');
 
 alter publication supabase_realtime add table public.direct_messages;
+alter publication supabase_realtime add table public.call_signals;

@@ -40,6 +40,13 @@
         <aside class="social-card messages-panel"><div class="message-heading"><div><p class="eyebrow">Direct messages</p><h2 id="chatTitle">Choose a person</h2></div><button class="text-button" id="callButton" disabled>Start call</button></div><div id="messageList" class="message-list"><p>Search for a person, then press Message.</p></div><form id="messageForm" class="message-form" hidden><input name="body" maxlength="1500" placeholder="Write a message" required /><button type="submit">Send</button></form></aside>
       </section>
     </main>
+    <dialog class="call-dialog" id="callDialog">
+      <button class="close-dialog" id="closeCall" aria-label="Close call">×</button>
+      <p class="eyebrow" id="callState">Secure call</p>
+      <h2 id="callTitle">Calling…</h2>
+      <div class="call-videos"><video id="remoteVideo" autoplay playsinline></video><video id="localVideo" autoplay playsinline muted></video></div>
+      <div class="call-actions"><button class="button primary" id="acceptCall" type="button" hidden>Accept <b>↗</b></button><button class="button" id="endCall" type="button">End call</button></div>
+    </dialog>
     <footer><a class="brand" href="index.html">ar<span>rai</span>.in</a><p>© 2026 Abhishek Rai. All rights reserved.</p><div><a href="privacy.html">Privacy</a><a href="privacy.html#terms">Terms</a></div></footer>
     <script src="https://cdn.auth0.com/js/auth0-spa-js/2.24/auth0-spa-js.production.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

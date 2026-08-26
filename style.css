@@ -592,6 +592,12 @@ footer div {
 .message.mine { justify-self: end; background: #2563eb; }.message.theirs { background: #24344e; }
 .message-form { display: flex; gap: 8px; }.message-form button { padding: 0 12px; background: var(--sky); color: #0f172a; }
 .empty-state { color: var(--muted); font-size: 0.74rem; }
+.call-dialog { width: min(760px, calc(100% - 28px)); padding: 28px; }
+.call-dialog h2 { font-size: 1.8rem; }
+.call-videos { display: grid; grid-template-columns: 1fr 150px; gap: 12px; margin: 22px 0; }
+.call-videos video { width: 100%; aspect-ratio: 16 / 10; border-radius: 12px; background: #0b1220; object-fit: cover; }
+.call-videos #localVideo { align-self: end; }
+.call-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 @media (max-width: 700px) {
   .auth-main {
     padding: 42px 16px;
@@ -600,6 +606,7 @@ footer div {
   .community-hero { padding: 50px 0 28px; }
   .community-grid { grid-template-columns: 1fr; }
   .messages-panel { position: static; }
+  .call-videos { grid-template-columns: 1fr; }
   .auth-card {
     padding: 28px 22px;
   }
