@@ -35,6 +35,7 @@ function openEditor(profile) {
   editor.elements.privacy.value = profile.privacy || "public";
   editor.elements.customUsername.value = profile.is_vip ? profile.username : "";
   const isOwnerProfile = profile.id === ownerId;
+  editor.classList.toggle("editing-owner-profile", isOwnerProfile);
   editor.elements.customUsername.disabled = !profile.is_vip && !isOwnerProfile;
   document.querySelector("#vipUsernameHelp").textContent = isOwnerProfile ? "Owner profile: all profile fields are unrestricted." : profile.is_vip ? "VIP custom username is unlocked." : "Grant VIP to unlock this field.";
   document.querySelector("#ownerRecord").textContent = `ID: ${profile.id} · Joined: ${new Date(profile.created_at).toLocaleString()} · Updated: ${new Date(profile.updated_at || profile.created_at).toLocaleString()} · Status: ${profile.account_status}`;

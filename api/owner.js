@@ -55,6 +55,7 @@ export default async function handler(request, response) {
     if (request.body.action === "moderate") {
       const id = String(request.body.id || ""); const action = String(request.body.moderationAction || "");
       if (!id || !["active", "suspended", "banned", "dismissed", "vip"].includes(action)) return response.status(400).json({ error: "Invalid moderation action." });
+      if (id === owner.id && action !== "vip") return response.status(403).json({ error: "Owner profile cannot be moderated." });
       const changes = action === "vip" ? { is_vip: true, vip_granted_at: new Date().toISOString() } : { account_status: action };
       const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=representation" }, body: JSON.stringify(changes) });
       if (!upstream.ok) throw new Error("Could not apply that moderation action.");
@@ -63,7 +64,7 @@ export default async function handler(request, response) {
     }
     if (request.body.action === "set-vip") {
       const id = String(request.body.id || ""); const isVip = request.body.isVip === true;
-      const vipType = request.body.vipType === "purchased" ? "purchased" : "owner_granted";
+      const vipType = ["owner_granted", "purchased", "black"].includes(request.body.vipType) ? request.body.vipType : "owner_granted";
       if (!id) return response.status(400).json({ error: "Profile is required." });
       const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ is_vip: isVip, vip_badge: isVip ? vipType : "none", vip_granted_at: isVip ? new Date().toISOString() : null }) });
       if (!upstream.ok) throw new Error("Could not update VIP access.");
@@ -81,6 +82,7 @@ export default async function handler(request, response) {
     if (request.body.action === "delete-account") {
       const id = String(request.body.id || "");
       if (!id) return response.status(400).json({ error: "Profile is required." });
+      if (id === owner.id) return response.status(403).json({ error: "Owner profile cannot be deleted." });
       const upstream = await fetch(`${supabaseUrl}/auth/v1/admin/users/${encodeURIComponent(id)}`, { method: "DELETE", headers: adminHeaders() });
       if (!upstream.ok) throw new Error("Could not permanently delete this account.");
       const profileDelete = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", headers: { ...adminHeaders(), Prefer: "return=minimal" } });
