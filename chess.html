@@ -141,33 +141,6 @@
         </div>
       </section>
     </main>
-    <dialog id="authDialog">
-      <button class="close-dialog" aria-label="Close">×</button>
-      <p class="eyebrow">Arrai Chess profile</p>
-      <h2>Join the club <span>♡</span></h2>
-      <p class="dialog-copy">
-        Your profile and stats are saved only in this browser.
-      </p>
-      <form id="authForm">
-        <label
-          >Display name<input
-            name="name"
-            maxlength="20"
-            required
-            placeholder="Your chess name" /></label
-        ><label
-          >Password <small>(local demo)</small
-          ><input
-            name="password"
-            type="password"
-            minlength="4"
-            required
-            placeholder="At least 4 characters" /></label
-        ><button class="button primary" type="submit">
-          Create profile <b>↗</b>
-        </button>
-      </form>
-    </dialog>
     <footer>
       <a class="brand" href="index.html">ar<span>rai</span>.in</a>
       <p>© 2026 Abhishek Rai. All rights reserved.</p>
@@ -175,6 +148,8 @@
         <a href="privacy.html">Privacy</a><a href="privacy.html#terms">Terms</a>
       </div>
     </footer>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.24/auth0-spa-js.production.js"></script>
+    <script src="auth0.js"></script>
     <script src="script.js"></script>
     <script src="chess.js"></script>
   </body>

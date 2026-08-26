@@ -210,21 +210,12 @@ document.querySelectorAll(".mode").forEach(
       init();
     }),
 );
-const dialog = el("authDialog");
 el("showAuth").onclick = () => {
   window.location.href = "auth.html";
 };
-document.querySelector(".close-dialog").onclick = () => dialog.close();
-el("authForm").onsubmit = (e) => {
-  e.preventDefault();
-  const name = new FormData(e.target).get("name").trim();
-  localStorage.setItem("arraiChessUser", name);
-  setProfile();
-  dialog.close();
-};
 el("signOut").onclick = () => {
   localStorage.removeItem("arraiChessUser");
-  setProfile();
+  window.logoutWithAuth0();
 };
 function setProfile() {
   const user = localStorage.getItem("arraiChessUser");
@@ -243,6 +234,10 @@ function setProfile() {
         "This connection needs a secure OAuth backend and app credentials before it can be activated. Your existing accounts are never requested or stored here.",
       )),
 );
-saveStats();
-setProfile();
-init();
+window.arraiAuth
+  .catch(() => ({ isAuthenticated: false }))
+  .then(() => {
+    saveStats();
+    setProfile();
+    init();
+  });

@@ -473,48 +473,10 @@ footer div {
   font-size: 0.88rem;
   line-height: 1.7;
 }
-.auth-tabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  margin-bottom: 25px;
-  border-bottom: 1px solid var(--line);
-}
-.auth-tab {
-  padding: 10px;
-  border: 0;
-  border-bottom: 2px solid transparent;
-  background: transparent;
-  color: var(--muted);
-  font: 800 0.78rem Manrope, sans-serif;
-  cursor: pointer;
-}
-.auth-tab.active {
-  border-color: var(--sky);
-  color: var(--sky);
-}
-.auth-form {
-  display: grid;
-  gap: 17px;
-}
-.auth-form label {
-  display: grid;
-  gap: 7px;
-  color: var(--ink);
-  font-size: 0.75rem;
-  font-weight: 800;
-}
-.auth-form input {
-  width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 12px;
-  background: #0f1d31;
-  color: var(--ink);
-  font: inherit;
-  outline: 0;
-}
-.auth-form input:focus {
-  border-color: var(--sky);
+.auth-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 .auth-status {
   min-height: 20px;

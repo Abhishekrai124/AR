@@ -9,9 +9,8 @@ if (nav && !nav.querySelector('[href="chess.html"]')) {
 }
 if (nav && !nav.querySelector('[href="auth.html"]')) {
   const authLink = document.createElement("a");
-  const account = JSON.parse(localStorage.getItem("arraiAccount") || "null");
   authLink.href = "auth.html";
-  authLink.textContent = account ? "Account" : "Login / Register";
+  authLink.textContent = "Login / Register";
   nav.append(authLink);
 }
 if (button && nav)
