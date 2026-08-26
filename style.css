@@ -445,6 +445,26 @@ footer div {
   margin-bottom: 16px;
   min-height: 290px;
 }
+.chess-project {
+  background: linear-gradient(135deg, #14532d, #172554);
+}
+.project-thanks {
+  margin-bottom: 80px;
+  padding: 54px;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  background: linear-gradient(120deg, rgba(22, 34, 56, 0.9), rgba(49, 46, 129, 0.7));
+}
+.project-thanks h2 {
+  font-size: clamp(2.2rem, 4.5vw, 4.2rem);
+  line-height: 1.05;
+}
+.project-thanks > p:not(.eyebrow) {
+  max-width: 540px;
+  margin: 22px 0;
+  color: var(--muted);
+  line-height: 1.8;
+}
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -552,6 +572,10 @@ footer div {
   .cta {
     padding: 45px 28px;
     margin-bottom: 45px;
+  }
+  .project-thanks {
+    margin-bottom: 45px;
+    padding: 38px 28px;
   }
   .socials div {
     display: grid;
