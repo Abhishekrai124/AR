@@ -23,6 +23,17 @@ body {
   font-family: Manrope, Arial, sans-serif;
   overflow-x: hidden;
 }
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0.12;
+  background-image: radial-gradient(rgba(255,255,255,.8) .6px, transparent .7px);
+  background-size: 6px 6px;
+  mix-blend-mode: soft-light;
+}
 .ambient {
   position: fixed;
   border-radius: 50%;
@@ -263,12 +274,29 @@ em {
 }
 .founder-card .eyebrow { margin-bottom: 12px; }
 .founder-card h2 { font-size: clamp(2.4rem, 5vw, 3.7rem); }
+.prince-name {
+  color: #fff;
+  text-shadow: 0 3px 24px rgba(249, 168, 212, 0.28);
+}
+.prince-name span {
+  font-family: "Playfair Display", Georgia, serif;
+  font-style: italic;
+  font-weight: 600;
+  background: linear-gradient(100deg, #fff, #fde68a 45%, var(--pink));
+  -webkit-background-clip: text;
+  color: transparent;
+}
 .founder-role {
   margin: 12px 0 22px;
   color: #fef3c7;
   font-family: "Playfair Display", Georgia, serif;
   font-size: 1.28rem;
   font-style: italic;
+}
+.founder-note {
+  margin: -10px 0 22px;
+  color: var(--muted);
+  font-size: 0.78rem;
 }
 .founder-tags {
   display: flex;
@@ -285,6 +313,65 @@ em {
   font-family: "DM Mono", monospace;
   font-size: 0.61rem;
   letter-spacing: 0.04em;
+}
+.founder-connect {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 22px;
+}
+.founder-connect a {
+  padding: 8px 10px;
+  border-radius: 10px;
+  color: var(--ink);
+  font-size: 0.67rem;
+  font-weight: 800;
+  text-decoration: none;
+  background: rgba(15, 23, 42, 0.52);
+  border: 1px solid rgba(249, 168, 212, 0.22);
+  transition: transform .2s ease, border-color .2s ease, background .2s ease;
+}
+.founder-connect a:hover {
+  transform: translateY(-3px) rotate(-1deg);
+  border-color: var(--pink);
+  background: rgba(131, 24, 67, 0.42);
+}
+.sakura-petal {
+  position: fixed;
+  top: -12vh;
+  z-index: 10;
+  width: 13px;
+  height: 10px;
+  border-radius: 100% 0 100% 0;
+  pointer-events: none;
+  opacity: 0.78;
+  background: linear-gradient(135deg, #fff7fb, #f9a8d4 58%, #f472b6);
+  box-shadow: 0 1px 7px rgba(249, 168, 212, 0.55);
+  animation: sakura-fall var(--fall-time, 12s) linear var(--fall-delay, 0s) infinite;
+}
+@keyframes sakura-fall {
+  0% { transform: translate3d(0, -12vh, 0) rotate(0deg); }
+  50% { transform: translate3d(var(--sway, 55px), 54vh, 0) rotate(260deg); }
+  100% { transform: translate3d(var(--end-sway, -55px), 114vh, 0) rotate(540deg); }
+}
+.cursor-sparkle {
+  position: fixed;
+  z-index: 30;
+  pointer-events: none;
+  color: #fde68a;
+  font-size: 15px;
+  text-shadow: 0 0 10px var(--pink);
+  transform: translate(-50%, -50%);
+  animation: sparkle-pop .7s ease-out forwards;
+}
+@keyframes sparkle-pop {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(.45) rotate(0deg); }
+  to { opacity: 0; transform: translate(calc(-50% + var(--spark-x)), calc(-50% + var(--spark-y))) scale(1.35) rotate(120deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+  .sakura-petal { display: none; }
 }
 .intro {
   padding: 115px 0;
@@ -766,6 +853,7 @@ footer div {
   .founder { padding: 15px 0 70px; }
   .founder-card { padding: 60px 20px 28px; border-radius: 22px; }
   .founder-photo-frame { width: 145px; height: 145px; }
+  .founder-connect a { padding: 8px; }
   .intro,
   .contact-grid {
     grid-template-columns: 1fr;
