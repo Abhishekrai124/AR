@@ -105,6 +105,7 @@ async function openChat(personId, name) {
   activeChat = { id: personId, name };
   $("#chatTitle").textContent = name;
   $("#messageForm").hidden = false;
+  $("#messageShortcuts").hidden = false;
   $("#callButton").disabled = false;
   await loadMessages();
   if (realtimeChannel) db.removeChannel(realtimeChannel);
@@ -290,6 +291,12 @@ $("#messageForm").addEventListener("submit", async (event) => {
   if (error) return say(error.message, "error");
   input.value = "";
   await loadMessages();
+});
+$("#messageShortcuts").addEventListener("click", (event) => {
+  if (event.target.matches("button")) {
+    $("#messageForm").elements.body.value = event.target.textContent;
+    $("#messageForm").elements.body.focus();
+  }
 });
 
 $("#callButton").addEventListener("click", startCall);

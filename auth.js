@@ -5,7 +5,8 @@ const switchAuth = document.querySelector("#switchAuth");
 const googleButton = document.querySelector("#googleButton");
 const communityButton = document.querySelector("#communityButton");
 const requestedPage = new URLSearchParams(window.location.search).get("next");
-const nextPage = requestedPage === "chess" ? "chess.html" : "community.html";
+const nextPage = requestedPage === "chess" ? "chess.html" : requestedPage === "owner" ? "owner.html" : "community.html";
+const authReturn = nextPage === "community.html" ? "" : `?next=${nextPage === "chess.html" ? "chess" : "owner"}`;
 
 function showStatus(message, type = "") {
   authStatus.textContent = message;
@@ -49,12 +50,12 @@ loginForm.addEventListener("submit", async (event) => {
 signupForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const values = new FormData(signupForm);
-  const { error } = await window.arraiSupabase.auth.signUp({ email: values.get("email"), password: values.get("password"), options: { data: { full_name: values.get("name") }, emailRedirectTo: `${window.location.origin}/auth.html${nextPage === "chess.html" ? "?next=chess" : ""}` } });
+  const { error } = await window.arraiSupabase.auth.signUp({ email: values.get("email"), password: values.get("password"), options: { data: { full_name: values.get("name") }, emailRedirectTo: `${window.location.origin}/auth.html${authReturn}` } });
   if (error) return showStatus(error.message, "error");
   showStatus("Account created. Check your email to confirm it, then log in.", "success");
 });
 
 googleButton.addEventListener("click", async () => {
-  const { error } = await window.arraiSupabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${window.location.origin}/auth.html${nextPage === "chess.html" ? "?next=chess" : ""}` } });
+  const { error } = await window.arraiSupabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${window.location.origin}/auth.html${authReturn}` } });
   if (error) showStatus(error.message, "error");
 });

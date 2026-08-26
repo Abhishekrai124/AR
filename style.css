@@ -794,6 +794,11 @@ footer div {
 }
 .community-status.success { color: #86efac; }
 .community-status.error { color: #fda4af; }
+.founder-spotlight { display: grid; grid-template-columns: 72px 1fr auto; align-items: center; gap: 16px; margin: 0 0 26px; padding: 14px 18px; border: 1px solid rgba(249,168,212,.32); border-radius: 19px; background: linear-gradient(100deg, rgba(79,70,229,.42), rgba(219,39,119,.22)); box-shadow: 0 16px 44px rgba(30,41,59,.22); }
+.founder-spotlight img { width: 72px; height: 72px; border: 3px solid #fde68a; border-radius: 50%; object-fit: cover; box-shadow: 0 0 0 4px rgba(249,168,212,.22); }.founder-spotlight .eyebrow { margin-bottom: 5px; }.founder-spotlight h2 { font-size: 1.5rem; }.founder-spotlight p:not(.eyebrow) { margin: 4px 0 0; color: #e0e7ff; font-size: .74rem; }.founder-spotlight > span { color: #fef3c7; font-size: .68rem; font-weight: 800; }
+.social-card { transition: transform .28s cubic-bezier(.22,1,.36,1), border-color .28s ease, box-shadow .28s ease; }.social-card:hover { transform: translateY(-5px) rotate(-.2deg); border-color: rgba(249,168,212,.55); box-shadow: 0 18px 42px rgba(2,6,23,.26); }
+.message-shortcuts { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 0 10px; }.message-shortcuts button { border: 1px solid rgba(249,168,212,.32); border-radius: 999px; padding: 6px 8px; color: #fce7f3; background: rgba(131,24,67,.22); font: 700 .6rem Manrope,sans-serif; cursor: pointer; }.message-shortcuts button:hover { background: rgba(219,39,119,.42); }
+.cute-tooltip { position: fixed; z-index: 100; max-width: 190px; padding: 7px 10px; border: 1px solid rgba(249,168,212,.45); border-radius: 10px; color: #fff7fb; background: rgba(30,20,52,.94); box-shadow: 0 9px 26px rgba(2,6,23,.38); font-size: .65rem; font-weight: 700; pointer-events: none; opacity: 0; transform: translate(-50%,8px) scale(.96); transition: opacity .16s ease, transform .16s ease; }.cute-tooltip.show { opacity: 1; transform: translate(-50%,0) scale(1); }
 .social-card {
   padding: 20px;
   border: 1px solid var(--line);
@@ -873,6 +878,7 @@ footer div {
   }
   .community-wrap { width: calc(100% - 32px); }
   .community-hero { padding: 50px 0 28px; }
+  .founder-spotlight { grid-template-columns: 55px 1fr; gap: 12px; padding: 13px; }.founder-spotlight img { width: 55px; height: 55px; }.founder-spotlight > span { grid-column: 1 / -1; }
   .community-grid { grid-template-columns: 1fr; }
   .messages-panel { position: static; }
   .call-videos { grid-template-columns: 1fr; }

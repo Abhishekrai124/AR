@@ -76,6 +76,21 @@ const mountAssistant = () => {
 };
 mountAssistant();
 
+const tooltip = document.createElement("div");
+tooltip.className = "cute-tooltip";
+tooltip.setAttribute("role", "tooltip");
+document.body.append(tooltip);
+const tooltipTargets = [...document.querySelectorAll("button, a, .social-card")].filter((node) => !node.closest(".ai-panel"));
+const tooltipText = (node) => node.dataset.cuteTip || node.getAttribute("aria-label") || node.textContent.trim().replace(/\s+/g, " ").slice(0, 72);
+const placeTooltip = (node) => { const rect = node.getBoundingClientRect(); tooltip.textContent = tooltipText(node); tooltip.style.left = `${rect.left + rect.width / 2}px`; tooltip.style.top = `${Math.max(8, rect.top - 34)}px`; tooltip.classList.add("show"); };
+tooltipTargets.forEach((node) => {
+  node.addEventListener("mouseenter", () => placeTooltip(node));
+  node.addEventListener("focus", () => placeTooltip(node));
+  node.addEventListener("mouseleave", () => tooltip.classList.remove("show"));
+  node.addEventListener("blur", () => tooltip.classList.remove("show"));
+  node.addEventListener("touchstart", () => { placeTooltip(node); setTimeout(() => tooltip.classList.remove("show"), 1100); }, { passive: true });
+});
+
 // Soft motion follows a mouse or touch lightly, without making the page hard to read.
 const softText = [...document.querySelectorAll("h1, h2, h3, p, .button, .text-link, .brand, nav a")];
 softText.forEach((node, index) => { node.classList.add("soft-text"); node.dataset.softIndex = index; });

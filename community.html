@@ -19,6 +19,7 @@
     <main class="community-wrap">
       <section class="community-hero"><div><p class="eyebrow">Arrai community</p><h1>Your people,<br /><em>your space.</em></h1></div><button class="text-button" id="logoutButton">Sign out</button></section>
       <p class="community-status" id="communityStatus" aria-live="polite">Loading your profile…</p>
+      <section class="founder-spotlight" aria-label="Community founder profile"><img src="assets/founder.jpg" alt="Abhishek Rai" /><div><p class="eyebrow">Community host</p><h2>Abhishek Rai</h2><p>@AR · Founder &amp; CEO</p></div><span>✦ A dreamy space for kind ideas</span></section>
       <section id="profileSetup" class="social-card profile-setup" hidden>
         <p class="eyebrow">One-time setup</p><h2>Choose your identity.</h2>
         <form id="profileForm" class="social-form">
@@ -37,7 +38,7 @@
           <form class="social-card post-composer" id="postForm"><p class="eyebrow">Share something</p><textarea name="body" maxlength="500" placeholder="What’s on your mind?"></textarea><div><label class="upload-label">Add image<input name="image" type="file" accept="image/png,image/jpeg,image/webp" /></label><button class="button primary" type="submit">Post <b>↗</b></button></div></form>
           <div id="postFeed" class="post-feed"></div>
         </section>
-        <aside class="social-card messages-panel"><div class="message-heading"><div><p class="eyebrow">Direct messages</p><h2 id="chatTitle">Choose a person</h2></div><button class="text-button" id="callButton" disabled>Start call</button></div><div id="messageList" class="message-list"><p>Search for a person, then press Message.</p></div><form id="messageForm" class="message-form" hidden><input name="body" maxlength="1500" placeholder="Write a message" required /><button type="submit">Send</button></form></aside>
+        <aside class="social-card messages-panel"><div class="message-heading"><div><p class="eyebrow">Dreamy messages</p><h2 id="chatTitle">Choose a person</h2></div><button class="text-button" id="callButton" disabled>Start call</button></div><div id="messageList" class="message-list"><p>Search for a person, then press Message.</p></div><div id="messageShortcuts" class="message-shortcuts" hidden><button type="button">Hey ✦</button><button type="button">Love this!</button><button type="button">Let’s create ♡</button></div><form id="messageForm" class="message-form" hidden><input name="body" maxlength="1500" placeholder="Write a sweet message…" required /><button type="submit">Send</button></form></aside>
       </section>
     </main>
     <dialog class="call-dialog" id="callDialog">
