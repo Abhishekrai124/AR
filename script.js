@@ -1,6 +1,1 @@
-document.getElementById('magicMotionBtn').addEventListener('click', function() {
-    alert('✨ Magic Motion Activated! Welcome to Abhishek Rai\'s digital empire at arrai.in 🚀');
-});
-
-// Dynamic interaction / console log
-console.log("arrai.in motion engine initialized successfully by Abhishek Rai.");
+const button=document.querySelector('.menu-button'),nav=document.querySelector('nav');if(button&&nav)button.addEventListener('click',()=>{const open=nav.classList.toggle('open');button.setAttribute('aria-expanded',open);button.textContent=open?'×':'☰'});document.querySelectorAll('.contact-form').forEach(form=>form.addEventListener('submit',e=>{e.preventDefault();const d=new FormData(form),s=encodeURIComponent(`Website enquiry from ${d.get('name')}`),b=encodeURIComponent(`Name: ${d.get('name')}\nEmail: ${d.get('email')}\n\n${d.get('message')}`);location.href=`mailto:abhishekrai@arrai.in?subject=${s}&body=${b}`}));
