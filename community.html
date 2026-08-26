@@ -41,7 +41,7 @@
           <form class="social-card post-composer" id="postForm"><p class="eyebrow">Daily update</p><textarea name="body" maxlength="500" placeholder="Share a little moment, thought or update…"></textarea><div><label class="upload-label">Add image<input name="image" type="file" accept="image/png,image/jpeg,image/webp" /></label><button class="button primary" type="submit">Share update <b>↗</b></button></div></form>
           <div id="postFeed" class="post-feed"></div>
         </section>
-        <aside class="social-card messages-panel"><div class="message-heading"><div><p class="eyebrow">Dreamy messages</p><h2 id="chatTitle">Choose a person</h2></div><button class="text-button" id="callButton" disabled>Start call</button></div><div id="messageList" class="message-list"><p>Search for a person, then press Message.</p></div><div id="messageShortcuts" class="message-shortcuts" hidden><button type="button">Hey ✦</button><button type="button">Love this!</button><button type="button">Let’s create ♡</button></div><form id="messageForm" class="message-form" hidden><input name="body" maxlength="1500" placeholder="Write a sweet message…" required /><button type="submit">Send</button></form></aside>
+        <aside class="social-card messages-panel"><div class="message-heading"><div><p class="eyebrow">Dreamy messages</p><h2 id="chatTitle">Choose a person</h2></div><button class="text-button" id="callButton" disabled>Start call</button></div><div id="messageList" class="message-list"><p>Search for a person, then press Message.</p></div><div id="messageShortcuts" class="message-shortcuts" hidden><button type="button">Hey ✦</button><button type="button">Love this!</button><button type="button">Let’s create ♡</button></div><form id="messageForm" class="message-form" hidden><textarea name="body" placeholder="Write a sweet message…" required></textarea><button type="submit">Send</button></form></aside>
       </section>
     </main>
     <dialog class="call-dialog" id="callDialog">
@@ -51,6 +51,7 @@
       <div class="call-videos"><video id="remoteVideo" autoplay playsinline></video><video id="localVideo" autoplay playsinline muted></video></div>
       <div class="call-actions"><button class="button primary" id="acceptCall" type="button" hidden>Accept <b>↗</b></button><button class="button" id="endCall" type="button">End call</button></div>
     </dialog>
+    <dialog class="profile-dialog" id="profileDialog"><button class="close-dialog" id="closeProfile" aria-label="Close profile">×</button><div id="profileDetails"></div></dialog>
     <footer><a class="brand" href="index.html">ar<span>rai</span>.in</a><p>© 2026 Abhishek Rai. All rights reserved.</p><div><a href="privacy.html">Privacy</a><a href="privacy.html#terms">Terms</a></div></footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase.js"></script><script src="script.js"></script><script src="community.js"></script>

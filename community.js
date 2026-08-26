@@ -32,6 +32,21 @@ function avatar(profileData) {
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.display_name)}&background=38bdf8&color=0f172a&bold=true`;
 }
 
+async function openProfile(profileId) {
+  const [{ data: person, error }, { count: followerCount }, { count: followingCount }, { data: posts, error: postError }, { data: followers, error: followerError }, { data: following, error: followingError }] = await Promise.all([
+    db.from("profiles").select("id, username, display_name, bio, avatar_url, is_vip, created_at").eq("id", profileId).single(),
+    db.from("follows").select("*", { count: "exact", head: true }).eq("following_id", profileId),
+    db.from("follows").select("*", { count: "exact", head: true }).eq("follower_id", profileId),
+    db.from("posts").select("id, body, image_url, created_at").eq("author_id", profileId).order("created_at", { ascending: false }).limit(24),
+    db.from("follows").select("profiles!follows_follower_id_fkey(username, display_name, avatar_url)").eq("following_id", profileId).limit(24),
+    db.from("follows").select("profiles!follows_following_id_fkey(username, display_name, avatar_url)").eq("follower_id", profileId).limit(24),
+  ]);
+  if (error || postError || followerError || followingError) throw error || postError || followerError || followingError;
+  const memberList = (rows, key) => (rows || []).map((row) => row.profiles).filter(Boolean).map((member) => `<span class="profile-member"><img src="${avatar(member)}" alt="" />${escapeHtml(member.display_name)} <small>@${escapeHtml(member.username)}</small></span>`).join("") || '<span class="empty-state">None yet</span>';
+  $("#profileDetails").innerHTML = `<section class="instagram-profile"><img class="profile-hero-avatar" src="${avatar(person)}" alt="" /><div><p class="eyebrow">${person.is_vip ? "✦ VIP member" : "AR member"}</p><h2>${escapeHtml(person.display_name)}</h2><p class="profile-handle">@${escapeHtml(person.username)}</p><p>${escapeHtml(person.bio || "No bio yet.")}</p><div class="profile-stats"><span><b>${posts.length}</b> posts</span><span><b>${followerCount || 0}</b> followers</span><span><b>${followingCount || 0}</b> following</span></div></div></section><section class="profile-lists"><div><p class="eyebrow">Followers</p>${memberList(followers, "follower")}</div><div><p class="eyebrow">Following</p>${memberList(following, "following")}</div></section><section class="profile-posts"><p class="eyebrow">Posts</p>${posts.length ? posts.map((post) => `<article class="social-card"><small>${new Date(post.created_at).toLocaleDateString()}</small><p>${escapeHtml(post.body)}</p>${post.image_url ? `<img src="${post.image_url}" alt="Member post" />` : ""}</article>`).join("") : '<p class="empty-state">No posts yet.</p>'}</section>`;
+  $("#profileDialog").showModal();
+}
+
 async function uploadImage(bucket, file) {
   if (!file) return null;
   if (file.size > 5 * 1024 * 1024) throw new Error("Images must be 5 MB or smaller.");
@@ -71,7 +86,7 @@ async function loadProfile() {
 async function loadPosts() {
   const { data, error } = await db
     .from("posts")
-    .select("id, body, image_url, created_at, profiles!posts_author_id_fkey(username, display_name, avatar_url)")
+    .select("id, body, image_url, created_at, profiles!posts_author_id_fkey(id, username, display_name, avatar_url)")
     .order("created_at", { ascending: false })
     .limit(30);
   if (error) throw error;
@@ -92,7 +107,7 @@ async function loadPosts() {
             const postComments = commentsByPost[post.id] || [];
             const postReactions = reactionsByPost[post.id] || [];
             const liked = postReactions.some((reaction) => reaction.user_id === user.sub);
-            return `<article class="social-card post" id="post-${post.id}"><img class="post-avatar" src="${avatar(post.profiles)}" alt="" /><div><strong>${escapeHtml(post.profiles.display_name)}</strong><span>@${escapeHtml(post.profiles.username)} · ${new Date(post.created_at).toLocaleDateString()}</span><p>${escapeHtml(post.body)}</p>${post.image_url ? `<img class="post-image" src="${post.image_url}" alt="Post image" />` : ""}<div class="post-tools"><button type="button" data-like="${post.id}" class="${liked ? "liked" : ""}">♡ ${postReactions.length || ""}</button><button type="button" data-share="${post.id}" data-share-text="${escapeHtml(post.body.slice(0, 160))}">↗ Share</button><span>${postComments.length} comment${postComments.length === 1 ? "" : "s"}</span></div><div class="comment-list">${postComments.slice(-3).map((comment) => `<p><b>${escapeHtml(comment.profiles?.display_name || "Member")}</b> ${escapeHtml(comment.body)}</p>`).join("")}</div><form class="comment-form" data-comment-form="${post.id}"><input maxlength="500" required placeholder="Write a kind comment…" /><button type="submit">Send</button></form></div></article>`;
+            return `<article class="social-card post" id="post-${post.id}"><img class="post-avatar" src="${avatar(post.profiles)}" alt="" /><div><button type="button" class="profile-link" data-profile="${post.profiles.id}">${escapeHtml(post.profiles.display_name)}</button><span>@${escapeHtml(post.profiles.username)} · ${new Date(post.created_at).toLocaleDateString()}</span><p>${escapeHtml(post.body)}</p>${post.image_url ? `<img class="post-image" src="${post.image_url}" alt="Post image" />` : ""}<div class="post-tools"><button type="button" data-like="${post.id}" class="${liked ? "liked" : ""}">♡ ${postReactions.length || ""}</button><button type="button" data-share="${post.id}" data-share-text="${escapeHtml(post.body.slice(0, 160))}">↗ Share</button><span>${postComments.length} comment${postComments.length === 1 ? "" : "s"}</span></div><div class="comment-list">${postComments.slice(-3).map((comment) => `<p><b>${escapeHtml(comment.profiles?.display_name || "Member")}</b> ${escapeHtml(comment.body)}</p>`).join("")}</div><form class="comment-form" data-comment-form="${post.id}"><input maxlength="500" required placeholder="Write a kind comment…" /><button type="submit">Send</button></form></div></article>`;
           },
         )
         .join("")
@@ -111,7 +126,7 @@ async function searchPeople(query = "") {
   $("#peopleResults").innerHTML = people.length
     ? people
         .map(
-          (person) => `<div class="person-row"><img src="${avatar(person)}" alt="" /><div><b>${escapeHtml(person.display_name)}</b><small>@${escapeHtml(person.username)}</small></div><button class="follow-button" data-follow="${person.id}" data-following="${followed.has(person.id)}">${followed.has(person.id) ? "Following" : "Follow"}</button><button class="message-button" data-message="${person.id}" data-name="${escapeHtml(person.display_name)}">Message</button></div>`,
+          (person) => `<div class="person-row"><img src="${avatar(person)}" alt="" /><div><b>${escapeHtml(person.display_name)}</b><small>@${escapeHtml(person.username)}</small></div><button class="follow-button" data-profile="${person.id}">Profile</button><button class="follow-button" data-follow="${person.id}" data-following="${followed.has(person.id)}">${followed.has(person.id) ? "Following" : "Follow"}</button><button class="message-button" data-message="${person.id}" data-name="${escapeHtml(person.display_name)}">Message</button></div>`,
         )
         .join("")
     : '<p class="empty-state">No people found.</p>';
@@ -312,7 +327,9 @@ $("#postForm").addEventListener("submit", async (event) => {
 $("#postFeed").addEventListener("click", async (event) => {
   const like = event.target.closest("[data-like]");
   const share = event.target.closest("[data-share]");
+  const profileButton = event.target.closest("[data-profile]");
   try {
+    if (profileButton) return openProfile(profileButton.dataset.profile);
     if (like) {
       const postId = like.dataset.like;
       const alreadyLiked = like.classList.contains("liked");
@@ -348,8 +365,10 @@ $("#peopleSearch").addEventListener("input", () => searchPeople($("#peopleSearch
 $("#peopleResults").addEventListener("click", (event) => {
   const follow = event.target.closest("[data-follow]");
   const message = event.target.closest("[data-message]");
+  const profileButton = event.target.closest("[data-profile]");
   if (follow) setFollow(follow.dataset.follow, follow.dataset.following === "true").catch((error) => say(error.message, "error"));
   if (message) openChat(message.dataset.message, message.dataset.name).catch((error) => say(error.message, "error"));
+  if (profileButton) openProfile(profileButton.dataset.profile).catch((error) => say(error.message, "error"));
 });
 
 $("#messageForm").addEventListener("submit", async (event) => {
@@ -372,6 +391,7 @@ $("#acceptCall").addEventListener("click", acceptCall);
 $("#endCall").addEventListener("click", () => endCall());
 $("#closeCall").addEventListener("click", () => endCall());
 $("#logoutButton").addEventListener("click", () => window.logout());
+$("#closeProfile").addEventListener("click", () => $("#profileDialog").close());
 
 (async () => {
   try {

@@ -28,6 +28,8 @@ alter table public.profiles add constraint profiles_account_status_check check (
 alter table public.direct_messages
   add column if not exists status text not null default 'request' check (status in ('request', 'accepted', 'declined')),
   add column if not exists responded_at timestamptz;
+-- Chat is text-based and intentionally has no length cap. Empty messages remain invalid.
+alter table public.direct_messages drop constraint if exists direct_messages_body_check;
 
 create table if not exists public.moderation_events (
   id uuid primary key default gen_random_uuid(),
@@ -75,7 +77,7 @@ begin
   if sender is null then raise exception 'Please sign in first'; end if;
   if not exists (select 1 from profiles where id = sender and account_status = 'active') then raise exception 'This account cannot send messages'; end if;
   if not exists (select 1 from profiles where id = recipient and account_status = 'active') then raise exception 'This member is unavailable'; end if;
-  if char_length(trim(message_body)) not between 1 and 1500 then raise exception 'Message must be 1–1500 characters'; end if;
+  if char_length(trim(message_body)) = 0 then raise exception 'Message cannot be empty'; end if;
   select exists(select 1 from follows a join follows b on b.follower_id = a.following_id and b.following_id = a.follower_id where a.follower_id = sender and a.following_id = recipient) into mutual;
   insert into direct_messages (sender_id, recipient_id, body, status)
   values (sender, recipient, trim(message_body), case when mutual then 'accepted' else 'request' end)
