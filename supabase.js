@@ -13,6 +13,7 @@ window.arraiAuth = window.arraiSupabase.auth.getUser().then(({ data, error }) =>
       sub: source.id,
       email: source.email,
       name: source.user_metadata.full_name || source.user_metadata.name || source.email.split("@")[0],
+      avatarUrl: source.user_metadata.avatar_url || source.user_metadata.picture || "",
     },
   };
 });

@@ -22,8 +22,12 @@ window.arraiAuth
       switchAuth.hidden = true;
       googleButton.hidden = true;
       communityButton.hidden = false;
-      communityButton.href = nextPage;
-      communityButton.innerHTML = nextPage === "chess.html" ? "Open chess <b>♟</b>" : "Open community <b>↗</b>";
+      communityButton.href = "#";
+      communityButton.textContent = "Logout";
+      communityButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        window.logout();
+      }, { once: true });
       return;
     }
     showStatus("Continue securely with email and password or Google.");

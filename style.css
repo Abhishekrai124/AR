@@ -145,6 +145,11 @@ nav a:hover,
 nav .active {
   color: var(--sky);
 }
+.nav-account { display: inline-flex; align-items: center; gap: 7px; max-width: 170px; color: var(--ink); }
+.nav-account img { width: 28px; height: 28px; flex: 0 0 28px; border: 1px solid var(--sky); border-radius: 50%; object-fit: cover; }
+.nav-account span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nav-logout { border: 1px solid rgba(249, 168, 212, .45); border-radius: 999px; padding: 7px 11px; color: var(--ink); background: rgba(131, 24, 67, .26); font: 700 .74rem Manrope, Arial, sans-serif; cursor: pointer; }
+.nav-logout:hover { border-color: var(--pink); color: var(--pink); }
 .menu-button {
   display: none;
   background: none;

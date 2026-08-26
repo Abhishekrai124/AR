@@ -22,11 +22,34 @@ if (nav && !nav.querySelector('[href="payments.html"]')) {
   nav.insertBefore(paymentsLink, authLink || null);
 }
 const ownerEmail = "abhishekrai6897@gmail.com";
+const avatarFallback = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "AR")}&background=38bdf8&color=0f172a&bold=true`;
+const makeAccountLink = (user, profile = {}) => {
+  const account = document.createElement("a");
+  const name = profile.display_name || user?.name || user?.email?.split("@")[0] || "My profile";
+  account.href = "community.html";
+  account.className = "nav-account";
+  account.setAttribute("aria-label", `Open ${name}'s profile`);
+  const image = document.createElement("img");
+  image.src = profile.avatar_url || user?.avatarUrl || avatarFallback(name);
+  image.alt = "";
+  image.addEventListener("error", () => { image.src = avatarFallback(name); }, { once: true });
+  const label = document.createElement("span");
+  label.textContent = name;
+  account.append(image, label);
+  return account;
+};
+const loadNavigationProfile = async (user) => {
+  if (!window.arraiSupabase || !user?.id) return {};
+  const { data } = await window.arraiSupabase.from("profiles").select("display_name, avatar_url").eq("id", user.id).maybeSingle();
+  return data || {};
+};
 const updateNavigationForUser = ({ isAuthenticated, user }) => {
   if (!nav) return;
   const loginLink = nav.querySelector('[href="auth.html"]');
   if (isAuthenticated) {
     loginLink?.remove();
+    nav.querySelector(".nav-account")?.remove();
+    nav.querySelector(".nav-logout")?.remove();
     if (!nav.querySelector('[href="community.html"]')) {
       const spaceLink = document.createElement("a");
       spaceLink.href = "community.html";
@@ -39,6 +62,19 @@ const updateNavigationForUser = ({ isAuthenticated, user }) => {
       ownerLink.textContent = "Owner studio";
       nav.append(ownerLink);
     }
+    if (!nav.querySelector(".nav-logout")) {
+      const logout = document.createElement("button");
+      logout.type = "button";
+      logout.className = "nav-logout";
+      logout.textContent = "Logout";
+      logout.addEventListener("click", () => window.logout?.());
+      nav.append(logout);
+    }
+    loadNavigationProfile(user).catch(() => ({})).then((profile) => {
+      nav.querySelector(".nav-account")?.remove();
+      const logout = nav.querySelector(".nav-logout");
+      nav.insertBefore(makeAccountLink(user, profile), logout || null);
+    });
     const welcomeKey = `arrai-welcome-${user?.id || user?.email}`;
     if (!sessionStorage.getItem(welcomeKey) && !document.body.classList.contains("auth-page")) {
       sessionStorage.setItem(welcomeKey, "1");
@@ -51,6 +87,8 @@ const updateNavigationForUser = ({ isAuthenticated, user }) => {
       setTimeout(() => welcome.remove(), 5200);
     }
   } else if (!loginLink && !document.body.classList.contains("auth-page")) {
+    nav.querySelector(".nav-account")?.remove();
+    nav.querySelector(".nav-logout")?.remove();
     const authLink = document.createElement("a");
     authLink.href = "auth.html";
     authLink.textContent = "Login / Register";
