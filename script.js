@@ -36,11 +36,11 @@ if (button && nav)
 
 const localAssistantReply = (question) => {
   const q = question.toLowerCase();
-  if (q.includes("contact") || q.includes("email") || q.includes("hire")) return "You can reach Abhishek directly at abhishekrai@arrai.in, or use the Contact page to prepare an enquiry.";
-  if (q.includes("service") || q.includes("work") || q.includes("website")) return "AR creates thoughtful websites, visual direction and practical digital strategy. Open Services for the full capability list.";
-  if (q.includes("founder") || q.includes("abhishek") || q.includes("ceo")) return "Abhishek Rai is the Founder & CEO of AR, connected with RaiGenZ Foundation and AR Tech Solutions.";
-  if (q.includes("project") || q.includes("portfolio")) return "You can explore current work from the Projects page. If you have an idea, the assistant can also help you prepare a message for Abhishek.";
-  return "I can help with AR, Abhishek Rai, services, projects or contacting the team. For a live web-researched reply, add the optional AI keys described in AI_SETUP.md.";
+  if (q.includes("contact") || q.includes("email") || q.includes("hire")) return "Of course ♡ You can reach Abhishek at abhishekrai@arrai.in, or use the Contact page and I’ll help you find the right place.";
+  if (q.includes("service") || q.includes("work") || q.includes("website")) return "AR gently brings together web design, visual direction and practical digital strategy. The Services page has the lovely details. ✿";
+  if (q.includes("founder") || q.includes("abhishek") || q.includes("ceo")) return "Abhishek Rai is AR’s Founder & CEO, connected with RaiGenZ Foundation and AR Tech Solutions. He is building thoughtful digital work with care. ✦";
+  if (q.includes("project") || q.includes("portfolio")) return "The Projects page is the best place to see what is in motion. If you have an idea of your own, I can also guide you to Abhishek’s contact page. ♡";
+  return "I’m Miss Makima, your gentle AR guide. I can help with AR, Abhishek Rai, services, projects, chess or contacting the team. For live web-researched replies, add the optional AI keys in AI_SETUP.md. ✿";
 };
 
 const mountAssistant = () => {
@@ -48,8 +48,8 @@ const mountAssistant = () => {
   shell.innerHTML = `
     <button class="ai-launcher" type="button" aria-label="Open AR AI support">✦</button>
     <aside class="ai-panel" aria-label="AR AI support assistant">
-      <div class="ai-head"><div><strong>AR Support ✿</strong><small>Ask about AR or the web</small></div><button class="ai-close" type="button" aria-label="Close assistant">×</button></div>
-      <div class="ai-messages"><p class="ai-message">Hi! I’m AR Support. I can guide you around the site and help with your question. ♡</p></div>
+      <div class="ai-head"><div><strong><span class="makima-orb">✿</span>Miss Makima</strong><small>Your soft little AR guide</small></div><button class="ai-close" type="button" aria-label="Close assistant">×</button></div>
+      <div class="ai-messages"><p class="ai-message">Hello, I’m Miss Makima. I’m here whenever you need a gentle hand around AR. What would you like to know? ♡</p></div>
       <form class="ai-form"><input required maxlength="500" aria-label="Your message" placeholder="Ask anything…" /><button type="submit">Send</button></form>
     </aside>`;
   document.body.append(shell);
@@ -75,6 +75,33 @@ const mountAssistant = () => {
   });
 };
 mountAssistant();
+
+// Soft motion follows a mouse or touch lightly, without making the page hard to read.
+const softText = [...document.querySelectorAll("h1, h2, h3, p, .button, .text-link, .brand, nav a")];
+softText.forEach((node, index) => { node.classList.add("soft-text"); node.dataset.softIndex = index; });
+let lastSoftMotion = 0;
+window.addEventListener("pointermove", (event) => {
+  const now = performance.now();
+  if (now - lastSoftMotion < 45) return;
+  lastSoftMotion = now;
+  const x = event.clientX / window.innerWidth - .5, y = event.clientY / window.innerHeight - .5;
+  softText.forEach((node, index) => {
+    const strength = 1.2 + (index % 4) * .45;
+    node.style.setProperty("--soft-shift-x", `${(x * strength * 2).toFixed(2)}px`);
+    node.style.setProperty("--soft-shift-y", `${(y * strength * 2).toFixed(2)}px`);
+  });
+}, { passive: true });
+
+const typeTargets = [...document.querySelectorAll(".eyebrow")];
+const writer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+  if (!entry.isIntersecting || entry.target.dataset.written) return;
+  const node = entry.target, text = node.dataset.originalText || node.textContent.trim();
+  node.dataset.written = "true"; node.dataset.originalText = text; node.textContent = ""; node.classList.add("ink-reveal");
+  let index = 0;
+  const type = () => { node.textContent = text.slice(0, ++index); if (index < text.length) setTimeout(type, 18); else node.classList.add("written"); };
+  type(); writer.unobserve(node);
+}), { threshold: .55 });
+if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) typeTargets.forEach((node) => writer.observe(node));
 
 // A gentle sakura shower and a small sparkle trail make every page feel alive.
 if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {

@@ -4,6 +4,8 @@ const signupForm = document.querySelector("#signupForm");
 const switchAuth = document.querySelector("#switchAuth");
 const googleButton = document.querySelector("#googleButton");
 const communityButton = document.querySelector("#communityButton");
+const requestedPage = new URLSearchParams(window.location.search).get("next");
+const nextPage = requestedPage === "chess" ? "chess.html" : "community.html";
 
 function showStatus(message, type = "") {
   authStatus.textContent = message;
@@ -19,6 +21,8 @@ window.arraiAuth
       switchAuth.hidden = true;
       googleButton.hidden = true;
       communityButton.hidden = false;
+      communityButton.href = nextPage;
+      communityButton.innerHTML = nextPage === "chess.html" ? "Open chess <b>♟</b>" : "Open community <b>↗</b>";
       return;
     }
     showStatus("Continue securely with email and password or Google.");
@@ -39,18 +43,18 @@ loginForm.addEventListener("submit", async (event) => {
   const values = new FormData(loginForm);
   const { error } = await window.arraiSupabase.auth.signInWithPassword({ email: values.get("email"), password: values.get("password") });
   if (error) return showStatus(error.message, "error");
-  window.location.assign("community.html");
+  window.location.assign(nextPage);
 });
 
 signupForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const values = new FormData(signupForm);
-  const { error } = await window.arraiSupabase.auth.signUp({ email: values.get("email"), password: values.get("password"), options: { data: { full_name: values.get("name") }, emailRedirectTo: `${window.location.origin}/auth.html` } });
+  const { error } = await window.arraiSupabase.auth.signUp({ email: values.get("email"), password: values.get("password"), options: { data: { full_name: values.get("name") }, emailRedirectTo: `${window.location.origin}/auth.html${nextPage === "chess.html" ? "?next=chess" : ""}` } });
   if (error) return showStatus(error.message, "error");
   showStatus("Account created. Check your email to confirm it, then log in.", "success");
 });
 
 googleButton.addEventListener("click", async () => {
-  const { error } = await window.arraiSupabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${window.location.origin}/auth.html` } });
+  const { error } = await window.arraiSupabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${window.location.origin}/auth.html${nextPage === "chess.html" ? "?next=chess" : ""}` } });
   if (error) showStatus(error.message, "error");
 });

@@ -211,20 +211,20 @@ document.querySelectorAll(".mode").forEach(
     }),
 );
 el("showAuth").onclick = () => {
-  window.location.href = "auth.html";
+  window.location.href = "auth.html?next=chess";
 };
 el("signOut").onclick = () => {
   localStorage.removeItem("arraiChessUser");
   window.logout();
 };
-function setProfile() {
-  const user = localStorage.getItem("arraiChessUser");
-  el("guestView").hidden = !!user;
-  el("memberView").hidden = !user;
-  if (user) {
-    el("playerName").textContent = user;
-    el("whiteName").textContent = user;
-    el("avatarLetter").textContent = user[0].toUpperCase();
+function setProfile(user = null) {
+  const name = user?.name || localStorage.getItem("arraiChessUser");
+  el("guestView").hidden = !!name;
+  el("memberView").hidden = !name;
+  if (name) {
+    el("playerName").textContent = name;
+    el("whiteName").textContent = name;
+    el("avatarLetter").textContent = name[0].toUpperCase();
   }
 }
 ["googleConnect", "chessConnect"].forEach(
@@ -235,9 +235,9 @@ function setProfile() {
       )),
 );
 window.arraiAuth
-  .catch(() => ({ isAuthenticated: false }))
-  .then(() => {
+  .catch(() => ({ isAuthenticated: false, user: null }))
+  .then(({ isAuthenticated, user }) => {
     saveStats();
-    setProfile();
+    setProfile(isAuthenticated ? user : null);
     init();
   });
