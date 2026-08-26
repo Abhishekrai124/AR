@@ -7,7 +7,7 @@ alter table public.profiles
   add column if not exists privacy text not null default 'public' check (privacy in ('public', 'private')),
   add column if not exists theme text not null default 'midnight' check (theme in ('midnight', 'sakura', 'ocean', 'royal')),
   add column if not exists is_vip boolean not null default false,
-  add column if not exists vip_badge text not null default 'none' check (vip_badge in ('none', 'owner_granted', 'purchased', 'black')),
+  add column if not exists vip_badge text not null default 'none' check (vip_badge in ('none', 'owner_granted', 'purchased')),
   add column if not exists vip_granted_at timestamptz,
   add column if not exists account_status text not null default 'active' check (account_status in ('active', 'suspended', 'banned', 'dismissed')),
   add column if not exists identity_locked boolean not null default false,
@@ -25,8 +25,6 @@ alter table public.profiles drop constraint if exists profiles_display_name_chec
 alter table public.profiles drop constraint if exists profiles_bio_check;
 alter table public.profiles drop constraint if exists profiles_account_status_check;
 alter table public.profiles add constraint profiles_account_status_check check (account_status in ('active', 'suspended', 'banned', 'dismissed'));
-alter table public.profiles drop constraint if exists profiles_vip_badge_check;
-alter table public.profiles add constraint profiles_vip_badge_check check (vip_badge in ('none', 'owner_granted', 'purchased', 'black'));
 
 alter table public.direct_messages
   add column if not exists status text not null default 'request' check (status in ('request', 'accepted', 'declined')),
