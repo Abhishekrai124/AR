@@ -34,6 +34,48 @@ if (button && nav)
     button.textContent = open ? "×" : "☰";
   });
 
+const localAssistantReply = (question) => {
+  const q = question.toLowerCase();
+  if (q.includes("contact") || q.includes("email") || q.includes("hire")) return "You can reach Abhishek directly at abhishekrai@arrai.in, or use the Contact page to prepare an enquiry.";
+  if (q.includes("service") || q.includes("work") || q.includes("website")) return "AR creates thoughtful websites, visual direction and practical digital strategy. Open Services for the full capability list.";
+  if (q.includes("founder") || q.includes("abhishek") || q.includes("ceo")) return "Abhishek Rai is the Founder & CEO of AR, connected with RaiGenZ Foundation and AR Tech Solutions.";
+  if (q.includes("project") || q.includes("portfolio")) return "You can explore current work from the Projects page. If you have an idea, the assistant can also help you prepare a message for Abhishek.";
+  return "I can help with AR, Abhishek Rai, services, projects or contacting the team. For a live web-researched reply, add the optional AI keys described in AI_SETUP.md.";
+};
+
+const mountAssistant = () => {
+  const shell = document.createElement("section");
+  shell.innerHTML = `
+    <button class="ai-launcher" type="button" aria-label="Open AR AI support">✦</button>
+    <aside class="ai-panel" aria-label="AR AI support assistant">
+      <div class="ai-head"><div><strong>AR Support ✿</strong><small>Ask about AR or the web</small></div><button class="ai-close" type="button" aria-label="Close assistant">×</button></div>
+      <div class="ai-messages"><p class="ai-message">Hi! I’m AR Support. I can guide you around the site and help with your question. ♡</p></div>
+      <form class="ai-form"><input required maxlength="500" aria-label="Your message" placeholder="Ask anything…" /><button type="submit">Send</button></form>
+    </aside>`;
+  document.body.append(shell);
+  const panel = shell.querySelector(".ai-panel"), launcher = shell.querySelector(".ai-launcher"), close = shell.querySelector(".ai-close"), form = shell.querySelector("form"), input = shell.querySelector("input"), messages = shell.querySelector(".ai-messages");
+  const toggle = (open) => { panel.classList.toggle("open", open); launcher.setAttribute("aria-expanded", open); if (open) input.focus(); };
+  launcher.addEventListener("click", () => toggle(!panel.classList.contains("open")));
+  close.addEventListener("click", () => toggle(false));
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const question = input.value.trim();
+    if (!question) return;
+    messages.insertAdjacentHTML("beforeend", `<p class="ai-message user"></p>`);
+    messages.lastElementChild.textContent = question;
+    input.value = "";
+    const status = document.createElement("p"); status.className = "ai-message status"; status.textContent = "Thinking ✦"; messages.append(status); messages.scrollTop = messages.scrollHeight;
+    let answer = localAssistantReply(question);
+    try {
+      const response = await fetch("/api/assistant", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question }) });
+      if (response.ok) answer = (await response.json()).answer || answer;
+    } catch { /* The local assistant is intentionally available without an API key. */ }
+    status.remove();
+    const reply = document.createElement("p"); reply.className = "ai-message"; reply.textContent = answer; messages.append(reply); messages.scrollTop = messages.scrollHeight;
+  });
+};
+mountAssistant();
+
 // A gentle sakura shower and a small sparkle trail make every page feel alive.
 if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
   const petalCount = 18;
