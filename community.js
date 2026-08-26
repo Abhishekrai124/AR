@@ -296,7 +296,7 @@ $("#callButton").addEventListener("click", startCall);
 $("#acceptCall").addEventListener("click", acceptCall);
 $("#endCall").addEventListener("click", () => endCall());
 $("#closeCall").addEventListener("click", () => endCall());
-$("#logoutButton").addEventListener("click", () => window.logoutWithAuth0());
+$("#logoutButton").addEventListener("click", () => window.logout());
 
 (async () => {
   try {

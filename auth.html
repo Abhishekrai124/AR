@@ -26,12 +26,19 @@
       <section class="auth-card" aria-labelledby="authTitle">
         <p class="eyebrow">Your Arrai profile</p>
         <h1 id="authTitle">Welcome <em>in.</em></h1>
-        <p class="auth-copy">Sign in or create an account securely with Auth0. Your password is handled by Auth0 and never by this website.</p>
-        <div class="auth-actions">
-          <button class="button primary" id="loginButton" type="button">Login <b>↗</b></button>
-          <button class="button" id="signupButton" type="button">Create account <b>✦</b></button>
-          <a class="button primary" id="communityButton" href="community.html" hidden>Open community <b>↗</b></a>
-        </div>
+        <p class="auth-copy">Create an account with email and password, or continue securely with Google.</p>
+        <form class="auth-form" id="loginForm">
+          <label>Email<input name="email" type="email" autocomplete="email" required placeholder="you@example.com" /></label>
+          <label>Password<input name="password" type="password" autocomplete="current-password" required placeholder="Your password" /></label>
+          <button class="button primary" type="submit">Login <b>↗</b></button>
+        </form>
+        <form class="auth-form" id="signupForm" hidden>
+          <label>Display name<input name="name" maxlength="50" required placeholder="Your name" /></label>
+          <label>Email<input name="email" type="email" autocomplete="email" required placeholder="you@example.com" /></label>
+          <label>Password<input name="password" type="password" autocomplete="new-password" minlength="6" required placeholder="At least 6 characters" /></label>
+          <button class="button primary" type="submit">Create account <b>✦</b></button>
+        </form>
+        <div class="auth-actions"><button class="button" id="switchAuth" type="button">Create a new account</button><button class="button" id="googleButton" type="button">Continue with Google</button><a class="button primary" id="communityButton" href="community.html" hidden>Open community <b>↗</b></a></div>
         <p class="auth-status" id="authStatus" aria-live="polite"></p>
       </section>
     </main>
@@ -40,8 +47,8 @@
       <p>© 2026 Abhishek Rai. All rights reserved.</p>
       <div><a href="privacy.html">Privacy</a><a href="privacy.html#terms">Terms</a></div>
     </footer>
-    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.24/auth0-spa-js.production.js"></script>
-    <script src="auth0.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
     <script src="script.js"></script>
     <script src="auth.js"></script>
   </body>

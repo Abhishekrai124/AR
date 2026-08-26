@@ -1,6 +1,8 @@
 const authStatus = document.querySelector("#authStatus");
-const loginButton = document.querySelector("#loginButton");
-const signupButton = document.querySelector("#signupButton");
+const loginForm = document.querySelector("#loginForm");
+const signupForm = document.querySelector("#signupForm");
+const switchAuth = document.querySelector("#switchAuth");
+const googleButton = document.querySelector("#googleButton");
 const communityButton = document.querySelector("#communityButton");
 
 function showStatus(message, type = "") {
@@ -12,16 +14,43 @@ window.arraiAuth
   .then(({ isAuthenticated, user }) => {
     if (isAuthenticated) {
       showStatus(`You are signed in as ${user.name || user.email}.`, "success");
-      loginButton.hidden = true;
-      signupButton.hidden = true;
+      loginForm.hidden = true;
+      signupForm.hidden = true;
+      switchAuth.hidden = true;
+      googleButton.hidden = true;
       communityButton.hidden = false;
       return;
     }
-    showStatus("Continue securely with Auth0 to access your profile.");
+    showStatus("Continue securely with email and password or Google.");
   })
   .catch(() => {
     showStatus("Authentication could not start. Please try again shortly.", "error");
   });
 
-loginButton.addEventListener("click", () => window.loginWithAuth0());
-signupButton.addEventListener("click", () => window.loginWithAuth0(true));
+switchAuth.addEventListener("click", () => {
+  const signingUp = signupForm.hidden;
+  signupForm.hidden = !signingUp;
+  loginForm.hidden = signingUp;
+  switchAuth.textContent = signingUp ? "I already have an account" : "Create a new account";
+});
+
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const values = new FormData(loginForm);
+  const { error } = await window.arraiSupabase.auth.signInWithPassword({ email: values.get("email"), password: values.get("password") });
+  if (error) return showStatus(error.message, "error");
+  window.location.assign("community.html");
+});
+
+signupForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const values = new FormData(signupForm);
+  const { error } = await window.arraiSupabase.auth.signUp({ email: values.get("email"), password: values.get("password"), options: { data: { full_name: values.get("name") }, emailRedirectTo: `${window.location.origin}/auth.html` } });
+  if (error) return showStatus(error.message, "error");
+  showStatus("Account created. Check your email to confirm it, then log in.", "success");
+});
+
+googleButton.addEventListener("click", async () => {
+  const { error } = await window.arraiSupabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${window.location.origin}/auth.html` } });
+  if (error) showStatus(error.message, "error");
+});

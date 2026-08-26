@@ -215,7 +215,7 @@ el("showAuth").onclick = () => {
 };
 el("signOut").onclick = () => {
   localStorage.removeItem("arraiChessUser");
-  window.logoutWithAuth0();
+  window.logout();
 };
 function setProfile() {
   const user = localStorage.getItem("arraiChessUser");
