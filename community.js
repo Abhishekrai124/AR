@@ -47,10 +47,6 @@ async function loadProfile() {
   if (error) throw error;
   profile = data;
   if (!profile) {
-    if (isOwner()) {
-      const { error: founderError } = await db.from("profiles").insert({ id: user.sub, username: "abhishekrai6897", display_name: "Abhishek Rai", bio: "Founder & CEO of AR · Building digital dreams with care.", avatar_url: "assets/founder.jpg" });
-      if (!founderError) return loadProfile();
-    }
     setup.hidden = false;
     if (isOwner()) {
       $("#profileForm [name='username']").value = "abhishekrai6897";
@@ -65,7 +61,9 @@ async function loadProfile() {
   $("#myAvatar").src = avatar(profile);
   $("#myName").textContent = profile.display_name;
   $("#myHandle").textContent = `@${profile.username}`;
-  if (isOwner()) $(".avatar-picker").hidden = true;
+  $("#membershipBadge").textContent = profile.is_vip ? "✦ VIP member" : "Standard member";
+  $("#themeSelect").value = profile.theme || "midnight";
+  document.body.dataset.theme = profile.theme || "midnight";
   say("You’re connected.", "success");
   return true;
 }
@@ -271,7 +269,7 @@ function subscribeToCalls() {
 $("#profileForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
-  const { error } = await db.from("profiles").insert({ id: user.sub, username: data.get("username").trim().toLowerCase(), display_name: data.get("displayName").trim(), bio: data.get("bio").trim() });
+  const { error } = await db.from("profiles").insert({ id: user.sub, username: data.get("username").trim().toLowerCase(), display_name: data.get("displayName").trim(), date_of_birth: data.get("dateOfBirth"), gender: data.get("gender"), privacy: data.get("privacy"), bio: data.get("bio").trim() });
   if (error) return say(error.code === "23505" ? "That username is already taken." : error.message, "error");
   if (await loadProfile()) {
     await Promise.all([loadPosts(), searchPeople()]);
@@ -288,6 +286,14 @@ $("#avatarInput").addEventListener("change", async (event) => {
     $("#myAvatar").src = avatarUrl;
     say("Profile photo updated.", "success");
   } catch (error) { say(error.message, "error"); }
+});
+
+$("#themeSelect").addEventListener("change", async (event) => {
+  const theme = event.target.value;
+  if (theme !== "midnight" && !profile.is_vip) { event.target.value = profile.theme || "midnight"; return say("Exclusive themes are available with VIP membership.", "error"); }
+  const { error } = await db.from("profiles").update({ theme }).eq("id", user.sub);
+  if (error) return say(error.message, "error");
+  profile.theme = theme; document.body.dataset.theme = theme; say("Your theme has been updated. ✦", "success");
 });
 
 $("#postForm").addEventListener("submit", async (event) => {
@@ -349,7 +355,7 @@ $("#peopleResults").addEventListener("click", (event) => {
 $("#messageForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   const input = event.currentTarget.elements.body;
-  const { error } = await db.from("direct_messages").insert({ sender_id: user.sub, recipient_id: activeChat.id, body: input.value.trim() });
+  const { error } = await db.rpc("send_message_request", { recipient: activeChat.id, message_body: input.value.trim() });
   if (error) return say(error.message, "error");
   input.value = "";
   await loadMessages();

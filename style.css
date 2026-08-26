@@ -150,6 +150,13 @@ nav .active {
 .nav-account span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .nav-logout { border: 1px solid rgba(249, 168, 212, .45); border-radius: 999px; padding: 7px 11px; color: var(--ink); background: rgba(131, 24, 67, .26); font: 700 .74rem Manrope, Arial, sans-serif; cursor: pointer; }
 .nav-logout:hover { border-color: var(--pink); color: var(--pink); }
+body[data-theme="sakura"] { --paper: #32142c; --panel: #4c1d3d; --sky: #f9a8d4; --pink: #fbcfe8; }
+body[data-theme="ocean"] { --paper: #082f49; --panel: #0c4a6e; --sky: #67e8f9; --pink: #a5f3fc; }
+body[data-theme="royal"] { --paper: #21123d; --panel: #35205f; --sky: #fde68a; --pink: #d8b4fe; }
+.social-form select, .theme-picker select { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 11px; background: #0f1d31; color: var(--ink); font: inherit; }
+.theme-picker { display: grid; grid-column: 1 / -1; gap: 7px; color: var(--sky); font-size: .72rem; font-weight: 800; }
+.owner-analytics { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 16px; }.owner-analytics span { border: 1px solid var(--line); border-radius: 999px; padding: 6px 9px; color: var(--sky); font: 700 .62rem "DM Mono", monospace; }.owner-person { grid-template-columns: 34px 1fr; }.owner-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 5px; }.owner-actions button:last-child { border-color: #fb7185; color: #fecdd3; }
+.owner-result { display: grid; grid-template-columns: 36px 1fr; gap: 10px; width: 100%; padding: 9px; border: 1px solid var(--line); border-radius: 10px; color: var(--ink); background: #172842; text-align: left; cursor: pointer; }.owner-result:hover { border-color: var(--sky); }.owner-result img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }.owner-result b, .owner-result small { display: block; }.owner-result small, .owner-record { color: var(--muted); font-size: .64rem; word-break: break-word; }.owner-editor { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
 .menu-button {
   display: none;
   background: none;

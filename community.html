@@ -25,13 +25,16 @@
         <form id="profileForm" class="social-form">
           <label>Username <input name="username" required pattern="[a-z0-9_]{3,20}" placeholder="e.g. abhishek_rai" /><small>3–20 lowercase letters, numbers or underscores. It must be unique.</small></label>
           <label>Display name <input name="displayName" required maxlength="50" placeholder="Your name" /></label>
+          <label>Date of birth <input name="dateOfBirth" type="date" required /></label>
+          <label>Gender <select name="gender" required><option value="" selected disabled>Select an option</option><option value="woman">Woman</option><option value="man">Man</option><option value="non_binary">Non-binary</option><option value="prefer_not_to_say">Prefer not to say</option></select><small>This can only be changed through a verified Owner Studio request.</small></label>
+          <label>Profile privacy <select name="privacy"><option value="public">Public</option><option value="private">Private — followers only</option></select></label>
           <label>Bio <textarea name="bio" maxlength="180" placeholder="A little about you"></textarea></label>
           <button class="button primary" type="submit">Save profile <b>↗</b></button>
         </form>
       </section>
       <section id="communityApp" class="community-grid" hidden>
         <aside class="community-sidebar">
-          <section class="social-card my-profile"><img id="myAvatar" class="profile-avatar" alt="Your profile image" /><div><p class="eyebrow">Your profile</p><h2 id="myName">—</h2><p id="myHandle">—</p></div><label class="avatar-picker">Change photo<input id="avatarInput" type="file" accept="image/png,image/jpeg,image/webp" /></label></section>
+          <section class="social-card my-profile"><img id="myAvatar" class="profile-avatar" alt="Your profile image" /><div><p class="eyebrow">Your profile</p><h2 id="myName">—</h2><p id="myHandle">—</p><p id="membershipBadge">Standard member</p></div><label class="avatar-picker">Change photo<input id="avatarInput" type="file" accept="image/png,image/jpeg,image/webp" /></label><label class="theme-picker">Your theme <select id="themeSelect"><option value="midnight">Midnight</option><option value="sakura">Sakura (VIP)</option><option value="ocean">Ocean (VIP)</option><option value="royal">Royal (VIP)</option></select></label></section>
           <section class="social-card"><p class="eyebrow">Find people</p><input id="peopleSearch" class="social-input" type="search" placeholder="Search username" /><div id="peopleResults" class="people-results"></div></section>
         </aside>
         <section class="community-feed">
