@@ -13,6 +13,8 @@ let localStream;
 let activeCall;
 let pendingCall;
 let queuedCandidates = [];
+const communityOwnerEmail = "abhishekrai6897@gmail.com";
+const isOwner = () => user?.email?.toLowerCase() === communityOwnerEmail;
 
 function say(message, type = "") {
   status.textContent = message;
@@ -45,7 +47,16 @@ async function loadProfile() {
   if (error) throw error;
   profile = data;
   if (!profile) {
+    if (isOwner()) {
+      const { error: founderError } = await db.from("profiles").insert({ id: user.sub, username: "abhishekrai6897", display_name: "Abhishek Rai", bio: "Founder & CEO of AR · Building digital dreams with care.", avatar_url: "assets/founder.jpg" });
+      if (!founderError) return loadProfile();
+    }
     setup.hidden = false;
+    if (isOwner()) {
+      $("#profileForm [name='username']").value = "abhishekrai6897";
+      $("#profileForm [name='displayName']").value = "Abhishek Rai";
+      $("#profileForm [name='bio']").value = "Founder & CEO of AR · Building digital dreams with care.";
+    }
     say("Set up your public profile to join the community.");
     return false;
   }
@@ -54,6 +65,7 @@ async function loadProfile() {
   $("#myAvatar").src = avatar(profile);
   $("#myName").textContent = profile.display_name;
   $("#myHandle").textContent = `@${profile.username}`;
+  if (isOwner()) $(".avatar-picker").hidden = true;
   say("You’re connected.", "success");
   return true;
 }

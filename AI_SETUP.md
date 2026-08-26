@@ -13,4 +13,4 @@ The optional Tavily key lets the assistant fetch a small set of current public w
 
 ## Private owner studio
 
-`owner.html` lets the verified owner correct public community profile names and bios. In Vercel, add `OWNER_EMAIL` (the owner’s sign-in email) and `SUPABASE_SERVICE_ROLE_KEY`. Keep the service-role key server-only: never put it in browser code. Owner controls intentionally do not expose private direct messages.
+`owner.html` lets the verified owner correct public community profile names and bios. The configured owner is `abhishekrai6897@gmail.com`; you may also explicitly set `OWNER_EMAIL` in Vercel. Add `SUPABASE_SERVICE_ROLE_KEY` server-side to activate the studio. Keep the service-role key server-only: never put it in browser code. Owner controls intentionally do not expose private direct messages.

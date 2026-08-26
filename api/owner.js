@@ -7,7 +7,8 @@ async function ownerSession(request) {
   const response = await fetch(`${supabaseUrl}/auth/v1/user`, { headers: { apikey: anonKey, Authorization: bearer } });
   const user = await response.json();
   if (!response.ok || !user.email) throw new Error("Your session could not be verified.");
-  if (!process.env.OWNER_EMAIL || user.email.toLowerCase() !== process.env.OWNER_EMAIL.toLowerCase()) throw new Error("This page is reserved for the verified owner.");
+  const ownerEmail = process.env.OWNER_EMAIL || "abhishekrai6897@gmail.com";
+  if (user.email.toLowerCase() !== ownerEmail.toLowerCase()) throw new Error("This page is reserved for the verified owner.");
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) throw new Error("Owner studio needs its secure server configuration.");
   return user;
 }

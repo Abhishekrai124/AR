@@ -7,12 +7,6 @@ if (nav && !nav.querySelector('[href="chess.html"]')) {
   const contact = nav.querySelector('[href="contact.html"]');
   nav.insertBefore(chessLink, contact);
 }
-if (nav && !nav.querySelector('[href="auth.html"]')) {
-  const authLink = document.createElement("a");
-  authLink.href = "auth.html";
-  authLink.textContent = "Login / Register";
-  nav.append(authLink);
-}
 if (nav && !nav.querySelector('[href="community.html"]')) {
   const communityLink = document.createElement("a");
   communityLink.href = "community.html";
@@ -27,6 +21,44 @@ if (nav && !nav.querySelector('[href="payments.html"]')) {
   const authLink = nav.querySelector('[href="auth.html"]');
   nav.insertBefore(paymentsLink, authLink || null);
 }
+const ownerEmail = "abhishekrai6897@gmail.com";
+const updateNavigationForUser = ({ isAuthenticated, user }) => {
+  if (!nav) return;
+  const loginLink = nav.querySelector('[href="auth.html"]');
+  if (isAuthenticated) {
+    loginLink?.remove();
+    if (!nav.querySelector('[href="community.html"]')) {
+      const spaceLink = document.createElement("a");
+      spaceLink.href = "community.html";
+      spaceLink.textContent = "My space";
+      nav.append(spaceLink);
+    }
+    if (user?.email?.toLowerCase() === ownerEmail && !nav.querySelector('[href="owner.html"]')) {
+      const ownerLink = document.createElement("a");
+      ownerLink.href = "owner.html";
+      ownerLink.textContent = "Owner studio";
+      nav.append(ownerLink);
+    }
+    const welcomeKey = `arrai-welcome-${user?.id || user?.email}`;
+    if (!sessionStorage.getItem(welcomeKey) && !document.body.classList.contains("auth-page")) {
+      sessionStorage.setItem(welcomeKey, "1");
+      const welcome = document.createElement("section");
+      const ownerGreeting = user?.email?.toLowerCase() === ownerEmail;
+      welcome.className = "prince-welcome";
+      welcome.innerHTML = `<div><button type="button" aria-label="Close welcome">×</button><span>✦</span><p>${ownerGreeting ? "The Prince is here" : "Welcome back"}</p><h2>${ownerGreeting ? "Abhishek Rai" : user?.name || "beautiful human"}</h2><small>${ownerGreeting ? "Your dreamy kingdom is ready." : "Your little AR space is waiting."}</small></div>`;
+      document.body.append(welcome);
+      welcome.querySelector("button").addEventListener("click", () => welcome.remove());
+      setTimeout(() => welcome.remove(), 5200);
+    }
+  } else if (!loginLink && !document.body.classList.contains("auth-page")) {
+    const authLink = document.createElement("a");
+    authLink.href = "auth.html";
+    authLink.textContent = "Login / Register";
+    nav.append(authLink);
+  }
+};
+if (window.arraiAuth) window.arraiAuth.then(updateNavigationForUser).catch(() => updateNavigationForUser({ isAuthenticated: false }));
+else updateNavigationForUser({ isAuthenticated: false });
 if (button && nav)
   button.addEventListener("click", () => {
     const open = nav.classList.toggle("open");
