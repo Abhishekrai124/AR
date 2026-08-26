@@ -65,10 +65,25 @@ async function loadPosts() {
     .order("created_at", { ascending: false })
     .limit(30);
   if (error) throw error;
+  const postIds = data.map((post) => post.id);
+  const [{ data: comments, error: commentError }, { data: reactions, error: reactionError }] = postIds.length
+    ? await Promise.all([
+        db.from("comments").select("id, post_id, body, created_at, author_id, profiles!comments_author_id_fkey(username, display_name, avatar_url)").in("post_id", postIds).order("created_at", { ascending: true }),
+        db.from("post_reactions").select("post_id, user_id").in("post_id", postIds),
+      ])
+    : [{ data: [], error: null }, { data: [], error: null }];
+  if (commentError || reactionError) throw commentError || reactionError;
+  const commentsByPost = (comments || []).reduce((all, comment) => ((all[comment.post_id] ||= []).push(comment), all), {});
+  const reactionsByPost = (reactions || []).reduce((all, reaction) => ((all[reaction.post_id] ||= []).push(reaction), all), {});
   $("#postFeed").innerHTML = data.length
     ? data
         .map(
-          (post) => `<article class="social-card post"><img class="post-avatar" src="${avatar(post.profiles)}" alt="" /><div><strong>${escapeHtml(post.profiles.display_name)}</strong><span>@${escapeHtml(post.profiles.username)} · ${new Date(post.created_at).toLocaleDateString()}</span><p>${escapeHtml(post.body)}</p>${post.image_url ? `<img class="post-image" src="${post.image_url}" alt="Post image" />` : ""}</div></article>`,
+          (post) => {
+            const postComments = commentsByPost[post.id] || [];
+            const postReactions = reactionsByPost[post.id] || [];
+            const liked = postReactions.some((reaction) => reaction.user_id === user.sub);
+            return `<article class="social-card post" id="post-${post.id}"><img class="post-avatar" src="${avatar(post.profiles)}" alt="" /><div><strong>${escapeHtml(post.profiles.display_name)}</strong><span>@${escapeHtml(post.profiles.username)} · ${new Date(post.created_at).toLocaleDateString()}</span><p>${escapeHtml(post.body)}</p>${post.image_url ? `<img class="post-image" src="${post.image_url}" alt="Post image" />` : ""}<div class="post-tools"><button type="button" data-like="${post.id}" class="${liked ? "liked" : ""}">♡ ${postReactions.length || ""}</button><button type="button" data-share="${post.id}" data-share-text="${escapeHtml(post.body.slice(0, 160))}">↗ Share</button><span>${postComments.length} comment${postComments.length === 1 ? "" : "s"}</span></div><div class="comment-list">${postComments.slice(-3).map((comment) => `<p><b>${escapeHtml(comment.profiles?.display_name || "Member")}</b> ${escapeHtml(comment.body)}</p>`).join("")}</div><form class="comment-form" data-comment-form="${post.id}"><input maxlength="500" required placeholder="Write a kind comment…" /><button type="submit">Send</button></form></div></article>`;
+          },
         )
         .join("")
     : '<p class="empty-state">No posts yet. Be the first to share something.</p>';
@@ -274,6 +289,41 @@ $("#postForm").addEventListener("submit", async (event) => {
     await loadPosts();
     say("Post published.", "success");
   } catch (error) { say(error.message, "error"); }
+});
+
+$("#postFeed").addEventListener("click", async (event) => {
+  const like = event.target.closest("[data-like]");
+  const share = event.target.closest("[data-share]");
+  try {
+    if (like) {
+      const postId = like.dataset.like;
+      const alreadyLiked = like.classList.contains("liked");
+      const { error } = alreadyLiked
+        ? await db.from("post_reactions").delete().eq("post_id", postId).eq("user_id", user.sub)
+        : await db.from("post_reactions").insert({ post_id: postId, user_id: user.sub });
+      if (error) throw error;
+      await loadPosts();
+    }
+    if (share) {
+      const url = `${window.location.origin}${window.location.pathname}#post-${share.dataset.share}`;
+      const text = share.dataset.shareText || "A lovely update from AR Community";
+      if (navigator.share) await navigator.share({ title: "AR Community", text, url });
+      else window.open(`https://wa.me/?text=${encodeURIComponent(`${text} ${url}`)}`, "_blank", "noopener,noreferrer");
+    }
+  } catch (error) { if (error.name !== "AbortError") say(error.message, "error"); }
+});
+
+$("#postFeed").addEventListener("submit", async (event) => {
+  const form = event.target.closest("[data-comment-form]");
+  if (!form) return;
+  event.preventDefault();
+  const input = form.querySelector("input");
+  const body = input.value.trim();
+  if (!body) return;
+  const { error } = await db.from("comments").insert({ post_id: form.dataset.commentForm, author_id: user.sub, body });
+  if (error) return say(error.message, "error");
+  input.value = "";
+  await loadPosts();
 });
 
 $("#peopleSearch").addEventListener("input", () => searchPeople($("#peopleSearch").value).catch((error) => say(error.message, "error")));
