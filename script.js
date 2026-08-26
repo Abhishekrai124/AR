@@ -13,6 +13,13 @@ if (nav && !nav.querySelector('[href="auth.html"]')) {
   authLink.textContent = "Login / Register";
   nav.append(authLink);
 }
+if (nav && !nav.querySelector('[href="community.html"]')) {
+  const communityLink = document.createElement("a");
+  communityLink.href = "community.html";
+  communityLink.textContent = "Community";
+  const authLink = nav.querySelector('[href="auth.html"]');
+  nav.insertBefore(communityLink, authLink || null);
+}
 if (button && nav)
   button.addEventListener("click", () => {
     const open = nav.classList.toggle("open");

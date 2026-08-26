@@ -511,10 +511,95 @@ footer div {
 .auth-status.error {
   color: #fda4af;
 }
+.community-wrap {
+  width: min(1320px, calc(100% - 48px));
+  margin: auto;
+  padding-bottom: 80px;
+}
+.community-hero {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 76px 0 38px;
+}
+.community-hero h1 {
+  font-size: clamp(3rem, 6vw, 5.8rem);
+  background: linear-gradient(100deg, #fff 25%, var(--sky), var(--pink));
+  -webkit-background-clip: text;
+  color: transparent;
+}
+.community-status {
+  margin: 0 0 22px;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+.community-status.success { color: #86efac; }
+.community-status.error { color: #fda4af; }
+.social-card {
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(22, 34, 56, 0.86);
+}
+.profile-setup {
+  width: min(520px, 100%);
+  margin: 0 auto;
+}
+.profile-setup h2,
+.messages-panel h2 { font-size: 1.45rem; }
+.social-form { display: grid; gap: 16px; margin-top: 22px; }
+.social-form label { display: grid; gap: 7px; font-size: 0.75rem; font-weight: 800; }
+.social-form small { color: var(--muted); font-size: 0.66rem; font-weight: 500; }
+.social-form input,
+.social-form textarea,
+.social-input,
+.post-composer textarea,
+.message-form input {
+  width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 11px;
+  background: #0f1d31; color: var(--ink); font: inherit; outline: 0;
+}
+.social-form textarea, .post-composer textarea { min-height: 90px; resize: vertical; }
+.community-grid { display: grid; grid-template-columns: 260px minmax(300px, 1fr) 330px; align-items: start; gap: 18px; }
+.community-sidebar { display: grid; gap: 18px; }
+.my-profile { display: grid; grid-template-columns: 54px 1fr; gap: 13px; align-items: center; }
+.my-profile h2 { font-size: 1rem; margin: 0; }
+.my-profile p:not(.eyebrow) { margin: 3px 0 0; color: var(--muted); font-size: 0.72rem; }
+.profile-avatar { width: 54px; height: 54px; border-radius: 50%; object-fit: cover; background: var(--sky); }
+.avatar-picker, .upload-label { color: var(--sky); font-size: 0.72rem; font-weight: 800; cursor: pointer; }
+.avatar-picker { grid-column: 1 / -1; }
+.avatar-picker input, .upload-label input { display: none; }
+.people-results { display: grid; gap: 10px; margin-top: 16px; }
+.person-row { display: grid; grid-template-columns: 34px 1fr auto; gap: 8px; align-items: center; }
+.person-row img, .post-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; }
+.person-row b, .person-row small { display: block; font-size: 0.66rem; }
+.person-row small { color: var(--muted); margin-top: 2px; }
+.follow-button, .message-button, .message-form button { border: 1px solid var(--line); border-radius: 7px; padding: 6px; color: var(--ink); background: #1c2c46; font: 700 0.62rem Manrope, sans-serif; cursor: pointer; }
+.message-button { grid-column: 3; }
+.community-feed { min-width: 0; display: grid; gap: 16px; }
+.post-composer > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; }
+.post-feed { display: grid; gap: 14px; }
+.post { display: grid; grid-template-columns: 36px 1fr; gap: 11px; }
+.post strong { font-size: 0.78rem; }
+.post span { margin-left: 7px; color: var(--muted); font-size: 0.64rem; }
+.post p { margin: 9px 0 0; white-space: pre-wrap; color: var(--muted); font-size: 0.82rem; line-height: 1.6; }
+.post-image { display: block; width: 100%; max-height: 430px; margin-top: 12px; border-radius: 12px; object-fit: cover; }
+.messages-panel { position: sticky; top: 18px; }
+.message-heading { display: flex; align-items: start; justify-content: space-between; gap: 12px; }
+.message-heading .eyebrow { margin-bottom: 8px; }
+.message-list { display: grid; align-content: start; gap: 8px; height: 360px; overflow: auto; margin: 18px 0; padding: 4px; color: var(--muted); font-size: 0.76rem; }
+.message { max-width: 84%; margin: 0; padding: 9px 11px; border-radius: 11px; color: var(--ink); line-height: 1.5; }
+.message.mine { justify-self: end; background: #2563eb; }.message.theirs { background: #24344e; }
+.message-form { display: flex; gap: 8px; }.message-form button { padding: 0 12px; background: var(--sky); color: #0f172a; }
+.empty-state { color: var(--muted); font-size: 0.74rem; }
 @media (max-width: 700px) {
   .auth-main {
     padding: 42px 16px;
   }
+  .community-wrap { width: calc(100% - 32px); }
+  .community-hero { padding: 50px 0 28px; }
+  .community-grid { grid-template-columns: 1fr; }
+  .messages-panel { position: static; }
   .auth-card {
     padding: 28px 22px;
   }

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Share posts, connect with people and chat on arrai.in." />
+    <title>Community — arrai.in</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="community-page">
+    <div class="ambient one"></div><div class="ambient two"></div>
+    <header>
+      <a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a>
+      <button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <nav>
+        <a href="index.html">Home</a><a href="about.html">About</a><a href="services.html">Services</a><a href="projects.html">Projects</a><a href="chess.html">Chess</a><a class="active" href="community.html">Community</a><a href="contact.html">Contact</a><a href="auth.html">Login / Register</a>
+      </nav>
+    </header>
+    <main class="community-wrap">
+      <section class="community-hero"><div><p class="eyebrow">Arrai community</p><h1>Your people,<br /><em>your space.</em></h1></div><button class="text-button" id="logoutButton">Sign out</button></section>
+      <p class="community-status" id="communityStatus" aria-live="polite">Loading your profile…</p>
+      <section id="profileSetup" class="social-card profile-setup" hidden>
+        <p class="eyebrow">One-time setup</p><h2>Choose your identity.</h2>
+        <form id="profileForm" class="social-form">
+          <label>Username <input name="username" required pattern="[a-z0-9_]{3,20}" placeholder="e.g. abhishek_rai" /><small>3–20 lowercase letters, numbers or underscores. It must be unique.</small></label>
+          <label>Display name <input name="displayName" required maxlength="50" placeholder="Your name" /></label>
+          <label>Bio <textarea name="bio" maxlength="180" placeholder="A little about you"></textarea></label>
+          <button class="button primary" type="submit">Save profile <b>↗</b></button>
+        </form>
+      </section>
+      <section id="communityApp" class="community-grid" hidden>
+        <aside class="community-sidebar">
+          <section class="social-card my-profile"><img id="myAvatar" class="profile-avatar" alt="Your profile image" /><div><p class="eyebrow">Your profile</p><h2 id="myName">—</h2><p id="myHandle">—</p></div><label class="avatar-picker">Change photo<input id="avatarInput" type="file" accept="image/png,image/jpeg,image/webp" /></label></section>
+          <section class="social-card"><p class="eyebrow">Find people</p><input id="peopleSearch" class="social-input" type="search" placeholder="Search username" /><div id="peopleResults" class="people-results"></div></section>
+        </aside>
+        <section class="community-feed">
+          <form class="social-card post-composer" id="postForm"><p class="eyebrow">Share something</p><textarea name="body" maxlength="500" placeholder="What’s on your mind?"></textarea><div><label class="upload-label">Add image<input name="image" type="file" accept="image/png,image/jpeg,image/webp" /></label><button class="button primary" type="submit">Post <b>↗</b></button></div></form>
+          <div id="postFeed" class="post-feed"></div>
+        </section>
+        <aside class="social-card messages-panel"><div class="message-heading"><div><p class="eyebrow">Direct messages</p><h2 id="chatTitle">Choose a person</h2></div><button class="text-button" id="callButton" disabled>Start call</button></div><div id="messageList" class="message-list"><p>Search for a person, then press Message.</p></div><form id="messageForm" class="message-form" hidden><input name="body" maxlength="1500" placeholder="Write a message" required /><button type="submit">Send</button></form></aside>
+      </section>
+    </main>
+    <footer><a class="brand" href="index.html">ar<span>rai</span>.in</a><p>© 2026 Abhishek Rai. All rights reserved.</p><div><a href="privacy.html">Privacy</a><a href="privacy.html#terms">Terms</a></div></footer>
+    <script src="https://cdn.auth0.com/js/auth0-spa-js/2.24/auth0-spa-js.production.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="auth0.js"></script><script src="supabase.js"></script><script src="script.js"></script><script src="community.js"></script>
+  </body>
+</html>
