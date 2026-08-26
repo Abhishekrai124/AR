@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Create an Arrai account or sign in to your local profile." />
+    <title>Login / Register — arrai.in</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="auth-page">
+    <div class="ambient one"></div>
+    <div class="ambient two"></div>
+    <header>
+      <a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a>
+      <button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="services.html">Services</a>
+        <a href="projects.html">Projects</a>
+        <a href="contact.html">Contact</a>
+        <a class="active" href="auth.html">Login / Register</a>
+      </nav>
+    </header>
+    <main class="auth-main">
+      <section class="auth-card" aria-labelledby="authTitle">
+        <p class="eyebrow">Your Arrai profile</p>
+        <h1 id="authTitle">Welcome <em>in.</em></h1>
+        <p class="auth-copy">Create a profile for this browser or return to an existing one. Passwords are never saved in this demo.</p>
+        <div class="auth-tabs" role="tablist" aria-label="Account options">
+          <button class="auth-tab active" type="button" role="tab" aria-selected="true" data-auth-mode="login">Login</button>
+          <button class="auth-tab" type="button" role="tab" aria-selected="false" data-auth-mode="register">Register</button>
+        </div>
+        <form class="auth-form" id="loginForm">
+          <label>Email address<input name="email" type="email" autocomplete="email" required placeholder="you@example.com" /></label>
+          <button class="button primary" type="submit">Login <b>↗</b></button>
+        </form>
+        <form class="auth-form" id="registerForm" hidden>
+          <label>Display name<input name="name" maxlength="20" autocomplete="name" required placeholder="Your name" /></label>
+          <label>Email address<input name="email" type="email" autocomplete="email" required placeholder="you@example.com" /></label>
+          <label>Password<input name="password" type="password" autocomplete="new-password" minlength="4" required placeholder="At least 4 characters" /></label>
+          <button class="button primary" type="submit">Create account <b>↗</b></button>
+        </form>
+        <p class="auth-status" id="authStatus" aria-live="polite"></p>
+      </section>
+    </main>
+    <footer>
+      <a class="brand" href="index.html">ar<span>rai</span>.in</a>
+      <p>© 2026 Abhishek Rai. All rights reserved.</p>
+      <div><a href="privacy.html">Privacy</a><a href="privacy.html#terms">Terms</a></div>
+    </footer>
+    <script src="script.js"></script>
+    <script src="auth.js"></script>
+  </body>
+</html>
