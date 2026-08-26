@@ -598,6 +598,17 @@ footer div {
 .call-videos video { width: 100%; aspect-ratio: 16 / 10; border-radius: 12px; background: #0b1220; object-fit: cover; }
 .call-videos #localVideo { align-self: end; }
 .call-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.payments-wrap { width: min(1160px, calc(100% - 48px)); margin: auto; padding-bottom: 85px; }
+.payment-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.payment-card { min-height: 255px; display: flex; flex-direction: column; align-items: flex-start; }
+.payment-card > span { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: #243b5b; color: var(--lime); font-size: 1.4rem; font-weight: 800; }
+.payment-card h2 { margin: 16px 0 8px; font-size: 1.55rem; }
+.payment-card p:not(.eyebrow) { margin: 0 0 20px; color: var(--muted); font-size: 0.8rem; line-height: 1.65; }
+.payment-card .button, .payment-card .text-link { margin-top: auto; }
+.featured-payment { background: linear-gradient(135deg, #075985, #312e81); }
+.amounts { display: flex; gap: 8px; margin-bottom: 18px; }
+.amounts button { border: 1px solid var(--line); border-radius: 8px; padding: 8px 11px; background: rgba(15, 23, 42, 0.4); color: var(--ink); cursor: pointer; font-weight: 800; }
+.amounts button.selected-amount { border-color: var(--lime); color: var(--lime); }
 @media (max-width: 700px) {
   .auth-main {
     padding: 42px 16px;
@@ -607,6 +618,8 @@ footer div {
   .community-grid { grid-template-columns: 1fr; }
   .messages-panel { position: static; }
   .call-videos { grid-template-columns: 1fr; }
+  .payments-wrap { width: calc(100% - 32px); }
+  .payment-grid { grid-template-columns: 1fr; }
   .auth-card {
     padding: 28px 22px;
   }

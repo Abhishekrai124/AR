@@ -20,6 +20,13 @@ if (nav && !nav.querySelector('[href="community.html"]')) {
   const authLink = nav.querySelector('[href="auth.html"]');
   nav.insertBefore(communityLink, authLink || null);
 }
+if (nav && !nav.querySelector('[href="payments.html"]')) {
+  const paymentsLink = document.createElement("a");
+  paymentsLink.href = "payments.html";
+  paymentsLink.textContent = "Payments";
+  const authLink = nav.querySelector('[href="auth.html"]');
+  nav.insertBefore(paymentsLink, authLink || null);
+}
 if (button && nav)
   button.addEventListener("click", () => {
     const open = nav.classList.toggle("open");
