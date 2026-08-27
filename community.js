@@ -176,12 +176,12 @@ async function loadMessages() {
   if (!activeChat) return;
   const { data, error } = await db
     .from("direct_messages")
-    .select("id, sender_id, body, media_url, media_type, created_at")
+    .select("id, sender_id, body, media_url, media_type, attachment_url, attachment_type, created_at")
     .or(`and(sender_id.eq.${user.sub},recipient_id.eq.${activeChat.id}),and(sender_id.eq.${activeChat.id},recipient_id.eq.${user.sub})`)
     .order("created_at", { ascending: true });
   if (error) throw error;
   $("#messageList").innerHTML = data.length
-    ? data.map((message) => `<div class="message ${message.sender_id === user.sub ? "mine" : "theirs"}">${message.body ? `<p>${escapeHtml(message.body)}</p>` : ""}${message.media_url ? message.media_type?.startsWith("image/") ? `<img src="${escapeHtml(message.media_url)}" alt="Shared image" />` : message.media_type?.startsWith("video/") ? `<video src="${escapeHtml(message.media_url)}" controls playsinline></video>` : `<audio src="${escapeHtml(message.media_url)}" controls></audio>` : ""}</div>`).join("")
+    ? data.map((message) => { const mediaUrl = message.media_url || message.attachment_url; const mediaType = message.media_type || message.attachment_type; return `<div class="message ${message.sender_id === user.sub ? "mine" : "theirs"}">${message.body ? `<p>${escapeHtml(message.body)}</p>` : ""}${mediaUrl ? mediaType?.startsWith("image/") ? `<img src="${escapeHtml(mediaUrl)}" alt="Shared image" />` : mediaType?.startsWith("video/") ? `<video src="${escapeHtml(mediaUrl)}" controls playsinline></video>` : `<audio src="${escapeHtml(mediaUrl)}" controls></audio>` : ""}</div>`; }).join("")
     : '<p class="empty-state">Say hello to start the conversation.</p>';
   $("#messageList").scrollTop = $("#messageList").scrollHeight;
 }
