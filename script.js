@@ -1,5 +1,5 @@
 const button = document.querySelector(".menu-button"),
-  nav = document.querySelector("nav");
+  nav = document.querySelector("header nav");
 if (nav && !nav.querySelector('[href="chess.html"]')) {
   const chessLink = document.createElement("a");
   chessLink.href = "chess.html";

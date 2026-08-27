@@ -134,6 +134,7 @@ nav {
   display: flex;
   gap: 25px;
 }
+.floating-community-nav { display: none; }
 nav a,
 footer a {
   color: var(--muted);
@@ -901,6 +902,10 @@ footer div {
 .amounts button { border: 1px solid var(--line); border-radius: 8px; padding: 8px 11px; background: rgba(15, 23, 42, 0.4); color: var(--ink); cursor: pointer; font-weight: 800; }
 .amounts button.selected-amount { border-color: var(--lime); color: var(--lime); }
 @media (max-width: 700px) {
+  .floating-community-nav { position: fixed; right: 12px; bottom: 12px; left: 12px; z-index: 40; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; padding: 7px; border: 1px solid var(--line); border-radius: 18px; background: rgba(15,29,49,.94); box-shadow: 0 15px 38px rgba(0,0,0,.35); backdrop-filter: blur(14px); }
+  .floating-nav-item { display: grid; place-items: center; gap: 2px; min-height: 44px; color: var(--muted); text-decoration: none; font-size: .56rem; font-weight: 800; }
+  .floating-nav-item i { color: var(--sky); font-size: 1.1rem; font-style: normal; }
+  .floating-nav-item.active, .floating-nav-item:hover { color: var(--pink); }
   .owner-panel { padding: 16px 13px; }
   .owner-form-grid { grid-template-columns: 1fr; }
   .owner-form-grid .full-width { grid-column: auto; }
