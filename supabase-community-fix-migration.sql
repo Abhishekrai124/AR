@@ -9,6 +9,8 @@ alter table public.profiles add column if not exists account_status text not nul
 alter table public.profiles add column if not exists updated_at timestamptz not null default now();
 alter table public.direct_messages add column if not exists attachment_url text;
 alter table public.direct_messages add column if not exists attachment_type text;
+alter table public.direct_messages add column if not exists media_url text;
+alter table public.direct_messages add column if not exists media_type text;
 alter table public.direct_messages add column if not exists status text not null default 'accepted';
 create or replace function public.send_media_message(media_type text, media_url text, message_body text, recipient text)
 returns public.direct_messages language plpgsql security definer set search_path = public as $$

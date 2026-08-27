@@ -336,8 +336,8 @@ $("#accountForm").addEventListener("submit", async (event) => {
   say("Account settings saved. ✦", "success");
 });
 $("#deleteMyAccount").addEventListener("click", async () => {
-  if (!confirm("Permanently delete your account and all community content? This cannot be undone.")) return;
-  if (!confirm("Final confirmation: delete my account now.")) return;
+  if (!(await window.cuteConfirm("Permanently delete your account and all community content? This cannot be undone.", { title: "Delete your account?", danger: true }))) return;
+  if (!(await window.cuteConfirm("This is the last check. Your profile, posts and messages will be removed.", { title: "Final confirmation", danger: true }))) return;
   try {
     const { data: { session } } = await db.auth.getSession();
     const response = await fetch("/api/account", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token || ""}` }, body: JSON.stringify({ action: "delete-my-account" }) });
@@ -402,7 +402,7 @@ $("#reelFeed").addEventListener("click", async (event) => {
   const profileButton = event.target.closest("[data-profile]"), remove = event.target.closest("[data-delete-reel]");
   try {
     if (profileButton) return openProfile(profileButton.dataset.profile);
-    if (remove && confirm("Delete your reel?")) { const { error } = await db.from("reels").delete().eq("id", remove.dataset.deleteReel).eq("author_id", user.sub); if (error) throw error; await loadReels(); }
+    if (remove && await window.cuteConfirm("This reel will be removed from your feed.", { title: "Delete this reel?", danger: true })) { const { error } = await db.from("reels").delete().eq("id", remove.dataset.deleteReel).eq("author_id", user.sub); if (error) throw error; await loadReels(); }
   } catch (error) { say(error.message, "error"); }
 });
 
@@ -414,8 +414,8 @@ $("#postFeed").addEventListener("click", async (event) => {
   const deleteComment = event.target.closest("[data-delete-comment]");
   try {
     if (profileButton) return openProfile(profileButton.dataset.profile);
-    if (deletePost && confirm("Delete your post?")) { const { error } = await db.from("posts").delete().eq("id", deletePost.dataset.deletePost).eq("author_id", user.sub); if (error) throw error; return loadPosts(); }
-    if (deleteComment && confirm("Delete your comment?")) { const { error } = await db.from("comments").delete().eq("id", deleteComment.dataset.deleteComment).eq("author_id", user.sub); if (error) throw error; return loadPosts(); }
+    if (deletePost && await window.cuteConfirm("This post will disappear for everyone.", { title: "Delete this post?", danger: true })) { const { error } = await db.from("posts").delete().eq("id", deletePost.dataset.deletePost).eq("author_id", user.sub); if (error) throw error; return loadPosts(); }
+    if (deleteComment && await window.cuteConfirm("Your comment will be removed.", { title: "Delete this comment?", danger: true })) { const { error } = await db.from("comments").delete().eq("id", deleteComment.dataset.deleteComment).eq("author_id", user.sub); if (error) throw error; return loadPosts(); }
     if (like) {
       const postId = like.dataset.like;
       const alreadyLiked = like.classList.contains("liked");
@@ -495,7 +495,7 @@ $("#profileDetails").addEventListener("click", (event) => {
   if (message) { $("#profileDialog").close(); return openChat(message.dataset.message, message.dataset.name).catch((error) => say(error.message, "error")); }
   if (person) { $("#profileDialog").close(); return openProfile(person.dataset.profile).catch((error) => say(error.message, "error")); }
   const staff = event.target.closest("[data-staff-action]");
-  if (staff && confirm(`Confirm ${staff.dataset.staffAction} for this member?`)) db.auth.getSession().then(({ data: { session } }) => fetch("/api/staff", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token || ""}` }, body: JSON.stringify({ action: staff.dataset.staffAction, id: staff.dataset.staffId }) })).then(async (response) => { const body = await response.json(); if (!response.ok) throw new Error(body.error); say("Staff action applied.", "success"); }).catch((error) => say(error.message, "error"));
+  if (staff) window.cuteConfirm(`Apply ${staff.dataset.staffAction} for this member?`, { title: "Update community role" }).then((ok) => { if (!ok) return; return db.auth.getSession().then(({ data: { session } }) => fetch("/api/staff", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token || ""}` }, body: JSON.stringify({ action: staff.dataset.staffAction, id: staff.dataset.staffId }) })).then(async (response) => { const body = await response.json(); if (!response.ok) throw new Error(body.error); say("Staff action applied.", "success"); }).catch((error) => say(error.message, "error")); });
 });
 document.querySelector(".community-mobile-nav").addEventListener("click", (event) => {
   const action = event.target.closest("[data-community-action]")?.dataset.communityAction;

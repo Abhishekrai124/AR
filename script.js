@@ -1,9 +1,29 @@
 const button = document.querySelector(".menu-button"),
   nav = document.querySelector("header nav");
 let deferredInstallPrompt;
+// Friendly, app-style confirmations used across the site.
+window.cuteConfirm = (message, { title = "Are you sure?", danger = false } = {}) => new Promise((resolve) => {
+  const overlay = document.createElement("div");
+  overlay.className = "cute-dialog-backdrop";
+  overlay.innerHTML = `<section class="cute-dialog ${danger ? "is-danger" : ""}" role="dialog" aria-modal="true" aria-label="${title}">
+    <div class="cute-dialog-sparkle">✦</div><h3>${title}</h3><p>${message}</p>
+    <div class="cute-dialog-actions"><button type="button" class="button cute-cancel">No, go back</button><button type="button" class="button primary cute-ok">Yes, continue</button></div>
+  </section>`;
+  document.body.append(overlay);
+  const close = (value) => { overlay.classList.add("is-closing"); setTimeout(() => overlay.remove(), 180); resolve(value); };
+  overlay.querySelector(".cute-cancel").addEventListener("click", () => close(false));
+  overlay.querySelector(".cute-ok").addEventListener("click", () => close(true));
+  overlay.addEventListener("click", (event) => { if (event.target === overlay) close(false); });
+  overlay.querySelector(".cute-ok").focus();
+});
+window.cuteNotice = (message, type = "success") => {
+  const notice = document.createElement("div"); notice.className = `cute-notice ${type}`; notice.textContent = message;
+  document.body.append(notice); requestAnimationFrame(() => notice.classList.add("show"));
+  setTimeout(() => { notice.classList.remove("show"); setTimeout(() => notice.remove(), 220); }, 3200);
+};
 if (!document.querySelector('link[rel="manifest"]')) { const manifest = document.createElement("link"); manifest.rel = "manifest"; manifest.href = "/manifest.webmanifest"; document.head.append(manifest); }
 window.addEventListener("beforeinstallprompt", (event) => { event.preventDefault(); deferredInstallPrompt = event; document.querySelectorAll("[data-install-app]").forEach((item) => item.hidden = false); });
-const installApp = async () => { if (!deferredInstallPrompt) return alert("Browser menu se 'Add to Home screen' choose karein."); deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice; deferredInstallPrompt = null; };
+const installApp = async () => { if (!deferredInstallPrompt) return cuteNotice("Browser menu se ‘Add to Home screen’ choose karein.", "warning"); deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice; deferredInstallPrompt = null; };
 if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
 if (nav && !nav.querySelector("[data-install-app]")) { const install = document.createElement("button"); install.type = "button"; install.dataset.installApp = "true"; install.className = "nav-install"; install.textContent = "Install app"; install.hidden = true; install.addEventListener("click", installApp); nav.append(install); }
 if (nav && !nav.querySelector('[href="chess.html"]')) {

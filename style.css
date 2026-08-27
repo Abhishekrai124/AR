@@ -10,6 +10,18 @@
   --pink: #f9a8d4;
   --lime: #bef264;
 }
+
+/* Soft, consistent feedback UI for confirmations and status messages. */
+.cute-dialog-backdrop{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:20px;background:rgba(5,10,28,.68);backdrop-filter:blur(10px);animation:cuteFade .18s ease}
+.cute-dialog{width:min(420px,100%);padding:28px 26px 22px;border:1px solid rgba(180,150,255,.45);border-radius:26px;background:linear-gradient(145deg,#17254b,#25183e);box-shadow:0 24px 80px rgba(0,0,0,.45);color:#f9f7ff;text-align:center;animation:cutePop .22s cubic-bezier(.2,.8,.2,1)}
+.cute-dialog.is-danger{border-color:rgba(255,126,174,.6)}
+.cute-dialog-sparkle{width:48px;height:48px;margin:0 auto 12px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#ffd98a,#ff8ac2);color:#321b48;font-size:24px;box-shadow:0 8px 24px rgba(255,145,193,.35)}
+.cute-dialog h3{margin:0 0 8px;font-size:1.2rem}.cute-dialog p{margin:0 auto 22px;max-width:34ch;color:#d9d5ed;line-height:1.5;font-size:.92rem}
+.cute-dialog-actions{display:flex;gap:10px;justify-content:center}.cute-dialog-actions .button{min-width:125px}.cute-cancel{border-color:rgba(255,255,255,.2)!important;background:rgba(255,255,255,.06)!important}.is-danger .cute-ok{background:linear-gradient(135deg,#ff6f9f,#ff9c75)!important}
+.cute-dialog-backdrop.is-closing{opacity:0;transition:opacity .18s ease}.cute-dialog-backdrop.is-closing .cute-dialog{transform:scale(.96);transition:transform .18s ease}
+.cute-notice{position:fixed;right:20px;top:20px;z-index:10001;max-width:min(360px,calc(100vw - 40px));padding:13px 17px;border:1px solid rgba(125,232,211,.45);border-radius:15px;background:rgba(17,35,57,.94);color:#f8fbff;box-shadow:0 12px 35px rgba(0,0,0,.3);transform:translateY(-12px);opacity:0;transition:.22s ease;font-size:.9rem}.cute-notice.show{transform:none;opacity:1}.cute-notice.warning{border-color:rgba(255,205,120,.6)}.cute-notice.error{border-color:rgba(255,126,174,.65)}
+@keyframes cuteFade{from{opacity:0}to{opacity:1}}@keyframes cutePop{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
+@media(max-width:520px){.cute-dialog{padding:24px 18px 18px;border-radius:22px}.cute-dialog-actions{flex-direction:column-reverse}.cute-dialog-actions .button{width:100%}.cute-notice{left:16px;right:16px;top:14px;max-width:none}}
 * {
   box-sizing: border-box;
 }

@@ -34,7 +34,7 @@ const loadCards=async()=>{ const cards=await ownerRequest("get-founder-cards"); 
  document.querySelector("#cardUsername")?.addEventListener("input", async (event)=>{ const q=event.target.value.trim(); if(q.length<2){cardResults.innerHTML="";return;} try { const {profiles}=await ownerRequest("profiles",{query:q}); window.ownerProfiles=new Map(profiles.map(p=>[p.id,p])); cardResults.innerHTML=profiles.slice(0,5).map(p=>`<button type="button" class="owner-result" data-card-profile="${escapeHtml(p.id)}"><img src="${escapeHtml(p.avatar_url||'')}" alt=""><span><b>${escapeHtml(p.display_name)}</b><small>@${escapeHtml(p.username)}</small></span></button>`).join(""); }catch{} });
 cardResults?.addEventListener("click",(event)=>{const b=event.target.closest("[data-card-profile]");if(!b)return;const p=window.ownerProfiles?.get(b.dataset.cardProfile);if(!p)return;cardForm.elements.title.value=p.display_name||"";cardForm.elements.description.value=p.bio||"";cardForm.elements.imageUrl.value=p.avatar_url||"";cardForm.elements.dateOfBirth.value=p.date_of_birth||"";document.querySelector("#cardUserHint").textContent=`Selected @${p.username}`;cardForm.dataset.profileId=p.id;});
 cardForm?.addEventListener("submit",async(event)=>{event.preventDefault();const data=Object.fromEntries(new FormData(cardForm));try{await ownerRequest("add-founder-card",{title:data.title,subtitle:data.subtitle,image_url:data.imageUrl,description:data.description,tags:data.tags,links:data.links,date_of_birth:data.dateOfBirth,profile_id:cardForm.dataset.profileId||null});cardForm.reset();delete cardForm.dataset.profileId;await loadCards();ownerStatus.textContent="Public card added to home. ✦";}catch(error){ownerStatus.textContent=error.message;}});
-cardList?.addEventListener("click",async(event)=>{const b=event.target.closest("[data-delete-card]");if(!b||!confirm("Remove this public card from home?"))return;try{await ownerRequest("delete-founder-card",{id:b.dataset.deleteCard});await loadCards();}catch(error){ownerStatus.textContent=error.message;}});
+cardList?.addEventListener("click",async(event)=>{const b=event.target.closest("[data-delete-card]");if(!b||!(await window.cuteConfirm("This card will be removed from the home page.",{title:"Remove public card?",danger:true})))return;try{await ownerRequest("delete-founder-card",{id:b.dataset.deleteCard});await loadCards();ownerStatus.textContent="Public card removed.";}catch(error){ownerStatus.textContent=error.message;}});
 
 function openEditor(profile) {
   selectedProfile = profile;
@@ -81,8 +81,8 @@ editor.addEventListener("click", async (event) => {
   if (!status && !vipType && !removeVip && !badge && !role && !deleteAccount) return;
   try {
     const label = deleteAccount ? "permanently delete this account" : "apply this action";
-    if (!confirm(`Confirm: ${label} for ${selectedProfile.display_name}?`)) return;
-    if (deleteAccount && !confirm("This cannot be undone. Delete this user and their profile now?")) return;
+    if (!(await window.cuteConfirm(`${label} for ${selectedProfile.display_name}?`, { title: "Confirm owner action" }))) return;
+    if (deleteAccount && !(await window.cuteConfirm("This cannot be undone. Delete this user and their profile now?", { title: "Delete this user?", danger: true }))) return;
     await ownerRequest(deleteAccount ? "delete-account" : role ? "set-role" : badge ? "set-badge" : vipType || removeVip ? "set-vip" : "moderate", deleteAccount ? { id: selectedProfile.id } : role ? { id: selectedProfile.id, role } : badge ? { id: selectedProfile.id, badge, enabled: !selectedProfile[`${badge}_tick`] } : vipType || removeVip ? { id: selectedProfile.id, isVip: !removeVip, vipType } : { id: selectedProfile.id, moderationAction: status });
     ownerStatus.textContent = "Member state updated. ✦";
     await Promise.all([searchProfiles(), loadAnalytics(), loadSiteControls(), loadCards()]);
