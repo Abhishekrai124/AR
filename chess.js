@@ -244,7 +244,7 @@ function setProfile(user = null, profile = {}) {
 );
 window.arraiAuth
   .catch(() => ({ isAuthenticated: false, user: null }))
-  .then(({ isAuthenticated, user }) => {
+  .then(async ({ isAuthenticated, user }) => {
     saveStats();
     if (isAuthenticated && window.arraiSupabase) { const { data: chessProfile } = await window.arraiSupabase.from("profiles").select("display_name,username,avatar_url").eq("id", user.id).maybeSingle(); setProfile(user, chessProfile || {}); } else setProfile(null);
     init();
