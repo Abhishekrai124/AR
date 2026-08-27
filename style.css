@@ -151,6 +151,7 @@ nav .active {
 .nav-account span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .nav-logout { border: 1px solid rgba(249, 168, 212, .45); border-radius: 999px; padding: 7px 11px; color: var(--ink); background: rgba(131, 24, 67, .26); font: 700 .74rem Manrope, Arial, sans-serif; cursor: pointer; }
 .nav-logout:hover { border-color: var(--pink); color: var(--pink); }
+.nav-install { border: 1px solid rgba(249,168,212,.45); border-radius: 999px; padding: 7px 11px; color: var(--ink); background: rgba(131,24,67,.26); font: 700 .74rem Manrope,Arial,sans-serif; cursor:pointer; }.nav-install:hover { border-color:var(--pink); color:var(--pink); }
 body[data-theme="sakura"] { --paper: #32142c; --panel: #4c1d3d; --sky: #f9a8d4; --pink: #fbcfe8; }
 body[data-theme="ocean"] { --paper: #082f49; --panel: #0c4a6e; --sky: #67e8f9; --pink: #a5f3fc; }
 body[data-theme="royal"] { --paper: #21123d; --panel: #35205f; --sky: #fde68a; --pink: #d8b4fe; }

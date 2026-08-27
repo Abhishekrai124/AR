@@ -1,5 +1,11 @@
 const button = document.querySelector(".menu-button"),
   nav = document.querySelector("header nav");
+let deferredInstallPrompt;
+if (!document.querySelector('link[rel="manifest"]')) { const manifest = document.createElement("link"); manifest.rel = "manifest"; manifest.href = "/manifest.webmanifest"; document.head.append(manifest); }
+window.addEventListener("beforeinstallprompt", (event) => { event.preventDefault(); deferredInstallPrompt = event; document.querySelectorAll("[data-install-app]").forEach((item) => item.hidden = false); });
+const installApp = async () => { if (!deferredInstallPrompt) return alert("Browser menu se 'Add to Home screen' choose karein."); deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice; deferredInstallPrompt = null; };
+if ("serviceWorker" in navigator) window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));
+if (nav && !nav.querySelector("[data-install-app]")) { const install = document.createElement("button"); install.type = "button"; install.dataset.installApp = "true"; install.className = "nav-install"; install.textContent = "Install app"; install.hidden = true; install.addEventListener("click", installApp); nav.append(install); }
 if (nav && !nav.querySelector('[href="chess.html"]')) {
   const chessLink = document.createElement("a");
   chessLink.href = "chess.html";
