@@ -10,6 +10,10 @@ create table if not exists public.profiles (
   created_at timestamptz not null default now()
 );
 
+-- 👇 BLUE TICK WALA COLUMN YAHAN ADD KIYA HAI (Safe method)
+alter table public.profiles add column if not exists blue_tick boolean default false;
+-- 👆
+
 create table if not exists public.posts (
   id uuid primary key default gen_random_uuid(),
   author_id text not null references public.profiles(id) on delete cascade,
@@ -31,8 +35,11 @@ create table if not exists public.direct_messages (
   id uuid primary key default gen_random_uuid(),
   sender_id text not null references public.profiles(id) on delete cascade,
   recipient_id text not null references public.profiles(id) on delete cascade,
-  body text not null check (char_length(trim(body)) between 1 and 1500),
-  created_at timestamptz not null default now()
+  body text not null default '' check (char_length(body) <= 1500),
+  media_url text,
+  media_type text,
+  created_at timestamptz not null default now(),
+  check (char_length(trim(body)) > 0 or media_url is not null) 
 );
 
 create table if not exists public.call_signals (
@@ -81,3 +88,20 @@ create policy "Users delete only their own media" on storage.objects for delete 
 
 alter publication supabase_realtime add table public.direct_messages;
 alter publication supabase_realtime add table public.call_signals;
+
+create or replace function public.send_media_message(
+  media_type text,
+  media_url text,
+  message_body text,
+  recipient text
+) returns public.direct_messages as $$
+declare
+  result public.direct_messages;
+begin
+  insert into public.direct_messages (sender_id, recipient_id, body, media_type, media_url)
+  values (auth.jwt() ->> 'sub', recipient, coalesce(message_body, ''), media_type, media_url)
+  returning * into result;
+  
+  return result;
+end;
+$$ language plpgsql security invoker;
