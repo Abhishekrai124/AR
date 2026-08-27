@@ -55,6 +55,7 @@ create table if not exists public.music_tracks (id uuid primary key default gen_
 alter table public.music_tracks enable row level security;
 create policy "Music is visible to signed-in users" on public.music_tracks for select to authenticated using (true);
 create policy "Users upload music metadata" on public.music_tracks for insert to authenticated with check (owner_id = auth.jwt() ->> 'sub');
+create policy "Users update their music" on public.music_tracks for update to authenticated using (owner_id = auth.jwt() ->> 'sub') with check (owner_id = auth.jwt() ->> 'sub');
 create policy "Users delete their music" on public.music_tracks for delete to authenticated using (owner_id = auth.jwt() ->> 'sub');
 
 alter table public.profiles enable row level security;

@@ -27,7 +27,7 @@ if (nav && !nav.querySelector('[href="payments.html"]')) {
   const authLink = nav.querySelector('[href="auth.html"]');
   nav.insertBefore(paymentsLink, authLink || null);
 }
-if (nav && !nav.querySelector('[href="music.html"]')) { const musicLink = document.createElement("a"); musicLink.href = "music.html"; musicLink.textContent = "Music"; nav.append(musicLink); }
+if (nav && !nav.querySelector('[href="music.html"]')) { const musicLink = document.createElement("a"); musicLink.href = "music.html"; musicLink.textContent = "Music"; const homeLink = nav.querySelector('[href="index.html"]'); homeLink?.after(musicLink); }
 const ownerEmail = "abhishekrai6897@gmail.com";
 const avatarFallback = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "AR")}&background=38bdf8&color=0f172a&bold=true`;
 const makeAccountLink = (user, profile = {}) => {
