@@ -18,10 +18,10 @@ export default async function handler(request, response) {
         Authorization: `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString("base64")}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ amount: amount * 100, currency: "INR", receipt: `ar_${crypto.randomUUID().replaceAll("-", "").slice(0, 28)}`, notes: { product: "arrai_test_payment" } }),
+      body: JSON.stringify({ amount: amount * 100, currency: "INR", receipt: `ar_${crypto.randomUUID().replaceAll("-", "").slice(0, 28)}`, notes: { product: request.body?.product === "vip" ? "arrai_gold_vip" : "arrai_payment" } }),
     });
     const order = await upstream.json();
     if (!upstream.ok) throw new Error(order.error?.description || "Could not create order.");
-    return response.status(200).json({ id: order.id, amount: order.amount, currency: order.currency });
+    return response.status(200).json({ id: order.id, amount: order.amount, currency: order.currency, key: keyId });
   } catch (error) { return response.status(502).json({ error: error.message }); }
 }
