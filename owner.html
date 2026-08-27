@@ -6,7 +6,41 @@
   </head>
   <body class="auth-page"><div class="ambient one"></div><div class="ambient two"></div>
     <header><a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a><button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button><nav><a href="index.html">Home</a><a href="community.html">Community</a><a class="active" href="owner.html">Owner studio</a></nav></header>
-    <main class="auth-main"><section class="auth-card owner-card"><p class="eyebrow">Private owner studio</p><h1>Care for your <em>community.</em></h1><p class="auth-copy" id="ownerStatus">Checking secure owner access…</p><div id="ownerTools" hidden><div id="ownerAnalytics" class="owner-analytics"></div><button id="ownerSelf" class="button" type="button">Edit my unrestricted profile</button><label class="social-form">God Mode search<input id="ownerSearch" placeholder="Username or exact user ID" /></label><div id="ownerResults" class="people-results"></div><form id="ownerEditor" class="social-form owner-editor" hidden><p class="eyebrow">Selected member</p><p id="ownerRecord" class="owner-record"></p><input name="id" type="hidden" /><label>Name <input name="displayName" required /></label><label>Bio <textarea name="bio"></textarea></label><label>DOB <input name="dateOfBirth" type="date" /></label><label>Gender <select name="gender"><option value="">Not set</option><option value="woman">Woman</option><option value="man">Man</option><option value="non_binary">Non-binary</option><option value="prefer_not_to_say">Prefer not to say</option></select></label><label>Privacy <select name="privacy"><option value="public">Public</option><option value="private">Private</option></select></label><label>Rare custom username <input name="customUsername" disabled /><small id="vipUsernameHelp">Grant VIP to unlock this field.</small></label><button class="button primary" type="submit">Force save <b>↗</b></button><div class="owner-actions"><button class="follow-button" type="button" data-vip-type="owner_granted">Give VIP</button><button class="follow-button" type="button" data-vip-remove>Remove VIP</button><button class="follow-button" type="button" data-badge="blue">Toggle blue tick</button><button class="follow-button" type="button" data-badge="gold">Toggle gold tick</button><span class="owner-moderation"><button class="follow-button" type="button" data-status="active">Active</button><button class="follow-button" type="button" data-status="suspended">Suspend</button><button class="follow-button" type="button" data-status="banned">Ban</button><button class="follow-button" type="button" data-status="dismissed">Dismiss</button><button class="follow-button" type="button" data-delete-account>Delete account</button></span></div></form></div></section></main>
+    <main class="auth-main"><section class="auth-card owner-card"><p class="eyebrow">Private owner studio</p><h1>Care for your <em>community.</em></h1><p class="auth-copy" id="ownerStatus">Checking secure owner access…</p><div id="ownerTools" hidden>
+    <div id="ownerAnalytics" class="owner-analytics"></div>
+    
+    <div class="owner-section">
+      <p class="eyebrow">Site Wide Settings</p>
+      <label class="social-form">Global Site Theme 
+        <select id="globalThemeSelect">
+          <option value="midnight">Midnight</option>
+          <option value="sakura">Sakura</option>
+          <option value="ocean">Ocean</option>
+          <option value="emerald">Emerald</option>
+          <option value="ruby">Ruby</option>
+          <option value="gold">Gold</option>
+          <option value="nebula">Nebula</option>
+          <option value="lava">Lava</option>
+          <option value="cyber">Cyber</option>
+          <option value="retro">Retro</option>
+          <!-- (Themes match style.css) -->
+        </select>
+      </label>
+      <label class="social-form">King Photo URL (Home Page)
+        <input id="siteHeroPic" placeholder="URL to founder image" />
+      </label>
+      <button id="saveGlobalSettings" class="button primary">Save Global Settings</button>
+    </div>
+
+    <div class="owner-section" style="margin-top:20px;">
+      <p class="eyebrow">Manage Cards</p>
+      <button id="addFounderCard" class="button">Add New Card to Home Page</button>
+    </div>
+
+    <hr style="margin:20px 0; border:0; border-top:1px solid var(--line);" />
+
+    <button id="ownerSelf" class="button" type="button">Edit my unrestricted profile</button>
+<label class="social-form">God Mode search<input id="ownerSearch" placeholder="Username or exact user ID" /></label><div id="ownerResults" class="people-results"></div><form id="ownerEditor" class="social-form owner-editor" hidden><p class="eyebrow">Selected member</p><p id="ownerRecord" class="owner-record"></p><input name="id" type="hidden" /><label>Name <input name="displayName" required /></label><label>Bio <textarea name="bio"></textarea></label><label>DOB <input name="dateOfBirth" type="date" /></label><label>Gender <select name="gender"><option value="">Not set</option><option value="woman">Woman</option><option value="man">Man</option><option value="non_binary">Non-binary</option><option value="prefer_not_to_say">Prefer not to say</option></select></label><label>Privacy <select name="privacy"><option value="public">Public</option><option value="private">Private</option></select></label><label>Rare custom username <input name="customUsername" disabled /><small id="vipUsernameHelp">Grant VIP to unlock this field.</small></label><button class="button primary" type="submit">Force save <b>↗</b></button><div class="owner-actions"><button class="follow-button" type="button" data-vip-type="owner_granted">Give VIP</button><button class="follow-button" type="button" data-vip-remove>Remove VIP</button><button class="follow-button" type="button" data-badge="blue">Toggle blue tick</button><button class="follow-button" type="button" data-badge="gold">Toggle gold tick</button><span class="owner-moderation"><button class="follow-button" type="button" data-status="active">Active</button><button class="follow-button" type="button" data-status="suspended">Suspend</button><button class="follow-button" type="button" data-status="banned">Ban</button><button class="follow-button" type="button" data-status="dismissed">Dismiss</button><button class="follow-button" type="button" data-delete-account>Delete account</button></span></div></form></div></section></main>
     <footer><a class="brand" href="index.html">ar<span>rai</span>.in</a><p>© 2026 Abhishek Rai. All rights reserved.</p></footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase.js"></script><script src="script.js"></script><script src="owner.js"></script>
   </body>

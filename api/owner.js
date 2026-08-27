@@ -107,17 +107,38 @@ export default async function handler(request, response) {
       await fetch(`${supabaseUrl}/rest/v1/moderation_events`, { method: "POST", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ profile_id: owner.id, action: "dismissed", note: `Owner removed ${kind} ${id}` }) });
       return response.status(200).json({ ok: true });
     }
-    if (request.body.action === "delete-account") {
-      const id = String(request.body.id || "");
-      if (!id) return response.status(400).json({ error: "Profile is required." });
-      if (id === owner.id) return response.status(400).json({ error: "The owner account cannot be deleted from Owner Studio." });
-      const upstream = await fetch(`${supabaseUrl}/auth/v1/admin/users/${encodeURIComponent(id)}`, { method: "DELETE", headers: adminHeaders() });
-      if (!upstream.ok) throw new Error("Could not permanently delete this account.");
-      const profileDelete = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", headers: { ...adminHeaders(), Prefer: "return=minimal" } });
-      if (!profileDelete.ok) throw new Error("Authentication was deleted, but profile cleanup needs attention.");
-      await fetch(`${supabaseUrl}/rest/v1/moderation_events`, { method: "POST", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ profile_id: id, action: "deleted", note: "Permanently deleted by Owner Studio" }) });
+        if (request.body.action === "get-site-settings") {
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/site_settings?id=eq.global&select=*`, { headers: adminHeaders() });
+      const [settings] = await upstream.json();
+      return response.status(200).json(settings || {});
+    }
+    if (request.body.action === "update-site-settings") {
+      const changes = {};
+      if (request.body.hero_image_url) changes.hero_image_url = String(request.body.hero_image_url);
+      if (request.body.global_theme) changes.global_theme = String(request.body.global_theme);
+      if (request.body.site_name) changes.site_name = String(request.body.site_name);
+      
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/site_settings?id=eq.global`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify(changes) });
+      if (!upstream.ok) throw new Error("Could not update site settings.");
       return response.status(200).json({ ok: true });
     }
+    if (request.body.action === "get-founder-cards") {
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/founder_cards?select=*&order=order_index.asc`, { headers: adminHeaders() });
+      return response.status(200).json(await upstream.json());
+    }
+    if (request.body.action === "add-founder-card") {
+      const card = { title: String(request.body.title || "New Card"), subtitle: String(request.body.subtitle || ""), description: String(request.body.description || ""), image_url: String(request.body.image_url || "") };
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/founder_cards`, { method: "POST", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify(card) });
+      if (!upstream.ok) throw new Error("Could not add founder card.");
+      return response.status(200).json({ ok: true });
+    }
+    if (request.body.action === "delete-founder-card") {
+      const id = String(request.body.id || "");
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/founder_cards?id=eq.${id}`, { method: "DELETE", headers: adminHeaders() });
+      if (!upstream.ok) throw new Error("Could not delete founder card.");
+      return response.status(200).json({ ok: true });
+    }
+
     return response.status(400).json({ error: "Unknown owner action." });
   } catch (error) { return response.status(error.message.includes("reserved") || error.message.includes("sign in") ? 403 : 500).json({ error: error.message || "Owner request failed." }); }
 }
