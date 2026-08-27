@@ -471,7 +471,8 @@ $("#messageForm").addEventListener("submit", async (event) => {
 });
 const voiceNoteButton = document.createElement("button");
 voiceNoteButton.type = "button"; voiceNoteButton.className = "follow-button"; voiceNoteButton.id = "voiceNote"; voiceNoteButton.textContent = "🎙 Voice note";
-$("#voiceText")?.after(voiceNoteButton);
+$("#voiceText")?.remove();
+$("#messageForm")?.querySelector("button[type=submit]")?.before(voiceNoteButton);
 let voiceRecorder = null, voiceChunks = [];
 voiceNoteButton.addEventListener("click", async () => {
   try {
@@ -482,14 +483,6 @@ voiceNoteButton.addEventListener("click", async () => {
     voiceRecorder.onstop = () => { stream.getTracks().forEach((track) => track.stop()); const blob = new Blob(voiceChunks, { type: voiceRecorder.mimeType || "audio/webm" }); const file = new File([blob], "voice-note-" + Date.now() + ".webm", { type: blob.type }); const transfer = new DataTransfer(); transfer.items.add(file); $("#messageForm").elements.attachment.files = transfer.files; voiceNoteButton.textContent = "✓ Voice note ready"; voiceNoteButton.classList.remove("is-recording"); voiceNoteButton.classList.add("is-ready"); };
     voiceRecorder.start(); voiceNoteButton.textContent = "■ Stop recording"; voiceNoteButton.classList.add("is-recording");
   } catch (error) { say(error.message || "Microphone permission is required.", "error"); }
-});
-$("#voiceText").addEventListener("click", () => {
-  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!Recognition) return say("Voice-to-text is not supported in this browser. Try Chrome.", "error");
-  const recognition = new Recognition(); recognition.lang = navigator.language || "en-IN"; recognition.interimResults = false;
-  recognition.onresult = (event) => { const input = $("#messageForm").elements.body; input.value = `${input.value}${input.value ? " " : ""}${event.results[0][0].transcript}`; input.focus(); };
-  recognition.onerror = () => say("Could not convert that voice note to text.", "error");
-  recognition.start(); say("Listening… speak your message.", "success");
 });
 $("#messageShortcuts").addEventListener("click", (event) => {
   if (event.target.matches("button")) {
