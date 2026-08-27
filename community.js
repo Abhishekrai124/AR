@@ -91,8 +91,13 @@ async function loadProfile() {
   $("#myHandle").textContent = `@${profile.username}`;
   $("#membershipBadge").textContent = profile.is_vip ? "✦ VIP member" : "Standard member";
   $("#membershipBadge").innerHTML = isOwner() ? "♛ Owner · all access" : profile.is_vip ? `${badge(profile)} VIP member` : "Standard member";
-  $("#themeSelect").value = profile.theme || "midnight";
-  document.body.dataset.theme = profile.theme || "midnight";
+  const { data: siteSettings } = await db.from("site_settings").select("global_theme").eq("id", "global").maybeSingle();
+  const globalTheme = siteSettings?.global_theme || "midnight";
+  const personalTheme = (profile.is_vip || isOwner()) ? (profile.theme || globalTheme) : globalTheme;
+  document.body.dataset.globalTheme = globalTheme;
+  document.body.dataset.userTheme = (profile.is_vip || isOwner()) ? personalTheme : "";
+  $("#themeSelect").value = personalTheme;
+  document.body.dataset.theme = personalTheme;
   say("You’re connected.", "success");
   return true;
 }

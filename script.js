@@ -154,6 +154,17 @@ const localAssistantReply = (question) => {
   return "I’m Miss Makima, your gentle AR guide. I can help with AR, Abhishek Rai, services, projects, chess or contacting the team. For live web-researched replies, add the optional AI keys in AI_SETUP.md. ✿";
 };
 
+// Owner-selected theme is the default across every page. VIP members may override it locally.
+const applyGlobalTheme = async () => {
+  if (!window.arraiSupabase) return "midnight";
+  const { data } = await window.arraiSupabase.from("site_settings").select("global_theme").eq("id", "global").maybeSingle();
+  const theme = data?.global_theme || "midnight";
+  document.body.dataset.globalTheme = theme;
+  if (!document.body.dataset.userTheme) document.body.dataset.theme = theme;
+  return theme;
+};
+applyGlobalTheme().catch(() => {});
+
 // Public home content is editable from Owner Studio and remains readable without login.
 const loadPublicHomeContent = async () => {
   if (!document.querySelector("#founderCards") || !window.arraiSupabase) return;
