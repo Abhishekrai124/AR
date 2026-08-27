@@ -902,6 +902,13 @@ footer div {
 .amounts button { border: 1px solid var(--line); border-radius: 8px; padding: 8px 11px; background: rgba(15, 23, 42, 0.4); color: var(--ink); cursor: pointer; font-weight: 800; }
 .amounts button.selected-amount { border-color: var(--lime); color: var(--lime); }
 @media (max-width: 700px) {
+  body:not(.community-page) header nav { position: fixed; right: 10px; bottom: 10px; left: 10px; z-index: 45; display: flex; flex-direction: row; align-items: center; justify-content: flex-start; gap: 2px; height: 48px; padding: 5px 7px; overflow-x: auto; overscroll-behavior-x: contain; border: 1px solid var(--line); border-radius: 16px; background: rgba(15, 29, 49, .95); box-shadow: 0 12px 32px rgba(0,0,0,.38); backdrop-filter: blur(14px); }
+  body:not(.community-page) header nav a, body:not(.community-page) header nav button { flex: 0 0 auto; padding: 8px 9px; border-radius: 10px; color: var(--muted); font-size: .61rem; white-space: nowrap; }
+  body:not(.community-page) header nav a.active, body:not(.community-page) header nav a:hover { color: var(--sky); background: rgba(56,189,248,.1); }
+  body:not(.community-page) .menu-button { display: none; }
+  body:not(.community-page) .floating-community-nav { display: none; }
+  body:not(.community-page) footer { padding-bottom: 72px; }
+  body:not(.community-page) main { padding-bottom: 58px; }
   .floating-community-nav { position: fixed; right: 12px; bottom: 12px; left: 12px; z-index: 40; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; padding: 7px; border: 1px solid var(--line); border-radius: 18px; background: rgba(15,29,49,.94); box-shadow: 0 15px 38px rgba(0,0,0,.35); backdrop-filter: blur(14px); }
   .floating-nav-item { display: grid; place-items: center; gap: 2px; min-height: 44px; color: var(--muted); text-decoration: none; font-size: .56rem; font-weight: 800; }
   .floating-nav-item i { color: var(--sky); font-size: 1.1rem; font-style: normal; }
