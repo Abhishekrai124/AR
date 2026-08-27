@@ -42,7 +42,9 @@ create policy "Visible posts respect profile privacy" on public.posts for select
 
 alter table public.direct_messages
   add column if not exists status text not null default 'request' check (status in ('request', 'accepted', 'declined')),
-  add column if not exists responded_at timestamptz;
+  add column if not exists responded_at timestamptz,
+  add column if not exists attachment_url text,
+  add column if not exists attachment_type text;
 -- Chat is text-based and intentionally has no length cap. Empty messages remain invalid.
 alter table public.direct_messages drop constraint if exists direct_messages_body_check;
 
@@ -125,3 +127,24 @@ returns void language sql security definer set search_path = public as $$
 $$;
 revoke all on function public.respond_to_message_request(uuid, text) from public;
 grant execute on function public.respond_to_message_request(uuid, text) to authenticated;
+
+-- Picture, video, and voice-note messages use the same request rules as text messages.
+create or replace function public.send_media_message(recipient text, message_body text, media_url text, media_type text)
+returns public.direct_messages language plpgsql security definer set search_path = public as $$
+declare sender text := auth.jwt() ->> 'sub'; result public.direct_messages; mutual boolean;
+begin
+  if sender is null then raise exception 'Please sign in first'; end if;
+  if char_length(trim(coalesce(message_body, ''))) = 0 and media_url is null then raise exception 'Write a message or attach media'; end if;
+  if not exists (select 1 from profiles where id = sender and account_status = 'active') then raise exception 'This account cannot send messages'; end if;
+  if not exists (select 1 from profiles where id = recipient and account_status = 'active') then raise exception 'This member is unavailable'; end if;
+  select exists(select 1 from follows a join follows b on b.follower_id = a.following_id and b.following_id = a.follower_id where a.follower_id = sender and a.following_id = recipient) into mutual;
+  insert into direct_messages (sender_id, recipient_id, body, attachment_url, attachment_type, status)
+  values (sender, recipient, trim(coalesce(message_body, '')), media_url, media_type, case when mutual then 'accepted' else 'request' end)
+  returning * into result;
+  return result;
+end $$;
+revoke all on function public.send_media_message(text, text, text, text) from public;
+grant execute on function public.send_media_message(text, text, text, text) to authenticated;
+insert into storage.buckets (id, name, public) values ('dm-media', 'dm-media', true) on conflict (id) do nothing;
+create policy "Signed-in users view DM media" on storage.objects for select to authenticated using (bucket_id = 'dm-media');
+create policy "Users upload their DM media" on storage.objects for insert to authenticated with check (bucket_id = 'dm-media' and (storage.foldername(name))[1] = auth.jwt() ->> 'sub');

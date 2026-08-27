@@ -39,8 +39,8 @@ async function openProfile(profileId) {
     db.from("follows").select("*", { count: "exact", head: true }).eq("following_id", profileId),
     db.from("follows").select("*", { count: "exact", head: true }).eq("follower_id", profileId),
     db.from("posts").select("id, body, image_url, created_at").eq("author_id", profileId).order("created_at", { ascending: false }).limit(24),
-    db.from("follows").select("profiles!follows_follower_id_fkey(username, display_name, avatar_url)").eq("following_id", profileId).limit(24),
-    db.from("follows").select("profiles!follows_following_id_fkey(username, display_name, avatar_url)").eq("follower_id", profileId).limit(24),
+    db.from("follows").select("profiles!follows_follower_id_fkey(id, username, display_name, avatar_url)").eq("following_id", profileId).limit(24),
+    db.from("follows").select("profiles!follows_following_id_fkey(id, username, display_name, avatar_url)").eq("follower_id", profileId).limit(24),
   ]);
   if (error || postError || followerError || followingError) throw error || postError || followerError || followingError;
   if (person.privacy === "private" && profileId !== user.sub) {
@@ -51,15 +51,17 @@ async function openProfile(profileId) {
       return $("#profileDialog").showModal();
     }
   }
-  const memberList = (rows, key) => (rows || []).map((row) => row.profiles).filter(Boolean).map((member) => `<span class="profile-member"><img src="${avatar(member)}" alt="" />${escapeHtml(member.display_name)} <small>@${escapeHtml(member.username)}</small></span>`).join("") || '<span class="empty-state">None yet</span>';
+  const memberList = (rows) => (rows || []).map((row) => row.profiles).filter(Boolean).map((member) => `<button class="profile-member" type="button" data-profile="${escapeHtml(member.id)}" data-name="${escapeHtml(member.display_name)}"><img src="${avatar(member)}" alt="" />${escapeHtml(member.display_name)} <small>@${escapeHtml(member.username)}</small></button>`).join("") || '<span class="empty-state">None yet</span>';
   $("#profileDetails").innerHTML = `<section class="instagram-profile"><img class="profile-hero-avatar" src="${avatar(person)}" alt="" /><div><p class="eyebrow">${person.is_vip ? "✦ VIP member" : "AR member"}</p><h2>${escapeHtml(person.display_name)}</h2><p class="profile-handle">@${escapeHtml(person.username)}</p><p>${escapeHtml(person.bio || "No bio yet.")}</p><div class="profile-stats"><span><b>${posts.length}</b> posts</span><span><b>${followerCount || 0}</b> followers</span><span><b>${followingCount || 0}</b> following</span></div></div></section><section class="profile-lists"><div><p class="eyebrow">Followers</p>${memberList(followers, "follower")}</div><div><p class="eyebrow">Following</p>${memberList(following, "following")}</div></section><section class="profile-posts"><p class="eyebrow">Posts</p>${posts.length ? posts.map((post) => `<article class="social-card"><small>${new Date(post.created_at).toLocaleDateString()}</small><p>${escapeHtml(post.body)}</p>${post.image_url ? `<img src="${post.image_url}" alt="Member post" />` : ""}</article>`).join("") : '<p class="empty-state">No posts yet.</p>'}</section>`;
   $("#profileDetails h2").insertAdjacentHTML("beforeend", ` ${badge(person)}`);
+  if (profileId !== user.sub) $("#profileDetails .instagram-profile > div").insertAdjacentHTML("beforeend", `<button class="message-button profile-message" type="button" data-message="${escapeHtml(person.id)}" data-name="${escapeHtml(person.display_name)}">Message</button>`);
   $("#profileDialog").showModal();
 }
 
 async function uploadImage(bucket, file) {
   if (!file) return null;
-  if (file.size > 5 * 1024 * 1024) throw new Error("Images must be 5 MB or smaller.");
+  const maxSize = bucket === "dm-media" ? 25 : 5;
+  if (file.size > maxSize * 1024 * 1024) throw new Error(`${bucket === "dm-media" ? "DM media" : "Images"} must be ${maxSize} MB or smaller.`);
   const extension = file.name.split(".").pop() || "jpg";
   const path = `${user.sub}/${crypto.randomUUID()}.${extension}`;
   const { error } = await db.storage.from(bucket).upload(path, file, { upsert: false });
@@ -173,12 +175,12 @@ async function loadMessages() {
   if (!activeChat) return;
   const { data, error } = await db
     .from("direct_messages")
-    .select("id, sender_id, body, created_at")
+    .select("id, sender_id, body, attachment_url, attachment_type, created_at")
     .or(`and(sender_id.eq.${user.sub},recipient_id.eq.${activeChat.id}),and(sender_id.eq.${activeChat.id},recipient_id.eq.${user.sub})`)
     .order("created_at", { ascending: true });
   if (error) throw error;
   $("#messageList").innerHTML = data.length
-    ? data.map((message) => `<p class="message ${message.sender_id === user.sub ? "mine" : "theirs"}">${escapeHtml(message.body)}</p>`).join("")
+    ? data.map((message) => `<div class="message ${message.sender_id === user.sub ? "mine" : "theirs"}">${message.body ? `<p>${escapeHtml(message.body)}</p>` : ""}${message.attachment_url ? message.attachment_type?.startsWith("image/") ? `<img src="${escapeHtml(message.attachment_url)}" alt="Shared image" />` : message.attachment_type?.startsWith("video/") ? `<video src="${escapeHtml(message.attachment_url)}" controls playsinline></video>` : `<audio src="${escapeHtml(message.attachment_url)}" controls></audio>` : ""}</div>`).join("")
     : '<p class="empty-state">Say hello to start the conversation.</p>';
   $("#messageList").scrollTop = $("#messageList").scrollHeight;
 }
@@ -455,10 +457,20 @@ $("#peopleResults").addEventListener("click", (event) => {
 $("#messageForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   const input = event.currentTarget.elements.body;
-  const { error } = await db.rpc("send_message_request", { recipient: activeChat.id, message_body: input.value.trim() });
+  const attachment = event.currentTarget.elements.attachment.files[0];
+  const mediaUrl = attachment ? await uploadImage("dm-media", attachment) : null;
+  const { error } = await db.rpc("send_media_message", { recipient: activeChat.id, message_body: input.value.trim(), media_url: mediaUrl, media_type: attachment?.type || null });
   if (error) return say(error.message, "error");
-  input.value = "";
+  event.currentTarget.reset();
   await loadMessages();
+});
+$("#voiceText").addEventListener("click", () => {
+  const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!Recognition) return say("Voice-to-text is not supported in this browser. Try Chrome.", "error");
+  const recognition = new Recognition(); recognition.lang = navigator.language || "en-IN"; recognition.interimResults = false;
+  recognition.onresult = (event) => { const input = $("#messageForm").elements.body; input.value = `${input.value}${input.value ? " " : ""}${event.results[0][0].transcript}`; input.focus(); };
+  recognition.onerror = () => say("Could not convert that voice note to text.", "error");
+  recognition.start(); say("Listening… speak your message.", "success");
 });
 $("#messageShortcuts").addEventListener("click", (event) => {
   if (event.target.matches("button")) {
@@ -473,6 +485,20 @@ $("#endCall").addEventListener("click", () => endCall());
 $("#closeCall").addEventListener("click", () => endCall());
 $("#logoutButton").addEventListener("click", () => window.logout());
 $("#closeProfile").addEventListener("click", () => $("#profileDialog").close());
+$("#profileDetails").addEventListener("click", (event) => {
+  const message = event.target.closest("[data-message]");
+  const person = event.target.closest("[data-profile]");
+  if (message) { $("#profileDialog").close(); return openChat(message.dataset.message, message.dataset.name).catch((error) => say(error.message, "error")); }
+  if (person) { $("#profileDialog").close(); return openProfile(person.dataset.profile).catch((error) => say(error.message, "error")); }
+});
+document.querySelector(".community-mobile-nav").addEventListener("click", (event) => {
+  const action = event.target.closest("[data-community-action]")?.dataset.communityAction;
+  if (!action) return;
+  if (action === "profile") return openProfile(user.sub).catch((error) => say(error.message, "error"));
+  const target = ({ feed: ".community-feed", search: "#peopleSearch", messages: ".messages-panel" })[action];
+  document.querySelector(target)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (action === "search") setTimeout(() => $("#peopleSearch").focus(), 350);
+});
 
 (async () => {
   try {

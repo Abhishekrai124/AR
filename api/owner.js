@@ -22,7 +22,7 @@ export default async function handler(request, response) {
       const query = String(request.body.query || "").replace(/[^a-zA-Z0-9_.-]/g, "").slice(0, 50);
       const filter = query ? `&or=(id.eq.${encodeURIComponent(query)},username.ilike.*${encodeURIComponent(query)}*,display_name.ilike.*${encodeURIComponent(query)}*)` : "";
       const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?select=id,username,display_name,bio,avatar_url,date_of_birth,gender,privacy,theme,is_vip,vip_badge,blue_tick,gold_tick,account_status,created_at,updated_at&order=created_at.desc&limit=30${filter}`, { headers: adminHeaders() });
-      if (!upstream.ok) throw new Error("Could not load profiles.");
+      if (!upstream.ok) throw new Error(`Could not load profiles (Supabase ${upstream.status}). Check that SUPABASE_SERVICE_ROLE_KEY is the server-side service_role key for this SUPABASE_URL, then redeploy.`);
       return response.status(200).json({ profiles: await upstream.json() });
     }
     if (request.body.action === "update-profile") {
