@@ -899,6 +899,8 @@ footer div {
 .payment-card .button, .payment-card .text-link { margin-top: auto; }
 .upi-qr { width: 220px; height: 220px; margin: 14px auto 0; padding: 8px; border-radius: 12px; background: #fff; }
 .vip-benefits ul { margin: 0 0 18px; padding-left: 18px; color: var(--muted); font-size: .78rem; line-height: 2; }.vip-benefits li::marker { color: var(--pink); }
+.merchant-card { background: linear-gradient(135deg, rgba(131,24,67,.42), rgba(49,46,129,.72)); }.merchant-card small { color: var(--muted); font-size:.65rem; margin-top:12px; }
+.payment-hero-copy { max-width: 520px; margin: 18px 0; color: var(--muted); line-height: 1.7; font-size: .85rem; }.pay-anywhere { display: inline-flex; box-shadow: 0 12px 28px rgba(249,168,212,.2); }
 .featured-payment { background: linear-gradient(135deg, #075985, #312e81); }
 .amounts { display: flex; gap: 8px; margin-bottom: 18px; }
 .amounts button { border: 1px solid var(--line); border-radius: 8px; padding: 8px 11px; background: rgba(15, 23, 42, 0.4); color: var(--ink); cursor: pointer; font-weight: 800; }
