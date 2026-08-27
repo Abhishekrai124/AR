@@ -9,6 +9,8 @@ export default async function handler(request, response) {
   const received = Buffer.from(String(signature), "hex");
   const valid = received.length === 32 && crypto.timingSafeEqual(Buffer.from(expected, "hex"), received);
   if (!valid) return response.status(400).json({ error: "Payment verification failed." });
+  const keyId = process.env.RAZORPAY_KEY_ID;
+  if (keyId) { const orderCheck = await fetch(`https://api.razorpay.com/v1/orders/${encodeURIComponent(orderId)}`, { headers: { Authorization: `Basic ${Buffer.from(`${keyId}:${secret}`).toString("base64")}` } }); const order = await orderCheck.json(); if (!orderCheck.ok || Number(order.amount) < 1000 || Number(order.amount) > 1000000 || order.status !== "paid") return response.status(400).json({ error: "Order could not be confirmed." }); }
   const bearer = request.headers.authorization || "";
   const supabaseUrl = process.env.SUPABASE_URL || "https://atphyjukjgnnbfbnizyx.supabase.co";
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

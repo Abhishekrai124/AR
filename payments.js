@@ -39,6 +39,7 @@ async function startCheckout(product = "payment") {
   finally { payButton.disabled = false; }
 }
 payButton.addEventListener("click", () => startCheckout());
+document.querySelector("#customAmount")?.addEventListener("input", (event) => { const value = Number(event.target.value); if (value >= 10) selectedAmount = value; });
 vipPayButton?.addEventListener("click", () => startCheckout("vip"));
 document.querySelector("#generateUpi")?.addEventListener("click", () => { const amount = Number(document.querySelector("#upiAmount").value); const upi = document.querySelector("#upiId").value.trim(); if (!amount || !upi.includes("@")) return setStatus("Enter a valid amount and UPI ID.", "error"); const data = `upi://pay?pa=${encodeURIComponent(upi)}&pn=Arrai%20VIP&am=${amount.toFixed(2)}&cu=INR`; const qr = document.querySelector("#upiQr"); qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(data)}`; qr.hidden = false; setStatus("UPI QR ready. Confirm payment in your UPI app.", "success"); });
 
