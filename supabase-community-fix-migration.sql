@@ -7,6 +7,7 @@ alter table public.profiles add column if not exists privacy text not null defau
 alter table public.profiles add column if not exists theme text not null default 'midnight';
 alter table public.profiles add column if not exists account_status text not null default 'active';
 alter table public.profiles add column if not exists updated_at timestamptz not null default now();
+alter table public.profiles add column if not exists phone_number text;
 alter table public.direct_messages add column if not exists attachment_url text;
 alter table public.direct_messages add column if not exists attachment_type text;
 alter table public.direct_messages add column if not exists media_url text;

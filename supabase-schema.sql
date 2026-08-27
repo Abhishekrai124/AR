@@ -12,6 +12,7 @@ create table if not exists public.profiles (
 
 -- 👇 BLUE TICK WALA COLUMN YAHAN ADD KIYA HAI (Safe method)
 alter table public.profiles add column if not exists blue_tick boolean default false;
+alter table public.profiles add column if not exists phone_number text;
 -- 👆
 
 create table if not exists public.posts (

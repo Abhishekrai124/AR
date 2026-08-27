@@ -35,7 +35,7 @@ export default async function handler(request, response) {
       const [targetProfile] = target.ok ? await target.json() : [];
       if (targetProfile?.community_role === "owner" && !isOwnProfile) return response.status(403).json({ error: "Only the verified owner can edit the owner profile from Owner Studio." });
       if (!isOwnProfile && (displayName.length > 50 || bio.length > 180)) return response.status(400).json({ error: "This member's profile exceeds normal field limits." });
-      const changes = { display_name: displayName, bio, privacy: ["public", "private"].includes(request.body.privacy) ? request.body.privacy : "public", gender: ["woman", "man", "non_binary", "prefer_not_to_say"].includes(request.body.gender) ? request.body.gender : null, date_of_birth: /^\d{4}-\d{2}-\d{2}$/.test(String(request.body.dateOfBirth || "")) ? request.body.dateOfBirth : null };
+      const changes = { display_name: displayName, phone_number: String(request.body.phoneNumber || "").trim().slice(0, 25), bio, privacy: ["public", "private"].includes(request.body.privacy) ? request.body.privacy : "public", gender: ["woman", "man", "non_binary", "prefer_not_to_say"].includes(request.body.gender) ? request.body.gender : null, date_of_birth: /^\d{4}-\d{2}-\d{2}$/.test(String(request.body.dateOfBirth || "")) ? request.body.dateOfBirth : null };
       const customUsername = String(request.body.customUsername || "").trim().toLowerCase();
       if (customUsername) {
         if (!isOwnProfile && !/^[a-z0-9_.-]{3,40}$/.test(customUsername)) return response.status(400).json({ error: "Custom username must be 3–40 lowercase letters, numbers, dots, hyphens, or underscores." });

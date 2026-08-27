@@ -41,6 +41,8 @@ function openEditor(profile) {
   editor.hidden = false;
   editor.elements.id.value = profile.id;
   editor.elements.displayName.value = profile.display_name || "";
+  if (!editor.elements.phoneNumber) { const label = document.createElement("label"); label.innerHTML = 'Mobile number <input name="phoneNumber" type="tel" maxlength="25" />'; editor.elements.displayName.closest("label")?.after(label); }
+  editor.elements.phoneNumber.value = profile.phone_number || "";
   editor.elements.bio.value = profile.bio || "";
   editor.elements.dateOfBirth.value = profile.date_of_birth || "";
   editor.elements.gender.value = profile.gender || "";

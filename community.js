@@ -312,7 +312,7 @@ async function openAccountSettings() {
 $("#profileForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
-  const { error } = await db.from("profiles").insert({ id: user.sub, username: data.get("username").trim().toLowerCase(), display_name: data.get("displayName").trim(), date_of_birth: data.get("dateOfBirth"), gender: data.get("gender"), privacy: data.get("privacy"), bio: data.get("bio").trim() });
+  const { error } = await db.from("profiles").insert({ id: user.sub, username: data.get("username").trim().toLowerCase(), display_name: data.get("displayName").trim(), phone_number: data.get("phoneNumber").trim(), date_of_birth: data.get("dateOfBirth"), gender: data.get("gender"), privacy: data.get("privacy"), bio: data.get("bio").trim() });
   if (error) return say(error.code === "23505" ? "That username is already taken." : error.message, "error");
   if (await loadProfile()) {
     await Promise.all([loadPosts(), searchPeople()]);
@@ -461,11 +461,12 @@ $("#messageForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   const form = event.currentTarget;
   const input = form.elements.body;
-  const attachment = form.elements.attachment.files[0];
+  const attachment = recordedVoiceFile || form.elements.attachment.files[0];
   const mediaUrl = attachment ? await uploadImage("dm-media", attachment) : null;
   const { error } = await db.rpc("send_media_message", { recipient: activeChat.id, message_body: input.value.trim(), media_url: mediaUrl, media_type: attachment?.type || null });
   if (error) return say(error.message, "error");
   form.reset();
+  recordedVoiceFile = null;
   if (voiceNoteButton) { voiceNoteButton.textContent = "🎙 Voice note"; voiceNoteButton.classList.remove("is-ready", "is-recording"); }
   await loadMessages();
 });
@@ -473,14 +474,14 @@ const voiceNoteButton = document.createElement("button");
 voiceNoteButton.type = "button"; voiceNoteButton.className = "follow-button"; voiceNoteButton.id = "voiceNote"; voiceNoteButton.textContent = "🎙 Voice note";
 $("#voiceText")?.remove();
 $("#messageForm")?.querySelector("button[type=submit]")?.before(voiceNoteButton);
-let voiceRecorder = null, voiceChunks = [];
+let voiceRecorder = null, voiceChunks = [], recordedVoiceFile = null;
 voiceNoteButton.addEventListener("click", async () => {
   try {
     if (voiceRecorder?.state === "recording") { voiceRecorder.stop(); return; }
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); voiceChunks = [];
     voiceRecorder = new MediaRecorder(stream);
     voiceRecorder.ondataavailable = (event) => { if (event.data.size) voiceChunks.push(event.data); };
-    voiceRecorder.onstop = () => { stream.getTracks().forEach((track) => track.stop()); const blob = new Blob(voiceChunks, { type: voiceRecorder.mimeType || "audio/webm" }); const file = new File([blob], "voice-note-" + Date.now() + ".webm", { type: blob.type }); const transfer = new DataTransfer(); transfer.items.add(file); $("#messageForm").elements.attachment.files = transfer.files; voiceNoteButton.textContent = "✓ Voice note ready"; voiceNoteButton.classList.remove("is-recording"); voiceNoteButton.classList.add("is-ready"); };
+    voiceRecorder.onstop = () => { stream.getTracks().forEach((track) => track.stop()); const mime = voiceRecorder.mimeType || "audio/webm"; const blob = new Blob(voiceChunks, { type: mime }); recordedVoiceFile = new File([blob], "voice-note-" + Date.now() + ".webm", { type: mime }); voiceNoteButton.textContent = "✓ Voice note ready — tap Send"; voiceNoteButton.classList.remove("is-recording"); voiceNoteButton.classList.add("is-ready"); };
     voiceRecorder.start(); voiceNoteButton.textContent = "■ Stop recording"; voiceNoteButton.classList.add("is-recording");
   } catch (error) { say(error.message || "Microphone permission is required.", "error"); }
 });
