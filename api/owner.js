@@ -142,6 +142,14 @@ export default async function handler(request, response) {
       if (!upstream.ok) throw new Error("Could not delete founder card.");
       return response.status(200).json({ ok: true });
     }
+    if (request.body.action === "update-founder-card") {
+      const id = String(request.body.id || "");
+      if (!id) return response.status(400).json({ error: "Card id is required." });
+      const card = { title: String(request.body.title || "New Card").slice(0,80), subtitle: String(request.body.subtitle || "").slice(0,120), description: String(request.body.description || "").slice(0,400), image_url: String(request.body.image_url || "").slice(0,1000), tags: String(request.body.tags || "").slice(0,500), links: String(request.body.links || "").slice(0,1500), date_of_birth: /^\d{4}-\d{2}-\d{2}$/.test(String(request.body.date_of_birth || "")) ? request.body.date_of_birth : null, profile_id: request.body.profile_id || null };
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/founder_cards?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify(card) });
+      if (!upstream.ok) throw new Error("Could not update founder card.");
+      return response.status(200).json({ ok: true });
+    }
 
     return response.status(400).json({ error: "Unknown owner action." });
   } catch (error) { return response.status(error.message.includes("reserved") || error.message.includes("sign in") ? 403 : 500).json({ error: error.message || "Owner request failed." }); }

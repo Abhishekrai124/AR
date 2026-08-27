@@ -10,6 +10,10 @@ create table if not exists public.site_settings (
 
 -- Insert default settings if not exists
 insert into public.site_settings (id) values ('global') on conflict (id) do nothing;
+alter table public.site_settings add column if not exists hero_image_url text default 'assets/founder.jpg';
+alter table public.site_settings add column if not exists global_theme text default 'midnight';
+alter table public.site_settings add column if not exists site_name text default 'arrai.in';
+alter table public.site_settings add column if not exists site_description text default 'Digital experiences by Abhishek Rai.';
 
 create table if not exists public.founder_cards (
   id uuid primary key default gen_random_uuid(),
