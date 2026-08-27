@@ -10,6 +10,8 @@ async function ownerSession(request) {
   const ownerEmail = process.env.OWNER_EMAIL || "abhishekrai6897@gmail.com";
   if (user.email.toLowerCase() !== ownerEmail.toLowerCase()) throw new Error("This page is reserved for the verified owner.");
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) throw new Error("Owner studio needs its secure server configuration.");
+  // The verified owner is promoted server-side on every Studio visit; no browser client can assign this role.
+  await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(user.id)}`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ community_role: "owner" }) }).catch(() => {});
   return user;
 }
 const adminHeaders = () => ({ apikey: process.env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`, "Content-Type": "application/json" });
@@ -21,14 +23,17 @@ export default async function handler(request, response) {
     if (request.body.action === "profiles") {
       const query = String(request.body.query || "").replace(/[^a-zA-Z0-9_.-]/g, "").slice(0, 50);
       const filter = query ? `&or=(id.eq.${encodeURIComponent(query)},username.ilike.*${encodeURIComponent(query)}*,display_name.ilike.*${encodeURIComponent(query)}*)` : "";
-      const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?select=id,username,display_name,bio,avatar_url,date_of_birth,gender,privacy,theme,is_vip,vip_badge,blue_tick,gold_tick,account_status,created_at,updated_at&order=created_at.desc&limit=30${filter}`, { headers: adminHeaders() });
-      if (!upstream.ok) throw new Error(`Could not load profiles (Supabase ${upstream.status}). Check that SUPABASE_SERVICE_ROLE_KEY is the server-side service_role key for this SUPABASE_URL, then redeploy.`);
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?select=*&order=created_at.desc&limit=30${filter}`, { headers: adminHeaders() });
+      if (!upstream.ok) throw new Error(`Could not load profiles (Supabase ${upstream.status}). Check the Supabase project URL and service_role key, then redeploy.`);
       return response.status(200).json({ profiles: await upstream.json() });
     }
     if (request.body.action === "update-profile") {
       const id = String(request.body.id || ""); const isOwnProfile = owner.id === id;
       const displayName = String(request.body.displayName || "").trim(); const bio = String(request.body.bio || "").trim();
       if (!id || !displayName) return response.status(400).json({ error: "A profile name is required." });
+      const target = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}&select=community_role`, { headers: adminHeaders() });
+      const [targetProfile] = target.ok ? await target.json() : [];
+      if (targetProfile?.community_role === "owner" && !isOwnProfile) return response.status(403).json({ error: "Only the verified owner can edit the owner profile from Owner Studio." });
       if (!isOwnProfile && (displayName.length > 50 || bio.length > 180)) return response.status(400).json({ error: "This member's profile exceeds normal field limits." });
       const changes = { display_name: displayName, bio, privacy: ["public", "private"].includes(request.body.privacy) ? request.body.privacy : "public", gender: ["woman", "man", "non_binary", "prefer_not_to_say"].includes(request.body.gender) ? request.body.gender : null, date_of_birth: /^\d{4}-\d{2}-\d{2}$/.test(String(request.body.dateOfBirth || "")) ? request.body.dateOfBirth : null };
       const customUsername = String(request.body.customUsername || "").trim().toLowerCase();
@@ -78,6 +83,19 @@ export default async function handler(request, response) {
       const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ [column]: enabled }) });
       if (!upstream.ok) throw new Error("Could not update this verification badge.");
       await fetch(`${supabaseUrl}/rest/v1/moderation_events`, { method: "POST", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ profile_id: id, action: "profile_updated", actor_id: owner.id, note: `${enabled ? "Granted" : "Removed"} ${badge} tick` }) });
+      return response.status(200).json({ ok: true });
+    }
+    if (request.body.action === "set-role") {
+      const id = String(request.body.id || "");
+      const role = String(request.body.role || "member");
+      if (!id || !["member", "moderator", "admin"].includes(role)) return response.status(400).json({ error: "Invalid community role." });
+      if (id === owner.id) return response.status(403).json({ error: "The owner role cannot be changed." });
+      const target = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}&select=community_role`, { headers: adminHeaders() });
+      const [targetProfile] = target.ok ? await target.json() : [];
+      if (targetProfile?.community_role === "owner") return response.status(403).json({ error: "The owner role cannot be changed." });
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ community_role: role }) });
+      if (!upstream.ok) throw new Error("Could not update this community role. Run the latest Supabase migration first.");
+      await fetch(`${supabaseUrl}/rest/v1/moderation_events`, { method: "POST", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ profile_id: id, action: "profile_updated", actor_id: owner.id, note: `Owner set role: ${role}` }) });
       return response.status(200).json({ ok: true });
     }
     if (request.body.action === "delete-content") {

@@ -39,6 +39,7 @@ function openEditor(profile) {
   editor.elements.customUsername.disabled = !profile.is_vip && !isOwnerProfile;
   document.querySelector("#vipUsernameHelp").textContent = isOwnerProfile ? "Owner profile: all profile fields are unrestricted." : profile.is_vip ? "VIP custom username is unlocked." : "Grant VIP to unlock this field.";
   document.querySelector("#ownerRecord").textContent = `ID: ${profile.id} · Joined: ${new Date(profile.created_at).toLocaleString()} · Updated: ${new Date(profile.updated_at || profile.created_at).toLocaleString()} · Status: ${profile.account_status} · VIP: ${profile.is_vip ? "on" : "off"} · Blue tick: ${profile.blue_tick ? "on" : "off"} · Gold tick: ${profile.gold_tick ? "on" : "off"}`;
+  if (!editor.querySelector("[data-role]")) editor.querySelector(".owner-actions").insertAdjacentHTML("beforeend", '<button class="follow-button" type="button" data-role="admin">Make admin</button><button class="follow-button" type="button" data-role="moderator">Make moderator</button><button class="follow-button" type="button" data-role="member">Remove staff role</button>');
 }
 
 document.querySelector("#ownerSearch").addEventListener("input", () => searchProfiles().catch((error) => ownerStatus.textContent = error.message));
@@ -63,13 +64,14 @@ editor.addEventListener("click", async (event) => {
   const vipType = event.target.dataset.vipType;
   const removeVip = event.target.matches("[data-vip-remove]");
   const badge = event.target.dataset.badge;
+  const role = event.target.dataset.role;
   const deleteAccount = event.target.matches("[data-delete-account]");
-  if (!status && !vipType && !removeVip && !badge && !deleteAccount) return;
+  if (!status && !vipType && !removeVip && !badge && !role && !deleteAccount) return;
   try {
     const label = deleteAccount ? "permanently delete this account" : "apply this action";
     if (!confirm(`Confirm: ${label} for ${selectedProfile.display_name}?`)) return;
     if (deleteAccount && !confirm("This cannot be undone. Delete this user and their profile now?")) return;
-    await ownerRequest(deleteAccount ? "delete-account" : badge ? "set-badge" : vipType || removeVip ? "set-vip" : "moderate", deleteAccount ? { id: selectedProfile.id } : badge ? { id: selectedProfile.id, badge, enabled: !selectedProfile[`${badge}_tick`] } : vipType || removeVip ? { id: selectedProfile.id, isVip: !removeVip, vipType } : { id: selectedProfile.id, moderationAction: status });
+    await ownerRequest(deleteAccount ? "delete-account" : role ? "set-role" : badge ? "set-badge" : vipType || removeVip ? "set-vip" : "moderate", deleteAccount ? { id: selectedProfile.id } : role ? { id: selectedProfile.id, role } : badge ? { id: selectedProfile.id, badge, enabled: !selectedProfile[`${badge}_tick`] } : vipType || removeVip ? { id: selectedProfile.id, isVip: !removeVip, vipType } : { id: selectedProfile.id, moderationAction: status });
     ownerStatus.textContent = "Member state updated. ✦";
     await Promise.all([searchProfiles(), loadAnalytics()]);
     openEditor(window.ownerProfiles.get(selectedProfile.id) || selectedProfile);

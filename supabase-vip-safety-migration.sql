@@ -10,6 +10,7 @@ alter table public.profiles
   add column if not exists vip_badge text not null default 'none' check (vip_badge in ('none', 'owner_granted', 'purchased')),
   add column if not exists blue_tick boolean not null default false,
   add column if not exists gold_tick boolean not null default false,
+  add column if not exists community_role text not null default 'member' check (community_role in ('member', 'moderator', 'admin', 'owner')),
   add column if not exists vip_granted_at timestamptz,
   add column if not exists account_status text not null default 'active' check (account_status in ('active', 'suspended', 'banned', 'dismissed')),
   add column if not exists identity_locked boolean not null default false,
@@ -31,6 +32,21 @@ alter table public.profiles drop constraint if exists profiles_display_name_chec
 alter table public.profiles drop constraint if exists profiles_bio_check;
 alter table public.profiles drop constraint if exists profiles_account_status_check;
 alter table public.profiles add constraint profiles_account_status_check check (account_status in ('active', 'suspended', 'banned', 'dismissed'));
+
+-- Roles can only be changed by server-side Owner Studio. An owner profile cannot be edited from any browser.
+create or replace function public.protect_owner_profile()
+returns trigger language plpgsql as $$
+begin
+  if current_user <> 'service_role' and new.community_role is distinct from old.community_role then
+    raise exception 'Community roles can only be changed by Owner Studio';
+  end if;
+  if current_user <> 'service_role' and old.community_role = 'owner' then
+    raise exception 'The owner profile is permanently locked';
+  end if;
+  return new;
+end $$;
+drop trigger if exists protect_owner_profile on public.profiles;
+create trigger protect_owner_profile before update on public.profiles for each row execute function public.protect_owner_profile();
 
 -- A private member's posts are available only to that member and their followers.
 drop policy if exists "Posts are visible to signed-in users" on public.posts;

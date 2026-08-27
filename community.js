@@ -31,11 +31,11 @@ function avatar(profileData) {
   if (profileData.avatar_url) return profileData.avatar_url;
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.display_name)}&background=38bdf8&color=0f172a&bold=true`;
 }
-const badge = (profileData) => `${profileData?.blue_tick ? '<span class="verified blue" title="Blue tick">✓</span>' : ""}${profileData?.gold_tick ? '<span class="verified gold" title="Gold tick">✓</span>' : ""}`;
+const badge = (profileData) => `${profileData?.community_role === "owner" ? '<span class="owner-tag" title="AR owner">arrai.in · OWNER</span>' : ""}${profileData?.blue_tick ? '<span class="verified blue" title="Blue tick">✓</span>' : ""}${profileData?.gold_tick ? '<span class="verified gold" title="Gold tick">✓</span>' : ""}`;
 
 async function openProfile(profileId) {
   const [{ data: person, error }, { count: followerCount }, { count: followingCount }, { data: posts, error: postError }, { data: followers, error: followerError }, { data: following, error: followingError }] = await Promise.all([
-    db.from("profiles").select("id, username, display_name, bio, avatar_url, is_vip, blue_tick, gold_tick, created_at").eq("id", profileId).single(),
+    db.from("profiles").select("id, username, display_name, bio, avatar_url, is_vip, blue_tick, gold_tick, community_role, created_at").eq("id", profileId).single(),
     db.from("follows").select("*", { count: "exact", head: true }).eq("following_id", profileId),
     db.from("follows").select("*", { count: "exact", head: true }).eq("follower_id", profileId),
     db.from("posts").select("id, body, image_url, created_at").eq("author_id", profileId).order("created_at", { ascending: false }).limit(24),
@@ -55,6 +55,7 @@ async function openProfile(profileId) {
   $("#profileDetails").innerHTML = `<section class="instagram-profile"><img class="profile-hero-avatar" src="${avatar(person)}" alt="" /><div><p class="eyebrow">${person.is_vip ? "✦ VIP member" : "AR member"}</p><h2>${escapeHtml(person.display_name)}</h2><p class="profile-handle">@${escapeHtml(person.username)}</p><p>${escapeHtml(person.bio || "No bio yet.")}</p><div class="profile-stats"><span><b>${posts.length}</b> posts</span><span><b>${followerCount || 0}</b> followers</span><span><b>${followingCount || 0}</b> following</span></div></div></section><section class="profile-lists"><div><p class="eyebrow">Followers</p>${memberList(followers, "follower")}</div><div><p class="eyebrow">Following</p>${memberList(following, "following")}</div></section><section class="profile-posts"><p class="eyebrow">Posts</p>${posts.length ? posts.map((post) => `<article class="social-card"><small>${new Date(post.created_at).toLocaleDateString()}</small><p>${escapeHtml(post.body)}</p>${post.image_url ? `<img src="${post.image_url}" alt="Member post" />` : ""}</article>`).join("") : '<p class="empty-state">No posts yet.</p>'}</section>`;
   $("#profileDetails h2").insertAdjacentHTML("beforeend", ` ${badge(person)}`);
   if (profileId !== user.sub) $("#profileDetails .instagram-profile > div").insertAdjacentHTML("beforeend", `<button class="message-button profile-message" type="button" data-message="${escapeHtml(person.id)}" data-name="${escapeHtml(person.display_name)}">Message</button>`);
+  if (profileId !== user.sub && ["moderator", "admin", "owner"].includes(profile.community_role)) $("#profileDetails .instagram-profile > div").insertAdjacentHTML("beforeend", `<span class="staff-actions"><button class="follow-button" type="button" data-staff-action="suspended" data-staff-id="${escapeHtml(person.id)}">Suspend</button><button class="follow-button" type="button" data-staff-action="active" data-staff-id="${escapeHtml(person.id)}">Restore</button>${["admin", "owner"].includes(profile.community_role) ? `<button class="follow-button" type="button" data-staff-action="banned" data-staff-id="${escapeHtml(person.id)}">Ban</button>` : ""}</span>`);
   $("#profileDialog").showModal();
 }
 
@@ -67,6 +68,14 @@ async function uploadImage(bucket, file) {
   const { error } = await db.storage.from(bucket).upload(path, file, { upsert: false });
   if (error) throw error;
   return db.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+}
+
+async function ownerDeleteContent(kind, id) {
+  if (!isOwner()) throw new Error("Owner access is required.");
+  const { data: { session } } = await db.auth.getSession();
+  const response = await fetch("/api/owner", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token || ""}` }, body: JSON.stringify({ action: "delete-content", kind, id }) });
+  const body = await response.json();
+  if (!response.ok) throw new Error(body.error || "Could not delete this content.");
 }
 
 async function loadProfile() {
@@ -99,7 +108,7 @@ async function loadProfile() {
 async function loadPosts() {
   const { data, error } = await db
     .from("posts")
-    .select("id, author_id, body, image_url, created_at, profiles!posts_author_id_fkey(id, username, display_name, avatar_url, blue_tick, gold_tick)")
+    .select("id, author_id, body, image_url, created_at, profiles!posts_author_id_fkey(id, username, display_name, avatar_url, blue_tick, gold_tick, community_role)")
     .order("created_at", { ascending: false })
     .limit(30);
   if (error) throw error;
@@ -125,6 +134,7 @@ async function loadPosts() {
         )
         .join("")
     : '<p class="empty-state">No posts yet. Be the first to share something.</p>';
+  if (isOwner()) data.forEach((post) => document.querySelector(`#post-${post.id} .post-tools`)?.insertAdjacentHTML("beforeend", `<button type="button" data-owner-delete-kind="post" data-owner-delete-id="${post.id}">Owner delete</button>`));
 }
 
 async function searchPeople(query = "") {
@@ -183,6 +193,15 @@ async function loadMessages() {
     ? data.map((message) => `<div class="message ${message.sender_id === user.sub ? "mine" : "theirs"}">${message.body ? `<p>${escapeHtml(message.body)}</p>` : ""}${message.attachment_url ? message.attachment_type?.startsWith("image/") ? `<img src="${escapeHtml(message.attachment_url)}" alt="Shared image" />` : message.attachment_type?.startsWith("video/") ? `<video src="${escapeHtml(message.attachment_url)}" controls playsinline></video>` : `<audio src="${escapeHtml(message.attachment_url)}" controls></audio>` : ""}</div>`).join("")
     : '<p class="empty-state">Say hello to start the conversation.</p>';
   $("#messageList").scrollTop = $("#messageList").scrollHeight;
+}
+
+async function loadNotifications(open = false) {
+  const { data, error } = await db.from("direct_messages").select("id, body, sender_id, profiles!direct_messages_sender_id_fkey(display_name, username)").eq("recipient_id", user.sub).eq("status", "request").order("created_at", { ascending: false });
+  if (error) throw error;
+  const requests = data || [];
+  $("#notificationCount").textContent = requests.length ? `(${requests.length})` : "";
+  $("#notificationList").innerHTML = requests.length ? requests.map((item) => `<div class="notification-row"><p><b>${escapeHtml(item.profiles?.display_name || "Member")}</b> wants to message you.<small>${escapeHtml(item.body || "Media message")}</small></p><button type="button" data-request="${item.id}" data-decision="accepted">Accept</button><button type="button" data-request="${item.id}" data-decision="declined">Decline</button></div>`).join("") : '<p class="empty-state">You are all caught up.</p>';
+  if (open) $("#notificationsPanel").hidden = false;
 }
 
 async function sendCallSignal(recipientId, kind, payload = {}) {
@@ -380,7 +399,7 @@ $("#postForm").addEventListener("submit", async (event) => {
 });
 
 async function loadReels() {
-  const { data, error } = await db.from("reels").select("id, author_id, video_url, caption, profiles!reels_author_id_fkey(id, username, display_name, avatar_url, blue_tick, gold_tick)").order("created_at", { ascending: false }).limit(18);
+  const { data, error } = await db.from("reels").select("id, author_id, video_url, caption, profiles!reels_author_id_fkey(id, username, display_name, avatar_url, blue_tick, gold_tick, community_role)").order("created_at", { ascending: false }).limit(18);
   if (error) throw error;
   $("#reelFeed").innerHTML = data.map((reel) => `<article class="social-card reel"><video src="${reel.video_url}" controls playsinline preload="metadata"></video><p><button type="button" class="profile-link" data-profile="${reel.profiles.id}">${escapeHtml(reel.profiles.display_name)} ${badge(reel.profiles)}</button> @${escapeHtml(reel.profiles.username)}</p><p>${escapeHtml(reel.caption)}</p>${reel.author_id === user.sub ? `<button class="follow-button" type="button" data-delete-reel="${reel.id}">Delete reel</button>` : ""}</article>`).join("");
 }
@@ -409,10 +428,12 @@ $("#postFeed").addEventListener("click", async (event) => {
   const profileButton = event.target.closest("[data-profile]");
   const deletePost = event.target.closest("[data-delete-post]");
   const deleteComment = event.target.closest("[data-delete-comment]");
+  const ownerDelete = event.target.closest("[data-owner-delete-kind]");
   try {
     if (profileButton) return openProfile(profileButton.dataset.profile);
     if (deletePost && confirm("Delete your post?")) { const { error } = await db.from("posts").delete().eq("id", deletePost.dataset.deletePost).eq("author_id", user.sub); if (error) throw error; return loadPosts(); }
     if (deleteComment && confirm("Delete your comment?")) { const { error } = await db.from("comments").delete().eq("id", deleteComment.dataset.deleteComment).eq("author_id", user.sub); if (error) throw error; return loadPosts(); }
+    if (ownerDelete && confirm("Owner action: permanently delete this content?")) { await ownerDeleteContent(ownerDelete.dataset.ownerDeleteKind, ownerDelete.dataset.ownerDeleteId); return loadPosts(); }
     if (like) {
       const postId = like.dataset.like;
       const alreadyLiked = like.classList.contains("liked");
@@ -485,11 +506,22 @@ $("#endCall").addEventListener("click", () => endCall());
 $("#closeCall").addEventListener("click", () => endCall());
 $("#logoutButton").addEventListener("click", () => window.logout());
 $("#closeProfile").addEventListener("click", () => $("#profileDialog").close());
+$("#notificationsButton").addEventListener("click", () => loadNotifications(true).catch((error) => say(error.message, "error")));
+$("#closeNotifications").addEventListener("click", () => $("#notificationsPanel").hidden = true);
+$("#notificationList").addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-request]");
+  if (!button) return;
+  const { error } = await db.rpc("respond_to_message_request", { message_id: button.dataset.request, decision: button.dataset.decision });
+  if (error) return say(error.message, "error");
+  await loadNotifications(true); say(`Request ${button.dataset.decision}.`, "success");
+});
 $("#profileDetails").addEventListener("click", (event) => {
   const message = event.target.closest("[data-message]");
   const person = event.target.closest("[data-profile]");
   if (message) { $("#profileDialog").close(); return openChat(message.dataset.message, message.dataset.name).catch((error) => say(error.message, "error")); }
   if (person) { $("#profileDialog").close(); return openProfile(person.dataset.profile).catch((error) => say(error.message, "error")); }
+  const staff = event.target.closest("[data-staff-action]");
+  if (staff && confirm(`Confirm ${staff.dataset.staffAction} for this member?`)) db.auth.getSession().then(({ data: { session } }) => fetch("/api/staff", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token || ""}` }, body: JSON.stringify({ action: staff.dataset.staffAction, id: staff.dataset.staffId }) })).then(async (response) => { const body = await response.json(); if (!response.ok) throw new Error(body.error); say("Staff action applied.", "success"); }).catch((error) => say(error.message, "error"));
 });
 document.querySelector(".community-mobile-nav").addEventListener("click", (event) => {
   const action = event.target.closest("[data-community-action]")?.dataset.communityAction;
@@ -507,7 +539,7 @@ document.querySelector(".community-mobile-nav").addEventListener("click", (event
     user = auth.user;
     db = await window.createArraiSupabase();
     if (await loadProfile()) {
-      await Promise.all([loadPosts(), loadReels(), searchPeople()]);
+      await Promise.all([loadPosts(), loadReels(), searchPeople(), loadNotifications()]);
       subscribeToCalls();
     }
   } catch (error) { say(error.message || "Could not load the community.", "error"); }

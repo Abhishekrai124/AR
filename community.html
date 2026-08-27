@@ -17,7 +17,7 @@
       </nav>
     </header>
     <main class="community-wrap">
-      <section class="community-hero"><div><p class="eyebrow">Arrai community</p><h1>Your people,<br /><em>your space.</em></h1></div><div class="community-header-actions"><button class="text-button" id="accountSettings">Account settings</button><button class="text-button" id="logoutButton">Sign out</button></div></section>
+      <section class="community-hero"><div><p class="eyebrow">Arrai community</p><h1>Your people,<br /><em>your space.</em></h1></div><div class="community-header-actions"><button class="text-button" id="notificationsButton">Notifications <span id="notificationCount"></span></button><button class="text-button" id="accountSettings">Account settings</button><button class="text-button" id="logoutButton">Sign out</button></div></section>
       <p class="community-status" id="communityStatus" aria-live="polite">Loading your profile…</p>
       <section class="founder-spotlight" aria-label="Community founder profile"><img src="assets/founder.jpg" alt="Abhishek Rai" /><div><p class="eyebrow">Community host</p><h2>Abhishek Rai</h2><p>@AR · Founder &amp; CEO</p></div><span>✦ A dreamy space for kind ideas</span></section>
       <section id="profileSetup" class="social-card profile-setup" hidden>
@@ -38,6 +38,7 @@
           <section class="social-card"><p class="eyebrow">Find people</p><input id="peopleSearch" class="social-input" type="search" placeholder="Search username" /><div id="peopleResults" class="people-results"></div></section>
         </aside>
         <section class="community-feed">
+          <section class="social-card notifications-panel" id="notificationsPanel" hidden><div class="message-heading"><div><p class="eyebrow">Notifications</p><h2>Message requests</h2></div><button class="text-button" id="closeNotifications">Close</button></div><div id="notificationList" class="message-list"></div></section>
           <form class="social-card post-composer" id="postForm"><p class="eyebrow">Daily update</p><textarea name="body" maxlength="500" placeholder="Share a little moment, thought or update…"></textarea><div><label class="upload-label">Add image<input name="image" type="file" accept="image/png,image/jpeg,image/webp" /></label><button class="button primary" type="submit">Share update <b>↗</b></button></div></form>
           <form class="social-card post-composer" id="reelForm"><p class="eyebrow">Reel</p><textarea name="caption" maxlength="500" placeholder="Add a caption to your reel…"></textarea><div><label class="upload-label">Upload video<input name="video" type="file" accept="video/mp4,video/webm,video/quicktime" required /></label><button class="button" type="submit">Share reel <b>↗</b></button></div></form>
           <div id="reelFeed" class="reel-feed"></div>
