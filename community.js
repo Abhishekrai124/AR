@@ -70,14 +70,6 @@ async function uploadImage(bucket, file) {
   return db.storage.from(bucket).getPublicUrl(path).data.publicUrl;
 }
 
-async function ownerDeleteContent(kind, id) {
-  if (!isOwner()) throw new Error("Owner access is required.");
-  const { data: { session } } = await db.auth.getSession();
-  const response = await fetch("/api/owner", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token || ""}` }, body: JSON.stringify({ action: "delete-content", kind, id }) });
-  const body = await response.json();
-  if (!response.ok) throw new Error(body.error || "Could not delete this content.");
-}
-
 async function loadProfile() {
   const { data, error } = await db.from("profiles").select("*").eq("id", user.sub).maybeSingle();
   if (error) throw error;
@@ -134,7 +126,6 @@ async function loadPosts() {
         )
         .join("")
     : '<p class="empty-state">No posts yet. Be the first to share something.</p>';
-  if (isOwner()) data.forEach((post) => document.querySelector(`#post-${post.id} .post-tools`)?.insertAdjacentHTML("beforeend", `<button type="button" data-owner-delete-kind="post" data-owner-delete-id="${post.id}">Owner delete</button>`));
 }
 
 async function searchPeople(query = "") {
@@ -193,15 +184,6 @@ async function loadMessages() {
     ? data.map((message) => `<div class="message ${message.sender_id === user.sub ? "mine" : "theirs"}">${message.body ? `<p>${escapeHtml(message.body)}</p>` : ""}${message.attachment_url ? message.attachment_type?.startsWith("image/") ? `<img src="${escapeHtml(message.attachment_url)}" alt="Shared image" />` : message.attachment_type?.startsWith("video/") ? `<video src="${escapeHtml(message.attachment_url)}" controls playsinline></video>` : `<audio src="${escapeHtml(message.attachment_url)}" controls></audio>` : ""}</div>`).join("")
     : '<p class="empty-state">Say hello to start the conversation.</p>';
   $("#messageList").scrollTop = $("#messageList").scrollHeight;
-}
-
-async function loadNotifications(open = false) {
-  const { data, error } = await db.from("direct_messages").select("id, body, sender_id, profiles!direct_messages_sender_id_fkey(display_name, username)").eq("recipient_id", user.sub).eq("status", "request").order("created_at", { ascending: false });
-  if (error) throw error;
-  const requests = data || [];
-  $("#notificationCount").textContent = requests.length ? `(${requests.length})` : "";
-  $("#notificationList").innerHTML = requests.length ? requests.map((item) => `<div class="notification-row"><p><b>${escapeHtml(item.profiles?.display_name || "Member")}</b> wants to message you.<small>${escapeHtml(item.body || "Media message")}</small></p><button type="button" data-request="${item.id}" data-decision="accepted">Accept</button><button type="button" data-request="${item.id}" data-decision="declined">Decline</button></div>`).join("") : '<p class="empty-state">You are all caught up.</p>';
-  if (open) $("#notificationsPanel").hidden = false;
 }
 
 async function sendCallSignal(recipientId, kind, payload = {}) {
@@ -428,12 +410,10 @@ $("#postFeed").addEventListener("click", async (event) => {
   const profileButton = event.target.closest("[data-profile]");
   const deletePost = event.target.closest("[data-delete-post]");
   const deleteComment = event.target.closest("[data-delete-comment]");
-  const ownerDelete = event.target.closest("[data-owner-delete-kind]");
   try {
     if (profileButton) return openProfile(profileButton.dataset.profile);
     if (deletePost && confirm("Delete your post?")) { const { error } = await db.from("posts").delete().eq("id", deletePost.dataset.deletePost).eq("author_id", user.sub); if (error) throw error; return loadPosts(); }
     if (deleteComment && confirm("Delete your comment?")) { const { error } = await db.from("comments").delete().eq("id", deleteComment.dataset.deleteComment).eq("author_id", user.sub); if (error) throw error; return loadPosts(); }
-    if (ownerDelete && confirm("Owner action: permanently delete this content?")) { await ownerDeleteContent(ownerDelete.dataset.ownerDeleteKind, ownerDelete.dataset.ownerDeleteId); return loadPosts(); }
     if (like) {
       const postId = like.dataset.like;
       const alreadyLiked = like.classList.contains("liked");
@@ -506,15 +486,6 @@ $("#endCall").addEventListener("click", () => endCall());
 $("#closeCall").addEventListener("click", () => endCall());
 $("#logoutButton").addEventListener("click", () => window.logout());
 $("#closeProfile").addEventListener("click", () => $("#profileDialog").close());
-$("#notificationsButton").addEventListener("click", () => loadNotifications(true).catch((error) => say(error.message, "error")));
-$("#closeNotifications").addEventListener("click", () => $("#notificationsPanel").hidden = true);
-$("#notificationList").addEventListener("click", async (event) => {
-  const button = event.target.closest("[data-request]");
-  if (!button) return;
-  const { error } = await db.rpc("respond_to_message_request", { message_id: button.dataset.request, decision: button.dataset.decision });
-  if (error) return say(error.message, "error");
-  await loadNotifications(true); say(`Request ${button.dataset.decision}.`, "success");
-});
 $("#profileDetails").addEventListener("click", (event) => {
   const message = event.target.closest("[data-message]");
   const person = event.target.closest("[data-profile]");
@@ -539,7 +510,7 @@ document.querySelector(".community-mobile-nav").addEventListener("click", (event
     user = auth.user;
     db = await window.createArraiSupabase();
     if (await loadProfile()) {
-      await Promise.all([loadPosts(), loadReels(), searchPeople(), loadNotifications()]);
+      await Promise.all([loadPosts(), loadReels(), searchPeople()]);
       subscribeToCalls();
     }
   } catch (error) { say(error.message || "Could not load the community.", "error"); }
