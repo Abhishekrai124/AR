@@ -15,12 +15,13 @@ drop policy if exists "Music is visible to signed-in users" on public.music_trac
 drop policy if exists "Users upload music metadata" on public.music_tracks;
 drop policy if exists "Users update their music" on public.music_tracks;
 drop policy if exists "Users delete their music" on public.music_tracks;
-create policy "Music is visible to signed-in users" on public.music_tracks for select to authenticated using (true);
+drop policy if exists "Music is public" on public.music_tracks;
+create policy "Music is public" on public.music_tracks for select to anon, authenticated using (true);
 create policy "Users upload music metadata" on public.music_tracks for insert to authenticated with check (owner_id = auth.jwt() ->> 'sub');
 create policy "Users update their music" on public.music_tracks for update to authenticated using (owner_id = auth.jwt() ->> 'sub') with check (owner_id = auth.jwt() ->> 'sub');
 create policy "Users delete their music" on public.music_tracks for delete to authenticated using (owner_id = auth.jwt() ->> 'sub');
 insert into storage.buckets (id, name, public) values ('music-media', 'music-media', true) on conflict (id) do update set public = true;
 drop policy if exists "Users upload music files" on storage.objects;
 drop policy if exists "Users view music files" on storage.objects;
-create policy "Users view music files" on storage.objects for select to authenticated using (bucket_id = 'music-media');
+create policy "Users view music files" on storage.objects for select to anon, authenticated using (bucket_id = 'music-media');
 create policy "Users upload music files" on storage.objects for insert to authenticated with check (bucket_id = 'music-media' and (storage.foldername(name))[1] = auth.jwt() ->> 'sub');

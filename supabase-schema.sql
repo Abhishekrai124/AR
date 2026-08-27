@@ -52,11 +52,20 @@ create table if not exists public.call_signals (
   created_at timestamptz not null default now()
 );
 create table if not exists public.music_tracks (id uuid primary key default gen_random_uuid(), owner_id text not null references public.profiles(id) on delete cascade, title text not null, artist text not null, team text not null default '', description text not null default '', media_url text not null, media_type text not null, created_at timestamptz not null default now());
+create table if not exists public.music_likes (track_id uuid references public.music_tracks(id) on delete cascade, user_id text references public.profiles(id) on delete cascade, primary key(track_id,user_id));
+create table if not exists public.music_comments (id uuid primary key default gen_random_uuid(), track_id uuid references public.music_tracks(id) on delete cascade, user_id text references public.profiles(id) on delete cascade, body text not null check(char_length(trim(body)) between 1 and 300), created_at timestamptz not null default now());
 alter table public.music_tracks enable row level security;
-create policy "Music is visible to signed-in users" on public.music_tracks for select to authenticated using (true);
+create policy "Music is visible to everyone" on public.music_tracks for select to anon, authenticated using (true);
 create policy "Users upload music metadata" on public.music_tracks for insert to authenticated with check (owner_id = auth.jwt() ->> 'sub');
 create policy "Users update their music" on public.music_tracks for update to authenticated using (owner_id = auth.jwt() ->> 'sub') with check (owner_id = auth.jwt() ->> 'sub');
 create policy "Users delete their music" on public.music_tracks for delete to authenticated using (owner_id = auth.jwt() ->> 'sub');
+alter table public.music_likes enable row level security; alter table public.music_comments enable row level security;
+create policy "Music likes are public" on public.music_likes for select to anon, authenticated using (true);
+create policy "Users like music" on public.music_likes for insert to authenticated with check (user_id = auth.jwt() ->> 'sub');
+create policy "Users remove music likes" on public.music_likes for delete to authenticated using (user_id = auth.jwt() ->> 'sub');
+create policy "Music comments are public" on public.music_comments for select to anon, authenticated using (true);
+create policy "Users comment on music" on public.music_comments for insert to authenticated with check (user_id = auth.jwt() ->> 'sub');
+create policy "Users delete music comments" on public.music_comments for delete to authenticated using (user_id = auth.jwt() ->> 'sub');
 
 alter table public.profiles enable row level security;
 alter table public.posts enable row level security;
@@ -90,7 +99,7 @@ insert into storage.buckets (id, name, public) values ('reel-media', 'reel-media
 insert into storage.buckets (id, name, public) values ('dm-media', 'dm-media', true) on conflict (id) do nothing;
 insert into storage.buckets (id, name, public) values ('music-media', 'music-media', true) on conflict (id) do nothing;
 
-create policy "Signed-in users view public media" on storage.objects for select to authenticated using (bucket_id in ('avatars', 'post-media', 'reel-media', 'dm-media', 'music-media'));
+create policy "Signed-in users view public media" on storage.objects for select to anon, authenticated using (bucket_id in ('avatars', 'post-media', 'reel-media', 'dm-media', 'music-media'));
 create policy "Users upload only to their folder" on storage.objects for insert to authenticated with check (bucket_id in ('avatars', 'post-media', 'reel-media', 'dm-media', 'music-media') and (storage.foldername(name))[1] = auth.jwt() ->> 'sub');
 create policy "Users update only their own media" on storage.objects for update to authenticated using (bucket_id in ('avatars', 'post-media', 'reel-media', 'dm-media') and (storage.foldername(name))[1] = auth.jwt() ->> 'sub');
 create policy "Users delete only their own media" on storage.objects for delete to authenticated using (bucket_id in ('avatars', 'post-media', 'reel-media', 'dm-media') and (storage.foldername(name))[1] = auth.jwt() ->> 'sub');
