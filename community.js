@@ -130,7 +130,7 @@ async function loadPosts() {
 
 async function searchPeople(query = "") {
   let request = db.from("profiles").select("id, username, display_name, avatar_url").neq("id", user.sub).order("username").limit(8);
-  if (query) request = request.ilike("username", `%${query.toLowerCase()}%`);
+  if (query) { const term = query.toLowerCase().replace(/[,()]/g, ""); request = request.or(`username.ilike.%${term}%,display_name.ilike.%${term}%`); }
   const [{ data: people, error }, { data: following, error: followError }] = await Promise.all([
     request,
     db.from("follows").select("following_id").eq("follower_id", user.sub),
@@ -176,12 +176,12 @@ async function loadMessages() {
   if (!activeChat) return;
   const { data, error } = await db
     .from("direct_messages")
-    .select("id, sender_id, body, attachment_url, attachment_type, created_at")
+    .select("id, sender_id, body, media_url, media_type, created_at")
     .or(`and(sender_id.eq.${user.sub},recipient_id.eq.${activeChat.id}),and(sender_id.eq.${activeChat.id},recipient_id.eq.${user.sub})`)
     .order("created_at", { ascending: true });
   if (error) throw error;
   $("#messageList").innerHTML = data.length
-    ? data.map((message) => `<div class="message ${message.sender_id === user.sub ? "mine" : "theirs"}">${message.body ? `<p>${escapeHtml(message.body)}</p>` : ""}${message.attachment_url ? message.attachment_type?.startsWith("image/") ? `<img src="${escapeHtml(message.attachment_url)}" alt="Shared image" />` : message.attachment_type?.startsWith("video/") ? `<video src="${escapeHtml(message.attachment_url)}" controls playsinline></video>` : `<audio src="${escapeHtml(message.attachment_url)}" controls></audio>` : ""}</div>`).join("")
+    ? data.map((message) => `<div class="message ${message.sender_id === user.sub ? "mine" : "theirs"}">${message.body ? `<p>${escapeHtml(message.body)}</p>` : ""}${message.media_url ? message.media_type?.startsWith("image/") ? `<img src="${escapeHtml(message.media_url)}" alt="Shared image" />` : message.media_type?.startsWith("video/") ? `<video src="${escapeHtml(message.media_url)}" controls playsinline></video>` : `<audio src="${escapeHtml(message.media_url)}" controls></audio>` : ""}</div>`).join("")
     : '<p class="empty-state">Say hello to start the conversation.</p>';
   $("#messageList").scrollTop = $("#messageList").scrollHeight;
 }
