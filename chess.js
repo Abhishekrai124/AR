@@ -17,6 +17,7 @@ let board,
   selected,
   flipped = false,
   mode = "local",
+  moveHistory = [],
   stats = JSON.parse(
     localStorage.getItem("arraiChessStats") ||
       '{"wins":0,"losses":0,"games":0,"rating":800}',
@@ -31,6 +32,7 @@ function init() {
   board = start.split("");
   turn = "white";
   selected = null;
+  moveHistory = [];
   render();
   message("White to move");
 }
@@ -139,6 +141,7 @@ function clickSquare(i) {
 function move(a, b) {
   const captured = board[b],
     piece = board[a];
+  moveHistory.push(`${squareName(a)}${captured ? "x" : "–"}${squareName(b)}${piece.toLowerCase() === "p" && (b < 8 || b > 55) ? "=Q" : ""}`);
   board[b] = piece;
   board[a] = "";
   if (piece.toLowerCase() === "p" && (b < 8 || b > 55))
@@ -153,6 +156,8 @@ function move(a, b) {
   render();
   if (mode === "bot" && turn === "black") setTimeout(botMove, 400);
 }
+function squareName(index) { return `${"abcdefgh"[index % 8]}${8 - Math.floor(index / 8)}`; }
+function renderHistory() { const list = el("moveHistory"); if (!list) return; list.innerHTML = moveHistory.map((m, i) => i % 2 === 0 ? `<li>${Math.floor(i / 2) + 1}. ${m}</li>` : `<li>${m}</li>`).join(""); }
 function botMove() {
   const moves = [];
   board.forEach((p, a) => {
@@ -189,12 +194,14 @@ function saveStats() {
 }
 function message(t) {
   el("gameMessage").textContent = t;
+  renderHistory();
 }
 el("newGame").onclick = init;
 el("flipBoard").onclick = () => {
   flipped = !flipped;
   render();
 };
+el("copyPgn").onclick = async () => { const pgn = moveHistory.map((m, i) => i % 2 === 0 ? `${Math.floor(i / 2) + 1}. ${m}` : m).join(" "); try { await navigator.clipboard.writeText(pgn || "*"); message("PGN copied ✦"); } catch { message("PGN: " + (pgn || "No moves yet")); } };
 document.querySelectorAll(".mode").forEach(
   (b) =>
     (b.onclick = () => {
@@ -217,13 +224,14 @@ el("signOut").onclick = () => {
   localStorage.removeItem("arraiChessUser");
   window.logout();
 };
-function setProfile(user = null) {
-  const name = user?.name || localStorage.getItem("arraiChessUser");
+function setProfile(user = null, profile = {}) {
+  const name = profile.display_name || user?.name || localStorage.getItem("arraiChessUser");
   el("guestView").hidden = !!name;
   el("memberView").hidden = !name;
   if (name) {
     el("playerName").textContent = name;
-    el("whiteName").textContent = name;
+    el("playerName").textContent = profile.username ? `${name} @${profile.username}` : name;
+    el("whiteName").textContent = profile.username ? `@${profile.username}` : name;
     el("avatarLetter").textContent = name[0].toUpperCase();
   }
 }
@@ -238,6 +246,6 @@ window.arraiAuth
   .catch(() => ({ isAuthenticated: false, user: null }))
   .then(({ isAuthenticated, user }) => {
     saveStats();
-    setProfile(isAuthenticated ? user : null);
+    if (isAuthenticated && window.arraiSupabase) { const { data: chessProfile } = await window.arraiSupabase.from("profiles").select("display_name,username,avatar_url").eq("id", user.id).maybeSingle(); setProfile(user, chessProfile || {}); } else setProfile(null);
     init();
   });

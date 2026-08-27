@@ -80,11 +80,13 @@ create policy "Call participants remove signals" on public.call_signals for dele
 
 insert into storage.buckets (id, name, public) values ('avatars', 'avatars', true) on conflict (id) do nothing;
 insert into storage.buckets (id, name, public) values ('post-media', 'post-media', true) on conflict (id) do nothing;
+insert into storage.buckets (id, name, public) values ('reel-media', 'reel-media', true) on conflict (id) do nothing;
+insert into storage.buckets (id, name, public) values ('dm-media', 'dm-media', true) on conflict (id) do nothing;
 
-create policy "Signed-in users view public media" on storage.objects for select to authenticated using (bucket_id in ('avatars', 'post-media'));
-create policy "Users upload only to their folder" on storage.objects for insert to authenticated with check (bucket_id in ('avatars', 'post-media') and (storage.foldername(name))[1] = auth.jwt() ->> 'sub');
-create policy "Users update only their own media" on storage.objects for update to authenticated using (bucket_id in ('avatars', 'post-media') and (storage.foldername(name))[1] = auth.jwt() ->> 'sub');
-create policy "Users delete only their own media" on storage.objects for delete to authenticated using (bucket_id in ('avatars', 'post-media') and (storage.foldername(name))[1] = auth.jwt() ->> 'sub');
+create policy "Signed-in users view public media" on storage.objects for select to authenticated using (bucket_id in ('avatars', 'post-media', 'reel-media', 'dm-media'));
+create policy "Users upload only to their folder" on storage.objects for insert to authenticated with check (bucket_id in ('avatars', 'post-media', 'reel-media', 'dm-media') and (storage.foldername(name))[1] = auth.jwt() ->> 'sub');
+create policy "Users update only their own media" on storage.objects for update to authenticated using (bucket_id in ('avatars', 'post-media', 'reel-media', 'dm-media') and (storage.foldername(name))[1] = auth.jwt() ->> 'sub');
+create policy "Users delete only their own media" on storage.objects for delete to authenticated using (bucket_id in ('avatars', 'post-media', 'reel-media', 'dm-media') and (storage.foldername(name))[1] = auth.jwt() ->> 'sub');
 
 alter publication supabase_realtime add table public.direct_messages;
 alter publication supabase_realtime add table public.call_signals;
