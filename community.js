@@ -192,10 +192,10 @@ async function sendCallSignal(recipientId, kind, payload = {}) {
 }
 
 async function getPeerConnection() {
-  const response = await fetch("/api/turn");
-  if (!response.ok) throw new Error("Call service is unavailable. Please try again.");
-  const iceServers = await response.json();
+  let iceServers = [{ urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"] }];
+  try { const response = await fetch("/api/turn"); if (response.ok) iceServers = await response.json(); } catch { /* public STUN fallback */ }
   peerConnection = new RTCPeerConnection({ iceServers });
+  if (!navigator.mediaDevices?.getUserMedia) throw new Error("Your browser does not support calls.");
   localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
   $("#localVideo").srcObject = localStream;
   localStream.getTracks().forEach((track) => peerConnection.addTrack(track, localStream));
@@ -466,7 +466,22 @@ $("#messageForm").addEventListener("submit", async (event) => {
   const { error } = await db.rpc("send_media_message", { recipient: activeChat.id, message_body: input.value.trim(), media_url: mediaUrl, media_type: attachment?.type || null });
   if (error) return say(error.message, "error");
   form.reset();
+  if (voiceNoteButton) { voiceNoteButton.textContent = "🎙 Voice note"; voiceNoteButton.classList.remove("is-ready", "is-recording"); }
   await loadMessages();
+});
+const voiceNoteButton = document.createElement("button");
+voiceNoteButton.type = "button"; voiceNoteButton.className = "follow-button"; voiceNoteButton.id = "voiceNote"; voiceNoteButton.textContent = "🎙 Voice note";
+$("#voiceText")?.after(voiceNoteButton);
+let voiceRecorder = null, voiceChunks = [];
+voiceNoteButton.addEventListener("click", async () => {
+  try {
+    if (voiceRecorder?.state === "recording") { voiceRecorder.stop(); return; }
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true }); voiceChunks = [];
+    voiceRecorder = new MediaRecorder(stream);
+    voiceRecorder.ondataavailable = (event) => { if (event.data.size) voiceChunks.push(event.data); };
+    voiceRecorder.onstop = () => { stream.getTracks().forEach((track) => track.stop()); const blob = new Blob(voiceChunks, { type: voiceRecorder.mimeType || "audio/webm" }); const file = new File([blob], "voice-note-" + Date.now() + ".webm", { type: blob.type }); const transfer = new DataTransfer(); transfer.items.add(file); $("#messageForm").elements.attachment.files = transfer.files; voiceNoteButton.textContent = "✓ Voice note ready"; voiceNoteButton.classList.remove("is-recording"); voiceNoteButton.classList.add("is-ready"); };
+    voiceRecorder.start(); voiceNoteButton.textContent = "■ Stop recording"; voiceNoteButton.classList.add("is-recording");
+  } catch (error) { say(error.message || "Microphone permission is required.", "error"); }
 });
 $("#voiceText").addEventListener("click", () => {
   const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;

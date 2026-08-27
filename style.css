@@ -21,6 +21,7 @@
 .cute-dialog-backdrop.is-closing{opacity:0;transition:opacity .18s ease}.cute-dialog-backdrop.is-closing .cute-dialog{transform:scale(.96);transition:transform .18s ease}
 .cute-notice{position:fixed;right:20px;top:20px;z-index:10001;max-width:min(360px,calc(100vw - 40px));padding:13px 17px;border:1px solid rgba(125,232,211,.45);border-radius:15px;background:rgba(17,35,57,.94);color:#f8fbff;box-shadow:0 12px 35px rgba(0,0,0,.3);transform:translateY(-12px);opacity:0;transition:.22s ease;font-size:.9rem}.cute-notice.show{transform:none;opacity:1}.cute-notice.warning{border-color:rgba(255,205,120,.6)}.cute-notice.error{border-color:rgba(255,126,174,.65)}
 @keyframes cuteFade{from{opacity:0}to{opacity:1}}@keyframes cutePop{from{opacity:0;transform:scale(.94) translateY(8px)}to{opacity:1;transform:none}}
+.message-form .is-recording{background:linear-gradient(135deg,#ff6f9f,#ff9c75);color:#fff;animation:recordPulse 1.1s ease-in-out infinite}.message-form .is-ready{border-color:#7de8d3;color:#7de8d3}@keyframes recordPulse{50%{box-shadow:0 0 0 6px rgba(255,111,159,.16)}}
 @media(max-width:520px){.cute-dialog{padding:24px 18px 18px;border-radius:22px}.cute-dialog-actions{flex-direction:column-reverse}.cute-dialog-actions .button{width:100%}.cute-notice{left:16px;right:16px;top:14px;max-width:none}}
 * {
   box-sizing: border-box;
