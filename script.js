@@ -116,6 +116,8 @@ if (communityPreview && window.arraiAuth) {
     communityPreview.hidden = false;
   }).catch(() => {});
 }
+// Public home feed: visitors can read public updates; publishing remains login-only.
+if (communityPreview && window.arraiSupabase) window.arraiSupabase.from("posts").select("body, image_url, created_at, profiles!posts_author_id_fkey(display_name, username, privacy)").eq("profiles.privacy", "public").order("created_at", { ascending: false }).limit(8).then(({ data: posts }) => { if (!posts?.length) return; const safe = (value) => { const e=document.createElement("div"); e.textContent=value||""; return e.innerHTML; }; document.querySelector("#communityPreviewPost").innerHTML = posts.map(post => `<article class="home-update"><p class="eyebrow">@${safe(post.profiles?.username || "member")} · ${new Date(post.created_at).toLocaleDateString()}</p><h3>${safe(post.profiles?.display_name || "AR member")}</h3><p>${safe(post.body)}</p>${post.image_url ? `<img class="post-image" src="${safe(post.image_url)}" alt="Community update" />` : ""}</article>`).join(""); communityPreview.hidden = false; }).catch(() => {});
 if (button && nav)
   button.addEventListener("click", () => {
     const open = nav.classList.toggle("open");
