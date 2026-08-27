@@ -21,7 +21,7 @@ export default async function handler(request, response) {
     if (request.body.action === "profiles") {
       const query = String(request.body.query || "").replace(/[^a-zA-Z0-9_.-]/g, "").slice(0, 50);
       const filter = query ? `&or=(id.eq.${encodeURIComponent(query)},username.ilike.*${encodeURIComponent(query)}*,display_name.ilike.*${encodeURIComponent(query)}*)` : "";
-      const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?select=id,username,display_name,bio,avatar_url,date_of_birth,gender,privacy,theme,is_vip,account_status,created_at,updated_at&order=created_at.desc&limit=30${filter}`, { headers: adminHeaders() });
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?select=id,username,display_name,bio,avatar_url,date_of_birth,gender,privacy,theme,is_vip,vip_badge,blue_tick,gold_tick,account_status,created_at,updated_at&order=created_at.desc&limit=30${filter}`, { headers: adminHeaders() });
       if (!upstream.ok) throw new Error("Could not load profiles.");
       return response.status(200).json({ profiles: await upstream.json() });
     }
@@ -69,6 +69,17 @@ export default async function handler(request, response) {
       if (!upstream.ok) throw new Error("Could not update VIP access.");
       return response.status(200).json({ ok: true });
     }
+    if (request.body.action === "set-badge") {
+      const id = String(request.body.id || "");
+      const badge = String(request.body.badge || "");
+      const enabled = request.body.enabled === true;
+      const column = ({ blue: "blue_tick", gold: "gold_tick" })[badge];
+      if (!id || !column) return response.status(400).json({ error: "Invalid badge request." });
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ [column]: enabled }) });
+      if (!upstream.ok) throw new Error("Could not update this verification badge.");
+      await fetch(`${supabaseUrl}/rest/v1/moderation_events`, { method: "POST", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ profile_id: id, action: "profile_updated", actor_id: owner.id, note: `${enabled ? "Granted" : "Removed"} ${badge} tick` }) });
+      return response.status(200).json({ ok: true });
+    }
     if (request.body.action === "delete-content") {
       const kind = String(request.body.kind || ""); const id = String(request.body.id || "");
       const table = ({ post: "posts", comment: "comments", reel: "reels" })[kind];
@@ -81,6 +92,7 @@ export default async function handler(request, response) {
     if (request.body.action === "delete-account") {
       const id = String(request.body.id || "");
       if (!id) return response.status(400).json({ error: "Profile is required." });
+      if (id === owner.id) return response.status(400).json({ error: "The owner account cannot be deleted from Owner Studio." });
       const upstream = await fetch(`${supabaseUrl}/auth/v1/admin/users/${encodeURIComponent(id)}`, { method: "DELETE", headers: adminHeaders() });
       if (!upstream.ok) throw new Error("Could not permanently delete this account.");
       const profileDelete = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", headers: { ...adminHeaders(), Prefer: "return=minimal" } });
