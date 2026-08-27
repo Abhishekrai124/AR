@@ -24,6 +24,17 @@ const loadAnalytics = async () => {
 };
 const searchProfiles = async () => renderProfiles((await ownerRequest("profiles", { query: document.querySelector("#ownerSearch").value })).profiles);
 
+const parseLines = (value) => String(value || "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+const siteForm = document.querySelector("#siteSettingsForm");
+const loadSiteControls = async () => { const settings = await ownerRequest("get-site-settings"); for (const [id, key] of [["siteHeroPic","hero_image_url"],["founderName","founder_name"],["founderRole","founder_role"],["founderNote","founder_note"],["founderTags","founder_tags"],["founderLinks","founder_links"]]) { const el=document.querySelector(`#${id}`); if(el) el.value=settings[key]||""; } document.querySelector("#globalThemeSelect").value=settings.global_theme||"midnight"; document.querySelector("#siteSaveState").textContent="Ready to edit"; };
+siteForm?.addEventListener("submit", async (event) => { event.preventDefault(); const state=document.querySelector("#siteSaveState"); state.textContent="Saving…"; try { await ownerRequest("update-site-settings", { global_theme: document.querySelector("#globalThemeSelect").value, hero_image_url: document.querySelector("#siteHeroPic").value.trim(), founder_name: document.querySelector("#founderName").value.trim(), founder_role: document.querySelector("#founderRole").value.trim(), founder_note: document.querySelector("#founderNote").value.trim(), founder_tags: document.querySelector("#founderTags").value, founder_links: document.querySelector("#founderLinks").value }); state.textContent="Saved ✓"; } catch(error) { state.textContent=error.message; } });
+const cardForm=document.querySelector("#publicCardForm"), cardResults=document.querySelector("#cardUserResults"), cardList=document.querySelector("#publicCardList");
+const loadCards=async()=>{ const cards=await ownerRequest("get-founder-cards"); cardList.innerHTML=cards.length?cards.map(c=>`<article class="owner-card-row"><img src="${escapeHtml(c.image_url||'assets/founder.jpg')}" alt=""><div><b>${escapeHtml(c.title)}</b><small>${escapeHtml(c.subtitle||'')}</small></div><button class="follow-button" data-delete-card="${c.id}" type="button">Remove</button></article>`).join(""):"<p class=empty-state>No public cards yet.</p>"; };
+ document.querySelector("#cardUsername")?.addEventListener("input", async (event)=>{ const q=event.target.value.trim(); if(q.length<2){cardResults.innerHTML="";return;} try { const {profiles}=await ownerRequest("profiles",{query:q}); window.ownerProfiles=new Map(profiles.map(p=>[p.id,p])); cardResults.innerHTML=profiles.slice(0,5).map(p=>`<button type="button" class="owner-result" data-card-profile="${escapeHtml(p.id)}"><img src="${escapeHtml(p.avatar_url||'')}" alt=""><span><b>${escapeHtml(p.display_name)}</b><small>@${escapeHtml(p.username)}</small></span></button>`).join(""); }catch{} });
+cardResults?.addEventListener("click",(event)=>{const b=event.target.closest("[data-card-profile]");if(!b)return;const p=window.ownerProfiles?.get(b.dataset.cardProfile);if(!p)return;cardForm.elements.title.value=p.display_name||"";cardForm.elements.description.value=p.bio||"";cardForm.elements.imageUrl.value=p.avatar_url||"";cardForm.elements.dateOfBirth.value=p.date_of_birth||"";document.querySelector("#cardUserHint").textContent=`Selected @${p.username}`;cardForm.dataset.profileId=p.id;});
+cardForm?.addEventListener("submit",async(event)=>{event.preventDefault();const data=Object.fromEntries(new FormData(cardForm));try{await ownerRequest("add-founder-card",{title:data.title,subtitle:data.subtitle,image_url:data.imageUrl,description:data.description,tags:data.tags,links:data.links,date_of_birth:data.dateOfBirth,profile_id:cardForm.dataset.profileId||null});cardForm.reset();delete cardForm.dataset.profileId;await loadCards();ownerStatus.textContent="Public card added to home. ✦";}catch(error){ownerStatus.textContent=error.message;}});
+cardList?.addEventListener("click",async(event)=>{const b=event.target.closest("[data-delete-card]");if(!b||!confirm("Remove this public card from home?"))return;try{await ownerRequest("delete-founder-card",{id:b.dataset.deleteCard});await loadCards();}catch(error){ownerStatus.textContent=error.message;}});
+
 function openEditor(profile) {
   selectedProfile = profile;
   editor.hidden = false;
@@ -73,7 +84,7 @@ editor.addEventListener("click", async (event) => {
     if (deleteAccount && !confirm("This cannot be undone. Delete this user and their profile now?")) return;
     await ownerRequest(deleteAccount ? "delete-account" : role ? "set-role" : badge ? "set-badge" : vipType || removeVip ? "set-vip" : "moderate", deleteAccount ? { id: selectedProfile.id } : role ? { id: selectedProfile.id, role } : badge ? { id: selectedProfile.id, badge, enabled: !selectedProfile[`${badge}_tick`] } : vipType || removeVip ? { id: selectedProfile.id, isVip: !removeVip, vipType } : { id: selectedProfile.id, moderationAction: status });
     ownerStatus.textContent = "Member state updated. ✦";
-    await Promise.all([searchProfiles(), loadAnalytics()]);
+    await Promise.all([searchProfiles(), loadAnalytics(), loadSiteControls(), loadCards()]);
     openEditor(window.ownerProfiles.get(selectedProfile.id) || selectedProfile);
   } catch (error) { ownerStatus.textContent = error.message; }
 });
@@ -84,7 +95,7 @@ editor.addEventListener("click", async (event) => {
   ownerId = session.user.id;
   ownerToken = session.access_token;
   try {
-    await Promise.all([searchProfiles(), loadAnalytics()]);
+    await Promise.all([searchProfiles(), loadAnalytics(), loadSiteControls(), loadCards()]);
     ownerTools.hidden = false;
     ownerStatus.textContent = "Owner access verified. God Mode is ready.";
   } catch (error) { ownerStatus.textContent = error.message; }

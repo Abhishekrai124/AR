@@ -153,6 +153,13 @@ nav .active {
 body[data-theme="sakura"] { --paper: #32142c; --panel: #4c1d3d; --sky: #f9a8d4; --pink: #fbcfe8; }
 body[data-theme="ocean"] { --paper: #082f49; --panel: #0c4a6e; --sky: #67e8f9; --pink: #a5f3fc; }
 body[data-theme="royal"] { --paper: #21123d; --panel: #35205f; --sky: #fde68a; --pink: #d8b4fe; }
+body[data-theme="emerald"] { --paper:#062b24; --panel:#0b4035; --sky:#6ee7b7; --pink:#a7f3d0; }
+body[data-theme="ruby"] { --paper:#2b0b18; --panel:#4a1025; --sky:#fda4af; --pink:#fecdd3; }
+body[data-theme="gold"] { --paper:#2a2108; --panel:#4a3910; --sky:#fde68a; --pink:#fef3c7; }
+body[data-theme="nebula"] { --paper:#17113b; --panel:#29205c; --sky:#c4b5fd; --pink:#f0abfc; }
+body[data-theme="lava"] { --paper:#301008; --panel:#581c0c; --sky:#fdba74; --pink:#fda4af; }
+body[data-theme="cyber"] { --paper:#07141b; --panel:#0b2933; --sky:#67e8f9; --pink:#f0abfc; }
+body[data-theme="retro"] { --paper:#2b1d2e; --panel:#49324d; --sky:#f9a8d4; --pink:#fde68a; }
 .social-form select, .theme-picker select { width: 100%; border: 1px solid var(--line); border-radius: 10px; padding: 11px; background: #0f1d31; color: var(--ink); font: inherit; }
 .theme-picker { display: grid; grid-column: 1 / -1; gap: 7px; color: var(--sky); font-size: .72rem; font-weight: 800; }
 .owner-analytics { display: flex; flex-wrap: wrap; gap: 7px; margin: 0 0 16px; }.owner-analytics span { border: 1px solid var(--line); border-radius: 999px; padding: 6px 9px; color: var(--sky); font: 700 .62rem "DM Mono", monospace; }.owner-person { grid-template-columns: 34px 1fr; }.owner-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 5px; }.owner-actions button:last-child { border-color: #fb7185; color: #fecdd3; }
@@ -894,6 +901,15 @@ footer div {
 .amounts button { border: 1px solid var(--line); border-radius: 8px; padding: 8px 11px; background: rgba(15, 23, 42, 0.4); color: var(--ink); cursor: pointer; font-weight: 800; }
 .amounts button.selected-amount { border-color: var(--lime); color: var(--lime); }
 @media (max-width: 700px) {
+  .owner-panel { padding: 16px 13px; }
+  .owner-form-grid { grid-template-columns: 1fr; }
+  .owner-form-grid .full-width { grid-column: auto; }
+  .owner-section-heading { flex-direction: column; }
+  .owner-card-row { grid-template-columns: 36px 1fr auto; }
+  .owner-card-row img { width:36px; height:36px; }
+  .community-mobile-nav { height: 58px !important; min-height: 58px; align-items: center; }
+  .community-mobile-nav button { min-height: 42px; }
+  .community-page { padding-bottom: 78px; }
   .auth-main {
     padding: 42px 16px;
   }
@@ -909,6 +925,24 @@ footer div {
   .auth-card {
     padding: 28px 22px;
   }
+}
+.owner-panel { margin-top: 20px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: rgba(22,34,56,.72); }
+.owner-section-heading { display:flex; justify-content:space-between; gap:14px; align-items:start; margin-bottom:16px; }
+.owner-section-heading h2 { margin:4px 0; font-size:1.2rem; }
+.owner-section-heading p:not(.eyebrow) { margin:0; color:var(--muted); font-size:.72rem; }
+.owner-save-state { color:var(--lime); font-size:.68rem; white-space:nowrap; }
+.owner-form-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.owner-form-grid .full-width { grid-column:1/-1; }
+.owner-form-grid textarea { min-height:70px; resize:vertical; }
+.owner-card-list { display:grid; gap:8px; margin-top:16px; }
+.owner-card-row { display:grid; grid-template-columns:42px 1fr auto; gap:10px; align-items:center; padding:8px; border:1px solid var(--line); border-radius:10px; }
+.owner-card-row img { width:42px; height:42px; border-radius:9px; object-fit:cover; }
+.owner-card-row b,.owner-card-row small { display:block; }.owner-card-row small { color:var(--muted); font-size:.65rem; }
+@media (max-width: 700px) {
+  .owner-panel { padding: 16px 13px; }
+  .owner-form-grid { grid-template-columns: 1fr; }
+  .owner-form-grid .full-width { grid-column: auto; }
+  .owner-section-heading { flex-direction: column; }
 }
 @media (max-width: 700px) {
   header {

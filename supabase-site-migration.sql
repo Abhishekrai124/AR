@@ -20,6 +20,15 @@ create table if not exists public.founder_cards (
   order_index int default 0,
   created_at timestamptz default now()
 );
+alter table public.site_settings add column if not exists founder_name text default 'Abhishek Rai';
+alter table public.site_settings add column if not exists founder_role text default 'Founder & CEO';
+alter table public.site_settings add column if not exists founder_note text default 'A little prince building big digital dreams ✿';
+alter table public.site_settings add column if not exists founder_tags text default 'AR · Parent Company\nRaiGenZ Foundation\nAR Tech Solutions';
+alter table public.site_settings add column if not exists founder_links text default '';
+alter table public.founder_cards add column if not exists tags text default '';
+alter table public.founder_cards add column if not exists links text default '';
+alter table public.founder_cards add column if not exists date_of_birth date;
+alter table public.founder_cards add column if not exists profile_id uuid;
 
 -- Enable RLS
 alter table public.site_settings enable row level security;

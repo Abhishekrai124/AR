@@ -9,9 +9,10 @@
     <main class="auth-main"><section class="auth-card owner-card"><p class="eyebrow">Private owner studio</p><h1>Care for your <em>community.</em></h1><p class="auth-copy" id="ownerStatus">Checking secure owner access…</p><div id="ownerTools" hidden>
     <div id="ownerAnalytics" class="owner-analytics"></div>
     
-    <div class="owner-section">
-      <p class="eyebrow">Site Wide Settings</p>
-      <label class="social-form">Global Site Theme 
+    <section class="owner-section owner-panel">
+      <div class="owner-section-heading"><div><p class="eyebrow">1 · Home appearance</p><h2>Global look & founder card</h2><p>These changes appear on the public home page.</p></div><span class="owner-save-state" id="siteSaveState">Loading…</span></div>
+      <form id="siteSettingsForm" class="social-form owner-form-grid">
+      <label>Global Site Theme
         <select id="globalThemeSelect">
           <option value="midnight">Midnight</option>
           <option value="sakura">Sakura</option>
@@ -26,16 +27,33 @@
           <!-- (Themes match style.css) -->
         </select>
       </label>
-      <label class="social-form">King Photo URL (Home Page)
+      <label>Founder photo URL
         <input id="siteHeroPic" placeholder="URL to founder image" />
       </label>
-      <button id="saveGlobalSettings" class="button primary">Save Global Settings</button>
-    </div>
+      <label>Founder name<input id="founderName" placeholder="Abhishek Rai" /></label>
+      <label>Founder label / role<input id="founderRole" placeholder="Founder & CEO" /></label>
+      <label class="full-width">Founder note<textarea id="founderNote" maxlength="240" placeholder="A short line below the role"></textarea></label>
+      <label class="full-width">Tags (one per line)<textarea id="founderTags" maxlength="500" placeholder="AR · Parent Company"></textarea></label>
+      <label class="full-width">Links (one per line: Label | https://…)<textarea id="founderLinks" maxlength="1500" placeholder="Email | mailto:hello@example.com"></textarea></label>
+      <button class="button primary" type="submit">Save home appearance <b>↗</b></button></form>
+    </section>
 
-    <div class="owner-section" style="margin-top:20px;">
-      <p class="eyebrow">Manage Cards</p>
-      <button id="addFounderCard" class="button">Add New Card to Home Page</button>
-    </div>
+    <section class="owner-section owner-panel">
+      <div class="owner-section-heading"><div><p class="eyebrow">2 · Public spotlight cards</p><h2>Add a community member or a new person</h2><p>Search a username to prefill their public profile, or enter a complete custom card.</p></div></div>
+      <form id="publicCardForm" class="social-form owner-form-grid">
+        <label class="full-width">Community username (optional)<input id="cardUsername" placeholder="e.g. arrai" autocomplete="off" /><small id="cardUserHint">Type a username, then choose a result to fill the card.</small></label>
+        <div id="cardUserResults" class="people-results full-width"></div>
+        <label>Display name<input name="title" required maxlength="80" placeholder="Person's name" /></label>
+        <label>Label / business<input name="subtitle" maxlength="120" placeholder="Founder · AR Studio" /></label>
+        <label>Photo URL<input name="imageUrl" maxlength="1000" placeholder="https://…" /></label>
+        <label>Date of birth (optional)<input name="dateOfBirth" type="date" /></label>
+        <label class="full-width">Bio / description<textarea name="description" maxlength="400" placeholder="Their short public introduction"></textarea></label>
+        <label class="full-width">Tags (one per line)<textarea name="tags" maxlength="500" placeholder="Creator\nMumbai"></textarea></label>
+        <label class="full-width">Links (one per line: Label | URL)<textarea name="links" maxlength="1500" placeholder="Instagram | https://instagram.com/…"></textarea></label>
+        <button class="button primary" type="submit">Add public card <b>↗</b></button>
+      </form>
+      <div id="publicCardList" class="owner-card-list"></div>
+    </section>
 
     <hr style="margin:20px 0; border:0; border-top:1px solid var(--line);" />
 

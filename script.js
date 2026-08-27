@@ -125,6 +125,27 @@ const localAssistantReply = (question) => {
   return "I’m Miss Makima, your gentle AR guide. I can help with AR, Abhishek Rai, services, projects, chess or contacting the team. For live web-researched replies, add the optional AI keys in AI_SETUP.md. ✿";
 };
 
+// Public home content is editable from Owner Studio and remains readable without login.
+const loadPublicHomeContent = async () => {
+  if (!document.querySelector("#founderCards") || !window.arraiSupabase) return;
+  const safe = (value) => { const el = document.createElement("div"); el.textContent = value || ""; return el.innerHTML; };
+  const [{ data: settings }, { data: cards }] = await Promise.all([
+    window.arraiSupabase.from("site_settings").select("*").eq("id", "global").maybeSingle(),
+    window.arraiSupabase.from("founder_cards").select("*").order("order_index", { ascending: true })
+  ]);
+  if (settings) {
+    document.body.dataset.theme = settings.global_theme || "midnight";
+    const pic = document.querySelector("#heroFounderPic"); if (pic && settings.hero_image_url) pic.src = settings.hero_image_url;
+    const name = document.querySelector("#founder-title span"); if (name && settings.founder_name) name.textContent = settings.founder_name;
+    const role = document.querySelector(".founder-role"); if (role && settings.founder_role) role.textContent = settings.founder_role;
+    const note = document.querySelector(".founder-note"); if (note && settings.founder_note) note.textContent = settings.founder_note;
+    const tags = document.querySelector(".founder-tags"); if (tags && settings.founder_tags) tags.innerHTML = String(settings.founder_tags).split(/\r?\n/).filter(Boolean).map(t => `<span>${safe(t)}</span>`).join("");
+    const links = document.querySelector(".founder-connect"); if (links && settings.founder_links !== undefined && settings.founder_links !== null) links.innerHTML = String(settings.founder_links).split(/\r?\n/).map(x=>x.split("|")).filter(x=>x[0]&&x[1]).map(x=>`<a href="${safe(x[1].trim())}" target="_blank" rel="noreferrer">${safe(x[0].trim())}</a>`).join("");
+  }
+  if (cards?.length) cards.forEach((card) => { const node = document.createElement("article"); node.className = "founder-card public-founder-card"; node.innerHTML = `<div class="founder-photo-frame"><img src="${safe(card.image_url || "assets/founder.jpg")}" alt="${safe(card.title)}" /></div><p class="eyebrow">Community spotlight</p><h2 class="prince-name"><span>${safe(card.title)}</span></h2><p class="founder-role">${safe(card.subtitle || "")}</p><p class="founder-note">${safe(card.description || "")}</p><div class="founder-tags">${String(card.tags || "").split(/\r?\n/).filter(Boolean).map(t=>`<span>${safe(t)}</span>`).join("")}</div><div class="founder-connect">${String(card.links || "").split(/\r?\n/).map(x=>x.split("|")).filter(x=>x[0]&&x[1]).map(x=>`<a href="${safe(x[1].trim())}" target="_blank" rel="noreferrer">${safe(x[0].trim())}</a>`).join("")}</div>`; document.querySelector("#founderCards").append(node); });
+};
+loadPublicHomeContent().catch(() => {});
+
 const mountAssistant = () => {
   const shell = document.createElement("section");
   shell.innerHTML = `

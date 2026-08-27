@@ -117,6 +117,7 @@ export default async function handler(request, response) {
       if (request.body.hero_image_url) changes.hero_image_url = String(request.body.hero_image_url);
       if (request.body.global_theme) changes.global_theme = String(request.body.global_theme);
       if (request.body.site_name) changes.site_name = String(request.body.site_name);
+      for (const key of ["founder_name", "founder_role", "founder_note", "founder_tags", "founder_links"]) if (request.body[key] !== undefined) changes[key] = String(request.body[key]).slice(0, 2000);
       
       const upstream = await fetch(`${supabaseUrl}/rest/v1/site_settings?id=eq.global`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify(changes) });
       if (!upstream.ok) throw new Error("Could not update site settings.");
@@ -127,7 +128,7 @@ export default async function handler(request, response) {
       return response.status(200).json(await upstream.json());
     }
     if (request.body.action === "add-founder-card") {
-      const card = { title: String(request.body.title || "New Card"), subtitle: String(request.body.subtitle || ""), description: String(request.body.description || ""), image_url: String(request.body.image_url || "") };
+      const card = { title: String(request.body.title || "New Card").slice(0,80), subtitle: String(request.body.subtitle || "").slice(0,120), description: String(request.body.description || "").slice(0,400), image_url: String(request.body.image_url || "").slice(0,1000), tags: String(request.body.tags || "").slice(0,500), links: String(request.body.links || "").slice(0,1500), date_of_birth: /^\d{4}-\d{2}-\d{2}$/.test(String(request.body.date_of_birth || "")) ? request.body.date_of_birth : null, profile_id: request.body.profile_id || null };
       const upstream = await fetch(`${supabaseUrl}/rest/v1/founder_cards`, { method: "POST", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify(card) });
       if (!upstream.ok) throw new Error("Could not add founder card.");
       return response.status(200).json({ ok: true });
