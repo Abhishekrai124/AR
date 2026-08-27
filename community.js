@@ -370,11 +370,12 @@ $("#themeSelect").addEventListener("change", async (event) => {
 $("#postForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
-    const data = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const data = new FormData(form);
     const imageUrl = await uploadImage("post-media", data.get("image"));
     const { error } = await db.from("posts").insert({ author_id: user.sub, body: data.get("body").trim(), image_url: imageUrl });
     if (error) throw error;
-    event.currentTarget.reset();
+    form.reset();
     await loadPosts();
     say("Post published.", "success");
   } catch (error) { say(error.message, "error"); }
@@ -388,12 +389,13 @@ async function loadReels() {
 $("#reelForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   try {
-    const data = new FormData(event.currentTarget), video = data.get("video");
+    const form = event.currentTarget;
+    const data = new FormData(form), video = data.get("video");
     if (video.size > 75 * 1024 * 1024) throw new Error("Reels must be 75 MB or smaller.");
     const videoUrl = await uploadImage("reel-media", video);
     const { error } = await db.from("reels").insert({ author_id: user.sub, video_url: videoUrl, caption: data.get("caption").trim() });
     if (error) throw error;
-    event.currentTarget.reset(); await loadReels(); say("Reel published. ✦", "success");
+    form.reset(); await loadReels(); say("Reel published. ✦", "success");
   } catch (error) { say(error.message, "error"); }
 });
 $("#reelFeed").addEventListener("click", async (event) => {
@@ -457,12 +459,13 @@ $("#peopleResults").addEventListener("click", (event) => {
 
 $("#messageForm").addEventListener("submit", async (event) => {
   event.preventDefault();
-  const input = event.currentTarget.elements.body;
-  const attachment = event.currentTarget.elements.attachment.files[0];
+  const form = event.currentTarget;
+  const input = form.elements.body;
+  const attachment = form.elements.attachment.files[0];
   const mediaUrl = attachment ? await uploadImage("dm-media", attachment) : null;
   const { error } = await db.rpc("send_media_message", { recipient: activeChat.id, message_body: input.value.trim(), media_url: mediaUrl, media_type: attachment?.type || null });
   if (error) return say(error.message, "error");
-  event.currentTarget.reset();
+  form.reset();
   await loadMessages();
 });
 $("#voiceText").addEventListener("click", () => {
