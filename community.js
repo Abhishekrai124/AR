@@ -31,11 +31,11 @@ function avatar(profileData) {
   if (profileData.avatar_url) return profileData.avatar_url;
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.display_name)}&background=38bdf8&color=0f172a&bold=true`;
 }
-const badge = (profileData) => profileData?.vip_badge === "purchased" ? '<span class="verified gold" title="Gold VIP">✓</span>' : profileData?.vip_badge === "owner_granted" ? '<span class="verified blue" title="Owner VIP">✓</span>' : "";
+const badge = (profileData) => `${profileData?.blue_tick ? '<span class="verified blue" title="Blue tick">✓</span>' : ""}${profileData?.gold_tick ? '<span class="verified gold" title="Gold tick">✓</span>' : ""}`;
 
 async function openProfile(profileId) {
   const [{ data: person, error }, { count: followerCount }, { count: followingCount }, { data: posts, error: postError }, { data: followers, error: followerError }, { data: following, error: followingError }] = await Promise.all([
-    db.from("profiles").select("id, username, display_name, bio, avatar_url, is_vip, vip_badge, created_at").eq("id", profileId).single(),
+    db.from("profiles").select("id, username, display_name, bio, avatar_url, is_vip, blue_tick, gold_tick, created_at").eq("id", profileId).single(),
     db.from("follows").select("*", { count: "exact", head: true }).eq("following_id", profileId),
     db.from("follows").select("*", { count: "exact", head: true }).eq("follower_id", profileId),
     db.from("posts").select("id, body, image_url, created_at").eq("author_id", profileId).order("created_at", { ascending: false }).limit(24),
@@ -43,8 +43,17 @@ async function openProfile(profileId) {
     db.from("follows").select("profiles!follows_following_id_fkey(username, display_name, avatar_url)").eq("follower_id", profileId).limit(24),
   ]);
   if (error || postError || followerError || followingError) throw error || postError || followerError || followingError;
+  if (person.privacy === "private" && profileId !== user.sub) {
+    const { data: access, error: accessError } = await db.from("follows").select("following_id").eq("follower_id", user.sub).eq("following_id", profileId).maybeSingle();
+    if (accessError) throw accessError;
+    if (!access) {
+      $("#profileDetails").innerHTML = `<section class="instagram-profile"><img class="profile-hero-avatar" src="${avatar(person)}" alt="" /><div><p class="eyebrow">Private account</p><h2>${escapeHtml(person.display_name)} ${badge(person)}</h2><p class="profile-handle">@${escapeHtml(person.username)}</p><p>This profile is visible to approved followers only.</p></div></section>`;
+      return $("#profileDialog").showModal();
+    }
+  }
   const memberList = (rows, key) => (rows || []).map((row) => row.profiles).filter(Boolean).map((member) => `<span class="profile-member"><img src="${avatar(member)}" alt="" />${escapeHtml(member.display_name)} <small>@${escapeHtml(member.username)}</small></span>`).join("") || '<span class="empty-state">None yet</span>';
   $("#profileDetails").innerHTML = `<section class="instagram-profile"><img class="profile-hero-avatar" src="${avatar(person)}" alt="" /><div><p class="eyebrow">${person.is_vip ? "✦ VIP member" : "AR member"}</p><h2>${escapeHtml(person.display_name)}</h2><p class="profile-handle">@${escapeHtml(person.username)}</p><p>${escapeHtml(person.bio || "No bio yet.")}</p><div class="profile-stats"><span><b>${posts.length}</b> posts</span><span><b>${followerCount || 0}</b> followers</span><span><b>${followingCount || 0}</b> following</span></div></div></section><section class="profile-lists"><div><p class="eyebrow">Followers</p>${memberList(followers, "follower")}</div><div><p class="eyebrow">Following</p>${memberList(following, "following")}</div></section><section class="profile-posts"><p class="eyebrow">Posts</p>${posts.length ? posts.map((post) => `<article class="social-card"><small>${new Date(post.created_at).toLocaleDateString()}</small><p>${escapeHtml(post.body)}</p>${post.image_url ? `<img src="${post.image_url}" alt="Member post" />` : ""}</article>`).join("") : '<p class="empty-state">No posts yet.</p>'}</section>`;
+  $("#profileDetails h2").insertAdjacentHTML("beforeend", ` ${badge(person)}`);
   $("#profileDialog").showModal();
 }
 
@@ -88,7 +97,7 @@ async function loadProfile() {
 async function loadPosts() {
   const { data, error } = await db
     .from("posts")
-    .select("id, author_id, body, image_url, created_at, profiles!posts_author_id_fkey(id, username, display_name, avatar_url, vip_badge)")
+    .select("id, author_id, body, image_url, created_at, profiles!posts_author_id_fkey(id, username, display_name, avatar_url, blue_tick, gold_tick)")
     .order("created_at", { ascending: false })
     .limit(30);
   if (error) throw error;
@@ -283,6 +292,20 @@ function subscribeToCalls() {
   callChannel = db.channel(`calls:${user.sub}`).on("postgres_changes", { event: "INSERT", schema: "public", table: "call_signals" }, (payload) => handleCallSignal(payload.new).catch((error) => say(error.message, "error"))).subscribe();
 }
 
+async function openAccountSettings() {
+  const [{ count: postCount }, { count: followerCount }, { count: followingCount }] = await Promise.all([
+    db.from("posts").select("*", { count: "exact", head: true }).eq("author_id", user.sub),
+    db.from("follows").select("*", { count: "exact", head: true }).eq("following_id", user.sub),
+    db.from("follows").select("*", { count: "exact", head: true }).eq("follower_id", user.sub),
+  ]);
+  const form = $("#accountForm");
+  form.elements.privacy.value = profile.privacy || "public";
+  form.elements.bio.value = profile.bio || "";
+  form.elements.theme.value = profile.theme || "midnight";
+  $("#accountActivity").innerHTML = `<span><b>${postCount || 0}</b> posts</span><span><b>${followerCount || 0}</b> followers</span><span><b>${followingCount || 0}</b> following</span>`;
+  $("#accountDialog").showModal();
+}
+
 $("#profileForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
@@ -292,6 +315,34 @@ $("#profileForm").addEventListener("submit", async (event) => {
     await Promise.all([loadPosts(), searchPeople()]);
     subscribeToCalls();
   }
+});
+
+$("#accountSettings").addEventListener("click", () => openAccountSettings().catch((error) => say(error.message, "error")));
+$("#closeAccount").addEventListener("click", () => $("#accountDialog").close());
+$("#accountForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(event.currentTarget);
+  const theme = data.get("theme");
+  if (theme !== "midnight" && !profile.is_vip && !isOwner()) return say("Exclusive themes are available with VIP membership.", "error");
+  const { error } = await db.from("profiles").update({ privacy: data.get("privacy"), bio: data.get("bio").trim(), theme }).eq("id", user.sub);
+  if (error) return say(error.message, "error");
+  Object.assign(profile, { privacy: data.get("privacy"), bio: data.get("bio").trim(), theme });
+  document.body.dataset.theme = theme;
+  $("#themeSelect").value = theme;
+  $("#accountDialog").close();
+  say("Account settings saved. ✦", "success");
+});
+$("#deleteMyAccount").addEventListener("click", async () => {
+  if (!confirm("Permanently delete your account and all community content? This cannot be undone.")) return;
+  if (!confirm("Final confirmation: delete my account now.")) return;
+  try {
+    const { data: { session } } = await db.auth.getSession();
+    const response = await fetch("/api/account", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token || ""}` }, body: JSON.stringify({ action: "delete-my-account" }) });
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || "Account deletion failed.");
+    await db.auth.signOut();
+    window.location.assign("index.html");
+  } catch (error) { say(error.message, "error"); }
 });
 
 $("#avatarInput").addEventListener("change", async (event) => {
@@ -327,7 +378,7 @@ $("#postForm").addEventListener("submit", async (event) => {
 });
 
 async function loadReels() {
-  const { data, error } = await db.from("reels").select("id, author_id, video_url, caption, profiles!reels_author_id_fkey(id, username, display_name, avatar_url, vip_badge)").order("created_at", { ascending: false }).limit(18);
+  const { data, error } = await db.from("reels").select("id, author_id, video_url, caption, profiles!reels_author_id_fkey(id, username, display_name, avatar_url, blue_tick, gold_tick)").order("created_at", { ascending: false }).limit(18);
   if (error) throw error;
   $("#reelFeed").innerHTML = data.map((reel) => `<article class="social-card reel"><video src="${reel.video_url}" controls playsinline preload="metadata"></video><p><button type="button" class="profile-link" data-profile="${reel.profiles.id}">${escapeHtml(reel.profiles.display_name)} ${badge(reel.profiles)}</button> @${escapeHtml(reel.profiles.username)}</p><p>${escapeHtml(reel.caption)}</p>${reel.author_id === user.sub ? `<button class="follow-button" type="button" data-delete-reel="${reel.id}">Delete reel</button>` : ""}</article>`).join("");
 }

@@ -17,7 +17,7 @@
       </nav>
     </header>
     <main class="community-wrap">
-      <section class="community-hero"><div><p class="eyebrow">Arrai community</p><h1>Your people,<br /><em>your space.</em></h1></div><button class="text-button" id="logoutButton">Sign out</button></section>
+      <section class="community-hero"><div><p class="eyebrow">Arrai community</p><h1>Your people,<br /><em>your space.</em></h1></div><div class="community-header-actions"><button class="text-button" id="accountSettings">Account settings</button><button class="text-button" id="logoutButton">Sign out</button></div></section>
       <p class="community-status" id="communityStatus" aria-live="polite">Loading your profile…</p>
       <section class="founder-spotlight" aria-label="Community founder profile"><img src="assets/founder.jpg" alt="Abhishek Rai" /><div><p class="eyebrow">Community host</p><h2>Abhishek Rai</h2><p>@AR · Founder &amp; CEO</p></div><span>✦ A dreamy space for kind ideas</span></section>
       <section id="profileSetup" class="social-card profile-setup" hidden>
@@ -54,6 +54,7 @@
       <div class="call-actions"><button class="button primary" id="acceptCall" type="button" hidden>Accept <b>↗</b></button><button class="button" id="endCall" type="button">End call</button></div>
     </dialog>
     <dialog class="profile-dialog" id="profileDialog"><button class="close-dialog" id="closeProfile" aria-label="Close profile">×</button><div id="profileDetails"></div></dialog>
+    <dialog class="profile-dialog account-dialog" id="accountDialog"><button class="close-dialog" id="closeAccount" aria-label="Close account settings">×</button><p class="eyebrow">User account settings</p><h2>Your community controls</h2><form class="social-form" id="accountForm"><label>Profile privacy <select name="privacy"><option value="public">Public — anyone in the community can see your posts</option><option value="private">Private — approved followers only</option></select></label><label>Bio <textarea name="bio" maxlength="180" placeholder="A little about you"></textarea></label><label>Theme <select name="theme"><option value="midnight">Midnight</option><option value="sakura">Sakura (VIP)</option><option value="ocean">Ocean (VIP)</option><option value="royal">Royal (VIP)</option></select></label><p class="account-help">Username, date of birth, and gender are locked after setup. Contact Owner Studio if a correction is needed.</p><div class="account-activity" id="accountActivity"></div><button class="button primary" type="submit">Save settings <b>↗</b></button></form><section class="danger-zone"><p class="eyebrow">Danger zone</p><p>Deleting your account permanently removes your profile, posts, messages, and community access.</p><button class="follow-button" id="deleteMyAccount" type="button">Delete my account</button></section></dialog>
     <footer><a class="brand" href="index.html">ar<span>rai</span>.in</a><p>© 2026 Abhishek Rai. All rights reserved.</p><div><a href="privacy.html">Privacy</a><a href="privacy.html#terms">Terms</a></div></footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase.js"></script><script src="script.js"></script><script src="community.js"></script>

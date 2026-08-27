@@ -15,7 +15,7 @@ const ownerRequest = async (action, payload = {}) => {
   return body;
 };
 const renderProfiles = (profiles) => {
-  ownerResults.innerHTML = profiles.length ? profiles.map((profile) => `<button class="owner-result" type="button" data-select="${escapeHtml(profile.id)}"><img src="${escapeHtml(profile.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.display_name)}`)}" alt="" /><span><b>${escapeHtml(profile.display_name)} ${profile.is_vip ? "✦ VIP" : ""}</b><small>@${escapeHtml(profile.username)} · ${escapeHtml(profile.account_status)}</small><small>${escapeHtml(profile.id)}</small></span></button>`).join("") : '<p class="empty-state">No matching profiles.</p>';
+  ownerResults.innerHTML = profiles.length ? profiles.map((profile) => `<button class="owner-result" type="button" data-select="${escapeHtml(profile.id)}"><img src="${escapeHtml(profile.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.display_name)}`)}" alt="" /><span><b>${escapeHtml(profile.display_name)} ${profile.is_vip ? "✦ VIP" : ""}${profile.blue_tick ? " 🔵" : ""}${profile.gold_tick ? " 🟡" : ""}</b><small>@${escapeHtml(profile.username)} · ${escapeHtml(profile.account_status)}</small><small>${escapeHtml(profile.id)}</small></span></button>`).join("") : '<p class="empty-state">No matching profiles.</p>';
   window.ownerProfiles = new Map(profiles.map((profile) => [profile.id, profile]));
 };
 const loadAnalytics = async () => {
@@ -38,7 +38,7 @@ function openEditor(profile) {
   editor.classList.toggle("editing-owner-profile", isOwnerProfile);
   editor.elements.customUsername.disabled = !profile.is_vip && !isOwnerProfile;
   document.querySelector("#vipUsernameHelp").textContent = isOwnerProfile ? "Owner profile: all profile fields are unrestricted." : profile.is_vip ? "VIP custom username is unlocked." : "Grant VIP to unlock this field.";
-  document.querySelector("#ownerRecord").textContent = `ID: ${profile.id} · Joined: ${new Date(profile.created_at).toLocaleString()} · Updated: ${new Date(profile.updated_at || profile.created_at).toLocaleString()} · Status: ${profile.account_status}`;
+  document.querySelector("#ownerRecord").textContent = `ID: ${profile.id} · Joined: ${new Date(profile.created_at).toLocaleString()} · Updated: ${new Date(profile.updated_at || profile.created_at).toLocaleString()} · Status: ${profile.account_status} · VIP: ${profile.is_vip ? "on" : "off"} · Blue tick: ${profile.blue_tick ? "on" : "off"} · Gold tick: ${profile.gold_tick ? "on" : "off"}`;
 }
 
 document.querySelector("#ownerSearch").addEventListener("input", () => searchProfiles().catch((error) => ownerStatus.textContent = error.message));
@@ -62,10 +62,14 @@ editor.addEventListener("click", async (event) => {
   const status = event.target.dataset.status;
   const vipType = event.target.dataset.vipType;
   const removeVip = event.target.matches("[data-vip-remove]");
-  if (!status && !vipType && !removeVip) return;
+  const badge = event.target.dataset.badge;
+  const deleteAccount = event.target.matches("[data-delete-account]");
+  if (!status && !vipType && !removeVip && !badge && !deleteAccount) return;
   try {
-    if (!confirm(`Confirm this Owner Studio action for ${selectedProfile.display_name}?`)) return;
-    await ownerRequest(vipType || removeVip ? "set-vip" : "moderate", vipType || removeVip ? { id: selectedProfile.id, isVip: !removeVip, vipType } : { id: selectedProfile.id, moderationAction: status });
+    const label = deleteAccount ? "permanently delete this account" : "apply this action";
+    if (!confirm(`Confirm: ${label} for ${selectedProfile.display_name}?`)) return;
+    if (deleteAccount && !confirm("This cannot be undone. Delete this user and their profile now?")) return;
+    await ownerRequest(deleteAccount ? "delete-account" : badge ? "set-badge" : vipType || removeVip ? "set-vip" : "moderate", deleteAccount ? { id: selectedProfile.id } : badge ? { id: selectedProfile.id, badge, enabled: !selectedProfile[`${badge}_tick`] } : vipType || removeVip ? { id: selectedProfile.id, isVip: !removeVip, vipType } : { id: selectedProfile.id, moderationAction: status });
     ownerStatus.textContent = "Member state updated. ✦";
     await Promise.all([searchProfiles(), loadAnalytics()]);
     openEditor(window.ownerProfiles.get(selectedProfile.id) || selectedProfile);

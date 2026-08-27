@@ -8,10 +8,16 @@ alter table public.profiles
   add column if not exists theme text not null default 'midnight' check (theme in ('midnight', 'sakura', 'ocean', 'royal')),
   add column if not exists is_vip boolean not null default false,
   add column if not exists vip_badge text not null default 'none' check (vip_badge in ('none', 'owner_granted', 'purchased')),
+  add column if not exists blue_tick boolean not null default false,
+  add column if not exists gold_tick boolean not null default false,
   add column if not exists vip_granted_at timestamptz,
   add column if not exists account_status text not null default 'active' check (account_status in ('active', 'suspended', 'banned', 'dismissed')),
   add column if not exists identity_locked boolean not null default false,
   add column if not exists updated_at timestamptz not null default now();
+
+-- Preserve the visual verification state of existing legacy VIP badges.
+update public.profiles set blue_tick = true where vip_badge = 'owner_granted' and blue_tick = false;
+update public.profiles set gold_tick = true where vip_badge = 'purchased' and gold_tick = false;
 
 -- New sign-ups must complete all identity fields. Existing members stay valid.
 alter table public.profiles drop constraint if exists profiles_identity_complete;
@@ -25,6 +31,14 @@ alter table public.profiles drop constraint if exists profiles_display_name_chec
 alter table public.profiles drop constraint if exists profiles_bio_check;
 alter table public.profiles drop constraint if exists profiles_account_status_check;
 alter table public.profiles add constraint profiles_account_status_check check (account_status in ('active', 'suspended', 'banned', 'dismissed'));
+
+-- A private member's posts are available only to that member and their followers.
+drop policy if exists "Posts are visible to signed-in users" on public.posts;
+create policy "Visible posts respect profile privacy" on public.posts for select to authenticated using (
+  author_id = auth.jwt() ->> 'sub'
+  or exists (select 1 from public.profiles p where p.id = posts.author_id and p.privacy = 'public')
+  or exists (select 1 from public.follows f where f.follower_id = auth.jwt() ->> 'sub' and f.following_id = posts.author_id)
+);
 
 alter table public.direct_messages
   add column if not exists status text not null default 'request' check (status in ('request', 'accepted', 'declined')),

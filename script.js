@@ -97,6 +97,18 @@ const updateNavigationForUser = ({ isAuthenticated, user }) => {
 };
 if (window.arraiAuth) window.arraiAuth.then(updateNavigationForUser).catch(() => updateNavigationForUser({ isAuthenticated: false }));
 else updateNavigationForUser({ isAuthenticated: false });
+const communityPreview = document.querySelector("#communityPreview");
+if (communityPreview && window.arraiAuth) {
+  window.arraiAuth.then(async ({ isAuthenticated, user }) => {
+    if (!isAuthenticated) return;
+    const { data } = await window.arraiSupabase.from("posts").select("body, image_url, created_at, author_id, profiles!posts_author_id_fkey(display_name, username, privacy)").order("created_at", { ascending: false }).limit(12);
+    const post = data?.find((item) => item.author_id === user.id || item.profiles?.privacy !== "private");
+    if (!post) return;
+    const safe = (value) => { const element = document.createElement("div"); element.textContent = value || ""; return element.innerHTML; };
+    document.querySelector("#communityPreviewPost").innerHTML = `<p class="eyebrow">@${safe(post.profiles?.username || "member")} · ${new Date(post.created_at).toLocaleDateString()}</p><h3>${safe(post.profiles?.display_name || "AR member")}</h3><p>${safe(post.body)}</p>${post.image_url ? `<img class="post-image" src="${safe(post.image_url)}" alt="Community post" />` : ""}`;
+    communityPreview.hidden = false;
+  }).catch(() => {});
+}
 if (button && nav)
   button.addEventListener("click", () => {
     const open = nav.classList.toggle("open");
