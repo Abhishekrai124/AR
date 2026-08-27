@@ -134,6 +134,7 @@ const loadPublicHomeContent = async () => {
     window.arraiSupabase.from("founder_cards").select("*").order("order_index", { ascending: true })
   ]);
   if (settings) {
+    if (settings.founder_profile_id) { const { data: founderProfile } = await window.arraiSupabase.from("profiles").select("avatar_url,display_name,username").eq("id", settings.founder_profile_id).maybeSingle(); if (founderProfile) { if (founderProfile.avatar_url) settings.hero_image_url = founderProfile.avatar_url; if (!settings.founder_name) settings.founder_name = founderProfile.display_name; } }
     document.body.dataset.theme = settings.global_theme || "midnight";
     const pic = document.querySelector("#heroFounderPic"); if (pic && settings.hero_image_url) pic.src = settings.hero_image_url;
     const name = document.querySelector("#founder-title span"); if (name && settings.founder_name) name.textContent = settings.founder_name;

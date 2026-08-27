@@ -114,9 +114,11 @@ export default async function handler(request, response) {
     }
     if (request.body.action === "update-site-settings") {
       const changes = {};
-      if (request.body.hero_image_url) changes.hero_image_url = String(request.body.hero_image_url);
-      if (request.body.global_theme) changes.global_theme = String(request.body.global_theme);
-      if (request.body.site_name) changes.site_name = String(request.body.site_name);
+      const themes = ["midnight", "sakura", "ocean", "emerald", "ruby", "gold", "nebula", "lava", "cyber", "retro"];
+      if (request.body.hero_image_url !== undefined) changes.hero_image_url = String(request.body.hero_image_url).slice(0, 2000);
+      if (request.body.global_theme !== undefined) { if (!themes.includes(String(request.body.global_theme))) return response.status(400).json({ error: "Choose a valid site theme." }); changes.global_theme = String(request.body.global_theme); }
+      if (request.body.site_name !== undefined) changes.site_name = String(request.body.site_name).slice(0, 120);
+      if (request.body.founder_username) { const username = String(request.body.founder_username).trim().toLowerCase(); const found = await fetch(`${supabaseUrl}/rest/v1/profiles?username=eq.${encodeURIComponent(username)}&select=id,avatar_url,display_name&limit=1`, { headers: adminHeaders() }); const [profile] = found.ok ? await found.json() : []; if (!profile) return response.status(404).json({ error: "Founder username was not found." }); changes.founder_username = username; changes.founder_profile_id = profile.id; if (!request.body.hero_image_url) changes.hero_image_url = profile.avatar_url || changes.hero_image_url; if (!request.body.founder_name) changes.founder_name = profile.display_name; }
       for (const key of ["founder_name", "founder_role", "founder_note", "founder_tags", "founder_links"]) if (request.body[key] !== undefined) changes[key] = String(request.body[key]).slice(0, 2000);
       
       const upstream = await fetch(`${supabaseUrl}/rest/v1/site_settings?id=eq.global`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify(changes) });
