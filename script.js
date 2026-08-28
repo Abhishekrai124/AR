@@ -21,6 +21,20 @@ window.cuteNotice = (message, type = "success") => {
   document.body.append(notice); requestAnimationFrame(() => notice.classList.add("show"));
   setTimeout(() => { notice.classList.remove("show"); setTimeout(() => notice.remove(), 220); }, 3200);
 };
+// A tiny, calm heads-up for first-time visitors: this cosy corner is still growing.
+if (location.pathname.endsWith("/") || location.pathname.endsWith("index.html")) {
+  const betaKey = "arrai-beta-hello";
+  if (!sessionStorage.getItem(betaKey)) {
+    sessionStorage.setItem(betaKey, "seen");
+    const beta = document.createElement("aside");
+    beta.className = "beta-hello";
+    beta.setAttribute("role", "status");
+    beta.innerHTML = "<span>✦</span><div><b>A tiny beta heads-up</b><p>This dreamy little world is still under construction. A few pixels may be dancing out of line.</p></div>";
+    document.body.append(beta);
+    requestAnimationFrame(() => beta.classList.add("show"));
+    setTimeout(() => { beta.classList.remove("show"); setTimeout(() => beta.remove(), 260); }, 3200);
+  }
+}
 if (!document.querySelector('link[rel="manifest"]')) { const manifest = document.createElement("link"); manifest.rel = "manifest"; manifest.href = "/manifest.webmanifest"; document.head.append(manifest); }
 window.addEventListener("beforeinstallprompt", (event) => { event.preventDefault(); deferredInstallPrompt = event; document.querySelectorAll("[data-install-app]").forEach((item) => item.hidden = false); });
 const installApp = async () => { if (!deferredInstallPrompt) return cuteNotice("Browser menu se ‘Add to Home screen’ choose karein.", "warning"); deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice; deferredInstallPrompt = null; };
@@ -39,6 +53,13 @@ if (nav && !nav.querySelector('[href="community.html"]')) {
   communityLink.textContent = "Community";
   const authLink = nav.querySelector('[href="auth.html"]');
   nav.insertBefore(communityLink, authLink || null);
+}
+if (nav && !nav.querySelector('[href="dm.html"]')) {
+  const dmLink = document.createElement("a");
+  dmLink.href = "dm.html";
+  dmLink.textContent = "DM";
+  const communityLink = nav.querySelector('[href="community.html"]');
+  communityLink?.after(dmLink);
 }
 if (nav && !nav.querySelector('[href="payments.html"]')) {
   const paymentsLink = document.createElement("a");

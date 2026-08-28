@@ -34,6 +34,9 @@ function avatar(profileData) {
 const badge = (profileData) => `${profileData?.community_role === "owner" ? '<span class="owner-tag" title="AR owner">arrai.in · OWNER</span>' : ""}${profileData?.blue_tick ? '<span class="verified blue" title="Blue tick">✓</span>' : ""}${profileData?.gold_tick ? '<span class="verified gold" title="Gold tick">✓</span>' : ""}`;
 
 async function openProfile(profileId) {
+  // Profiles deserve their own peaceful corner, not a cramped popup.
+  window.location.href = `profile.html?id=${encodeURIComponent(profileId)}`;
+  return;
   const [{ data: person, error }, { count: followerCount }, { count: followingCount }, { data: posts, error: postError }, { data: followers, error: followerError }, { data: following, error: followingError }] = await Promise.all([
     db.from("profiles").select("id, username, display_name, bio, avatar_url, is_vip, blue_tick, gold_tick, community_role, created_at").eq("id", profileId).single(),
     db.from("follows").select("*", { count: "exact", head: true }).eq("following_id", profileId),
@@ -145,7 +148,7 @@ async function searchPeople(query = "") {
   $("#peopleResults").innerHTML = people.length
     ? people
         .map(
-          (person) => `<div class="person-row"><img src="${avatar(person)}" alt="" /><div><b>${escapeHtml(person.display_name)}</b><small>@${escapeHtml(person.username)}</small></div><button class="follow-button" data-profile="${person.id}">Profile</button><button class="follow-button" data-follow="${person.id}" data-following="${followed.has(person.id)}">${followed.has(person.id) ? "Following" : "Follow"}</button><button class="message-button" data-message="${person.id}" data-name="${escapeHtml(person.display_name)}">Message</button></div>`,
+          (person) => `<div class="person-row"><img src="${avatar(person)}" alt="" /><div><b>${escapeHtml(person.display_name)}</b><small>@${escapeHtml(person.username)}</small></div><a class="follow-button" href="profile.html?id=${encodeURIComponent(person.id)}">Profile</a><button class="follow-button" data-follow="${person.id}" data-following="${followed.has(person.id)}">${followed.has(person.id) ? "Following" : "Follow"}</button><a class="message-button" href="dm.html?with=${encodeURIComponent(person.id)}">Message</a></div>`,
         )
         .join("")
     : '<p class="empty-state">No people found.</p>';

@@ -1,0 +1,34 @@
+const dm$ = (s) => document.querySelector(s);
+const dmStatus = dm$("#dmStatus");
+let dmDb, dmUser, activePerson, dmRealtime;
+const dmEscape = (value) => { const e = document.createElement("div"); e.textContent = value || ""; return e.innerHTML; };
+const dmAvatar = (p) => p?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(p?.display_name || "AR")}&background=38bdf8&color=0f172a&bold=true`;
+const dmSay = (m, type = "") => { dmStatus.textContent = m; dmStatus.className = `community-status ${type}`; };
+
+async function getChats() {
+  const { data, error } = await dmDb.from("direct_messages").select("sender_id,recipient_id,body,created_at").or(`sender_id.eq.${dmUser.sub},recipient_id.eq.${dmUser.sub}`).order("created_at", { ascending: false }).limit(300);
+  if (error) throw error;
+  const latest = new Map();
+  data.forEach((m) => { const id = m.sender_id === dmUser.sub ? m.recipient_id : m.sender_id; if (!latest.has(id)) latest.set(id, m); });
+  const ids = [...latest.keys()];
+  if (!ids.length) { dm$("#chatList").innerHTML = '<p class="dm-list-empty">No chats yet. Your first hello could be a good one.</p>'; return; }
+  const { data: people, error: peopleError } = await dmDb.from("profiles").select("id,username,display_name,avatar_url").in("id", ids);
+  if (peopleError) throw peopleError;
+  const lookup = new Map((people || []).map((p) => [p.id, p]));
+  dm$("#chatList").innerHTML = ids.map((id) => { const p = lookup.get(id); const m = latest.get(id); if (!p) return ""; return `<button class="chat-row ${activePerson?.id === id ? "active" : ""}" data-person="${id}"><img src="${dmAvatar(p)}" alt="" /><span><b>${dmEscape(p.display_name)}</b><small>${dmEscape(m.body || "Shared a little something")}</small></span><time>${new Date(m.created_at).toLocaleDateString([], { month: "short", day: "numeric" })}</time></button>`; }).join("");
+}
+async function openDm(id) {
+  const { data: person, error } = await dmDb.from("profiles").select("id,username,display_name,avatar_url").eq("id", id).single(); if (error) throw error;
+  activePerson = person; dm$("#dmEmpty").hidden = true; dm$("#dmThread").hidden = false; dm$("#chatName").textContent = person.display_name; dm$("#chatHandle").textContent = `@${person.username} · tap for their dreamy corner`; dm$("#chatAvatar").src = dmAvatar(person); dm$("#openProfile").href = `profile.html?id=${encodeURIComponent(id)}`;
+  await loadThread(); await getChats();
+  if (dmRealtime) dmDb.removeChannel(dmRealtime);
+  dmRealtime = dmDb.channel(`dream-dm:${[dmUser.sub, id].sort().join(":")}`).on("postgres_changes", { event: "INSERT", schema: "public", table: "direct_messages" }, (event) => { if ([event.new.sender_id, event.new.recipient_id].includes(dmUser.sub) && [event.new.sender_id, event.new.recipient_id].includes(id)) { loadThread(); getChats(); } }).subscribe();
+}
+async function loadThread() { if (!activePerson) return; const { data, error } = await dmDb.from("direct_messages").select("sender_id,body,created_at").or(`and(sender_id.eq.${dmUser.sub},recipient_id.eq.${activePerson.id}),and(sender_id.eq.${activePerson.id},recipient_id.eq.${dmUser.sub})`).order("created_at", { ascending: true }); if (error) throw error; dm$("#dmMessages").innerHTML = data.length ? data.map((m) => `<article class="dm-bubble ${m.sender_id === dmUser.sub ? "mine" : "theirs"}"><p>${dmEscape(m.body)}</p><time>${new Date(m.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time></article>`).join("") : '<div class="dm-first-note">No messages here yet. A warm hello goes a long way ✦</div>'; dm$("#dmMessages").scrollTop = dm$("#dmMessages").scrollHeight; }
+async function startDm() { const result = await window.arraiAuth; if (!result.isAuthenticated) { dm$("#dmLogin").hidden = false; dmStatus.hidden = true; return; } dmDb = window.arraiSupabase; dmUser = result.user; const { data: mine } = await dmDb.from("profiles").select("id").eq("id", dmUser.sub).maybeSingle(); if (!mine) { dmSay("Set up your community profile first, then your inbox will bloom.", "error"); return; } dm$("#dmApp").hidden = false; dmSay("Your inbox is ready for tiny adventures.", "success"); await getChats(); const requested = new URLSearchParams(location.search).get("with"); if (requested) await openDm(requested); }
+dm$("#chatList").addEventListener("click", (e) => { const row = e.target.closest("[data-person]"); if (row) openDm(row.dataset.person).catch((x) => dmSay(x.message, "error")); });
+dm$("#newChat").addEventListener("click", () => location.href = "community.html"); dm$("#chatProfile").addEventListener("click", () => { if (activePerson) location.href = `profile.html?id=${encodeURIComponent(activePerson.id)}`; });
+dm$(".dm-suggestions").addEventListener("click", (e) => { if (e.target.matches("button")) { dm$("#dmForm").elements.body.value = e.target.textContent; dm$("#dmForm").elements.body.focus(); } });
+dm$("#dmForm").addEventListener("submit", async (e) => { e.preventDefault(); const body = e.currentTarget.elements.body.value.trim(); if (!body || !activePerson) return; const { error } = await dmDb.from("direct_messages").insert({ sender_id: dmUser.sub, recipient_id: activePerson.id, body }); if (error) return dmSay(error.message, "error"); e.currentTarget.reset(); await loadThread(); await getChats(); });
+dm$("#dmSearch").addEventListener("input", (e) => { const q = e.target.value.toLowerCase(); dm$("#chatList").querySelectorAll(".chat-row").forEach((row) => row.hidden = !row.textContent.toLowerCase().includes(q)); });
+startDm().catch((e) => dmSay(e.message || "Could not open messages.", "error"));

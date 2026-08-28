@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Dreamy private messages on arrai.in." />
+    <title>Dreamy DMs — arrai.in</title><link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="dm-page">
+    <div class="ambient one"></div><div class="ambient two"></div>
+    <header><a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a><button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button><nav><a href="index.html">Home</a><a href="community.html">Community</a><a class="active" href="dm.html">DM</a><a href="contact.html">Contact</a><a href="auth.html">Login / Register</a></nav></header>
+    <main class="dm-wrap">
+      <section class="dm-intro"><div><p class="eyebrow">Dreamy messages</p><h1>Little hellos,<br /><em>kept close.</em></h1><p>Choose a person, send a kind note, and let the conversation wander somewhere nice.</p></div><a class="button" href="community.html">Find people ♡</a></section>
+      <p id="dmStatus" class="community-status" aria-live="polite">Opening your little inbox…</p>
+      <section class="dm-shell" id="dmApp" hidden>
+        <aside class="dm-sidebar"><div class="dm-sidebar-head"><div><p class="eyebrow">Your inbox</p><h2>Chats</h2></div><button type="button" id="newChat" class="text-button">New chat</button></div><label class="dm-search"><span>⌕</span><input id="dmSearch" type="search" placeholder="Search your people" /></label><div id="chatList" class="chat-list"></div></aside>
+        <section class="dm-conversation"><div id="dmEmpty" class="dm-empty"><span>☾</span><h2>Pick a conversation</h2><p>Your messages are waiting patiently, probably sipping imaginary tea.</p><a class="button primary" href="community.html">Meet the community <b>↗</b></a></div><div id="dmThread" hidden><header class="dm-thread-head"><button id="chatProfile" class="dm-person" type="button"><img id="chatAvatar" alt="" /><span><b id="chatName">—</b><small id="chatHandle">Tap to visit profile</small></span></button><a id="openProfile" class="text-button" href="#">Profile ↗</a></header><div id="dmMessages" class="dm-messages"></div><div class="dm-suggestions"><button type="button">Hey, you ✦</button><button type="button">This made me smile ♡</button><button type="button">Let’s build something dreamy</button></div><form id="dmForm" class="dm-compose"><textarea name="body" maxlength="1500" placeholder="Write something sweet…" aria-label="Message"></textarea><button class="button primary" type="submit">Send <b>↗</b></button></form></div></section>
+      </section>
+      <section id="dmLogin" class="social-card dm-login" hidden><p class="eyebrow">One small key needed</p><h2>Sign in to open your inbox.</h2><p>Private messages stay between the people in the conversation. That’s the whole point.</p><a class="button primary" href="auth.html">Login / Register <b>↗</b></a></section>
+    </main>
+    <footer><a class="brand" href="index.html">ar<span>rai</span>.in</a><p>© 2026 Abhishek Rai. All rights reserved.</p><div><a href="mailto:info@arrai.in">info@arrai.in</a><a href="mailto:support@arrai.in">support</a></div></footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase.js"></script><script src="script.js"></script><script src="dm.js"></script>
+  </body>
+</html>
