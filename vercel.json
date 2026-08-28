@@ -1,3 +1,9 @@
 {
-  "cleanUrls": true
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/:username((?!dm$|community$|about$|services$|projects$|contact$|music$|chess$|auth$|owner$|payments$|privacy$|index$)[a-zA-Z0-9_]+)",
+      "destination": "/profile.html"
+    }
+  ]
 }

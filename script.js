@@ -32,7 +32,7 @@ if (location.pathname.endsWith("/") || location.pathname.endsWith("index.html"))
     beta.innerHTML = "<span>✦</span><div><b>A tiny beta heads-up</b><p>This dreamy little world is still under construction. A few pixels may be dancing out of line.</p></div>";
     document.body.append(beta);
     requestAnimationFrame(() => beta.classList.add("show"));
-    setTimeout(() => { beta.classList.remove("show"); setTimeout(() => beta.remove(), 260); }, 3200);
+    setTimeout(() => { beta.classList.remove("show"); setTimeout(() => beta.remove(), 260); }, 5000);
   }
 }
 if (!document.querySelector('link[rel="manifest"]')) { const manifest = document.createElement("link"); manifest.rel = "manifest"; manifest.href = "/manifest.webmanifest"; document.head.append(manifest); }
@@ -56,7 +56,7 @@ if (nav && !nav.querySelector('[href="community.html"]')) {
 }
 if (nav && !nav.querySelector('[href="dm.html"]')) {
   const dmLink = document.createElement("a");
-  dmLink.href = "dm.html";
+  dmLink.href = "/dm";
   dmLink.textContent = "DM";
   const communityLink = nav.querySelector('[href="community.html"]');
   communityLink?.after(dmLink);

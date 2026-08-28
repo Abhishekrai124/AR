@@ -35,7 +35,8 @@ const badge = (profileData) => `${profileData?.community_role === "owner" ? '<sp
 
 async function openProfile(profileId) {
   // Profiles deserve their own peaceful corner, not a cramped popup.
-  window.location.href = `profile.html?id=${encodeURIComponent(profileId)}`;
+  const { data: redirectProfile } = await db.from("profiles").select("username").eq("id", profileId).maybeSingle();
+  window.location.href = redirectProfile?.username ? `/${encodeURIComponent(redirectProfile.username)}` : "profile.html";
   return;
   const [{ data: person, error }, { count: followerCount }, { count: followingCount }, { data: posts, error: postError }, { data: followers, error: followerError }, { data: following, error: followingError }] = await Promise.all([
     db.from("profiles").select("id, username, display_name, bio, avatar_url, is_vip, blue_tick, gold_tick, community_role, created_at").eq("id", profileId).single(),
@@ -148,7 +149,7 @@ async function searchPeople(query = "") {
   $("#peopleResults").innerHTML = people.length
     ? people
         .map(
-          (person) => `<div class="person-row"><img src="${avatar(person)}" alt="" /><div><b>${escapeHtml(person.display_name)}</b><small>@${escapeHtml(person.username)}</small></div><a class="follow-button" href="profile.html?id=${encodeURIComponent(person.id)}">Profile</a><button class="follow-button" data-follow="${person.id}" data-following="${followed.has(person.id)}">${followed.has(person.id) ? "Following" : "Follow"}</button><a class="message-button" href="dm.html?with=${encodeURIComponent(person.id)}">Message</a></div>`,
+          (person) => `<div class="person-row"><img src="${avatar(person)}" alt="" /><div><b>${escapeHtml(person.display_name)}</b><small>@${escapeHtml(person.username)}</small></div><a class="follow-button" href="/${encodeURIComponent(person.username)}">Profile</a><button class="follow-button" data-follow="${person.id}" data-following="${followed.has(person.id)}">${followed.has(person.id) ? "Following" : "Follow"}</button><a class="message-button" href="/dm?with=${encodeURIComponent(person.id)}">Message</a></div>`,
         )
         .join("")
     : '<p class="empty-state">No people found.</p>';
