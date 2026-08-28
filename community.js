@@ -64,7 +64,8 @@ async function openProfile(profileId) {
 }
 
 async function uploadImage(bucket, file) {
-  if (!file) return null;
+  // Empty file inputs arrive as a zero-byte File in some browsers — that is not an upload.
+  if (!file || !file.size) return null;
   const maxSize = bucket === "dm-media" ? 25 : 5;
   if (file.size > maxSize * 1024 * 1024) throw new Error(`${bucket === "dm-media" ? "DM media" : "Images"} must be ${maxSize} MB or smaller.`);
   const extension = file.name.split(".").pop() || "jpg";
@@ -116,7 +117,7 @@ async function loadPosts() {
   const postIds = data.map((post) => post.id);
   const [{ data: comments, error: commentError }, { data: reactions, error: reactionError }] = postIds.length
     ? await Promise.all([
-        db.from("comments").select("id, post_id, body, created_at, author_id, profiles!comments_author_id_fkey(username, display_name, avatar_url)").in("post_id", postIds).order("created_at", { ascending: true }),
+        db.from("comments").select("id, post_id, body, created_at, updated_at, author_id, profiles!comments_author_id_fkey(username, display_name, avatar_url)").in("post_id", postIds).order("created_at", { ascending: true }),
         db.from("post_reactions").select("post_id, user_id").in("post_id", postIds),
       ])
     : [{ data: [], error: null }, { data: [], error: null }];
@@ -130,7 +131,8 @@ async function loadPosts() {
             const postComments = commentsByPost[post.id] || [];
             const postReactions = reactionsByPost[post.id] || [];
             const liked = postReactions.some((reaction) => reaction.user_id === user.sub);
-            return `<article class="social-card post" id="post-${post.id}"><img class="post-avatar" src="${avatar(post.profiles)}" alt="" /><div><button type="button" class="profile-link" data-profile="${post.profiles.id}">${escapeHtml(post.profiles.display_name)} ${badge(post.profiles)}</button><span>@${escapeHtml(post.profiles.username)} · ${new Date(post.created_at).toLocaleDateString()}</span><p>${escapeHtml(post.body)}</p>${post.image_url ? `<img class="post-image" src="${post.image_url}" alt="Post image" />` : ""}<div class="post-tools"><button type="button" data-like="${post.id}" class="${liked ? "liked" : ""}">♡ ${postReactions.length || ""}</button><button type="button" data-share="${post.id}" data-share-text="${escapeHtml(post.body.slice(0, 160))}">↗ Share</button>${post.author_id === user.sub ? `<button type="button" data-delete-post="${post.id}">Delete</button>` : ""}<span>${postComments.length} comment${postComments.length === 1 ? "" : "s"}</span></div><div class="comment-list">${postComments.slice(-3).map((comment) => `<p><b>${escapeHtml(comment.profiles?.display_name || "Member")}</b> ${escapeHtml(comment.body)} ${comment.author_id === user.sub ? `<button type="button" data-delete-comment="${comment.id}">Delete</button>` : ""}</p>`).join("")}</div><form class="comment-form" data-comment-form="${post.id}"><input maxlength="500" required placeholder="Write a kind comment…" /><button type="submit">Send</button></form></div></article>`;
+            const commentMarkup = postComments.slice(-6).map((comment) => { const canManage = comment.author_id === user.sub || post.author_id === user.sub; const wasEdited = comment.updated_at && new Date(comment.updated_at).getTime() - new Date(comment.created_at).getTime() > 1000; return `<article class="comment"><div><b>${escapeHtml(comment.profiles?.display_name || "Member")}</b><time>${new Date(comment.created_at).toLocaleString([], { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" })}${wasEdited ? " · edited" : ""}</time></div><p>${escapeHtml(comment.body)}</p>${comment.author_id === user.sub ? `<button type="button" data-edit-comment="${comment.id}" data-comment-body="${encodeURIComponent(comment.body)}">Edit</button>` : ""}${canManage ? `<button type="button" data-delete-comment="${comment.id}">${comment.author_id === user.sub ? "Delete" : "Remove"}</button>` : ""}</article>`; }).join("");
+            return `<article class="social-card post" id="post-${post.id}"><img class="post-avatar" src="${avatar(post.profiles)}" alt="" /><div><button type="button" class="profile-link" data-profile="${post.profiles.id}">${escapeHtml(post.profiles.display_name)} ${badge(post.profiles)}</button><span>@${escapeHtml(post.profiles.username)} · ${new Date(post.created_at).toLocaleDateString()}</span>${post.body ? `<p>${escapeHtml(post.body)}</p>` : ""}${post.image_url ? `<img class="post-image" src="${post.image_url}" alt="Post image" />` : ""}<div class="post-tools"><button type="button" data-like="${post.id}" class="${liked ? "liked" : ""}">♡ ${postReactions.length || ""}</button><button type="button" data-share="${post.id}" data-share-text="${escapeHtml(post.body.slice(0, 160))}">↗ Share</button>${post.author_id === user.sub ? `<button type="button" data-delete-post="${post.id}">Delete</button>` : ""}<span>${postComments.length} comment${postComments.length === 1 ? "" : "s"}</span></div><div class="comment-list">${commentMarkup}</div><form class="comment-form" data-comment-form="${post.id}"><input maxlength="500" required placeholder="Write a kind comment…" /><button type="submit">Send</button></form></div></article>`;
           },
         )
         .join("")
@@ -381,8 +383,10 @@ $("#postForm").addEventListener("submit", async (event) => {
   try {
     const form = event.currentTarget;
     const data = new FormData(form);
+    const body = data.get("body").trim();
     const imageUrl = await uploadImage("post-media", data.get("image"));
-    const { error } = await db.from("posts").insert({ author_id: user.sub, body: data.get("body").trim(), image_url: imageUrl });
+    if (!body && !imageUrl) throw new Error("Write a little update or choose a photo first.");
+    const { error } = await db.from("posts").insert({ author_id: user.sub, body, image_url: imageUrl });
     if (error) throw error;
     form.reset();
     await loadPosts();
@@ -421,10 +425,12 @@ $("#postFeed").addEventListener("click", async (event) => {
   const profileButton = event.target.closest("[data-profile]");
   const deletePost = event.target.closest("[data-delete-post]");
   const deleteComment = event.target.closest("[data-delete-comment]");
+  const editComment = event.target.closest("[data-edit-comment]");
   try {
     if (profileButton) return openProfile(profileButton.dataset.profile);
     if (deletePost && await window.cuteConfirm("This post will disappear for everyone.", { title: "Delete this post?", danger: true })) { const { error } = await db.from("posts").delete().eq("id", deletePost.dataset.deletePost).eq("author_id", user.sub); if (error) throw error; return loadPosts(); }
-    if (deleteComment && await window.cuteConfirm("Your comment will be removed.", { title: "Delete this comment?", danger: true })) { const { error } = await db.from("comments").delete().eq("id", deleteComment.dataset.deleteComment).eq("author_id", user.sub); if (error) throw error; return loadPosts(); }
+    if (editComment) { const before = decodeURIComponent(editComment.dataset.commentBody || ""); const body = window.prompt("Edit your comment — make it lovely:", before)?.trim(); if (body === undefined || body === before) return; if (!body) return say("A comment cannot be empty.", "error"); const { error } = await db.from("comments").update({ body, updated_at: new Date().toISOString() }).eq("id", editComment.dataset.editComment).eq("author_id", user.sub); if (error) throw error; return loadPosts(); }
+    if (deleteComment && await window.cuteConfirm("This comment will be removed from the conversation.", { title: "Remove this comment?", danger: true })) { const { error } = await db.from("comments").delete().eq("id", deleteComment.dataset.deleteComment); if (error) throw error; return loadPosts(); }
     if (like) {
       const postId = like.dataset.like;
       const alreadyLiked = like.classList.contains("liked");

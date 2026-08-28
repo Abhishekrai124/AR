@@ -70,7 +70,7 @@ export default async function handler(request, response) {
       const id = String(request.body.id || ""); const isVip = request.body.isVip === true;
       const vipType = request.body.vipType === "purchased" ? "purchased" : "owner_granted";
       if (!id) return response.status(400).json({ error: "Profile is required." });
-      const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ is_vip: isVip, vip_badge: isVip ? vipType : "none", vip_granted_at: isVip ? new Date().toISOString() : null }) });
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ is_vip: isVip, blue_tick: isVip, vip_badge: isVip ? vipType : "none", vip_granted_at: isVip ? new Date().toISOString() : null }) });
       if (!upstream.ok) throw new Error("Could not update VIP access.");
       return response.status(200).json({ ok: true });
     }
@@ -140,6 +140,15 @@ export default async function handler(request, response) {
       const id = String(request.body.id || "");
       const upstream = await fetch(`${supabaseUrl}/rest/v1/founder_cards?id=eq.${id}`, { method: "DELETE", headers: adminHeaders() });
       if (!upstream.ok) throw new Error("Could not delete founder card.");
+      return response.status(200).json({ ok: true });
+    }
+    if (request.body.action === "delete-account") {
+      const id = String(request.body.id || "");
+      if (!id || id === owner.id) return response.status(400).json({ error: "The owner account cannot be deleted here." });
+      const profileDelete = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", headers: { ...adminHeaders(), Prefer: "return=minimal" } });
+      if (!profileDelete.ok) throw new Error("Could not delete this profile and its linked content.");
+      const authDelete = await fetch(`${supabaseUrl}/auth/v1/admin/users/${encodeURIComponent(id)}`, { method: "DELETE", headers: adminHeaders() });
+      if (!authDelete.ok) throw new Error("Profile removed, but the login account could not be removed.");
       return response.status(200).json({ ok: true });
     }
     if (request.body.action === "update-founder-card") {
