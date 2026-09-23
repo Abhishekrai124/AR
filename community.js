@@ -36,7 +36,7 @@ const badge = (profileData) => `${profileData?.community_role === "owner" ? '<sp
 async function openProfile(profileId) {
   // Profiles deserve their own peaceful corner, not a cramped popup.
   const { data: redirectProfile } = await db.from("profiles").select("username").eq("id", profileId).maybeSingle();
-  window.location.href = redirectProfile?.username ? `/${encodeURIComponent(redirectProfile.username)}` : "profile.html";
+  window.location.href = redirectProfile?.username ? `/${encodeURIComponent(redirectProfile.username)}` : `profile.html?id=${encodeURIComponent(profileId)}`;
   return;
   const [{ data: person, error }, { count: followerCount }, { count: followingCount }, { data: posts, error: postError }, { data: followers, error: followerError }, { data: following, error: followingError }] = await Promise.all([
     db.from("profiles").select("id, username, display_name, bio, avatar_url, is_vip, blue_tick, gold_tick, community_role, created_at").eq("id", profileId).single(),

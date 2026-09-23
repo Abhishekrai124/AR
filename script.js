@@ -35,6 +35,7 @@ if (location.pathname.endsWith("/") || location.pathname.endsWith("index.html"))
     setTimeout(() => { beta.classList.remove("show"); setTimeout(() => beta.remove(), 260); }, 5000);
   }
 }
+if (!document.querySelector('link[rel="icon"]')) { const icon = document.createElement("link"); icon.rel = "icon"; icon.type = "image/svg+xml"; icon.href = "/assets/app-icon.svg"; document.head.append(icon); }
 if (!document.querySelector('link[rel="manifest"]')) { const manifest = document.createElement("link"); manifest.rel = "manifest"; manifest.href = "/manifest.webmanifest"; document.head.append(manifest); }
 window.addEventListener("beforeinstallprompt", (event) => { event.preventDefault(); deferredInstallPrompt = event; document.querySelectorAll("[data-install-app]").forEach((item) => item.hidden = false); });
 const installApp = async () => { if (!deferredInstallPrompt) return cuteNotice("Browser menu se ‘Add to Home screen’ choose karein.", "warning"); deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice; deferredInstallPrompt = null; };
@@ -74,7 +75,7 @@ const avatarFallback = (name) => `https://ui-avatars.com/api/?name=${encodeURICo
 const makeAccountLink = (user, profile = {}) => {
   const account = document.createElement("a");
   const name = profile.display_name || user?.name || user?.email?.split("@")[0] || "My profile";
-  account.href = "community.html";
+  account.href = "profile.html";
   account.className = "nav-account";
   account.setAttribute("aria-label", `Open ${name}'s profile`);
   const image = document.createElement("img");
