@@ -70,6 +70,7 @@ if (nav && !nav.querySelector('[href="payments.html"]')) {
   nav.insertBefore(paymentsLink, authLink || null);
 }
 if (nav && !nav.querySelector('[href="music.html"]')) { const musicLink = document.createElement("a"); musicLink.href = "music.html"; musicLink.textContent = "Music"; const homeLink = nav.querySelector('[href="index.html"]'); homeLink?.after(musicLink); }
+if (nav && !nav.querySelector('[href="calendar.html"]')) { const calendarLink = document.createElement("a"); calendarLink.href = "calendar.html"; calendarLink.textContent = "Calendar"; const contactLink = nav.querySelector('[href="contact.html"]'); contactLink?.before(calendarLink); }
 const ownerEmail = "abhishekrai6897@gmail.com";
 const avatarFallback = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "AR")}&background=38bdf8&color=0f172a&bold=true`;
 const makeAccountLink = (user, profile = {}) => {

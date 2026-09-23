@@ -13,6 +13,7 @@
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/community", "destination": "/community.html" },
     { "source": "/dm", "destination": "/dm.html" },
+    { "source": "/calendar", "destination": "/calendar.html" },
     { "source": "/:username", "destination": "/profile.html" }
   ]
 }

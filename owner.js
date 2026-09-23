@@ -28,6 +28,11 @@ const loadPrivateContact = async () => {
   details.innerHTML = `<span><b>Personal email</b><br /><a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a></span>${data.phones.map((phone) => `<span><b>Private mobile</b><br /><a href="tel:${escapeHtml(phone)}">${escapeHtml(phone)}</a></span>`).join("")}`;
 };
 const searchProfiles = async () => renderProfiles((await ownerRequest("profiles", { query: document.querySelector("#ownerSearch").value })).profiles);
+const ownerEventList = document.querySelector("#ownerEventList");
+const renderOwnerEvents = (events) => { ownerEventList.innerHTML = events.length ? events.map((event) => `<article class="owner-card-row"><div><b>${escapeHtml(event.title)}</b><small>${escapeHtml(event.event_date)} · ${escapeHtml(event.start_time)} · ${escapeHtml(event.location)}</small></div><button class="follow-button" type="button" data-delete-event="${escapeHtml(event.id)}">Remove</button></article>`).join("") : "<p class=empty-state>No upcoming events yet.</p>"; };
+const loadOwnerEvents = async () => renderOwnerEvents((await ownerRequest("calendar-events")).events);
+document.querySelector("#calendarEventForm")?.addEventListener("submit", async (event) => { event.preventDefault(); try { await ownerRequest("add-calendar-event", Object.fromEntries(new FormData(event.currentTarget))); event.currentTarget.reset(); await loadOwnerEvents(); ownerStatus.textContent = "Calendar event added. ✦"; } catch (error) { ownerStatus.textContent = error.message; } });
+ownerEventList?.addEventListener("click", async (event) => { const button = event.target.closest("[data-delete-event]"); if (!button) return; try { await ownerRequest("delete-calendar-event", { id: button.dataset.deleteEvent }); await loadOwnerEvents(); ownerStatus.textContent = "Calendar event removed."; } catch (error) { ownerStatus.textContent = error.message; } });
 
 const parseLines = (value) => String(value || "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
 const siteForm = document.querySelector("#siteSettingsForm");
@@ -93,7 +98,7 @@ editor.addEventListener("click", async (event) => {
     if (deleteAccount && !(await window.cuteConfirm("This cannot be undone. Delete this user and their profile now?", { title: "Delete this user?", danger: true }))) return;
     await ownerRequest(deleteAccount ? "delete-account" : role ? "set-role" : badge ? "set-badge" : vipType || removeVip ? "set-vip" : "moderate", deleteAccount ? { id: selectedProfile.id } : role ? { id: selectedProfile.id, role } : badge ? { id: selectedProfile.id, badge, enabled: !selectedProfile[`${badge}_tick`] } : vipType || removeVip ? { id: selectedProfile.id, isVip: !removeVip, vipType } : { id: selectedProfile.id, moderationAction: status });
     ownerStatus.textContent = "Member state updated. ✦";
-    await Promise.all([searchProfiles(), loadAnalytics(), loadPrivateContact(), loadSiteControls(), loadCards()]);
+    await Promise.all([searchProfiles(), loadAnalytics(), loadPrivateContact(), loadSiteControls(), loadCards(), loadOwnerEvents()]);
     openEditor(window.ownerProfiles.get(selectedProfile.id) || selectedProfile);
   } catch (error) { ownerStatus.textContent = error.message; }
 });

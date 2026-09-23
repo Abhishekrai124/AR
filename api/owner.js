@@ -26,6 +26,25 @@ export default async function handler(request, response) {
         phones: [process.env.OWNER_PRIVATE_PHONE_PRIMARY, process.env.OWNER_PRIVATE_PHONE_SECONDARY].filter(Boolean),
       });
     }
+    if (request.body.action === "calendar-events") {
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/calendar_events?select=*&order=event_date.asc,start_time.asc`, { headers: adminHeaders() });
+      if (!upstream.ok) throw new Error("Could not load calendar events.");
+      return response.status(200).json({ events: await upstream.json() });
+    }
+    if (request.body.action === "add-calendar-event") {
+      const event = { title: String(request.body.title || "").trim().slice(0, 120), description: String(request.body.description || "").trim().slice(0, 500), event_date: String(request.body.eventDate || ""), start_time: String(request.body.startTime || ""), end_time: String(request.body.endTime || "") || null, location: String(request.body.location || "Online").trim().slice(0, 180), meeting_url: String(request.body.meetingUrl || "").trim().slice(0, 1000) || null };
+      if (!event.title || !/^\d{4}-\d{2}-\d{2}$/.test(event.event_date) || !/^\d{2}:\d{2}/.test(event.start_time)) return response.status(400).json({ error: "Title, date and start time are required." });
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/calendar_events`, { method: "POST", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify(event) });
+      if (!upstream.ok) throw new Error("Could not create calendar event. Run the calendar SQL migration first.");
+      return response.status(200).json({ ok: true });
+    }
+    if (request.body.action === "delete-calendar-event") {
+      const id = String(request.body.id || "");
+      if (!id) return response.status(400).json({ error: "Event id is required." });
+      const upstream = await fetch(`${supabaseUrl}/rest/v1/calendar_events?id=eq.${encodeURIComponent(id)}`, { method: "DELETE", headers: adminHeaders() });
+      if (!upstream.ok) throw new Error("Could not delete calendar event.");
+      return response.status(200).json({ ok: true });
+    }
     if (request.body.action === "profiles") {
       const query = String(request.body.query || "").replace(/[^a-zA-Z0-9_.-]/g, "").slice(0, 50);
       const filter = query ? `&or=(id.eq.${encodeURIComponent(query)},username.ilike.*${encodeURIComponent(query)}*,display_name.ilike.*${encodeURIComponent(query)}*)` : "";

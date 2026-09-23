@@ -32,6 +32,21 @@ alter table public.site_settings add column if not exists founder_links text def
 alter table public.site_settings add column if not exists founder_profile_id uuid;
 alter table public.site_settings add column if not exists founder_username text;
 alter table public.site_settings add column if not exists show_personal_contact boolean not null default false;
+
+create table if not exists public.calendar_events (
+  id uuid primary key default gen_random_uuid(),
+  title text not null check (char_length(title) between 1 and 120),
+  description text not null default '' check (char_length(description) <= 500),
+  event_date date not null,
+  start_time time not null,
+  end_time time,
+  location text not null default 'Online' check (char_length(location) <= 180),
+  meeting_url text,
+  created_at timestamptz not null default now()
+);
+alter table public.calendar_events enable row level security;
+drop policy if exists "Anyone can read calendar events" on public.calendar_events;
+create policy "Anyone can read calendar events" on public.calendar_events for select using (true);
 alter table public.founder_cards add column if not exists tags text default '';
 alter table public.founder_cards add column if not exists links text default '';
 alter table public.founder_cards add column if not exists date_of_birth date;
