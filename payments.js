@@ -3,20 +3,42 @@ const paymentApp = document.querySelector("#paymentApp");
 const payButton = document.querySelector("#payButton");
 let selectedAmount = 49;
 const vipPayButton = document.querySelector("#vipPayButton");
-const notify = (text) => { if ("Notification" in window && Notification.permission === "granted") new Notification("Arrai Pay", { body: text }); };
 
-function setStatus(message, type = "") { paymentStatus.textContent = message; paymentStatus.className = `community-status ${type}`; }
+// Payment UI can be warm and playful, but verification must stay boringly exact.
+// Romance belongs in the copy; money belongs behind server-side checks. 💳
+const notify = (text) => {
+  if ("Notification" in window && Notification.permission === "granted")
+    new Notification("Arrai Pay", { body: text });
+};
 
-document.querySelectorAll("[data-amount]").forEach((button) => button.addEventListener("click", () => {
-  selectedAmount = Number(button.dataset.amount);
-  document.querySelectorAll("[data-amount]").forEach((item) => item.classList.toggle("selected-amount", item === button));
-}));
+function setStatus(message, type = "") {
+  paymentStatus.textContent = message;
+  paymentStatus.className = `community-status ${type}`;
+}
+
+document.querySelectorAll("[data-amount]").forEach((button) =>
+  button.addEventListener("click", () => {
+    selectedAmount = Number(button.dataset.amount);
+    document
+      .querySelectorAll("[data-amount]")
+      .forEach((item) =>
+        item.classList.toggle("selected-amount", item === button),
+      );
+  }),
+);
 
 async function startCheckout(product = "payment") {
   try {
     payButton.disabled = true;
     setStatus("Creating your secure test payment…");
-    const orderResponse = await fetch("/api/payments/create-order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount: product === "vip" ? 45 : selectedAmount, product }) });
+    const orderResponse = await fetch("/api/payments/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: product === "vip" ? 45 : selectedAmount,
+        product,
+      }),
+    });
     const order = await orderResponse.json();
     if (!orderResponse.ok) throw new Error(order.error);
     const checkout = new Razorpay({
@@ -24,29 +46,97 @@ async function startCheckout(product = "payment") {
       amount: order.amount,
       currency: order.currency,
       name: "arrai.in",
-      description: product === "vip" ? "Arrai Gold VIP membership" : "Arrai payment",
+      description:
+        product === "vip" ? "Arrai Gold VIP membership" : "Arrai payment",
       order_id: order.id,
       handler: async (payment) => {
-        const session = (await window.arraiSupabase.auth.getSession()).data.session;
-        const verified = await fetch("/api/payments/verify", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token || ""}` }, body: JSON.stringify({ orderId: payment.razorpay_order_id, paymentId: payment.razorpay_payment_id, signature: payment.razorpay_signature, product }) });
+        const session = (await window.arraiSupabase.auth.getSession()).data
+          .session;
+        const verified = await fetch("/api/payments/verify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token || ""}`,
+          },
+          body: JSON.stringify({
+            orderId: payment.razorpay_order_id,
+            paymentId: payment.razorpay_payment_id,
+            signature: payment.razorpay_signature,
+            product,
+          }),
+        });
         const result = await verified.json();
-        const text = verified.ok && result.verified ? (product === "vip" ? "Payment verified. VIP activation is processing." : product === "recharge" ? "Payment verified. Recharge request is queued." : "Payment verified successfully.") : (result.error || "Payment is pending verification."); setStatus(text, verified.ok ? "success" : "error"); notify(text); localStorage.setItem("arraiLastPayment", JSON.stringify({ text, at: new Date().toISOString(), product }));
+        const text =
+          verified.ok && result.verified
+            ? product === "vip"
+              ? "Payment verified. VIP activation is processing."
+              : product === "recharge"
+                ? "Payment verified. Recharge request is queued."
+                : "Payment verified successfully."
+            : result.error || "Payment is pending verification.";
+        setStatus(text, verified.ok ? "success" : "error");
+        notify(text);
+        localStorage.setItem(
+          "arraiLastPayment",
+          JSON.stringify({ text, at: new Date().toISOString(), product }),
+        );
       },
       theme: { color: "#0284c7" },
     });
-    checkout.on("payment.failed", (response) => setStatus(response.error.description || "Payment failed.", "error"));
+    checkout.on("payment.failed", (response) =>
+      setStatus(response.error.description || "Payment failed.", "error"),
+    );
     checkout.open();
-  } catch (error) { setStatus(error.message || "Could not start payment.", "error"); }
-  finally { payButton.disabled = false; }
+  } catch (error) {
+    setStatus(error.message || "Could not start payment.", "error");
+  } finally {
+    payButton.disabled = false;
+  }
 }
 payButton.addEventListener("click", () => startCheckout());
-document.querySelector("#customAmount")?.addEventListener("input", (event) => { const value = Number(event.target.value); if (value >= 10) selectedAmount = value; });
+document.querySelector("#customAmount")?.addEventListener("input", (event) => {
+  const value = Number(event.target.value);
+  if (value >= 10) selectedAmount = value;
+});
 vipPayButton?.addEventListener("click", () => startCheckout("vip"));
-document.querySelector("#rechargeButton")?.addEventListener("click", () => { const phone = document.querySelector("#rechargePhone").value.replace(/\D/g, ""); const amount = Number(document.querySelector("#rechargeAmount").value); if (!/^\d{10}$/.test(phone)) return setStatus("Enter a valid 10-digit mobile number.", "error"); if (amount < 10 || amount > 5000) return setStatus("Recharge amount must be between ₹10 and ₹5,000.", "error"); startCheckout("recharge"); });
-document.querySelector("#generateUpi")?.addEventListener("click", () => { const amount = Number(document.querySelector("#upiAmount").value); const upi = document.querySelector("#upiId").value.trim(); if (!amount || !upi.includes("@")) return setStatus("Enter a valid amount and UPI ID.", "error"); const data = `upi://pay?pa=${encodeURIComponent(upi)}&pn=Arrai%20VIP&am=${amount.toFixed(2)}&cu=INR`; const qr = document.querySelector("#upiQr"); qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(data)}`; qr.hidden = false; setStatus("UPI QR ready. Confirm payment in your UPI app.", "success"); });
+document.querySelector("#rechargeButton")?.addEventListener("click", () => {
+  const phone = document
+    .querySelector("#rechargePhone")
+    .value.replace(/\D/g, "");
+  const amount = Number(document.querySelector("#rechargeAmount").value);
+  if (!/^\d{10}$/.test(phone))
+    return setStatus("Enter a valid 10-digit mobile number.", "error");
+  if (amount < 10 || amount > 5000)
+    return setStatus(
+      "Recharge amount must be between ₹10 and ₹5,000.",
+      "error",
+    );
+  startCheckout("recharge");
+});
+document.querySelector("#generateUpi")?.addEventListener("click", () => {
+  const amount = Number(document.querySelector("#upiAmount").value);
+  const upi = document.querySelector("#upiId").value.trim();
+  if (!amount || !upi.includes("@"))
+    return setStatus("Enter a valid amount and UPI ID.", "error");
+  const data = `upi://pay?pa=${encodeURIComponent(upi)}&pn=Arrai%20VIP&am=${amount.toFixed(2)}&cu=INR`;
+  const qr = document.querySelector("#upiQr");
+  qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(data)}`;
+  qr.hidden = false;
+  setStatus("UPI QR ready. Confirm payment in your UPI app.", "success");
+});
 
-window.arraiAuth.then(({ isAuthenticated }) => {
-  if (!isAuthenticated) return window.location.assign("auth.html");
-  paymentApp.hidden = false;
-  if ("Notification" in window && Notification.permission === "default") Notification.requestPermission().catch(() => {}); const last = JSON.parse(localStorage.getItem("arraiLastPayment") || "null"); setStatus(last ? `${last.text} · ${new Date(last.at).toLocaleString()}` : "Razorpay checkout ready. Configure live keys before accepting real money.", "success");
-}).catch(() => setStatus("Could not check your sign-in.", "error"));
+window.arraiAuth
+  .then(({ isAuthenticated }) => {
+    if (!isAuthenticated) return window.location.assign("auth.html");
+    paymentApp.hidden = false;
+    if ("Notification" in window && Notification.permission === "default")
+      Notification.requestPermission().catch(() => {});
+    const last = JSON.parse(localStorage.getItem("arraiLastPayment") || "null");
+    setStatus(
+      last
+        ? `${last.text} · ${new Date(last.at).toLocaleString()}`
+        : "Razorpay checkout ready. Configure live keys before accepting real money.",
+      "success",
+    );
+  })
+  .catch(() => setStatus("Could not check your sign-in.", "error"));

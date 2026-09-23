@@ -5,8 +5,16 @@ const switchAuth = document.querySelector("#switchAuth");
 const googleButton = document.querySelector("#googleButton");
 const communityButton = document.querySelector("#communityButton");
 const requestedPage = new URLSearchParams(window.location.search).get("next");
-const nextPage = requestedPage === "chess" ? "chess.html" : requestedPage === "owner" ? "owner.html" : "community.html";
-const authReturn = nextPage === "community.html" ? "" : `?next=${nextPage === "chess.html" ? "chess" : "owner"}`;
+const nextPage =
+  requestedPage === "chess"
+    ? "chess.html"
+    : requestedPage === "owner"
+      ? "owner.html"
+      : "community.html";
+const authReturn =
+  nextPage === "community.html"
+    ? ""
+    : `?next=${nextPage === "chess.html" ? "chess" : "owner"}`;
 
 function showStatus(message, type = "") {
   authStatus.textContent = message;
@@ -24,29 +32,41 @@ window.arraiAuth
       communityButton.hidden = false;
       communityButton.href = "#";
       communityButton.textContent = "Logout";
-      communityButton.addEventListener("click", (event) => {
-        event.preventDefault();
-        window.logout();
-      }, { once: true });
+      communityButton.addEventListener(
+        "click",
+        (event) => {
+          event.preventDefault();
+          window.logout();
+        },
+        { once: true },
+      );
       return;
     }
     showStatus("Continue securely with email and password or Google.");
   })
   .catch(() => {
-    showStatus("Authentication could not start. Please try again shortly.", "error");
+    showStatus(
+      "Authentication could not start. Please try again shortly.",
+      "error",
+    );
   });
 
 switchAuth.addEventListener("click", () => {
   const signingUp = signupForm.hidden;
   signupForm.hidden = !signingUp;
   loginForm.hidden = signingUp;
-  switchAuth.textContent = signingUp ? "I already have an account" : "Create a new account";
+  switchAuth.textContent = signingUp
+    ? "I already have an account"
+    : "Create a new account";
 });
 
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const values = new FormData(loginForm);
-  const { error } = await window.arraiSupabase.auth.signInWithPassword({ email: values.get("email"), password: values.get("password") });
+  const { error } = await window.arraiSupabase.auth.signInWithPassword({
+    email: values.get("email"),
+    password: values.get("password"),
+  });
   if (error) return showStatus(error.message, "error");
   window.location.assign(nextPage);
 });
@@ -54,12 +74,25 @@ loginForm.addEventListener("submit", async (event) => {
 signupForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   const values = new FormData(signupForm);
-  const { error } = await window.arraiSupabase.auth.signUp({ email: values.get("email"), password: values.get("password"), options: { data: { full_name: values.get("name") }, emailRedirectTo: `${window.location.origin}/auth.html${authReturn}` } });
+  const { error } = await window.arraiSupabase.auth.signUp({
+    email: values.get("email"),
+    password: values.get("password"),
+    options: {
+      data: { full_name: values.get("name") },
+      emailRedirectTo: `${window.location.origin}/auth.html${authReturn}`,
+    },
+  });
   if (error) return showStatus(error.message, "error");
-  showStatus("Account created. Check your email to confirm it, then log in.", "success");
+  showStatus(
+    "Account created. Check your email to confirm it, then log in.",
+    "success",
+  );
 });
 
 googleButton.addEventListener("click", async () => {
-  const { error } = await window.arraiSupabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${window.location.origin}/auth.html${authReturn}` } });
+  const { error } = await window.arraiSupabase.auth.signInWithOAuth({
+    provider: "google",
+    options: { redirectTo: `${window.location.origin}/auth.html${authReturn}` },
+  });
   if (error) showStatus(error.message, "error");
 });

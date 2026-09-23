@@ -2,107 +2,469 @@
 <html lang="en">
   <head>
     <link rel="icon" href="/assets/app-icon.svg" type="image/svg+xml" />
-    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Private AR owner controls." /><title>Owner studio — arrai.in</title><link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Private AR owner controls." />
+    <title>Owner studio — arrai.in</title>
+    <link rel="stylesheet" href="style.css" />
   </head>
-  <body class="auth-page"><div class="ambient one"></div><div class="ambient two"></div>
-    <header><a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a><button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button><nav><a href="index.html">Home</a><a href="community.html">Community</a><a class="active" href="owner.html">Owner studio</a></nav></header>
-    <main class="auth-main"><section class="auth-card owner-card"><p class="eyebrow">Private owner studio</p><h1>Care for your <em>community.</em></h1><p class="auth-copy" id="ownerStatus">Checking secure owner access…</p><div id="ownerTools" hidden>
-    <div id="ownerAnalytics" class="owner-analytics"></div>
-    <section class="owner-section owner-panel private-contact-panel">
-      <div class="owner-section-heading"><div><p class="eyebrow">Private contact vault</p><h2>Your personal contact details</h2><p>Visible only after verified owner login. These details are never shown on public pages.</p></div></div>
-      <div id="privateContactDetails" class="owner-analytics"><span>Loading securely…</span></div>
-    </section>
-    
-    <section class="owner-section owner-panel">
-      <div class="owner-section-heading"><div><p class="eyebrow">1 · Home appearance</p><h2>Global look & founder card</h2><p>These changes appear on the public home page.</p></div><span class="owner-save-state" id="siteSaveState">Loading…</span></div>
-      <form id="siteSettingsForm" class="social-form owner-form-grid">
-      <label>Global Site Theme
-        <select id="globalThemeSelect">
-          <option value="midnight">Midnight</option>
-          <option value="sakura">Sakura</option>
-          <option value="ocean">Ocean</option>
-          <option value="emerald">Emerald</option>
-          <option value="ruby">Ruby</option>
-          <option value="gold">Gold</option>
-          <option value="nebula">Nebula</option>
-          <option value="lava">Lava</option>
-          <option value="cyber">Cyber</option>
-          <option value="retro">Retro</option>
-          <!-- (Themes match style.css) -->
-        </select>
-      </label>
-      <label>Founder photo URL
-        <input id="siteHeroPic" placeholder="URL to founder image" />
-      </label>
-      <label>Founder photo upload<input id="founderPicUpload" type="file" accept="image/png,image/jpeg,image/webp" /><small>Upload directly to the avatars bucket.</small></label>
-      <label>Founder community username<input id="founderUsername" placeholder="username to link this founder" /><small id="founderLinkHint">Optional: links the public founder card to this profile.</small></label>
-      <label>Founder name<input id="founderName" placeholder="Abhishek Rai" /></label>
-      <label>Founder label / role<input id="founderRole" placeholder="Founder & CEO" /></label>
-      <label class="full-width">Founder note<textarea id="founderNote" maxlength="240" placeholder="A short line below the role"></textarea></label>
-      <label class="full-width">Tags (one per line)<textarea id="founderTags" maxlength="500" placeholder="AR · Parent Company"></textarea></label>
-      <label class="full-width">Links (one per line: Label | https://…)<textarea id="founderLinks" maxlength="1500" placeholder="Email | mailto:hello@example.com"></textarea></label>
-      <label class="full-width"><input id="showPersonalContact" type="checkbox" /> Show personal contact details to signed-in users <small>Business contacts remain public. Personal email and mobile numbers stay hidden when this is off.</small></label>
-      <button class="button primary" type="submit">Save home appearance <b>↗</b></button></form>
-    </section>
+  <body class="auth-page">
+    <div class="ambient one"></div>
+    <div class="ambient two"></div>
+    <header>
+      <a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a
+      ><button
+        class="menu-button"
+        aria-label="Open navigation"
+        aria-expanded="false"
+      >
+        ☰
+      </button>
+      <nav>
+        <a href="index.html">Home</a><a href="community.html">Community</a
+        ><a class="active" href="owner.html">Owner studio</a>
+      </nav>
+    </header>
+    <main class="auth-main">
+      <section class="auth-card owner-card">
+        <p class="eyebrow">Private owner studio</p>
+        <h1>Care for your <em>community.</em></h1>
+        <p class="auth-copy" id="ownerStatus">Checking secure owner access…</p>
+        <div id="ownerTools" hidden>
+          <div id="ownerAnalytics" class="owner-analytics"></div>
+          <section class="owner-section owner-panel private-contact-panel">
+            <div class="owner-section-heading">
+              <div>
+                <p class="eyebrow">Private contact vault</p>
+                <h2>Your personal contact details</h2>
+                <p>
+                  Visible only after verified owner login. These details are
+                  never shown on public pages.
+                </p>
+              </div>
+            </div>
+            <div id="privateContactDetails" class="owner-analytics">
+              <span>Loading securely…</span>
+            </div>
+          </section>
 
-    <section class="owner-section owner-panel">
-      <div class="owner-section-heading"><div><p class="eyebrow">Special day mode · the big little switch</p><h2>Turn the whole site into their world</h2><p>For birthdays, crushes, love notes and beautifully suspicious amounts of butterflies. It wakes up only on your chosen dates.</p></div></div>
-      <form id="specialDayForm" class="social-form owner-form-grid">
-        <label class="full-width"><input id="specialDayEnabled" type="checkbox" /> Let the butterflies take over</label>
-        <label>From<input id="specialDayStart" type="date" /></label><label>Until<input id="specialDayEnd" type="date" /></label>
-        <label>For someone special<input id="specialDayName" maxlength="100" placeholder="Her name, his name, their name…" /></label>
-        <label>Theme<select id="specialDayTheme"><option value="sakura">Sakura love</option><option value="rose">Rose</option><option value="gold">Golden celebration</option><option value="ocean">Ocean calm</option><option value="midnight">Midnight</option></select></label>
-        <label>Special photo URL<input id="specialDayImageUrl" maxlength="2000" placeholder="Their best photo goes here ✦" /></label>
-        <label>Special role / line<input id="specialDayRole" maxlength="160" placeholder="Professional heart-stealer" /></label>
-        <label class="full-width">Special title<input id="specialDayTitle" maxlength="120" placeholder="Happy birthday, beautiful human ♡" /></label>
-        <label class="full-width">Special message<textarea id="specialDayMessage" maxlength="360" placeholder="Write the kind of line that makes someone smile at their phone…"></textarea></label>
-        <label class="full-width">Special tags<textarea id="specialDayTags" maxlength="500" placeholder="Kind heart\nFavourite human\nMain character energy"></textarea></label>
-        <label class="full-width">Social links<textarea id="specialDayLinks" maxlength="2000" placeholder="Instagram | https://instagram.com/username\nLinkedIn | https://linkedin.com/in/username\nYouTube | https://youtube.com/@username"></textarea><small>Public links only. We can show the doorway; we cannot sneak into someone’s private feed.</small></label>
-        <label class="full-width">Home intro title<input id="specialDayIntroTitle" maxlength="180" placeholder="A little corner made just for her." /></label>
-        <label class="full-width">Home intro text<textarea id="specialDayIntroText" maxlength="500" placeholder="The thought you want the whole internet to quietly understand."></textarea></label>
-        <label class="full-width">Home button text<input id="specialDayCtaTitle" maxlength="100" placeholder="Send a little love" /></label>
-        <button class="button primary" type="submit">Save this tiny universe <b>↗</b></button>
-      </form>
-    </section>
+          <section class="owner-section owner-panel">
+            <div class="owner-section-heading">
+              <div>
+                <p class="eyebrow">1 · Home appearance</p>
+                <h2>Global look & founder card</h2>
+                <p>These changes appear on the public home page.</p>
+              </div>
+              <span class="owner-save-state" id="siteSaveState">Loading…</span>
+            </div>
+            <form id="siteSettingsForm" class="social-form owner-form-grid">
+              <label
+                >Global Site Theme
+                <select id="globalThemeSelect">
+                  <option value="midnight">Midnight</option>
+                  <option value="sakura">Sakura</option>
+                  <option value="ocean">Ocean</option>
+                  <option value="emerald">Emerald</option>
+                  <option value="ruby">Ruby</option>
+                  <option value="gold">Gold</option>
+                  <option value="nebula">Nebula</option>
+                  <option value="lava">Lava</option>
+                  <option value="cyber">Cyber</option>
+                  <option value="retro">Retro</option>
+                  <!-- (Themes match style.css) -->
+                </select>
+              </label>
+              <label
+                >Founder photo URL
+                <input id="siteHeroPic" placeholder="URL to founder image" />
+              </label>
+              <label
+                >Founder photo upload<input
+                  id="founderPicUpload"
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                /><small>Upload directly to the avatars bucket.</small></label
+              >
+              <label
+                >Founder community username<input
+                  id="founderUsername"
+                  placeholder="username to link this founder"
+                /><small id="founderLinkHint"
+                  >Optional: links the public founder card to this
+                  profile.</small
+                ></label
+              >
+              <label
+                >Founder name<input id="founderName" placeholder="Abhishek Rai"
+              /></label>
+              <label
+                >Founder label / role<input
+                  id="founderRole"
+                  placeholder="Founder & CEO"
+              /></label>
+              <label class="full-width"
+                >Founder note<textarea
+                  id="founderNote"
+                  maxlength="240"
+                  placeholder="A short line below the role"
+                ></textarea>
+              </label>
+              <label class="full-width"
+                >Tags (one per line)<textarea
+                  id="founderTags"
+                  maxlength="500"
+                  placeholder="AR · Parent Company"
+                ></textarea>
+              </label>
+              <label class="full-width"
+                >Links (one per line: Label | https://…)<textarea
+                  id="founderLinks"
+                  maxlength="1500"
+                  placeholder="Email | mailto:hello@example.com"
+                ></textarea>
+              </label>
+              <label class="full-width"
+                ><input id="showPersonalContact" type="checkbox" /> Show
+                personal contact details to signed-in users
+                <small
+                  >Business contacts remain public. Personal email and mobile
+                  numbers stay hidden when this is off.</small
+                ></label
+              >
+              <button class="button primary" type="submit">
+                Save home appearance <b>↗</b>
+              </button>
+            </form>
+          </section>
 
-    <section class="owner-section owner-panel">
-      <div class="owner-section-heading"><div><p class="eyebrow">Calendar · because “we’ll see” is not a plan</p><h2>Put the lovely things on the map</h2><p>Add the date, time and place so nobody has to pretend they remembered.</p></div></div>
-      <form id="calendarEventForm" class="social-form owner-form-grid">
-        <label>Event title<input name="title" required maxlength="120" placeholder="AR community session" /></label>
-        <label>Date<input name="eventDate" type="date" required /></label>
-        <label>Start time<input name="startTime" type="time" required /></label>
-        <label>End time<input name="endTime" type="time" /></label>
-        <label>Location<input name="location" maxlength="180" placeholder="Ludhiana / Online" /></label>
-        <label>Meeting link<input name="meetingUrl" type="url" placeholder="https://…" /></label>
-        <label class="full-width">Description<textarea name="description" maxlength="500" placeholder="What is happening?"></textarea></label>
-        <button class="button primary" type="submit">Put it on the calendar <b>↗</b></button>
-      </form>
-      <div id="ownerEventList" class="owner-card-list"></div>
-    </section>
+          <section class="owner-section owner-panel">
+            <div class="owner-section-heading">
+              <div>
+                <p class="eyebrow">Special day mode · the big little switch</p>
+                <h2>Turn the whole site into their world</h2>
+                <p>
+                  For birthdays, crushes, love notes and beautifully suspicious
+                  amounts of butterflies. It wakes up only on your chosen dates.
+                </p>
+              </div>
+            </div>
+            <form id="specialDayForm" class="social-form owner-form-grid">
+              <label class="full-width"
+                ><input id="specialDayEnabled" type="checkbox" /> Let the
+                butterflies take over</label
+              >
+              <label>From<input id="specialDayStart" type="date" /></label
+              ><label>Until<input id="specialDayEnd" type="date" /></label>
+              <label
+                >For someone special<input
+                  id="specialDayName"
+                  maxlength="100"
+                  placeholder="Her name, his name, their name…"
+              /></label>
+              <label
+                >Theme<select id="specialDayTheme">
+                  <option value="sakura">Sakura love</option>
+                  <option value="rose">Rose</option>
+                  <option value="gold">Golden celebration</option>
+                  <option value="ocean">Ocean calm</option>
+                  <option value="midnight">Midnight</option>
+                </select></label
+              >
+              <label
+                >Special photo URL<input
+                  id="specialDayImageUrl"
+                  maxlength="2000"
+                  placeholder="Their best photo goes here ✦"
+              /></label>
+              <label
+                >Special role / line<input
+                  id="specialDayRole"
+                  maxlength="160"
+                  placeholder="Professional heart-stealer"
+              /></label>
+              <label class="full-width"
+                >Special title<input
+                  id="specialDayTitle"
+                  maxlength="120"
+                  placeholder="Happy birthday, beautiful human ♡"
+              /></label>
+              <label class="full-width"
+                >Special message<textarea
+                  id="specialDayMessage"
+                  maxlength="360"
+                  placeholder="Write the kind of line that makes someone smile at their phone…"
+                ></textarea>
+              </label>
+              <label class="full-width"
+                >Special tags<textarea
+                  id="specialDayTags"
+                  maxlength="500"
+                  placeholder="Kind heart\nFavourite human\nMain character energy"
+                ></textarea>
+              </label>
+              <label class="full-width"
+                >Social links<textarea
+                  id="specialDayLinks"
+                  maxlength="2000"
+                  placeholder="Instagram | https://instagram.com/username\nLinkedIn | https://linkedin.com/in/username\nYouTube | https://youtube.com/@username"
+                ></textarea
+                ><small
+                  >Public links only. We can show the doorway; we cannot sneak
+                  into someone’s private feed.</small
+                ></label
+              >
+              <label class="full-width"
+                >Home intro title<input
+                  id="specialDayIntroTitle"
+                  maxlength="180"
+                  placeholder="A little corner made just for her."
+              /></label>
+              <label class="full-width"
+                >Home intro text<textarea
+                  id="specialDayIntroText"
+                  maxlength="500"
+                  placeholder="The thought you want the whole internet to quietly understand."
+                ></textarea>
+              </label>
+              <label class="full-width"
+                >Home button text<input
+                  id="specialDayCtaTitle"
+                  maxlength="100"
+                  placeholder="Send a little love"
+              /></label>
+              <button class="button primary" type="submit">
+                Save this tiny universe <b>↗</b>
+              </button>
+            </form>
+          </section>
 
-    <section class="owner-section owner-panel">
-      <div class="owner-section-heading"><div><p class="eyebrow">2 · Public spotlight cards</p><h2>Add a community member or a new person</h2><p>Search a username to prefill their public profile, or enter a complete custom card.</p></div></div>
-      <form id="publicCardForm" class="social-form owner-form-grid">
-        <label class="full-width">Community username (optional)<input id="cardUsername" placeholder="e.g. arrai" autocomplete="off" /><small id="cardUserHint">Type a username, then choose a result to fill the card.</small></label>
-        <div id="cardUserResults" class="people-results full-width"></div>
-        <label>Display name<input name="title" required maxlength="80" placeholder="Person's name" /></label>
-        <label>Label / business<input name="subtitle" maxlength="120" placeholder="Founder · AR Studio" /></label>
-        <label>Photo URL<input name="imageUrl" maxlength="1000" placeholder="https://…" /></label>
-        <label>Date of birth (optional)<input name="dateOfBirth" type="date" /></label>
-        <label class="full-width">Bio / description<textarea name="description" maxlength="400" placeholder="Their short public introduction"></textarea></label>
-        <label class="full-width">Tags (one per line)<textarea name="tags" maxlength="500" placeholder="Creator\nMumbai"></textarea></label>
-        <label class="full-width">Links (one per line: Label | URL)<textarea name="links" maxlength="1500" placeholder="Instagram | https://instagram.com/…"></textarea></label>
-        <button class="button primary" type="submit">Add public card <b>↗</b></button>
-      </form>
-      <div id="publicCardList" class="owner-card-list"></div>
-    </section>
+          <section class="owner-section owner-panel">
+            <div class="owner-section-heading">
+              <div>
+                <p class="eyebrow">
+                  Calendar · because “we’ll see” is not a plan
+                </p>
+                <h2>Put the lovely things on the map</h2>
+                <p>
+                  Add the date, time and place so nobody has to pretend they
+                  remembered.
+                </p>
+              </div>
+            </div>
+            <form id="calendarEventForm" class="social-form owner-form-grid">
+              <label
+                >Event title<input
+                  name="title"
+                  required
+                  maxlength="120"
+                  placeholder="AR community session"
+              /></label>
+              <label>Date<input name="eventDate" type="date" required /></label>
+              <label
+                >Start time<input name="startTime" type="time" required
+              /></label>
+              <label>End time<input name="endTime" type="time" /></label>
+              <label
+                >Location<input
+                  name="location"
+                  maxlength="180"
+                  placeholder="Ludhiana / Online"
+              /></label>
+              <label
+                >Meeting link<input
+                  name="meetingUrl"
+                  type="url"
+                  placeholder="https://…"
+              /></label>
+              <label class="full-width"
+                >Description<textarea
+                  name="description"
+                  maxlength="500"
+                  placeholder="What is happening?"
+                ></textarea>
+              </label>
+              <button class="button primary" type="submit">
+                Put it on the calendar <b>↗</b>
+              </button>
+            </form>
+            <div id="ownerEventList" class="owner-card-list"></div>
+          </section>
 
-    <hr style="margin:20px 0; border:0; border-top:1px solid var(--line);" />
+          <section class="owner-section owner-panel">
+            <div class="owner-section-heading">
+              <div>
+                <p class="eyebrow">2 · Public spotlight cards</p>
+                <h2>Add a community member or a new person</h2>
+                <p>
+                  Search a username to prefill their public profile, or enter a
+                  complete custom card.
+                </p>
+              </div>
+            </div>
+            <form id="publicCardForm" class="social-form owner-form-grid">
+              <label class="full-width"
+                >Community username (optional)<input
+                  id="cardUsername"
+                  placeholder="e.g. arrai"
+                  autocomplete="off"
+                /><small id="cardUserHint"
+                  >Type a username, then choose a result to fill the
+                  card.</small
+                ></label
+              >
+              <div id="cardUserResults" class="people-results full-width"></div>
+              <label
+                >Display name<input
+                  name="title"
+                  required
+                  maxlength="80"
+                  placeholder="Person's name"
+              /></label>
+              <label
+                >Label / business<input
+                  name="subtitle"
+                  maxlength="120"
+                  placeholder="Founder · AR Studio"
+              /></label>
+              <label
+                >Photo URL<input
+                  name="imageUrl"
+                  maxlength="1000"
+                  placeholder="https://…"
+              /></label>
+              <label
+                >Date of birth (optional)<input name="dateOfBirth" type="date"
+              /></label>
+              <label class="full-width"
+                >Bio / description<textarea
+                  name="description"
+                  maxlength="400"
+                  placeholder="Their short public introduction"
+                ></textarea>
+              </label>
+              <label class="full-width"
+                >Tags (one per line)<textarea
+                  name="tags"
+                  maxlength="500"
+                  placeholder="Creator\nMumbai"
+                ></textarea>
+              </label>
+              <label class="full-width"
+                >Links (one per line: Label | URL)<textarea
+                  name="links"
+                  maxlength="1500"
+                  placeholder="Instagram | https://instagram.com/…"
+                ></textarea>
+              </label>
+              <button class="button primary" type="submit">
+                Add public card <b>↗</b>
+              </button>
+            </form>
+            <div id="publicCardList" class="owner-card-list"></div>
+          </section>
 
-    <button id="ownerSelf" class="button" type="button">Edit my unrestricted profile</button>
-<label class="social-form">God Mode search<input id="ownerSearch" placeholder="Username or exact user ID" /></label><div id="ownerResults" class="people-results"></div><form id="ownerEditor" class="social-form owner-editor" hidden><p class="eyebrow">Selected member</p><p id="ownerRecord" class="owner-record"></p><input name="id" type="hidden" /><label>Name <input name="displayName" required /></label><label>Bio <textarea name="bio"></textarea></label><label>DOB <input name="dateOfBirth" type="date" /></label><label>Gender <select name="gender"><option value="">Not set</option><option value="woman">Woman</option><option value="man">Man</option><option value="non_binary">Non-binary</option><option value="prefer_not_to_say">Prefer not to say</option></select></label><label>Privacy <select name="privacy"><option value="public">Public</option><option value="private">Private</option></select></label><label>Rare custom username <input name="customUsername" disabled /><small id="vipUsernameHelp">Grant VIP to unlock this field.</small></label><button class="button primary" type="submit">Force save <b>↗</b></button><div class="owner-actions"><button class="follow-button" type="button" data-vip-type="owner_granted">Give VIP</button><button class="follow-button" type="button" data-vip-remove>Remove VIP</button><button class="follow-button" type="button" data-badge="blue">Toggle blue tick</button><button class="follow-button" type="button" data-badge="gold">Toggle gold tick</button><span class="owner-moderation"><button class="follow-button" type="button" data-status="active">Active</button><button class="follow-button" type="button" data-status="suspended">Suspend</button><button class="follow-button" type="button" data-status="banned">Ban</button><button class="follow-button" type="button" data-status="dismissed">Dismiss</button><button class="follow-button" type="button" data-delete-account>Delete account</button></span></div></form></div></section></main>
-    <footer><a class="brand" href="index.html">ar<span>rai</span>.in</a><p>© 2026 Abhishek Rai. All rights reserved.</p></footer>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase.js"></script><script src="script.js"></script><script src="owner.js"></script>
+          <hr
+            style="margin: 20px 0; border: 0; border-top: 1px solid var(--line)"
+          />
+
+          <button id="ownerSelf" class="button" type="button">
+            Edit my unrestricted profile
+          </button>
+          <label class="social-form"
+            >God Mode search<input
+              id="ownerSearch"
+              placeholder="Username or exact user ID"
+          /></label>
+          <div id="ownerResults" class="people-results"></div>
+          <form id="ownerEditor" class="social-form owner-editor" hidden>
+            <p class="eyebrow">Selected member</p>
+            <p id="ownerRecord" class="owner-record"></p>
+            <input name="id" type="hidden" /><label
+              >Name <input name="displayName" required /></label
+            ><label>Bio <textarea name="bio"></textarea></label
+            ><label>DOB <input name="dateOfBirth" type="date" /></label
+            ><label
+              >Gender
+              <select name="gender">
+                <option value="">Not set</option>
+                <option value="woman">Woman</option>
+                <option value="man">Man</option>
+                <option value="non_binary">Non-binary</option>
+                <option value="prefer_not_to_say">Prefer not to say</option>
+              </select></label
+            ><label
+              >Privacy
+              <select name="privacy">
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+              </select></label
+            ><label
+              >Rare custom username
+              <input name="customUsername" disabled /><small
+                id="vipUsernameHelp"
+                >Grant VIP to unlock this field.</small
+              ></label
+            ><button class="button primary" type="submit">
+              Force save <b>↗</b>
+            </button>
+            <div class="owner-actions">
+              <button
+                class="follow-button"
+                type="button"
+                data-vip-type="owner_granted"
+              >
+                Give VIP</button
+              ><button class="follow-button" type="button" data-vip-remove>
+                Remove VIP</button
+              ><button class="follow-button" type="button" data-badge="blue">
+                Toggle blue tick</button
+              ><button class="follow-button" type="button" data-badge="gold">
+                Toggle gold tick</button
+              ><span class="owner-moderation"
+                ><button
+                  class="follow-button"
+                  type="button"
+                  data-status="active"
+                >
+                  Active</button
+                ><button
+                  class="follow-button"
+                  type="button"
+                  data-status="suspended"
+                >
+                  Suspend</button
+                ><button
+                  class="follow-button"
+                  type="button"
+                  data-status="banned"
+                >
+                  Ban</button
+                ><button
+                  class="follow-button"
+                  type="button"
+                  data-status="dismissed"
+                >
+                  Dismiss</button
+                ><button
+                  class="follow-button"
+                  type="button"
+                  data-delete-account
+                >
+                  Delete account
+                </button></span
+              >
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+    <footer>
+      <a class="brand" href="index.html">ar<span>rai</span>.in</a>
+      <p>© 2026 Abhishek Rai. All rights reserved.</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="script.js"></script>
+    <script src="owner.js"></script>
   </body>
 </html>

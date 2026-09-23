@@ -5,6 +5,9 @@ visual direction and practical digital strategy. Contact email: abhishekrai@arra
 Keep answers useful, factual, friendly and under 160 words. Do not claim to have completed actions or accessed private data.
 `;
 
+// Provider keys stay server-side. The assistant can be sweet in public while
+// its credentials remain safely boring behind the curtain.
+
 const requestJson = async (url, options) => {
   const signal = AbortSignal.timeout(15000);
   const result = await fetch(url, { ...options, signal });
@@ -29,7 +32,8 @@ const openSourceProviders = [
     key: "OPENROUTER_API_KEY",
     name: "OpenRouter free model",
     url: "https://openrouter.ai/api/v1/chat/completions",
-    model: process.env.OPENROUTER_MODEL || "meta-llama/llama-3.3-70b-instruct:free",
+    model:
+      process.env.OPENROUTER_MODEL || "meta-llama/llama-3.3-70b-instruct:free",
   },
   {
     key: "HUGGINGFACE_API_KEY",
@@ -45,11 +49,16 @@ const askOpenSourceProvider = async (provider, prompt) => {
     headers: {
       Authorization: `Bearer ${process.env[provider.key]}`,
       "Content-Type": "application/json",
-      ...(provider.key === "OPENROUTER_API_KEY" ? { "HTTP-Referer": "https://arrai.in", "X-Title": "AR Support" } : {}),
+      ...(provider.key === "OPENROUTER_API_KEY"
+        ? { "HTTP-Referer": "https://arrai.in", "X-Title": "AR Support" }
+        : {}),
     },
     body: JSON.stringify({
       model: provider.model,
-      messages: [{ role: "system", content: websiteContext }, { role: "user", content: prompt }],
+      messages: [
+        { role: "system", content: websiteContext },
+        { role: "user", content: prompt },
+      ],
       temperature: 0.35,
       max_tokens: 320,
     }),
@@ -64,22 +73,36 @@ export default async function handler(request, response) {
     response.setHeader("Allow", "POST");
     return response.status(405).json({ error: "Method not allowed" });
   }
-  const question = String(request.body?.question || "").trim().slice(0, 500);
-  if (!question) return response.status(400).json({ error: "A question is required." });
+  const question = String(request.body?.question || "")
+    .trim()
+    .slice(0, 500);
+  if (!question)
+    return response.status(400).json({ error: "A question is required." });
   try {
     let webContext = "";
     if (process.env.TAVILY_API_KEY) {
       const search = await fetch("https://api.tavily.com/search", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ api_key: process.env.TAVILY_API_KEY, query: question, search_depth: "basic", max_results: 4 }),
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          api_key: process.env.TAVILY_API_KEY,
+          query: question,
+          search_depth: "basic",
+          max_results: 4,
+        }),
       });
       if (search.ok) {
         const data = await search.json();
-        webContext = (data.results || []).map((item) => `Source: ${item.title}\n${item.content}`).join("\n\n").slice(0, 10000);
+        webContext = (data.results || [])
+          .map((item) => `Source: ${item.title}\n${item.content}`)
+          .join("\n\n")
+          .slice(0, 10000);
       }
     }
     const prompt = `${webContext ? `Web research (use only when relevant):\n${webContext}\n\n` : ""}User question: ${question}`;
-    const configuredProviders = openSourceProviders.filter((provider) => process.env[provider.key]);
+    const configuredProviders = openSourceProviders.filter(
+      (provider) => process.env[provider.key],
+    );
     for (const provider of configuredProviders) {
       try {
         const answer = await askOpenSourceProvider(provider, prompt);
@@ -89,16 +112,27 @@ export default async function handler(request, response) {
       }
     }
     if (process.env.GEMINI_API_KEY) {
-      const data = await requestJson(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(process.env.GEMINI_API_KEY)}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: [{ parts: [{ text: `${websiteContext}\n${prompt}` }] }] }),
-      });
-      const answer = data.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("").trim();
-      if (answer) return response.status(200).json({ answer, provider: "Gemini" });
+      const data = await requestJson(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(process.env.GEMINI_API_KEY)}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: `${websiteContext}\n${prompt}` }] }],
+          }),
+        },
+      );
+      const answer = data.candidates?.[0]?.content?.parts
+        ?.map((part) => part.text || "")
+        .join("")
+        .trim();
+      if (answer)
+        return response.status(200).json({ answer, provider: "Gemini" });
     }
     return response.status(503).json({ error: "AI is not configured yet." });
   } catch {
-    return response.status(502).json({ error: "The AI service is temporarily unavailable." });
+    return response
+      .status(502)
+      .json({ error: "The AI service is temporarily unavailable." });
   }
 }
