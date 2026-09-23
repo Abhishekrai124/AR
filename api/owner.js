@@ -139,11 +139,15 @@ export default async function handler(request, response) {
     }
     if (request.body.action === "update-site-settings") {
       const changes = {};
-      const themes = ["midnight", "sakura", "ocean", "emerald", "ruby", "gold", "nebula", "lava", "cyber", "retro"];
+      const themes = ["midnight", "sakura", "rose", "ocean", "emerald", "ruby", "gold", "nebula", "lava", "cyber", "retro"];
       if (request.body.hero_image_url !== undefined) changes.hero_image_url = String(request.body.hero_image_url).slice(0, 2000);
       if (request.body.global_theme !== undefined) { if (!themes.includes(String(request.body.global_theme))) return response.status(400).json({ error: "Choose a valid site theme." }); changes.global_theme = String(request.body.global_theme); }
       if (request.body.site_name !== undefined) changes.site_name = String(request.body.site_name).slice(0, 120);
       if (request.body.show_personal_contact !== undefined) changes.show_personal_contact = request.body.show_personal_contact === true;
+      if (request.body.special_day_enabled !== undefined) changes.special_day_enabled = request.body.special_day_enabled === true;
+      for (const key of ["special_day_start", "special_day_end"]) if (request.body[key] !== undefined) changes[key] = /^\d{4}-\d{2}-\d{2}$/.test(String(request.body[key])) ? String(request.body[key]) : null;
+      for (const key of ["special_day_name", "special_day_title", "special_day_message"]) if (request.body[key] !== undefined) changes[key] = String(request.body[key]).slice(0, 500);
+      if (request.body.special_day_theme !== undefined) { if (!themes.includes(String(request.body.special_day_theme))) return response.status(400).json({ error: "Choose a valid special-day theme." }); changes.special_day_theme = String(request.body.special_day_theme); }
       if (request.body.founder_username) { const username = String(request.body.founder_username).trim().toLowerCase(); const found = await fetch(`${supabaseUrl}/rest/v1/profiles?username=eq.${encodeURIComponent(username)}&select=id,avatar_url,display_name&limit=1`, { headers: adminHeaders() }); const [profile] = found.ok ? await found.json() : []; if (!profile) return response.status(404).json({ error: "Founder username was not found." }); changes.founder_username = username; changes.founder_profile_id = profile.id; if (!request.body.hero_image_url) changes.hero_image_url = profile.avatar_url || changes.hero_image_url; if (!request.body.founder_name) changes.founder_name = profile.display_name; }
       for (const key of ["founder_name", "founder_role", "founder_note", "founder_tags", "founder_links"]) if (request.body[key] !== undefined) changes[key] = String(request.body[key]).slice(0, 2000);
       

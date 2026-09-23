@@ -47,6 +47,19 @@
     </section>
 
     <section class="owner-section owner-panel">
+      <div class="owner-section-heading"><div><p class="eyebrow">Special day mode</p><h2>Give the whole site a new mood</h2><p>Set a birthday, love note or celebration. It activates only between the selected dates.</p></div></div>
+      <form id="specialDayForm" class="social-form owner-form-grid">
+        <label class="full-width"><input id="specialDayEnabled" type="checkbox" /> Enable special day mode</label>
+        <label>From<input id="specialDayStart" type="date" /></label><label>Until<input id="specialDayEnd" type="date" /></label>
+        <label>For someone special<input id="specialDayName" maxlength="100" placeholder="Someone wonderful" /></label>
+        <label>Theme<select id="specialDayTheme"><option value="sakura">Sakura love</option><option value="rose">Rose</option><option value="gold">Golden celebration</option><option value="ocean">Ocean calm</option><option value="midnight">Midnight</option></select></label>
+        <label class="full-width">Special title<input id="specialDayTitle" maxlength="120" placeholder="Happy birthday, beautiful soul" /></label>
+        <label class="full-width">Special message<textarea id="specialDayMessage" maxlength="360" placeholder="A little note for this beautiful day…"></textarea></label>
+        <button class="button primary" type="submit">Save special day <b>↗</b></button>
+      </form>
+    </section>
+
+    <section class="owner-section owner-panel">
       <div class="owner-section-heading"><div><p class="eyebrow">Calendar</p><h2>Upcoming events</h2><p>Add a date, time and location for the community.</p></div></div>
       <form id="calendarEventForm" class="social-form owner-form-grid">
         <label>Event title<input name="title" required maxlength="120" placeholder="AR community session" /></label>

@@ -32,6 +32,13 @@ alter table public.site_settings add column if not exists founder_links text def
 alter table public.site_settings add column if not exists founder_profile_id uuid;
 alter table public.site_settings add column if not exists founder_username text;
 alter table public.site_settings add column if not exists show_personal_contact boolean not null default false;
+alter table public.site_settings add column if not exists special_day_enabled boolean not null default false;
+alter table public.site_settings add column if not exists special_day_start date;
+alter table public.site_settings add column if not exists special_day_end date;
+alter table public.site_settings add column if not exists special_day_name text default '';
+alter table public.site_settings add column if not exists special_day_title text default '';
+alter table public.site_settings add column if not exists special_day_message text default '';
+alter table public.site_settings add column if not exists special_day_theme text default 'sakura';
 
 create table if not exists public.calendar_events (
   id uuid primary key default gen_random_uuid(),

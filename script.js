@@ -180,10 +180,20 @@ const localAssistantReply = (question) => {
 // Owner-selected theme is the default across every page. VIP members may override it locally.
 const applyGlobalTheme = async () => {
   if (!window.arraiSupabase) return "midnight";
-  const { data } = await window.arraiSupabase.from("site_settings").select("global_theme").eq("id", "global").maybeSingle();
-  const theme = data?.global_theme || "midnight";
+  const { data } = await window.arraiSupabase.from("site_settings").select("*").eq("id", "global").maybeSingle();
+  const today = new Date().toISOString().slice(0, 10);
+  const specialActive = data?.special_day_enabled && data.special_day_start && data.special_day_end && today >= data.special_day_start && today <= data.special_day_end;
+  const theme = specialActive ? (data.special_day_theme || "sakura") : (data?.global_theme || "midnight");
   document.body.dataset.globalTheme = theme;
   if (!document.body.dataset.userTheme) document.body.dataset.theme = theme;
+  if (specialActive && !document.querySelector(".special-day-banner")) {
+    const banner = document.createElement("aside");
+    banner.className = "special-day-banner";
+    const safe = (value) => { const element = document.createElement("div"); element.textContent = value || ""; return element.innerHTML; };
+    banner.innerHTML = `<span class="special-day-spark">♡</span><div><strong>${safe(data.special_day_title || `A special day for ${data.special_day_name || "someone wonderful"}`)}</strong><p>${safe(data.special_day_message || "Today the whole AR corner is glowing a little more softly.")}</p></div>`;
+    document.body.prepend(banner);
+    document.body.classList.add("special-day-active");
+  }
   return theme;
 };
 applyGlobalTheme().catch(() => {});
@@ -198,7 +208,9 @@ const loadPublicHomeContent = async () => {
   ]);
   if (settings) {
     if (settings.founder_profile_id) { const { data: founderProfile } = await window.arraiSupabase.from("profiles").select("avatar_url,display_name,username").eq("id", settings.founder_profile_id).maybeSingle(); if (founderProfile) { if (founderProfile.avatar_url) settings.hero_image_url = founderProfile.avatar_url; if (!settings.founder_name) settings.founder_name = founderProfile.display_name; } }
-    document.body.dataset.theme = settings.global_theme || "midnight";
+    const today = new Date().toISOString().slice(0, 10);
+    const specialActive = settings.special_day_enabled && settings.special_day_start && settings.special_day_end && today >= settings.special_day_start && today <= settings.special_day_end;
+    document.body.dataset.theme = specialActive ? (settings.special_day_theme || "sakura") : (settings.global_theme || "midnight");
     const pic = document.querySelector("#heroFounderPic"); if (pic && settings.hero_image_url) pic.src = settings.hero_image_url;
     const name = document.querySelector("#founder-title span"); if (name && settings.founder_name) name.textContent = settings.founder_name;
     const role = document.querySelector(".founder-role"); if (role && settings.founder_role) role.textContent = settings.founder_role;
