@@ -1,11 +1,17 @@
 # AR Support AI setup
 
-The floating AR Support assistant works immediately with offline website guidance. For real AI answers, add these Vercel environment variables before deploying:
+The floating AR Support assistant works immediately with offline website guidance. For free/open-weight AI answers, add one or more of these Vercel environment variables before deploying:
 
-- `GEMINI_API_KEY` — create a key in Google AI Studio. Gemini has a free tier with usage limits.
+- `GROQ_API_KEY` — free developer key for fast Llama models. Recommended first provider.
+- `CEREBRAS_API_KEY` — free developer key for fast open Llama models.
+- `OPENROUTER_API_KEY` — free key; defaults to `meta-llama/llama-3.3-70b-instruct:free`.
+- `HUGGINGFACE_API_KEY` — free Hugging Face token for open models.
+- `GEMINI_API_KEY` — optional non-open fallback from Google AI Studio.
 - `TAVILY_API_KEY` — optional live web research. Tavily's free plan currently includes 1,000 monthly API credits.
 
-Never place either key in `script.js`, HTML, or a public Git repository. They are read only on the server by `api/assistant.js`.
+The server tries configured open-source providers in this order: Groq, Cerebras, OpenRouter, Hugging Face, then Gemini. If one provider is rate-limited or unavailable, the next one is tried automatically. Use `GROQ_MODEL`, `CEREBRAS_MODEL`, `OPENROUTER_MODEL`, or `HUGGINGFACE_MODEL` to select another compatible model.
+
+Never place keys in `script.js`, HTML, or a public Git repository. They are read only on the server by `api/assistant.js`.
 
 On Vercel: Project → Settings → Environment Variables → add the keys for Production, Preview, and Development → redeploy.
 
