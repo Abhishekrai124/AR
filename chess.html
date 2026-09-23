@@ -96,6 +96,7 @@
           </div>
           <div class="game-actions">
             <button class="small-button" id="newGame">↻ New game</button
+            ><button class="text-button" id="undoMove">↶ Undo</button
             ><button class="text-button" id="flipBoard">⇄ Flip board</button
             ><button class="text-button" id="copyPgn">Copy PGN</button
             ><span id="gameMessage">White to move</span>
@@ -157,6 +158,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase.js"></script>
     <script src="script.js"></script>
-    <script src="chess.js"></script>
+    <script type="module" src="chess.js"></script>
   </body>
 </html>

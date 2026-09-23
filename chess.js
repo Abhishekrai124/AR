@@ -1,190 +1,175 @@
+import { Chess } from "https://cdn.jsdelivr.net/npm/chess.js@1.4.0/+esm";
+
 const pieces = {
-  r: "♜",
-  n: "♞",
-  b: "♝",
-  q: "♛",
-  k: "♚",
-  p: "♟",
-  R: "♖",
-  N: "♘",
-  B: "♗",
-  Q: "♕",
-  K: "♔",
-  P: "♙",
+  w: { p: "♙", n: "♘", b: "♗", r: "♖", q: "♕", k: "♔" },
+  b: { p: "♟", n: "♞", b: "♝", r: "♜", q: "♛", k: "♚" },
 };
-let board,
-  turn,
-  selected,
-  flipped = false,
-  mode = "local",
-  moveHistory = [],
-  stats = JSON.parse(
-    localStorage.getItem("arraiChessStats") ||
-      '{"wins":0,"losses":0,"games":0,"rating":800}',
-  );
-const start =
-  "rnbqkbnrpppppppp................................PPPPPPPPRNBQKBNR";
+
+let game;
+let flipped = false;
+let mode = "local";
+let botTimer;
+let stats = JSON.parse(localStorage.getItem("arraiChessStats") || '{"wins":0,"losses":0,"games":0,"rating":800}');
+
 const el = (id) => document.getElementById(id);
-const isWhite = (p) => p && p === p.toUpperCase();
-const nameOf = (p) =>
-  p ? ("prnbqk".includes(p.toLowerCase()) ? p.toLowerCase() : null) : null;
+const boardElement = () => el("chessBoard");
+
+// chess.js owns the difficult truth of chess. This page owns the friendly board,
+// buttons and feelings; the library prevents illegal king adventures for us. ♟
 function init() {
-  board = start.split("");
-  turn = "white";
-  selected = null;
-  moveHistory = [];
+  clearTimeout(botTimer);
+  game = new Chess();
+  delete boardElement().dataset.selected;
   render();
-  message("White to move");
+  message("White to move — may your first move be less awkward than a first text.");
 }
+
+function squareName(row, column) {
+  return `${"abcdefgh"[column]}${8 - row}`;
+}
+
+function boardOrder() {
+  const squares = [];
+  for (let row = 0; row < 8; row += 1) {
+    for (let column = 0; column < 8; column += 1) squares.push({ row, column });
+  }
+  return flipped ? squares.reverse() : squares;
+}
+
+function legalTargets(square) {
+  return game.moves({ square, verbose: true }).map((move) => move.to);
+}
+
 function render() {
-  const root = el("chessBoard");
+  const root = boardElement();
+  const currentTurn = game.turn();
+  const selectedSquare = root.dataset.selected || "";
+  const targets = selectedSquare ? legalTargets(selectedSquare) : [];
+  const lastMove = game.history({ verbose: true }).at(-1);
   root.innerHTML = "";
-  const order = [...Array(64).keys()];
-  if (flipped) order.reverse();
-  order.forEach((i) => {
-    const r = Math.floor(i / 8),
-      c = i % 8,
-      p = board[i],
-      btn = document.createElement("button");
-    btn.className = `square ${(r + c) % 2 ? "dark" : "light"}`;
-    btn.dataset.i = i;
-    btn.innerHTML = `<span class="${isWhite(p) ? "white-piece" : "black-piece"}">${pieces[p] || ""}</span>${c === 0 ? `<small class="coord">${8 - r}</small>` : ""}${r === 7 ? `<small class="coord" style="left:auto;right:3px;bottom:auto;top:2px">${"abcdefgh"[c]}</small>` : ""}`;
-    if (selected === i) btn.classList.add("selected");
-    if (selected !== null && legal(selected, i))
-      btn.classList.add(board[i] ? "capture" : "move");
-    btn.onclick = () => clickSquare(i);
-    root.append(btn);
+
+  boardOrder().forEach(({ row, column }) => {
+    const square = squareName(row, column);
+    const piece = game.get(square);
+    const button = document.createElement("button");
+    const isLastMove = lastMove && [lastMove.from, lastMove.to].includes(square);
+
+    button.className = `square ${(row + column) % 2 ? "dark" : "light"}`;
+    button.dataset.square = square;
+    if (square === selectedSquare) button.classList.add("selected");
+    if (isLastMove) button.classList.add("last-move");
+    if (targets.includes(square)) button.classList.add(piece ? "capture" : "move");
+    if (game.isCheck() && piece?.type === "k" && piece.color === currentTurn) button.classList.add("in-check");
+
+    const fileLabel = row === 7 ? `<small class="coord file">${"abcdefgh"[column]}</small>` : "";
+    const rankLabel = column === 0 ? `<small class="coord rank">${8 - row}</small>` : "";
+    button.innerHTML = `${piece ? `<span class="${piece.color === "w" ? "white-piece" : "black-piece"}">${pieces[piece.color][piece.type]}</span>` : ""}${rankLabel}${fileLabel}`;
+    button.addEventListener("click", () => clickSquare(square));
+    root.append(button);
   });
-  el("whiteTurn").classList.toggle("current", turn === "white");
-  el("blackTurn").classList.toggle("current", turn === "black");
+
+  el("whiteTurn").classList.toggle("current", currentTurn === "w");
+  el("blackTurn").classList.toggle("current", currentTurn === "b");
+  renderHistory();
 }
-function pathClear(a, b) {
-  const ar = Math.floor(a / 8),
-    ac = a % 8,
-    br = Math.floor(b / 8),
-    bc = b % 8,
-    dr = Math.sign(br - ar),
-    dc = Math.sign(bc - ac);
-  let r = ar + dr,
-    c = ac + dc;
-  while (r !== br || c !== bc) {
-    if (board[r * 8 + c]) return false;
-    r += dr;
-    c += dc;
-  }
-  return true;
-}
-function legal(a, b) {
-  const p = board[a];
-  if (
-    !p ||
-    a === b ||
-    isWhite(p) !== (turn === "white") ||
-    (board[b] && isWhite(board[b]) === isWhite(p))
-  )
-    return false;
-  const ar = Math.floor(a / 8),
-    ac = a % 8,
-    br = Math.floor(b / 8),
-    bc = b % 8,
-    dr = br - ar,
-    dc = bc - ac,
-    kind = p.toLowerCase();
-  if (kind === "n") return Math.abs(dr) * Math.abs(dc) === 2;
-  if (kind === "k") return Math.max(Math.abs(dr), Math.abs(dc)) === 1;
-  if (kind === "r") return (dr === 0 || dc === 0) && pathClear(a, b);
-  if (kind === "b") return Math.abs(dr) === Math.abs(dc) && pathClear(a, b);
-  if (kind === "q")
-    return (
-      (dr === 0 || dc === 0 || Math.abs(dr) === Math.abs(dc)) && pathClear(a, b)
-    );
-  if (kind === "p") {
-    const d = isWhite(p) ? -1 : 1,
-      startRow = isWhite(p) ? 6 : 1;
-    if (
-      dc === 0 &&
-      !board[b] &&
-      (dr === d ||
-        (ar === startRow && dr === 2 * d && !board[(ar + d) * 8 + ac]))
-    )
-      return true;
-    return Math.abs(dc) === 1 && dr === d && !!board[b];
-  }
-  return false;
-}
-function clickSquare(i) {
-  const p = board[i];
-  if (selected === null) {
-    if (p && isWhite(p) === (turn === "white")) {
-      selected = i;
+
+function clickSquare(square) {
+  if (game.isGameOver() || (mode === "bot" && game.turn() === "b")) return;
+  const selectedSquare = boardElement().dataset.selected || "";
+  const piece = game.get(square);
+
+  if (!selectedSquare) {
+    if (piece?.color === game.turn()) {
+      boardElement().dataset.selected = square;
       render();
     }
     return;
   }
-  if (i === selected) {
-    selected = null;
+  if (square === selectedSquare) {
+    delete boardElement().dataset.selected;
     render();
     return;
   }
-  if (legal(selected, i)) {
-    move(selected, i);
+  if (piece?.color === game.turn()) {
+    boardElement().dataset.selected = square;
+    render();
     return;
   }
-  if (p && isWhite(p) === (turn === "white")) {
-    selected = i;
+
+  const move = game.moves({ square: selectedSquare, verbose: true }).find((item) => item.to === square);
+  if (!move) {
+    delete boardElement().dataset.selected;
+    message("That move is not legal — chess has boundaries, darling.", "error");
     render();
-  } else {
-    selected = null;
-    render();
+    return;
   }
+  playMove(selectedSquare, square);
 }
-function move(a, b) {
-  const captured = board[b],
-    piece = board[a];
-  moveHistory.push(`${squareName(a)}${captured ? "x" : "–"}${squareName(b)}${piece.toLowerCase() === "p" && (b < 8 || b > 55) ? "=Q" : ""}`);
-  board[b] = piece;
-  board[a] = "";
-  if (piece.toLowerCase() === "p" && (b < 8 || b > 55))
-    board[b] = isWhite(piece) ? "Q" : "q";
-  selected = null;
-  if (captured && captured.toLowerCase() === "k") {
-    finish(turn === "white" ? "win" : "loss");
+
+function playMove(from, to) {
+  const movingPiece = game.get(from);
+  let promotion = "q";
+  if (movingPiece?.type === "p" && (to.endsWith("8") || to.endsWith("1"))) {
+    const choice = window.prompt("Promotion time: choose q, r, b or n", "q")?.toLowerCase();
+    promotion = ["q", "r", "b", "n"].includes(choice) ? choice : "q";
+  }
+
+  try {
+    game.move({ from, to, promotion });
+  } catch {
+    message("The board rejected that move. Even queens have standards.", "error");
     return;
   }
-  turn = turn === "white" ? "black" : "white";
-  message(`${turn[0].toUpperCase() + turn.slice(1)} to move`);
+  delete boardElement().dataset.selected;
   render();
-  if (mode === "bot" && turn === "black") setTimeout(botMove, 400);
+  finishOrContinue();
 }
-function squareName(index) { return `${"abcdefgh"[index % 8]}${8 - Math.floor(index / 8)}`; }
-function renderHistory() { const list = el("moveHistory"); if (!list) return; list.innerHTML = moveHistory.map((m, i) => i % 2 === 0 ? `<li>${Math.floor(i / 2) + 1}. ${m}</li>` : `<li>${m}</li>`).join(""); }
+
+function finishOrContinue() {
+  if (game.isGameOver()) return finishGame();
+  const side = game.turn() === "w" ? "White" : "Black";
+  message(`${side} to move${game.isCheck() ? " — check, the king is having a dramatic moment." : ""}`);
+  if (mode === "bot" && game.turn() === "b") botTimer = setTimeout(botMove, 450);
+}
+
 function botMove() {
-  const moves = [];
-  board.forEach((p, a) => {
-    if (p && !isWhite(p))
-      board.forEach((_, b) => {
-        if (legal(a, b)) moves.push([a, b]);
-      });
-  });
-  if (moves.length) {
-    const captures = moves.filter((x) => board[x[1]]);
-    move(...(captures[0] || moves[Math.floor(Math.random() * moves.length)]));
-  }
+  if (game.isGameOver() || game.turn() !== "b") return;
+  const moves = game.moves({ verbose: true });
+  const move = moves.find((item) => item.captured) || moves[Math.floor(Math.random() * moves.length)];
+  if (!move) return;
+  game.move({ from: move.from, to: move.to, promotion: "q" });
+  render();
+  finishOrContinue();
 }
-function finish(result) {
-  stats.games++;
-  if (result === "win") {
-    stats.wins++;
-    stats.rating += 12;
-    message("Checkmate! You win ✦");
-  } else {
-    stats.losses++;
-    stats.rating = Math.max(100, stats.rating - 8);
-    message("Game over — try again ♡");
+
+function finishGame() {
+  stats.games += 1;
+  if (game.isCheckmate()) {
+    const winner = game.turn() === "b" ? "w" : "b";
+    const playerWon = mode === "local" || winner === "w";
+    if (playerWon) {
+      stats.wins += 1;
+      stats.rating += 12;
+      message("Checkmate! The king has been politely escorted off the board. You win ✦");
+    } else {
+      stats.losses += 1;
+      stats.rating = Math.max(100, stats.rating - 8);
+      message("Checkmate. A little heartbreak, a lot of practice. ♡");
+    }
+  } else if (game.isDraw()) {
+    message("Draw game — nobody won, nobody got rejected. Very mature of you.");
   }
   saveStats();
   render();
 }
+
+function renderHistory() {
+  const list = el("moveHistory");
+  if (!list) return;
+  const history = game.history();
+  list.innerHTML = history.map((move, index) => index % 2 === 0 ? `<li>${Math.floor(index / 2) + 1}. ${move}</li>` : `<li>${move}</li>`).join("");
+}
+
 function saveStats() {
   localStorage.setItem("arraiChessStats", JSON.stringify(stats));
   el("wins").textContent = stats.wins;
@@ -192,60 +177,74 @@ function saveStats() {
   el("games").textContent = stats.games;
   el("rating").textContent = stats.rating;
 }
-function message(t) {
-  el("gameMessage").textContent = t;
+
+function message(text, type = "") {
+  el("gameMessage").textContent = text;
+  el("gameMessage").className = type;
   renderHistory();
 }
-el("newGame").onclick = init;
-el("flipBoard").onclick = () => {
+
+el("newGame").addEventListener("click", init);
+el("undoMove")?.addEventListener("click", () => {
+  if (!game.history().length) return message("Nothing to undo. The past is empty for now.");
+  game.undo();
+  if (mode === "bot" && game.history().length) game.undo();
+  delete boardElement().dataset.selected;
+  render();
+  message(`${game.turn() === "w" ? "White" : "Black"} to move — second chances are allowed here.`);
+});
+el("flipBoard").addEventListener("click", () => {
   flipped = !flipped;
   render();
-};
-el("copyPgn").onclick = async () => { const pgn = moveHistory.map((m, i) => i % 2 === 0 ? `${Math.floor(i / 2) + 1}. ${m}` : m).join(" "); try { await navigator.clipboard.writeText(pgn || "*"); message("PGN copied ✦"); } catch { message("PGN: " + (pgn || "No moves yet")); } };
-document.querySelectorAll(".mode").forEach(
-  (b) =>
-    (b.onclick = () => {
-      document
-        .querySelectorAll(".mode")
-        .forEach((x) => x.classList.remove("active-mode"));
-      b.classList.add("active-mode");
-      mode = b.dataset.mode;
-      el("modeNote").textContent =
-        mode === "bot"
-          ? "A simple practice bot plays Black."
-          : "Pass the board to play with a friend.";
-      init();
-    }),
-);
-el("showAuth").onclick = () => {
-  window.location.href = "auth.html?next=chess";
-};
-el("signOut").onclick = () => {
-  localStorage.removeItem("arraiChessUser");
-  window.logout();
-};
+});
+el("copyPgn").addEventListener("click", async () => {
+  const pgn = game.pgn() || "*";
+  try {
+    await navigator.clipboard.writeText(pgn);
+    message("PGN copied. A tiny souvenir of the battle ✦");
+  } catch {
+    message(`PGN: ${pgn}`);
+  }
+});
+
+document.querySelectorAll(".mode").forEach((button) => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".mode").forEach((item) => item.classList.remove("active-mode"));
+    button.classList.add("active-mode");
+    mode = button.dataset.mode;
+    el("modeNote").textContent = mode === "bot" ? "A tiny practice bot plays Black. It has no feelings, allegedly." : "Pass the board to a friend and see who forgives the blunders first.";
+    init();
+  });
+});
+
+el("showAuth").addEventListener("click", () => { window.location.href = "auth.html?next=chess"; });
+el("signOut").addEventListener("click", () => { localStorage.removeItem("arraiChessUser"); window.logout(); });
+
 function setProfile(user = null, profile = {}) {
   const name = profile.display_name || user?.name || localStorage.getItem("arraiChessUser");
-  el("guestView").hidden = !!name;
+  el("guestView").hidden = Boolean(name);
   el("memberView").hidden = !name;
-  if (name) {
-    el("playerName").textContent = name;
-    el("playerName").textContent = profile.username ? `${name} @${profile.username}` : name;
-    el("whiteName").textContent = profile.username ? `@${profile.username}` : name;
-    el("avatarLetter").textContent = name[0].toUpperCase();
-  }
+  if (!name) return;
+  el("playerName").textContent = profile.username ? `${name} @${profile.username}` : name;
+  el("whiteName").textContent = profile.username ? `@${profile.username}` : name;
+  el("avatarLetter").textContent = name[0].toUpperCase();
 }
-["googleConnect", "chessConnect"].forEach(
-  (id) =>
-    (el(id).onclick = () =>
-      alert(
-        "This connection needs a secure OAuth backend and app credentials before it can be activated. Your existing accounts are never requested or stored here.",
-      )),
-);
+
+// OAuth buttons stay honest until provider credentials exist; pretending a
+// connection worked would be more embarrassing than hanging a queen. ♛
+["googleConnect", "chessConnect"].forEach((id) => {
+  el(id).addEventListener("click", () => alert("This connection needs secure OAuth credentials before it can be activated."));
+});
+
 window.arraiAuth
   .catch(() => ({ isAuthenticated: false, user: null }))
   .then(async ({ isAuthenticated, user }) => {
     saveStats();
-    if (isAuthenticated && window.arraiSupabase) { const { data: chessProfile } = await window.arraiSupabase.from("profiles").select("display_name,username,avatar_url").eq("id", user.id).maybeSingle(); setProfile(user, chessProfile || {}); } else setProfile(null);
+    if (isAuthenticated && window.arraiSupabase) {
+      const { data: chessProfile } = await window.arraiSupabase.from("profiles").select("display_name,username,avatar_url").eq("id", user.id).maybeSingle();
+      setProfile(user, chessProfile || {});
+    } else {
+      setProfile(null);
+    }
     init();
   });
