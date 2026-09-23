@@ -5,7 +5,9 @@ const player = document.querySelector("#musicPlayer");
 const audio = document.querySelector("#audioPlayer");
 
 let tracks = [];
-// User-supplied titles and links should look pretty without being allowed to become HTML.
+
+// Safety first: even a love song needs boundaries. This keeps user text as text,
+// so a dramatic title cannot accidentally become executable HTML.
 const escapeHtml = (value) => {
 	const element = document.createElement("div");
 	element.textContent = value || "";
@@ -17,6 +19,8 @@ const setStatus = (message, type = "") => {
 	status.className = `community-status ${type}`;
 };
 
+// Search is deliberately small and forgiving: title, artist, team and uploader
+// all get a chance to be found, like friends looking for each other in a crowd.
 const currentSearch = () => document.querySelector("#musicSearch").value.trim().toLowerCase();
 
 const searchableTrackText = (track) => [
@@ -31,6 +35,8 @@ function renderTracks() {
 	const query = currentSearch();
 	const visibleTracks = tracks.filter((track) => searchableTrackText(track).includes(query));
 
+	// Rebuild only the cards that match the search. Empty results get a little
+	// kindness instead of a cold database error: rejection is already hard enough.
 	grid.innerHTML = visibleTracks.length
 		? visibleTracks.map((track) => {
 			const kind = track.media_type?.startsWith("video") ? "Music video" : "Song";
@@ -42,12 +48,12 @@ function renderTracks() {
 			return `<article class="music-card">
 				<div class="music-art">♫</div>
 				<div>
-		  <p class="eyebrow">${kind}</p>
-		  <h2>${escapeHtml(track.title)}</h2>
-		  <p>${escapeHtml(track.artist)}${credits}</p>
-		  <small>${escapeHtml(track.description || "A little sound, sent into the world with hope.")}</small>
-		  <small>Uploaded by @${escapeHtml(track.uploader?.username || "member")}</small>
-		  <button class="button play-track" data-url="${escapeHtml(track.media_url)}" data-title="${escapeHtml(track.title)}" data-artist="${escapeHtml(track.artist)}">Play ♫</button>
+					<p class="eyebrow">${kind}</p>
+					<h2>${escapeHtml(track.title)}</h2>
+					<p>${escapeHtml(track.artist)}${credits}</p>
+					<small>${escapeHtml(track.description || "A little sound, sent into the world with hope.")}</small>
+					<small>Uploaded by @${escapeHtml(track.uploader?.username || "member")}</small>
+					<button class="button play-track" data-url="${escapeHtml(track.media_url)}" data-title="${escapeHtml(track.title)}" data-artist="${escapeHtml(track.artist)}">Play ♫</button>
 					${ownerTools}
 				</div>
 			</article>`;
@@ -56,6 +62,8 @@ function renderTracks() {
 }
 
 async function loadTracks() {
+	// One gentle request fills the room. Keeping it here makes refreshes after
+	// upload, edit or delete predictable instead of scattering fetches everywhere.
 	const { data, error } = await db
 		.from("music_tracks")
 		.select("*, uploader:profiles(display_name,username)")
@@ -72,6 +80,8 @@ async function loadTracks() {
 }
 
 function playTrack(track) {
+	// The player is the emotional centre of this page: give it the song and the
+	// two credits it needs to tell the listener who is singing.
 	audio.src = track.media_url;
 	document.querySelector("#playerTitle").textContent = track.title;
 	document.querySelector("#playerArtist").textContent = track.artist;
@@ -79,6 +89,8 @@ function playTrack(track) {
 }
 
 async function editTrack(track) {
+	// Editing changes credits only. The audio stays untouched, because we respect
+	// the song even when its title once had a questionable haircut.
 	const title = window.prompt("Song title — give it a name it deserves", track.title);
 	const artist = window.prompt("Artist name — credit the beautiful human behind it", track.artist);
 	if (!title?.trim() || !artist?.trim()) return;
@@ -97,6 +109,8 @@ async function editTrack(track) {
 }
 
 async function deleteTrack(trackId) {
+	// Deleting is owner-scoped in the query as well as the button, so one friend
+	// cannot accidentally tidy up another friend's playlist.
 	const confirmed = window.confirm("Delete this upload? It will leave the music room very quietly.");
 	if (!confirmed) return;
 
@@ -114,6 +128,8 @@ async function deleteTrack(trackId) {
 }
 
 grid.addEventListener("click", (event) => {
+	// One listener handles dynamic cards created by renderTracks. It is less code,
+	// and the buttons still know whether they are here to play, edit or say goodbye.
 	const playButton = event.target.closest(".play-track");
 	if (playButton) {
 		playTrack({ media_url: playButton.dataset.url, title: playButton.dataset.title, artist: playButton.dataset.artist });
@@ -144,6 +160,8 @@ audio.addEventListener("pause", () => { player.hidden = true; });
 audio.addEventListener("ended", () => { player.hidden = true; });
 
 async function uploadTrack(event) {
+	// Upload accepts either a file or a public URL. A creator can bring a finished
+	// song, a video, or just a tiny first demo that is still finding its courage.
 	event.preventDefault();
 	const auth = await window.arraiAuth;
 	if (!auth.isAuthenticated) return location.assign("auth.html");
@@ -161,9 +179,9 @@ async function uploadTrack(event) {
 
 	if (file?.size) {
 		const safeName = file.name.replace(/[^a-z0-9._-]/gi, "-");
-	const path = `${auth.user.id}/${crypto.randomUUID()}-${safeName}`;
-	const upload = await db.storage.from("music-media").upload(path, file);
-	if (upload.error) return setStatus(upload.error.message, "error");
+		const path = `${auth.user.id}/${crypto.randomUUID()}-${safeName}`;
+		const upload = await db.storage.from("music-media").upload(path, file);
+		if (upload.error) return setStatus(upload.error.message, "error");
 		mediaUrl = db.storage.from("music-media").getPublicUrl(path).data.publicUrl;
 		mediaType = file.type;
 	}
@@ -171,9 +189,9 @@ async function uploadTrack(event) {
 	const row = {
 		owner_id: auth.user.id,
 		title: String(formData.get("title") || "").trim(),
-	artist: String(formData.get("artist") || "").trim(),
-	team: String(formData.get("team") || "").trim(),
-	description: String(formData.get("description") || "").trim(),
+		artist: String(formData.get("artist") || "").trim(),
+		team: String(formData.get("team") || "").trim(),
+		description: String(formData.get("description") || "").trim(),
 		media_url: mediaUrl,
 		media_type: mediaType,
 	};
@@ -188,12 +206,16 @@ async function uploadTrack(event) {
 document.querySelector("#musicForm").addEventListener("submit", (event) => uploadTrack(event).catch((error) => setStatus(error.message, "error")));
 
 function playAt(index) {
+	// Previous and next wrap around. When the playlist ends, it does not abandon
+	// us like a one-sided crush; it comes back around with another song.
 	if (!tracks.length) return;
 	const track = tracks[(index + tracks.length) % tracks.length];
 	playTrack(track);
 }
 
 function setupPlayerEnhancements() {
+	// These controls are created here because the player is shared markup and the
+	// music page owns its little collection of moods: aurora, sakura, ocean and gold.
 	const controls = document.createElement("div");
 	controls.className = "player-enhancements";
 	controls.innerHTML = '<button type="button" id="prevTrack" aria-label="Previous track">⏮</button><button type="button" id="nextTrack" aria-label="Next track">⏭</button><select id="playerTheme" aria-label="Player theme"><option value="aurora">Aurora</option><option value="sakura">Sakura</option><option value="ocean">Ocean</option><option value="gold">Gold</option><option value="midnight">Midnight</option></select><button type="button" id="minPlayer" aria-label="Minimize player">⌃</button>';
@@ -231,6 +253,8 @@ function setupPlayerDragging() {
 }
 
 window.arraiAuth
+	// Listening is public; uploading is a logged-in privilege. The room welcomes
+	// everyone, while ownership keeps edits and deletions politely contained.
 	.then(({ isAuthenticated, user }) => {
 		window.currentMusicUser = isAuthenticated ? user.id : null;
 		if (!isAuthenticated) {
