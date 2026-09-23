@@ -24,7 +24,7 @@
       <section id="profileSetup" class="social-card profile-setup" hidden>
         <p class="eyebrow">One-time setup</p><h2>Choose your identity.</h2>
         <form id="profileForm" class="social-form">
-          <label>Username <input name="username" required pattern="[a-z0-9_]{3,20}" placeholder="e.g. abhishek_rai" /><small>3–20 lowercase letters, numbers or underscores. It must be unique.</small></label>
+          <label>Username <input name="username" required minlength="3" maxlength="20" pattern="[a-z0-9_]+" autocapitalize="none" autocomplete="username" placeholder="e.g. abhi123" /><small>3–20 lowercase letters, numbers or underscores. It must be unique.</small></label>
           <label>Display name <input name="displayName" required maxlength="50" placeholder="Your name" /></label>
           <label>Mobile number <input name="phoneNumber" type="tel" required pattern="[0-9+() -]{7,20}" placeholder="+91 98765 43210" /><small>Only Owner Studio can view or edit this securely.</small></label>
           <label>Date of birth <input name="dateOfBirth" type="date" required /></label>

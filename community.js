@@ -323,11 +323,23 @@ async function openAccountSettings() {
 $("#profileForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
-  const { error } = await db.from("profiles").insert({ id: user.sub, username: data.get("username").trim().toLowerCase(), display_name: data.get("displayName").trim(), phone_number: data.get("phoneNumber").trim(), date_of_birth: data.get("dateOfBirth"), gender: data.get("gender"), privacy: data.get("privacy"), bio: data.get("bio").trim() });
-  if (error) return say(error.code === "23505" ? "That username is already taken." : error.message, "error");
-  if (await loadProfile()) {
-    await Promise.all([loadPosts(), searchPeople()]);
-    subscribeToCalls();
+  const username = String(data.get("username") || "").trim().toLowerCase();
+  const displayName = String(data.get("displayName") || "").trim();
+  if (!/^[a-z0-9_]{3,20}$/.test(username)) return say("Username 3–20 characters ka ho: only a-z, 0-9, underscore. Example: abhi123", "error");
+  if (!displayName) return say("Display name is required.", "error");
+  try {
+    const { error } = await db.from("profiles").insert({ id: user.sub, username, display_name: displayName, phone_number: String(data.get("phoneNumber") || "").trim(), date_of_birth: data.get("dateOfBirth"), gender: data.get("gender"), privacy: data.get("privacy"), bio: String(data.get("bio") || "").trim() });
+    if (error) {
+      if (error.code === "23505") return say("That username is already taken. Try another one, like abhi1234.", "error");
+      if (error.code === "42501") return say("Profile save blocked by Supabase permissions. Run the latest SQL migration, then try again.", "error");
+      return say(error.message || "Profile could not be saved.", "error");
+    }
+    if (await loadProfile()) {
+      await Promise.all([loadPosts(), searchPeople()]);
+      subscribeToCalls();
+    }
+  } catch (error) {
+    say(error.message || "Profile could not be saved. Please try again.", "error");
   }
 });
 
