@@ -1,8 +1,20 @@
 {
   "cleanUrls": true,
   "rewrites": [
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/services", "destination": "/services.html" },
+    { "source": "/projects", "destination": "/projects.html" },
+    { "source": "/contact", "destination": "/contact.html" },
+    { "source": "/music", "destination": "/music.html" },
+    { "source": "/chess", "destination": "/chess.html" },
+    { "source": "/auth", "destination": "/auth.html" },
+    { "source": "/owner", "destination": "/owner.html" },
+    { "source": "/payments", "destination": "/payments.html" },
+    { "source": "/privacy", "destination": "/privacy.html" },
+    { "source": "/community", "destination": "/community.html" },
+    { "source": "/dm", "destination": "/dm.html" },
     {
-      "source": "/:username((?!dm$|community$|about$|services$|projects$|contact$|music$|chess$|auth$|owner$|payments$|privacy$|index$)[a-zA-Z0-9_]+)",
+      "source": "/:username([a-zA-Z0-9_]{3,20})",
       "destination": "/profile.html"
     }
   ]
