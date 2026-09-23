@@ -22,6 +22,11 @@ const loadAnalytics = async () => {
   const data = await ownerRequest("analytics");
   ownerAnalytics.innerHTML = `<span>${data.members} members</span><span>${data.vip} VIP</span><span>${data.posts} posts</span><span>${data.messageRequests} requests</span><span>${data.suspended} moderated</span>`;
 };
+const loadPrivateContact = async () => {
+  const details = document.querySelector("#privateContactDetails");
+  const data = await ownerRequest("private-contact");
+  details.innerHTML = `<span><b>Personal email</b><br /><a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a></span>${data.phones.map((phone) => `<span><b>Private mobile</b><br /><a href="tel:${escapeHtml(phone)}">${escapeHtml(phone)}</a></span>`).join("")}`;
+};
 const searchProfiles = async () => renderProfiles((await ownerRequest("profiles", { query: document.querySelector("#ownerSearch").value })).profiles);
 
 const parseLines = (value) => String(value || "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
@@ -88,7 +93,7 @@ editor.addEventListener("click", async (event) => {
     if (deleteAccount && !(await window.cuteConfirm("This cannot be undone. Delete this user and their profile now?", { title: "Delete this user?", danger: true }))) return;
     await ownerRequest(deleteAccount ? "delete-account" : role ? "set-role" : badge ? "set-badge" : vipType || removeVip ? "set-vip" : "moderate", deleteAccount ? { id: selectedProfile.id } : role ? { id: selectedProfile.id, role } : badge ? { id: selectedProfile.id, badge, enabled: !selectedProfile[`${badge}_tick`] } : vipType || removeVip ? { id: selectedProfile.id, isVip: !removeVip, vipType } : { id: selectedProfile.id, moderationAction: status });
     ownerStatus.textContent = "Member state updated. ✦";
-    await Promise.all([searchProfiles(), loadAnalytics(), loadSiteControls(), loadCards()]);
+    await Promise.all([searchProfiles(), loadAnalytics(), loadPrivateContact(), loadSiteControls(), loadCards()]);
     openEditor(window.ownerProfiles.get(selectedProfile.id) || selectedProfile);
   } catch (error) { ownerStatus.textContent = error.message; }
 });

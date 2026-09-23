@@ -20,6 +20,12 @@ export default async function handler(request, response) {
   if (request.method !== "POST") return response.status(405).json({ error: "Method not allowed" });
   try {
     const owner = await ownerSession(request);
+    if (request.body.action === "private-contact") {
+      return response.status(200).json({
+        email: process.env.OWNER_PRIVATE_EMAIL || owner.email,
+        phones: [process.env.OWNER_PRIVATE_PHONE_PRIMARY, process.env.OWNER_PRIVATE_PHONE_SECONDARY].filter(Boolean),
+      });
+    }
     if (request.body.action === "profiles") {
       const query = String(request.body.query || "").replace(/[^a-zA-Z0-9_.-]/g, "").slice(0, 50);
       const filter = query ? `&or=(id.eq.${encodeURIComponent(query)},username.ilike.*${encodeURIComponent(query)}*,display_name.ilike.*${encodeURIComponent(query)}*)` : "";

@@ -15,6 +15,16 @@ Never place keys in `script.js`, HTML, or a public Git repository. They are read
 
 On Vercel: Project → Settings → Environment Variables → add the keys for Production, Preview, and Development → redeploy.
 
+## Private owner contact details
+
+The public Contact page only exposes business email addresses. The verified Owner Studio can show private owner contact details after login. Add these server-only Vercel variables if you want the two personal mobile numbers available there:
+
+- `OWNER_PRIVATE_EMAIL` = `abhishekrai6897@gmail.com`
+- `OWNER_PRIVATE_PHONE_PRIMARY` = `7814516897`
+- `OWNER_PRIVATE_PHONE_SECONDARY` = `7009446821`
+
+Do not put personal phone numbers or passwords in HTML, browser JavaScript, SQL, or Git. Passwords are handled only by Supabase Auth.
+
 The optional Tavily key lets the assistant fetch a small set of current public web sources before Gemini writes its answer. This does not grant access to private accounts or the entire internet, and results should still be checked for important decisions.
 
 ## Private owner studio
