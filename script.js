@@ -211,6 +211,21 @@ const loadPublicHomeContent = async () => {
     const today = new Date().toISOString().slice(0, 10);
     const specialActive = settings.special_day_enabled && settings.special_day_start && settings.special_day_end && today >= settings.special_day_start && today <= settings.special_day_end;
     document.body.dataset.theme = specialActive ? (settings.special_day_theme || "sakura") : (settings.global_theme || "midnight");
+    if (specialActive) {
+      const specialText = (selector, value) => { const element = document.querySelector(selector); if (element && value) element.textContent = value; };
+      const specialImage = document.querySelector("#heroFounderPic");
+      if (specialImage && settings.special_day_image_url) { specialImage.src = settings.special_day_image_url; specialImage.alt = settings.special_day_name || "Someone special"; }
+      specialText("#founder-title span", settings.special_day_name);
+      specialText(".founder-role", settings.special_day_role);
+      specialText(".founder-note", settings.special_day_message);
+      specialText(".intro h2", settings.special_day_intro_title);
+      specialText(".intro > div > p", settings.special_day_intro_text);
+      specialText(".cta h2", settings.special_day_cta_title);
+      const specialTags = document.querySelector(".founder-tags");
+      if (specialTags && settings.special_day_tags) specialTags.innerHTML = String(settings.special_day_tags).split(/\r?\n/).filter(Boolean).map((tag) => `<span>${safe(tag)}</span>`).join("");
+      const socialLinks = document.querySelector(".founder-connect");
+      if (socialLinks && settings.special_day_links) socialLinks.innerHTML = String(settings.special_day_links).split(/\r?\n/).map((line) => line.split("|" )).filter((parts) => parts[0] && /^https?:\/\//i.test(parts[1]?.trim() || "")).map((parts) => `<a href="${safe(parts[1].trim())}" target="_blank" rel="noreferrer">${safe(parts[0].trim())}</a>`).join("");
+    }
     const pic = document.querySelector("#heroFounderPic"); if (pic && settings.hero_image_url) pic.src = settings.hero_image_url;
     const name = document.querySelector("#founder-title span"); if (name && settings.founder_name) name.textContent = settings.founder_name;
     const role = document.querySelector(".founder-role"); if (role && settings.founder_role) role.textContent = settings.founder_role;

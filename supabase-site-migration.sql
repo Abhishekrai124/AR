@@ -39,6 +39,13 @@ alter table public.site_settings add column if not exists special_day_name text 
 alter table public.site_settings add column if not exists special_day_title text default '';
 alter table public.site_settings add column if not exists special_day_message text default '';
 alter table public.site_settings add column if not exists special_day_theme text default 'sakura';
+alter table public.site_settings add column if not exists special_day_image_url text default '';
+alter table public.site_settings add column if not exists special_day_role text default '';
+alter table public.site_settings add column if not exists special_day_tags text default '';
+alter table public.site_settings add column if not exists special_day_links text default '';
+alter table public.site_settings add column if not exists special_day_intro_title text default '';
+alter table public.site_settings add column if not exists special_day_intro_text text default '';
+alter table public.site_settings add column if not exists special_day_cta_title text default '';
 
 create table if not exists public.calendar_events (
   id uuid primary key default gen_random_uuid(),
