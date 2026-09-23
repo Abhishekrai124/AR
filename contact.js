@@ -7,6 +7,12 @@ const loadPersonalContact = async () => {
   const auth = await window.arraiAuth;
   if (!auth.isAuthenticated) return;
   try {
+    const { data: settings, error: settingsError } = await window.arraiSupabase.from("site_settings").select("show_personal_contact").eq("id", "global").maybeSingle();
+    if (settingsError) throw settingsError;
+    if (settings?.show_personal_contact !== true) {
+      status.textContent = "Personal contact details are currently private.";
+      return;
+    }
     const session = await window.arraiSupabase.auth.getSession();
     const response = await fetch("/api/contact", { headers: { Authorization: `Bearer ${session.data.session?.access_token || ""}` } });
     const data = await response.json();

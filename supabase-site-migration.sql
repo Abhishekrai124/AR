@@ -31,6 +31,7 @@ alter table public.site_settings add column if not exists founder_tags text defa
 alter table public.site_settings add column if not exists founder_links text default '';
 alter table public.site_settings add column if not exists founder_profile_id uuid;
 alter table public.site_settings add column if not exists founder_username text;
+alter table public.site_settings add column if not exists show_personal_contact boolean not null default false;
 alter table public.founder_cards add column if not exists tags text default '';
 alter table public.founder_cards add column if not exists links text default '';
 alter table public.founder_cards add column if not exists date_of_birth date;
