@@ -24,10 +24,11 @@
         <h1>Tell us what kind of help you need.</h1>
         <p>
           Individuals, families, legal professionals, public authorities,
-          businesses, insurers and nonprofits can submit an enquiry. Choose the
+          businesses, insurers, nonprofits and students can submit an enquiry. Choose the
           closest options; if yours is not listed, select “Other / not sure.”
           The form prepares an email draft and does not file an official case.
         </p>
+        <p class="case-solver-note">Case enquiries are routed for review by <strong>Mr. A</strong>.</p>
       </section>
       <section class="content wrap contact-grid">
         <aside class="contact-detail">
@@ -37,7 +38,6 @@
               >General agency enquiries</small
             >
           </p>
-          <p>
           <p>Giaspura, Ludhiana<br />Punjab 141003, India<br /><small>Listed hours: Open 24 hours</small></p>
           <p class="notice">For immediate danger, contact local emergency services or police directly. This inbox is not monitored as an emergency line.</p>
         </aside>
@@ -50,6 +50,8 @@
             <option value="" selected disabled>Choose a client type</option>
             <option>Individual</option>
             <option>Family member or representative</option>
+            <option>Student</option>
+            <option>Parent/guardian for a student</option>
             <option>Lawyer or legal professional</option>
             <option>Police or law-enforcement official</option>
             <option>Public authority or government body</option>
@@ -78,6 +80,7 @@
             <option>Insurance, claim or suspected fraud</option>
             <option>Online, social media or digital matter</option>
             <option>Property, asset or document-serving enquiry</option>
+            <option>Cross-border or international enquiry</option>
             <option>Other / not sure</option>
           </select></label>
           <label>Service<select name="service" id="caseService" required>
@@ -100,7 +103,29 @@
             <option>Surveillance services</option>
             <option>Related or unlisted investigation request</option>
           </select></label>
-          <label>Where is the matter based?<input name="location" type="text" maxlength="120" placeholder="City, state or country" /></label>
+          <div class="location-lookup">
+            <p class="case-form-group-title">Location details · worldwide</p>
+            <label>Search for a place (optional)<input id="locationSearch" type="search" maxlength="120" placeholder="City, area, postcode or public place" /></label>
+            <label class="consent-label"><input id="locationLookupConsent" name="locationLookupConsent" type="checkbox" value="Confirmed" /> I agree to send only this place search to Photon/OpenStreetMap for suggestions. Do not search an exact confidential case address or include a person's name.</label>
+            <div class="location-actions">
+              <button class="button location-lookup-button" id="lookupLocation" type="button">Find location details</button>
+              <button class="button location-lookup-button" id="lookupPoliceStations" type="button">Suggest nearby police stations</button>
+            </div>
+            <label id="locationSuggestionLabel" hidden>Choose a matching place<select id="locationSuggestions"><option value="">Search for a place first</option></select></label>
+            <label id="policeSuggestionLabel" hidden>Choose a mapped police station<select id="policeSuggestions"><option value="">Search for station suggestions first</option></select></label>
+            <p class="location-status" id="locationLookupStatus" role="status" aria-live="polite">Search is optional. You can enter every location field manually.</p>
+            <p class="location-attribution">Suggestions can be missing or out of date and are not official records. Verify station details with the relevant authority. Search requests go to <a href="https://photon.komoot.io/" target="_blank" rel="noreferrer">Photon</a>; map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap contributors</a>.</p>
+          </div>
+          <div class="location-fields">
+            <label>Country<input name="country" id="country" type="text" maxlength="100" autocomplete="country-name" placeholder="Country" /></label>
+            <label>State / province / region<input name="state" id="state" type="text" maxlength="100" autocomplete="address-level1" placeholder="State or region" /></label>
+            <label>District / county<input name="district" id="district" type="text" maxlength="100" autocomplete="address-level2" placeholder="District or county" /></label>
+            <label>City / town / village<input name="city" id="city" type="text" maxlength="100" autocomplete="address-level2" placeholder="City, town or village" /></label>
+            <label>Area / neighbourhood / ward<input name="area" id="area" type="text" maxlength="100" placeholder="Area, neighbourhood or ward" /></label>
+            <label>PIN / postal code<input name="postalCode" id="postalCode" type="text" maxlength="24" autocomplete="postal-code" placeholder="Postal or PIN code" /></label>
+            <label class="location-wide">Police station / precinct (optional)<input name="policeStation" id="policeStation" type="text" maxlength="120" placeholder="Enter manually or choose a mapped suggestion" /></label>
+          </div>
+          <p class="student-safety-note">Students: use only a broad, non-sensitive location. Minors should ask a parent or guardian to help with the enquiry.</p>
           <label>Timing<select name="timing" required>
             <option value="Routine">Routine enquiry</option>
             <option value="Time-sensitive">Time-sensitive (mention any deadline in your summary)</option>

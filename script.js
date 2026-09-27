@@ -713,11 +713,33 @@ document.querySelectorAll(".contact-form").forEach((form) =>
     e.preventDefault();
     const d = new FormData(form),
       requestType = d.get("requestType") || "Website enquiry",
-      caseReference = d.get("caseReference"),
       s = encodeURIComponent(`${requestType} from ${d.get("name")}`),
-      b = encodeURIComponent(
-        `Enquiry type: ${requestType}\nClient type: ${d.get("clientType") || "Not specified"}\nMatter: ${d.get("caseCategory") || "Not specified"}\nService: ${d.get("service") || "Not specified"}\nOrganization: ${d.get("organization") || "Not provided"}\nRole: ${d.get("professionalRole") || "Not provided"}\nReference: ${caseReference || "Not provided"}\nAuthorized to enquire: ${d.get("authorizedToEnquire") || "Not applicable"}\nLocation: ${d.get("location") || "Not provided"}\nTiming: ${d.get("timing") || "Not specified"}\nName: ${d.get("name")}\nEmail: ${d.get("email")}\nEmail-draft acknowledgement: ${d.get("emailDraftAcknowledged") ? "Confirmed" : "Not confirmed"}\n\nNon-sensitive summary:\n${d.get("message")}`,
-      );
+      details = [
+        ["Enquiry type", requestType],
+        ["Case solver", "Mr. A"],
+        ["Client type", d.get("clientType")],
+        ["Matter", d.get("caseCategory")],
+        ["Service", d.get("service")],
+        ["Organization", d.get("organization")],
+        ["Role", d.get("professionalRole")],
+        ["Reference", d.get("caseReference")],
+        ["Authorized to enquire", d.get("authorizedToEnquire")],
+        ["Country", d.get("country")],
+        ["State / region", d.get("state")],
+        ["District / county", d.get("district")],
+        ["City / town", d.get("city")],
+        ["Area / neighbourhood", d.get("area")],
+        ["PIN / postal code", d.get("postalCode")],
+        ["Police station / precinct", d.get("policeStation")],
+        ["Location search sharing consent", d.get("locationLookupConsent")],
+        ["Timing", d.get("timing")],
+        ["Name", d.get("name")],
+        ["Email", d.get("email")],
+        ["Email-draft acknowledgement", d.get("emailDraftAcknowledged")],
+      ]
+        .map(([label, value]) => `${label}: ${value || "Not provided"}`)
+        .join("\n"),
+      b = encodeURIComponent(`${details}\n\nNon-sensitive summary:\n${d.get("message")}`);
     location.href = `mailto:info@arrai.in?subject=${s}&body=${b}`;
   }),
 );

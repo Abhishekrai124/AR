@@ -28,6 +28,8 @@ body.detective-page::after { display: none; }
 .detective-page header nav a:hover,.detective-page header nav a.active { color: var(--sky); background: rgba(213, 173, 111, 0.1); }
 .detective-hero { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr); gap: 80px; align-items: center; min-height: 620px; padding-top: 76px; padding-bottom: 76px; }
 .case-kicker { display: flex; align-items: center; gap: 11px; margin: 0 0 22px; color: var(--sky); font: 0.68rem "DM Mono", monospace; text-transform: uppercase; }
+.case-solver-line { margin: 20px 0 0; color: var(--muted); font-size: 0.74rem; }
+.case-solver-line strong { margin-left: 5px; color: var(--sky); font: 600 1rem "Barlow Condensed", sans-serif; }
 .case-kicker span { width: 8px; height: 8px; border: 1px solid var(--sky); border-radius: 50%; box-shadow: 0 0 0 4px rgba(213, 173, 111, 0.1); }
 .detective-hero h1 { max-width: 740px; font: 600 4.6rem/0.99 "Barlow Condensed", sans-serif; }
 .detective-page em { color: var(--sky); font-family: "Playfair Display", Georgia, serif; font-weight: 600; }
