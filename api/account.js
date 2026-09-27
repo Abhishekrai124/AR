@@ -11,6 +11,16 @@ const adminHeaders = () => ({
 });
 
 export default async function handler(request, response) {
+  if (request.method === "GET" && request.query?.action === "turn") {
+    const apiKey = process.env.METERED_TURN_API_KEY;
+    if (!apiKey) return response.status(500).json({ error: "TURN service is not configured." });
+    try {
+      const upstream = await fetch(`https://arrai.metered.live/api/v1/turn/credentials?apiKey=${encodeURIComponent(apiKey)}`);
+      if (!upstream.ok) throw new Error("TURN provider request failed");
+      response.setHeader("Cache-Control", "private, max-age=300");
+      return response.status(200).json(await upstream.json());
+    } catch { return response.status(502).json({ error: "Could not obtain call credentials." }); }
+  }
   if (request.method !== "POST")
     return response.status(405).json({ error: "Method not allowed" });
   if (request.body?.action !== "delete-my-account")

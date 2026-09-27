@@ -9,10 +9,37 @@ let game;
 let flipped = false;
 let mode = "local";
 let botTimer;
+let draggedFrom = "";
+let soundOn = true;
+let onlineChannel = null;
+let onlineColor = null;
+const audioContext = window.AudioContext || window.webkitAudioContext;
 let stats = JSON.parse(localStorage.getItem("arraiChessStats") || '{"wins":0,"losses":0,"games":0,"rating":800}');
 
 const el = (id) => document.getElementById(id);
 const boardElement = () => el("chessBoard");
+
+// Tiny browser-made sound effects keep the board alive without shipping
+// copyrighted audio files: a soft tap for moves, a brighter note for checks,
+// and a gentle low chord when the king finally runs out of excuses. ♫
+function playSound(kind = "move") {
+  if (!soundOn || !audioContext) return;
+  const context = new audioContext();
+  const notes = { move: [440], capture: [330, 494], check: [660, 880], mate: [523, 659, 784] };
+  const now = context.currentTime;
+  notes[kind].forEach((frequency, index) => {
+    const oscillator = context.createOscillator();
+    const gain = context.createGain();
+    oscillator.type = kind === "mate" ? "triangle" : "sine";
+    oscillator.frequency.value = frequency;
+    gain.gain.setValueAtTime(0.0001, now + index * 0.07);
+    gain.gain.exponentialRampToValueAtTime(0.08, now + index * 0.07 + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.07 + 0.28);
+    oscillator.connect(gain).connect(context.destination);
+    oscillator.start(now + index * 0.07);
+    oscillator.stop(now + index * 0.07 + 0.3);
+  });
+}
 
 // chess.js owns the difficult truth of chess. This page owns the friendly board,
 // buttons and feelings; the library prevents illegal king adventures for us. ♟
@@ -56,6 +83,20 @@ function render() {
 
     button.className = `square ${(row + column) % 2 ? "dark" : "light"}`;
     button.dataset.square = square;
+    button.draggable = Boolean(piece && piece.color === currentTurn && !(mode === "online" && onlineColor !== currentTurn));
+    button.addEventListener("dragstart", () => {
+      draggedFrom = square;
+      button.classList.add("dragging");
+    });
+    button.addEventListener("dragend", () => {
+      draggedFrom = "";
+      button.classList.remove("dragging");
+    });
+    button.addEventListener("dragover", (event) => event.preventDefault());
+    button.addEventListener("drop", (event) => {
+      event.preventDefault();
+      if (draggedFrom) playMove(draggedFrom, square);
+    });
     if (square === selectedSquare) button.classList.add("selected");
     if (isLastMove) button.classList.add("last-move");
     if (targets.includes(square)) button.classList.add(piece ? "capture" : "move");
@@ -75,6 +116,10 @@ function render() {
 
 function clickSquare(square) {
   if (game.isGameOver() || (mode === "bot" && game.turn() === "b")) return;
+  if (mode === "online" && onlineColor !== game.turn()) {
+    message("Your friend is thinking — no stealing their turn, sweet cheater. 😄", "error");
+    return;
+  }
   const selectedSquare = boardElement().dataset.selected || "";
   const piece = game.get(square);
 
@@ -107,6 +152,10 @@ function clickSquare(square) {
 }
 
 function playMove(from, to) {
+  if (mode === "online" && onlineColor !== game.turn()) {
+    message("Your friend is thinking — no stealing their turn, sweet cheater. 😄", "error");
+    return;
+  }
   const movingPiece = game.get(from);
   let promotion = "q";
   if (movingPiece?.type === "p" && (to.endsWith("8") || to.endsWith("1"))) {
@@ -115,7 +164,9 @@ function playMove(from, to) {
   }
 
   try {
-    game.move({ from, to, promotion });
+    const played = game.move({ from, to, promotion });
+    playSound(played.captured ? "capture" : "move");
+    if (mode === "online") onlineChannel?.send({ type: "broadcast", event: "move", payload: { from, to, promotion } });
   } catch {
     message("The board rejected that move. Even queens have standards.", "error");
     return;
@@ -128,6 +179,7 @@ function playMove(from, to) {
 function finishOrContinue() {
   if (game.isGameOver()) return finishGame();
   const side = game.turn() === "w" ? "White" : "Black";
+  if (game.isCheck()) playSound("check");
   message(`${side} to move${game.isCheck() ? " — check, the king is having a dramatic moment." : ""}`);
   if (mode === "bot" && game.turn() === "b") botTimer = setTimeout(botMove, 450);
 }
@@ -151,6 +203,7 @@ function finishGame() {
       stats.wins += 1;
       stats.rating += 12;
       message("Checkmate! The king has been politely escorted off the board. You win ✦");
+      playSound("mate");
     } else {
       stats.losses += 1;
       stats.rating = Math.max(100, stats.rating - 8);
@@ -161,6 +214,61 @@ function finishGame() {
   }
   saveStats();
   render();
+}
+
+function applyRemoteMove({ from, to, promotion = "q" }) {
+  if (mode !== "online" || game.isGameOver() || game.turn() === onlineColor) return;
+  try {
+    const move = game.move({ from, to, promotion });
+    playSound(move.captured ? "capture" : "move");
+    delete boardElement().dataset.selected;
+    render();
+    finishOrContinue();
+  } catch {
+    message("That online move did not arrive cleanly. The board kept your game safe.", "error");
+  }
+}
+
+async function joinOnlineRoom() {
+  const code = el("roomCode").value.trim().toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 12);
+  if (!code || !window.arraiSupabase) {
+    el("roomStatus").textContent = "A room code and a live Supabase connection are needed.";
+    return;
+  }
+  onlineChannel?.unsubscribe();
+  onlineChannel = window.arraiSupabase.channel(`arrai-chess:${code}`, {
+    config: { broadcast: { self: false }, presence: { key: crypto.randomUUID() } },
+  });
+  onlineChannel
+    .on("broadcast", { event: "move" }, ({ payload }) => applyRemoteMove(payload))
+    .on("broadcast", { event: "state-request" }, () => {
+      onlineChannel.send({ type: "broadcast", event: "state", payload: { fen: game.fen() } });
+    })
+    .on("broadcast", { event: "state" }, ({ payload }) => {
+      if (game.history().length || !payload?.fen) return;
+      try {
+        game.load(payload.fen);
+        render();
+        message(`${game.turn() === "w" ? "White" : "Black"} to move — the board caught up with the conversation.`);
+      } catch {
+        message("The room sent a board state I could not read, so this game stayed safe.", "error");
+      }
+    })
+    .on("presence", { event: "sync" }, () => {
+      const members = Object.keys(onlineChannel.presenceState()).sort();
+      onlineColor = members.indexOf(onlineChannel.presenceKey) === 0 ? "w" : "b";
+      el("roomStatus").textContent = members.length > 2
+        ? "Room is full — this little board only seats two players."
+        : `Connected as ${onlineColor === "w" ? "White" : "Black"} · share the code with your friend.`;
+      render();
+    });
+  await onlineChannel.subscribe(async (status) => {
+    if (status === "SUBSCRIBED") {
+      await onlineChannel.track({ joinedAt: Date.now() });
+      onlineChannel.send({ type: "broadcast", event: "state-request", payload: {} });
+      el("roomStatus").textContent = "Room joined. Waiting for your favourite opponent…";
+    }
+  });
 }
 
 function renderHistory() {
@@ -212,9 +320,29 @@ document.querySelectorAll(".mode").forEach((button) => {
     document.querySelectorAll(".mode").forEach((item) => item.classList.remove("active-mode"));
     button.classList.add("active-mode");
     mode = button.dataset.mode;
-    el("modeNote").textContent = mode === "bot" ? "A tiny practice bot plays Black. It has no feelings, allegedly." : "Pass the board to a friend and see who forgives the blunders first.";
+    el("onlineRoom").hidden = mode !== "online";
+    el("modeNote").textContent = mode === "bot"
+      ? "A tiny practice bot plays Black. It has no feelings, allegedly."
+      : mode === "online"
+        ? "Join the same room from two browsers and let the board carry the conversation."
+        : "Pass the board to a friend and see who forgives the blunders first.";
     init();
   });
+});
+
+el("joinRoom")?.addEventListener("click", joinOnlineRoom);
+el("copyRoomLink")?.addEventListener("click", async () => {
+  const code = el("roomCode").value.trim();
+  if (!code) return message("Give the room a name first — even love letters need an address.");
+  const link = `${location.origin}${location.pathname}?room=${encodeURIComponent(code)}`;
+  await navigator.clipboard.writeText(link);
+  el("roomStatus").textContent = "Invite link copied. Now send it to your favourite rival. 💌";
+});
+el("soundToggle")?.addEventListener("click", () => {
+  soundOn = !soundOn;
+  el("soundToggle").textContent = soundOn ? "🔊 Sound on" : "🔇 Sound off";
+  el("soundToggle").setAttribute("aria-pressed", String(soundOn));
+  if (soundOn) playSound("move");
 });
 
 el("showAuth").addEventListener("click", () => { window.location.href = "auth.html?next=chess"; });
@@ -247,4 +375,11 @@ window.arraiAuth
       setProfile(null);
     }
     init();
+    const room = new URLSearchParams(location.search).get("room");
+    if (room) {
+      mode = "online";
+      document.querySelector('[data-mode="online"]')?.click();
+      el("roomCode").value = room;
+      joinOnlineRoom();
+    }
   });

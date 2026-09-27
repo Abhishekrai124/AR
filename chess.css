@@ -191,6 +191,13 @@
 .square.selected {
   box-shadow: inset 0 0 0 5px #facc15;
 }
+.square[draggable="true"] {
+  cursor: grab;
+}
+.square.dragging {
+  opacity: 0.48;
+  cursor: grabbing;
+}
 .square.last-move {
   background: #b8d98b;
 }
@@ -256,6 +263,41 @@
   margin-left: auto;
   color: var(--muted);
   font-size: 0.68rem;
+}
+.game-actions #gameMessage.error {
+  color: #fca5a5;
+}
+.room-label {
+  display: block;
+  color: var(--muted);
+  font: 700 0.68rem "DM Mono", monospace;
+  margin-top: 14px;
+}
+.room-row {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+.room-row input {
+  min-width: 0;
+  width: 100%;
+  background: #101b2d;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  padding: 9px;
+  font: 0.72rem "DM Mono", monospace;
+}
+#onlineRoom .small-button {
+  width: auto;
+  padding-inline: 13px;
+}
+#roomStatus {
+  display: block;
+  color: var(--muted);
+  font-size: 0.66rem;
+  line-height: 1.5;
+  margin-top: 8px;
 }
 .stats-card > h3 {
   font-size: 2.3rem;

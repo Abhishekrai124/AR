@@ -70,10 +70,20 @@
             <p class="eyebrow">Game mode</p>
             <button class="mode active-mode" data-mode="local">
               ♟ Local 2-player</button
-            ><button class="mode" data-mode="bot">✦ Practice vs bot</button>
+            ><button class="mode" data-mode="bot">✦ Practice vs bot</button
+            ><button class="mode" data-mode="online">🌐 Online room</button>
             <p class="mode-note" id="modeNote">
               Pass the board to play with a friend.
             </p>
+            <div id="onlineRoom" hidden>
+              <label class="room-label" for="roomCode">Room code</label>
+              <div class="room-row">
+                <input id="roomCode" maxlength="12" placeholder="e.g. moon-42" />
+                <button class="small-button" id="joinRoom">Join</button>
+              </div>
+              <button class="text-button" id="copyRoomLink">Copy invite link</button>
+              <small id="roomStatus">Create a room code and share it with a friend.</small>
+            </div>
           </div>
         </aside>
         <section class="board-panel">
@@ -99,6 +109,7 @@
             ><button class="text-button" id="undoMove">↶ Undo</button
             ><button class="text-button" id="flipBoard">⇄ Flip board</button
             ><button class="text-button" id="copyPgn">Copy PGN</button
+            ><button class="text-button" id="soundToggle" aria-pressed="true">🔊 Sound on</button
             ><span id="gameMessage">White to move</span>
           </div>
           <div class="move-history" aria-live="polite">

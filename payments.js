@@ -27,59 +27,77 @@ document.querySelectorAll("[data-amount]").forEach((button) =>
   }),
 );
 
-async function startCheckout(product = "payment") {
+async function startCheckout(
+  product = "payment",
+  amount = selectedAmount,
+  button = payButton,
+) {
   try {
-    payButton.disabled = true;
+    button.disabled = true;
     setStatus("Creating your secure test payment…");
     const orderResponse = await fetch("/api/payments/create-order", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        amount: product === "vip" ? 45 : selectedAmount,
+        amount,
         product,
       }),
     });
     const order = await orderResponse.json();
     if (!orderResponse.ok) throw new Error(order.error);
+    let paymentCompleted = false;
     const checkout = new Razorpay({
-      key: order.key,
+      key: order.key_id,
       amount: order.amount,
       currency: order.currency,
       name: "arrai.in",
       description:
         product === "vip" ? "Arrai Gold VIP membership" : "Arrai payment",
-      order_id: order.id,
+      order_id: order.order_id,
       handler: async (payment) => {
-        const session = (await window.arraiSupabase.auth.getSession()).data
-          .session;
-        const verified = await fetch("/api/payments/verify", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.access_token || ""}`,
-          },
-          body: JSON.stringify({
-            orderId: payment.razorpay_order_id,
-            paymentId: payment.razorpay_payment_id,
-            signature: payment.razorpay_signature,
-            product,
-          }),
-        });
-        const result = await verified.json();
-        const text =
-          verified.ok && result.verified
-            ? product === "vip"
-              ? "Payment verified. VIP activation is processing."
-              : product === "recharge"
-                ? "Payment verified. Recharge request is queued."
-                : "Payment verified successfully."
-            : result.error || "Payment is pending verification.";
-        setStatus(text, verified.ok ? "success" : "error");
-        notify(text);
-        localStorage.setItem(
-          "arraiLastPayment",
-          JSON.stringify({ text, at: new Date().toISOString(), product }),
-        );
+        paymentCompleted = true;
+        try {
+          const session = (await window.arraiSupabase.auth.getSession()).data
+            .session;
+          const verified = await fetch("/api/payments/verify", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${session?.access_token || ""}`,
+            },
+            body: JSON.stringify({
+              orderId: payment.razorpay_order_id,
+              paymentId: payment.razorpay_payment_id,
+              signature: payment.razorpay_signature,
+              product,
+            }),
+          });
+          const result = await verified.json();
+          const text =
+            verified.ok && result.verified
+              ? product === "vip"
+                ? "Payment verified. VIP activation is processing."
+                : product === "recharge"
+                  ? "Payment verified. Recharge request is queued."
+                  : "Payment verified successfully."
+              : result.error || "Payment is pending verification.";
+          setStatus(text, verified.ok ? "success" : "error");
+          notify(text);
+          localStorage.setItem(
+            "arraiLastPayment",
+            JSON.stringify({ text, at: new Date().toISOString(), product }),
+          );
+        } catch {
+          setStatus(
+            "Payment received, but verification could not be completed. Contact support.",
+            "error",
+          );
+        }
+      },
+      modal: {
+        ondismiss: () => {
+          if (!paymentCompleted) setStatus("Payment cancelled.");
+        },
       },
       theme: { color: "#0284c7" },
     });
@@ -90,7 +108,7 @@ async function startCheckout(product = "payment") {
   } catch (error) {
     setStatus(error.message || "Could not start payment.", "error");
   } finally {
-    payButton.disabled = false;
+    button.disabled = false;
   }
 }
 payButton.addEventListener("click", () => startCheckout());
@@ -98,7 +116,9 @@ document.querySelector("#customAmount")?.addEventListener("input", (event) => {
   const value = Number(event.target.value);
   if (value >= 10) selectedAmount = value;
 });
-vipPayButton?.addEventListener("click", () => startCheckout("vip"));
+vipPayButton?.addEventListener("click", () =>
+  startCheckout("vip", 45, vipPayButton),
+);
 document.querySelector("#rechargeButton")?.addEventListener("click", () => {
   const phone = document
     .querySelector("#rechargePhone")
@@ -111,7 +131,7 @@ document.querySelector("#rechargeButton")?.addEventListener("click", () => {
       "Recharge amount must be between ₹10 and ₹5,000.",
       "error",
     );
-  startCheckout("recharge");
+  startCheckout("recharge", amount, document.querySelector("#rechargeButton"));
 });
 document.querySelector("#generateUpi")?.addEventListener("click", () => {
   const amount = Number(document.querySelector("#upiAmount").value);

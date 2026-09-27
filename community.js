@@ -381,7 +381,7 @@ async function getPeerConnection() {
     { urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"] },
   ];
   try {
-    const response = await fetch("/api/turn");
+    const response = await fetch("/api/account?action=turn");
     if (response.ok) iceServers = await response.json();
   } catch {
     /* public STUN fallback */
