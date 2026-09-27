@@ -144,6 +144,13 @@ if (nav && !nav.querySelector('[href="music.html"]')) {
   const homeLink = nav.querySelector('[href="index.html"]');
   homeLink?.after(musicLink);
 }
+if (nav && !nav.querySelector('[href="detective.html"]')) {
+  const detectiveLink = document.createElement("a");
+  detectiveLink.href = "detective.html";
+  detectiveLink.textContent = "Detective Agency";
+  const servicesLink = nav.querySelector('[href="services.html"]');
+  servicesLink?.before(detectiveLink);
+}
 if (nav && !nav.querySelector('[href="calendar.html"]')) {
   const calendarLink = document.createElement("a");
   calendarLink.href = "calendar.html";
