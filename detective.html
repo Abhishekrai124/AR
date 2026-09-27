@@ -136,8 +136,7 @@
             <label>Timing<select name="timing" required><option value="Routine">Routine enquiry</option><option value="Time-sensitive">Time-sensitive</option></select></label>
             <label>Your name<input required name="name" maxlength="120" autocomplete="name" /></label><label>Email address<input required name="email" type="email" maxlength="254" autocomplete="email" /></label><label>Brief, non-sensitive summary<textarea required name="message" maxlength="1600" placeholder="What happened, where, and what help do you need? Do not enter passwords or private account access."></textarea></label>
             <label class="consent-label form-consent"><input required name="agreementAccepted" type="checkbox" value="Confirmed" /> I confirm these details are accurate and I am entitled to submit this enquiry. This is not a final contract, legal advice, emergency request or police/court filing.</label>
-            <div class="pdf-action-panel" aria-label="Draft application PDF options"><p>Optional draft copy — submitting is not required.</p><div><button class="follow-button" type="button" data-case-pdf-action="preview">Preview PDF</button><button class="follow-button" type="button" data-case-pdf-action="download">Download PDF</button><button class="follow-button" type="button" data-case-pdf-action="print">Print PDF</button></div></div>
-            <button class="case-button" type="submit">Create case &amp; download PDF <span aria-hidden="true">↗</span></button><p class="case-submission-status" id="caseSubmissionStatus" role="status" aria-live="polite"></p>
+            <button class="case-button" type="submit">Create confidential case <span aria-hidden="true">↗</span></button><p class="case-submission-status" id="caseSubmissionStatus" role="status" aria-live="polite"></p>
           </form>
         </div>
       </section>
@@ -160,6 +159,6 @@
     <script src="supabase.js"></script>
     <script src="detective-catalog.js"></script>
     <script src="script.js"></script>
-    <script src="contact.js"></script>
+    <script src="detective-intake.js"></script>
   </body>
 </html>
