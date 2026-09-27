@@ -342,6 +342,15 @@ em {
 .case-form .location-wide { grid-column: 1 / -1; }
 .student-safety-note { margin-top: -6px; }
 .case-form .location-lookup input[type="checkbox"] { flex: 0 0 auto; width: 17px; height: 17px; margin: 2px 0 0; accent-color: var(--sky); }
+.case-submission-status { margin: 0; color: var(--lime); font-size: .75rem; line-height: 1.7; }
+.case-form [type="submit"]:disabled { cursor: wait; opacity: .65; }
+.detective-issued-id { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 14px 0; padding: 14px; border: 1px solid var(--lime); }
+.detective-issued-id code { color: var(--lime); font-size: 1rem; font-weight: 800; }
+.detective-application-row { align-items: flex-start; }
+.detective-app-photo img { width: 72px; height: 72px; border-radius: 4px; object-fit: cover; }
+.detective-owner-actions { display: flex; flex-wrap: wrap; align-items: end; gap: 8px; margin-top: 10px; }
+.detective-owner-actions label { display: grid; gap: 4px; color: var(--muted); font-size: .65rem; }
+.detective-owner-actions select { max-width: 250px; min-height: 38px; border: 1px solid var(--line); border-radius: 8px; padding: 7px; background: #0f1d31; color: var(--ink); }
 @media (max-width: 720px) {
   .location-fields { grid-template-columns: 1fr; }
   .case-form .location-wide { grid-column: auto; }

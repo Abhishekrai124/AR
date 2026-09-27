@@ -26,7 +26,7 @@
           Individuals, families, legal professionals, public authorities,
           businesses, insurers, nonprofits and students can submit an enquiry. Choose the
           closest options; if yours is not listed, select “Other / not sure.”
-          The form prepares an email draft and does not file an official case.
+          Enquiries receive a unique case number and a downloadable draft acknowledgement. This is not an official police/court filing or a final service contract.
         </p>
         <p class="case-solver-note">Case enquiries are routed for review by <strong>Mr. A</strong>.</p>
       </section>
@@ -59,6 +59,11 @@
             <option>Insurer or claims professional</option>
             <option>Nonprofit or community organization</option>
             <option>Other / not sure</option>
+          </select></label>
+          <label id="studentStatusField" hidden>Student confirmation<select name="studentStatus" id="studentStatus">
+            <option value="">Choose one</option>
+            <option value="adult">I am 18 or older</option>
+            <option value="minor_guardian">I am under 18 and a parent/guardian is helping me</option>
           </select></label>
           <div class="professional-fields" id="professionalFields" hidden>
             <p class="case-form-group-title">Professional or organization enquiry</p>
@@ -149,10 +154,12 @@
               maxlength="1600"
               placeholder="What happened, where, and what would you like help with? Keep sensitive details for a secure conversation."
             ></textarea></label
-          ><label class="consent-label form-consent"><input required name="emailDraftAcknowledged" type="checkbox" value="Confirmed" /> I understand this prepares an email draft only; it does not file a police or court case or request emergency help.</label>
+          ><label class="consent-label form-consent"><input required name="agreementAccepted" type="checkbox" value="Confirmed" /> I confirm these details are accurate and I am entitled to make this enquiry. I accept a preliminary intake acknowledgement only; it is not a final contract, legal advice, emergency request or police/court filing. No investigation starts until a separate written scope and fee are agreed.</label>
           <button class="button primary" type="submit">
-            Review enquiry in email <b>↗</b>
+            Create case &amp; download PDF <b>↗</b>
           </button>
+          <p class="case-submission-status" id="caseSubmissionStatus" role="status" aria-live="polite"></p>
+          <a id="casePdfLink" class="text-link" hidden></a>
         </form>
       </section>
     </main>
@@ -164,7 +171,9 @@
       </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@3.0.2/dist/jspdf.umd.min.js"></script>
     <script src="supabase.js"></script>
+    <script src="detective-catalog.js"></script>
     <script src="script.js"></script>
     <script src="contact.js"></script>
   </body>

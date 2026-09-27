@@ -73,6 +73,120 @@ const renderOwnerEvents = (events) => {
 };
 const loadOwnerEvents = async () =>
   renderOwnerEvents((await ownerRequest("calendar-events")).events);
+const detectiveAdminRequest = async (action, payload = {}) => {
+  const response = await fetch("/api/detective-admin", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${ownerToken}`,
+    },
+    body: JSON.stringify({ action, ...payload }),
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || "Detective owner request failed.");
+  return result;
+};
+const detectiveApplications = document.querySelector("#detectiveApplications");
+const detectiveCaseRegister = document.querySelector("#detectiveCaseRegister");
+const detectiveAdminStatus = document.querySelector("#detectiveAdminStatus");
+const detectiveIssuedId = document.querySelector("#detectiveIssuedId");
+const renderDetectiveApplications = (applications) => {
+  const members = applications.filter((application) => application.status === "approved");
+  window.detectiveApprovedMembers = members;
+  detectiveApplications.innerHTML = applications.length
+    ? applications.map((application) => {
+        const actions = application.status === "pending"
+          ? `<button class="follow-button" type="button" data-detective-review="approve" data-user-id="${escapeHtml(application.user_id)}">Approve &amp; issue ID</button><button class="follow-button" type="button" data-detective-review="reject" data-user-id="${escapeHtml(application.user_id)}">Reject</button>`
+          : application.status === "approved"
+            ? `<button class="follow-button" type="button" data-detective-review="rotate-id" data-user-id="${escapeHtml(application.user_id)}">Reissue member ID</button><button class="follow-button" type="button" data-detective-review="suspend" data-user-id="${escapeHtml(application.user_id)}">Suspend access</button>`
+            : application.status === "suspended"
+              ? `<button class="follow-button" type="button" data-detective-review="restore" data-user-id="${escapeHtml(application.user_id)}">Restore access</button>`
+              : `<button class="follow-button" type="button" data-detective-review="approve" data-user-id="${escapeHtml(application.user_id)}">Re-review &amp; issue new ID</button>`;
+        const photo = application.photoUrl
+          ? `<a class="detective-app-photo" href="${escapeHtml(application.photoUrl)}" target="_blank" rel="noreferrer"><img src="${escapeHtml(application.photoUrl)}" alt="Applicant photo for ${escapeHtml(application.full_name)}" /></a>`
+          : "";
+        return `<article class="owner-card-row detective-application-row">${photo}<div><b>${escapeHtml(application.full_name)}</b><small>${escapeHtml(application.email)} · ${escapeHtml(application.phone)}</small><small>${escapeHtml(application.city)}, ${escapeHtml(application.state)}, ${escapeHtml(application.country)} · ${escapeHtml(application.years_experience)} years</small><small>Languages: ${escapeHtml((application.languages || []).join(", "))}</small><small>Status: ${escapeHtml(application.status)}${application.member_id_suffix ? ` · member ID ending ${escapeHtml(application.member_id_suffix)}` : ""}</small><small>Specialties: ${escapeHtml((application.specialties || []).join(", "))}</small><small>Qualifications: ${escapeHtml(application.qualifications)}</small><small>License details: ${escapeHtml(application.license_details)}</small><div class="detective-owner-actions">${actions}</div></div></article>`;
+      }).join("")
+    : '<p class="empty-state">No detective applications yet.</p>';
+};
+const renderDetectiveCases = (cases) => {
+  const members = window.detectiveApprovedMembers || [];
+  detectiveCaseRegister.innerHTML = cases.length
+    ? cases.map((item) => {
+        const selected = item.assigned_member_id || "";
+        const memberOptions = `<option value="">Unassigned</option>${members.map((member) => `<option value="${escapeHtml(member.user_id)}" ${member.user_id === selected ? "selected" : ""}>${escapeHtml(member.full_name)}${member.member_id_suffix ? ` · ID …${escapeHtml(member.member_id_suffix)}` : ""}</option>`).join("")}`;
+        const statusOptions = ["new", "reviewing", "assigned", "in_progress", "closed", "declined"].map((status) => `<option value="${status}" ${item.status === status ? "selected" : ""}>${status.replaceAll("_", " ")}</option>`).join("");
+        const documentLink = item.documentUrl ? `<a href="${escapeHtml(item.documentUrl)}" target="_blank" rel="noreferrer">Open private PDF</a>` : "PDF not attached";
+        const location = [item.area, item.city, item.state, item.country].filter(Boolean).join(", ");
+        return `<article class="owner-card-row detective-case-row"><div><b>${escapeHtml(item.case_number)} · ${escapeHtml(item.service_name)}</b><small>${escapeHtml(item.client_name)} · ${escapeHtml(item.client_email)} · ${escapeHtml(item.client_type)}</small><small>${escapeHtml(item.matter_category)}${location ? ` · ${escapeHtml(location)}` : ""}</small><p>${escapeHtml(item.non_sensitive_summary)}</p><small>${documentLink}</small><div class="detective-owner-actions"><label>Assign detective<select data-case-assignee="${escapeHtml(item.id)}">${memberOptions}</select></label><button class="follow-button" type="button" data-assign-case="${escapeHtml(item.id)}">Save assignment</button><label>Case status<select data-case-status="${escapeHtml(item.id)}">${statusOptions}</select></label><button class="follow-button" type="button" data-update-case="${escapeHtml(item.id)}">Update status</button></div></div></article>`;
+      }).join("")
+    : '<p class="empty-state">No case enquiries in the register.</p>';
+};
+const loadDetectiveAdmin = async () => {
+  const [applicationData, caseData] = await Promise.all([
+    detectiveAdminRequest("applications"),
+    detectiveAdminRequest("cases"),
+  ]);
+  renderDetectiveApplications(applicationData.applications);
+  renderDetectiveCases(caseData.cases);
+};
+detectiveApplications?.addEventListener("click", async (event) => {
+  const button = event.target.closest("[data-detective-review]");
+  if (!button) return;
+  button.disabled = true;
+  try {
+    const result = await detectiveAdminRequest("review-application", {
+      userId: button.dataset.userId,
+      decision: button.dataset.detectiveReview,
+    });
+    if (result.memberId) {
+      document.querySelector("#detectiveIssuedIdValue").textContent = result.memberId;
+      detectiveIssuedId.hidden = false;
+      detectiveAdminStatus.textContent = result.memberEmailSent
+        ? "Member approved. The ID was shown once and emailed to the applicant."
+        : "Member approved. The ID was shown once; copy it and deliver it securely because email delivery is not available.";
+    } else {
+      detectiveAdminStatus.textContent = `Application ${result.decision} completed.`;
+    }
+    await loadDetectiveAdmin();
+  } catch (error) {
+    detectiveAdminStatus.textContent = error.message;
+    button.disabled = false;
+  }
+});
+detectiveIssuedId?.querySelector("button")?.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(document.querySelector("#detectiveIssuedIdValue").textContent);
+    detectiveAdminStatus.textContent = "One-time member ID copied. Store and deliver it securely.";
+  } catch {
+    detectiveAdminStatus.textContent = "Select and copy the displayed one-time ID, then store it securely.";
+  }
+});
+detectiveCaseRegister?.addEventListener("click", async (event) => {
+  const assign = event.target.closest("[data-assign-case]");
+  const update = event.target.closest("[data-update-case]");
+  if (!assign && !update) return;
+  const button = assign || update;
+  button.disabled = true;
+  try {
+    if (assign) {
+      await detectiveAdminRequest("assign-case", {
+        caseId: assign.dataset.assignCase,
+        memberUserId: detectiveCaseRegister.querySelector(`[data-case-assignee="${assign.dataset.assignCase}"]`).value,
+      });
+    } else {
+      await detectiveAdminRequest("update-case-status", {
+        caseId: update.dataset.updateCase,
+        status: detectiveCaseRegister.querySelector(`[data-case-status="${update.dataset.updateCase}"]`).value,
+      });
+    }
+    detectiveAdminStatus.textContent = "Case register updated.";
+    await loadDetectiveAdmin();
+  } catch (error) {
+    detectiveAdminStatus.textContent = error.message;
+    button.disabled = false;
+  }
+});
 document
   .querySelector("#calendarEventForm")
   ?.addEventListener("submit", async (event) => {
@@ -508,6 +622,9 @@ editor.addEventListener("click", async (event) => {
     ]);
     ownerTools.hidden = false;
     ownerStatus.textContent = "Owner access verified. God Mode is ready.";
+    loadDetectiveAdmin().catch((error) => {
+      if (detectiveAdminStatus) detectiveAdminStatus.textContent = error.message;
+    });
   } catch (error) {
     ownerStatus.textContent = error.message;
   }

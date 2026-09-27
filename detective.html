@@ -79,27 +79,16 @@
 
       <section class="case-section wrap" id="services" aria-labelledby="services-title">
         <div class="section-intro">
-          <p class="case-kicker">Services / 01—15</p>
+          <p class="case-kicker">Services / global case review</p>
           <h2 id="services-title">The right questions.<br /><em>Carefully pursued.</em></h2>
           <p>The services below are starting points, not a promise that every matter can be accepted. Related requests can still be submitted for review; authorization, local law, specialist qualifications and available resources may affect what we can do.</p>
+          <div class="service-catalog-controls">
+            <label>Search services<input id="detectiveServiceSearch" type="search" placeholder="Try fraud, digital, family…" /></label>
+            <label>Filter by field<select id="detectiveServiceCategory"><option value="all">All fields</option></select></label>
+            <p id="detectiveServiceCount" aria-live="polite"></p>
+          </div>
         </div>
-        <ol class="investigation-list">
-          <li><span>01</span><div><h3>Private Investigator</h3><p>One-to-one case review, lawful investigation planning and clear communication throughout your enquiry.</p></div></li>
-          <li><span>02</span><div><h3>Address report</h3><p>Lawful address verification and available-location enquiries to help confirm relevant details.</p></div></li>
-          <li><span>03</span><div><h3>Anti-stalking</h3><p>Documenting concerns and discussing lawful, safety-focused information gathering. For immediate danger, contact local emergency services.</p></div></li>
-          <li><span>04</span><div><h3>Background investigations</h3><p>Discreet due diligence about identity, history and other relevant, lawfully obtainable information.</p></div></li>
-          <li><span>05</span><div><h3>Comprehensive background report</h3><p>A scoped summary of verified, relevant findings, subject to source availability and applicable privacy law.</p></div></li>
-          <li><span>06</span><div><h3>Deceased search</h3><p>Help locating public records and leads for family or estate-related enquiries.</p></div></li>
-          <li><span>07</span><div><h3>Eavesdropping detection</h3><p>Privacy and space assessments for signs of unauthorized listening or recording devices, within lawful limits.</p></div></li>
-          <li><span>08</span><div><h3>Forensics</h3><p>Initial digital-evidence guidance and referrals where qualified, authorized handling is required.</p></div></li>
-          <li><span>09</span><div><h3>Infidelity investigations</h3><p>Discreet fact-finding for relationship concerns, using lawful methods and respecting privacy boundaries.</p></div></li>
-          <li><span>10</span><div><h3>Insurance investigations</h3><p>Independent information gathering to help assess claims and verify relevant facts, subject to authorization.</p></div></li>
-          <li><span>11</span><div><h3>Person location services</h3><p>Responsible efforts to locate a person using lawful leads. No assistance with harassment, intimidation or evading legal safeguards.</p></div></li>
-          <li><span>12</span><div><h3>Phone number search</h3><p>Lawful lookup of available information connected to a phone number; results depend on accessible sources.</p></div></li>
-          <li><span>13</span><div><h3>Process serving</h3><p>Coordination for delivery of legal documents where permitted and in accordance with applicable rules.</p></div></li>
-          <li><span>14</span><div><h3>Social media &amp; internet investigations</h3><p>Review of publicly available online information, profiles and digital footprints relevant to your enquiry.</p></div></li>
-          <li><span>15</span><div><h3>Surveillance services</h3><p>Discreet, proportionate observation for legitimate purposes, subject to consent, privacy and local law.</p></div></li>
-        </ol>
+        <div class="investigation-list" id="detectiveServiceCatalog" aria-live="polite"></div>
       </section>
 
       <section class="approach-section" id="approach" aria-labelledby="approach-title">
@@ -138,6 +127,7 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase.js"></script>
+    <script src="detective-catalog.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

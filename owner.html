@@ -32,6 +32,31 @@
         <p class="auth-copy" id="ownerStatus">Checking secure owner access…</p>
         <div id="ownerTools" hidden>
           <div id="ownerAnalytics" class="owner-analytics"></div>
+          <section class="owner-section owner-panel">
+            <div class="owner-section-heading">
+              <div>
+                <p class="eyebrow">Detective member approval</p>
+                <h2>Applications &amp; member IDs</h2>
+                <p>Applications stay private and pending until you review them. A newly issued member ID is shown once; copy it and deliver it securely.</p>
+              </div>
+            </div>
+            <div id="detectiveIssuedId" class="detective-issued-id" hidden>
+              <b>One-time member ID</b><code id="detectiveIssuedIdValue"></code>
+              <button id="copyDetectiveIssuedId" class="follow-button" type="button">Copy ID</button>
+            </div>
+            <p id="detectiveAdminStatus" class="notice" aria-live="polite"></p>
+            <div id="detectiveApplications" class="owner-card-list"><p class="empty-state">Loading applications…</p></div>
+          </section>
+          <section class="owner-section owner-panel">
+            <div class="owner-section-heading">
+              <div>
+                <p class="eyebrow">Private case register</p>
+                <h2>Cases &amp; assignments</h2>
+                <p>Only the owner sees every case. Detective members receive only the cases assigned to their approved account.</p>
+              </div>
+            </div>
+            <div id="detectiveCaseRegister" class="owner-card-list"><p class="empty-state">Loading cases…</p></div>
+          </section>
           <section class="owner-section owner-panel private-contact-panel">
             <div class="owner-section-heading">
               <div>

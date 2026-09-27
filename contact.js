@@ -3,8 +3,20 @@ if (requestType && new URLSearchParams(window.location.search).get("type") === "
   requestType.value = "Private investigation enquiry";
 }
 
+const serviceSelect = document.querySelector("#caseService");
+if (serviceSelect && window.detectiveServiceCatalog) {
+  serviceSelect.replaceChildren(new Option("Choose a service or ‘Not sure yet’", ""));
+  window.detectiveServiceCatalog.forEach(({ title }) => {
+    serviceSelect.add(new Option(title, title));
+  });
+  serviceSelect.add(new Option("Related or unlisted investigation request", "Related or unlisted investigation request"));
+  serviceSelect.required = true;
+}
+
 const clientType = document.querySelector("#clientType");
 const professionalFields = document.querySelector("#professionalFields");
+const studentStatusField = document.querySelector("#studentStatusField");
+const studentStatus = document.querySelector("#studentStatus");
 const professionalTypes = new Set([
   "Lawyer or legal professional",
   "Police or law-enforcement official",
@@ -26,6 +38,12 @@ const updateProfessionalFields = () => {
   if (authorization) {
     authorization.required = isProfessional;
     if (!isProfessional) authorization.checked = false;
+  }
+  const isStudent = clientType.value === "Student";
+  if (studentStatusField) studentStatusField.hidden = !isStudent;
+  if (studentStatus) {
+    studentStatus.required = isStudent;
+    if (!isStudent) studentStatus.value = "";
   }
 };
 
@@ -155,4 +173,197 @@ policeSuggestions?.addEventListener("change", () => {
   if (!policeSuggestions.value) return;
   const feature = policeResults[Number(policeSuggestions.value)];
   if (feature) fillLocation(feature.properties, feature.geometry?.coordinates);
+});
+
+const caseForm = document.querySelector(".case-form");
+const caseStatus = document.querySelector("#caseSubmissionStatus");
+const casePdfLink = document.querySelector("#casePdfLink");
+const toDataUrl = async (blob) => {
+  const bytes = new Uint8Array(await blob.arrayBuffer());
+  let binary = "";
+  for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+    binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
+  }
+  return `data:application/pdf;base64,${btoa(binary)}`;
+};
+
+const buildCasePdf = (data, caseNumber, createdAt) => {
+  const { jsPDF } = window.jspdf || {};
+  if (!jsPDF) throw new Error("PDF support did not load. Reload the page and try again.");
+  const documentPdf = new jsPDF({ unit: "mm", format: "a4" });
+  const left = 18;
+  const right = 192;
+  let y = 20;
+  documentPdf.setFont("helvetica", "bold");
+  documentPdf.setFontSize(16);
+  documentPdf.text("ARRAI DETECTIVE AGENCY", left, y);
+  y += 9;
+  documentPdf.setFontSize(12);
+  documentPdf.text("PRELIMINARY CASE INTAKE ACKNOWLEDGEMENT", left, y);
+  y += 8;
+  documentPdf.setFont("helvetica", "normal");
+  documentPdf.setFontSize(10);
+  documentPdf.text(`Case number: ${caseNumber}`, left, y);
+  y += 6;
+  documentPdf.text(`Generated: ${new Date(createdAt).toLocaleString()}`, left, y);
+  y += 9;
+
+  const fields = [
+    ["Client / representative", data.get("name")],
+    ["Case solver", "Mr. A · ARRAI Detective Agency"],
+    ["Email", data.get("email")],
+    ["Client type", data.get("clientType")],
+    ["Student / guardian", data.get("studentStatus")],
+    ["Organization / agency", data.get("organization")],
+    ["Role", data.get("professionalRole")],
+    ["Matter", data.get("caseCategory")],
+    ["Requested service", data.get("service")],
+    ["Country", data.get("country")],
+    ["State / region", data.get("state")],
+    ["District / county", data.get("district")],
+    ["City / town", data.get("city")],
+    ["Area / neighbourhood", data.get("area")],
+    ["PIN / postal code", data.get("postalCode")],
+    ["Police station / precinct", data.get("policeStation")],
+    ["Timing", data.get("timing")],
+    ["Summary", data.get("message")],
+  ];
+  documentPdf.setFont("helvetica", "bold");
+  documentPdf.text("ENQUIRY DETAILS", left, y);
+  y += 7;
+  documentPdf.setFont("helvetica", "normal");
+  fields.forEach(([label, value]) => {
+    const text = `${label}: ${String(value || "Not provided")}`;
+    const lines = documentPdf.splitTextToSize(text, right - left);
+    if (y + lines.length * 5 > 275) {
+      documentPdf.addPage();
+      y = 20;
+    }
+    documentPdf.text(lines, left, y);
+    y += lines.length * 5 + 2;
+  });
+
+  if (y + 45 > 275) {
+    documentPdf.addPage();
+    y = 20;
+  }
+  y += 3;
+  documentPdf.setFont("helvetica", "bold");
+  documentPdf.text("PRELIMINARY ACKNOWLEDGEMENT", left, y);
+  y += 7;
+  documentPdf.setFont("helvetica", "normal");
+  const terms = [
+    "I confirm that the information above is accurate to the best of my knowledge and that I am entitled to submit this enquiry.",
+    "This acknowledgement records an enquiry only. It is not legal advice, a final investigation-services contract, an emergency request, or an official police/court filing.",
+    "No investigative work begins until the agency confirms lawful authority and capability and both parties agree in writing on scope, fees, timing, privacy/data handling and cancellation terms.",
+    "The agency will not hack accounts/devices, obtain private records without authority, install spyware, or conduct unlawful surveillance. Outcomes and public-source records cannot be guaranteed.",
+    `Acknowledged by: ${data.get("name")}    Date/time: ${new Date().toISOString()}`,
+    `Draft terms version: ${data.get("agreementVersion")}`,
+  ];
+  terms.forEach((term) => {
+    const lines = documentPdf.splitTextToSize(term, right - left);
+    if (y + lines.length * 5 > 275) {
+      documentPdf.addPage();
+      y = 20;
+    }
+    documentPdf.text(lines, left, y);
+    y += lines.length * 5 + 3;
+  });
+  for (let page = 1; page <= documentPdf.getNumberOfPages(); page += 1) {
+    documentPdf.setPage(page);
+    documentPdf.setFontSize(8);
+    documentPdf.setTextColor(100);
+    documentPdf.text("DRAFT INTAKE ACKNOWLEDGEMENT · Not a final service contract", left, 288);
+    documentPdf.text(`Page ${page} of ${documentPdf.getNumberOfPages()}`, right, 288, { align: "right" });
+  }
+  return documentPdf.output("blob");
+};
+
+caseForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!caseForm.reportValidity()) return;
+  const submitButton = caseForm.querySelector('[type="submit"]');
+  const data = new FormData(caseForm);
+  const clientTypeValue = data.get("clientType");
+  if (clientTypeValue === "Student" && !data.get("studentStatus")) {
+    caseStatus.textContent = "Confirm that you are an adult student or that a parent/guardian is helping.";
+    return;
+  }
+  submitButton.disabled = true;
+  caseStatus.textContent = "Creating the private case record…";
+  casePdfLink.hidden = true;
+  try {
+    const payload = {
+      action: "create-case",
+      requestType: data.get("requestType"),
+      clientName: data.get("name"),
+      clientEmail: data.get("email"),
+      clientType: clientTypeValue,
+      studentStatus: data.get("studentStatus"),
+      studentStatus: data.get("studentStatus"),
+      matterCategory: data.get("caseCategory"),
+      service: data.get("service"),
+      organization: data.get("organization"),
+      professionalRole: data.get("professionalRole"),
+      caseReference: data.get("caseReference"),
+      authorizedToEnquire: data.get("authorizedToEnquire") === "Confirmed",
+      country: data.get("country"),
+      state: data.get("state"),
+      district: data.get("district"),
+      city: data.get("city"),
+      area: data.get("area"),
+      postalCode: data.get("postalCode"),
+      policeStation: data.get("policeStation"),
+      timing: data.get("timing"),
+      summary: data.get("message"),
+      agreementName: data.get("name"),
+      agreementAccepted: data.get("agreementAccepted") === "Confirmed",
+    };
+    const response = await fetch("/api/detective-cases", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "The secure case register could not save this enquiry.");
+
+    payload.agreementVersion = result.agreementVersion;
+    const pdf = buildCasePdf(data, result.caseNumber, result.createdAt);
+    const fileName = `${result.caseNumber}.pdf`;
+    const objectUrl = URL.createObjectURL(pdf);
+    casePdfLink.href = objectUrl;
+    casePdfLink.download = fileName;
+    casePdfLink.textContent = `Download case PDF · ${result.caseNumber}`;
+    casePdfLink.hidden = false;
+    casePdfLink.click();
+    caseStatus.textContent = `Case ${result.caseNumber} created. Your preliminary acknowledgement PDF is downloading.`;
+
+    try {
+      const pdfData = await toDataUrl(pdf);
+      const uploadResponse = await fetch("/api/detective-cases", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "attach-pdf",
+          caseId: result.caseId,
+          caseNumber: result.caseNumber,
+          uploadToken: result.uploadToken,
+          pdfData,
+        }),
+      });
+      const uploadResult = await uploadResponse.json();
+      if (!uploadResponse.ok) throw new Error(uploadResult.error || "PDF email-link setup failed.");
+      caseStatus.textContent = uploadResult.emailSent
+        ? `Case ${result.caseNumber} created. The PDF was downloaded and a private 7-day link was emailed to you.`
+        : uploadResult.emailReason === "email_not_configured"
+          ? `Case ${result.caseNumber} created and PDF downloaded. Automatic email link is not configured yet; contact info@arrai.in with this case number.`
+          : `Case ${result.caseNumber} created and PDF downloaded, but the email link could not be delivered. Contact info@arrai.in with this case number.`;
+    } catch {
+      caseStatus.textContent = `Case ${result.caseNumber} created and PDF downloaded. The private email link could not be prepared; contact info@arrai.in with this case number.`;
+    }
+  } catch (error) {
+    caseStatus.textContent = error.message || "Case intake could not be completed.";
+  } finally {
+    submitButton.disabled = false;
+  }
 });

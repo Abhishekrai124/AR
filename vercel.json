@@ -3,6 +3,8 @@
   "rewrites": [
     { "source": "/about", "destination": "/about.html" },
     { "source": "/services", "destination": "/services.html" },
+    { "source": "/detective", "destination": "/detective.html" },
+    { "source": "/detective-members", "destination": "/detective-members.html" },
     { "source": "/projects", "destination": "/projects.html" },
     { "source": "/contact", "destination": "/contact.html" },
     { "source": "/music", "destination": "/music.html" },

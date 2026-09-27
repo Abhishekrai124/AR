@@ -1,0 +1,36 @@
+.member-portal { padding-top: 70px; padding-bottom: 100px; }
+.member-portal-intro { max-width: 850px; padding-bottom: 56px; }
+.member-portal-intro h1 { font: 600 4.4rem/0.98 "Barlow Condensed", sans-serif; }
+.member-portal-intro > p:not(.case-kicker) { max-width: 690px; margin: 20px 0 0; color: var(--muted); font-size: 0.82rem; line-height: 1.8; }
+.member-portal-intro .member-boundary { padding-left: 13px; border-left: 2px solid var(--sky); }
+.member-workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; padding-top: 36px; border-top: 1px solid var(--line); }
+.member-column { min-width: 0; }
+.member-column h2 { margin: 0 0 22px; font: 600 2.2rem/1 "Barlow Condensed", sans-serif; }
+.member-form { display: grid; gap: 15px; }
+.member-form[hidden] { display: none; }
+.member-form label { display: grid; gap: 6px; color: var(--muted); font-size: 0.7rem; font-weight: 700; }
+.member-form input,.member-form textarea,.member-form select { width: 100%; min-height: 42px; border: 1px solid var(--line); border-radius: 3px; padding: 10px 11px; color: var(--ink); background: #202722; font: inherit; }
+.member-form input:focus,.member-form textarea:focus,.member-form select:focus { outline: 2px solid var(--sky); outline-offset: 2px; }
+.member-form select[multiple] { min-height: 150px; }
+.member-form small { color: var(--muted); font-size: 0.62rem; font-weight: 400; line-height: 1.6; }
+.member-form .member-consent { display: flex; gap: 9px; align-items: flex-start; font-size: 0.68rem; font-weight: 500; line-height: 1.65; }
+.member-form .member-consent input { flex: 0 0 17px; width: 17px; min-height: 17px; margin: 2px 0 0; accent-color: var(--sky); }
+.member-status { color: var(--muted); font-size: 0.72rem; line-height: 1.7; }
+.member-dashboard { margin-top: 30px; padding-top: 23px; border-top: 1px solid var(--line); }
+.member-dashboard-heading { display: flex; justify-content: space-between; align-items: start; gap: 15px; }
+.member-dashboard-heading h2 { margin: 0; font-size: 1.9rem; }
+.assigned-cases { display: grid; gap: 12px; margin-top: 20px; }
+.assigned-case { padding: 15px 0; border-top: 1px solid var(--line); }
+.assigned-case h3 { margin: 0; font-size: 0.9rem; }
+.assigned-case p,.assigned-case small { color: var(--muted); font-size: 0.7rem; line-height: 1.7; }
+.assigned-case a { color: var(--sky); font-size: 0.72rem; }
+.detective-members-page .detective-footer { margin-top: 0; }
+@media (max-width: 760px) {
+  .member-portal { padding-top: 50px; }
+  .member-portal-intro h1 { font-size: 3.5rem; }
+  .member-workspace { grid-template-columns: 1fr; gap: 52px; }
+}
+@media (max-width: 420px) {
+  .member-portal-intro h1 { font-size: 3rem; }
+  .member-dashboard-heading { flex-direction: column; }
+}

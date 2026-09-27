@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#151a17" />
+    <meta name="description" content="Private ARRAI Detective Agency member registration and approved investigator case access." />
+    <title>Detective Member Portal · ARRAI</title>
+    <link rel="icon" href="/assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="detective.css" />
+    <link rel="stylesheet" href="detective-members.css" />
+  </head>
+  <body class="detective-page detective-members-page">
+    <header>
+      <a class="brand agency-wordmark" href="detective.html">ARRAI<span>FIELD OFFICE</span></a>
+      <button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <nav aria-label="Main navigation">
+        <a href="index.html">AR Home</a>
+        <a href="detective.html">Agency</a>
+        <a class="active" href="detective-members.html" aria-current="page">Member portal</a>
+        <a href="contact.html?type=case">File a case</a>
+      </nav>
+    </header>
+    <main class="member-portal wrap">
+      <section class="member-portal-intro">
+        <p class="case-kicker"><span></span> Restricted access · ARRAI Detective Agency</p>
+        <h1>Private work.<br /><em>Verified members only.</em></h1>
+        <p>Anyone may submit a membership application. A detective account stays locked until the owner approves it and issues a member ID. Login requires your account password and that ID.</p>
+        <p class="member-boundary">Members see only cases specifically assigned to their approved account. Applications, photos and case files are private; do not upload identity documents or sensitive client evidence here.</p>
+      </section>
+
+      <section class="member-workspace" aria-label="Detective member access">
+        <div class="member-column">
+          <p class="case-kicker">Already approved?</p>
+          <h2>Member login</h2>
+          <form id="memberLoginForm" class="member-form">
+            <label>Email<input name="email" type="email" autocomplete="username" required /></label>
+            <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
+            <label>Owner-issued member ID<input name="memberId" type="password" autocomplete="off" required placeholder="DTA-32-character code" /></label>
+            <button class="case-button" type="submit">Verify &amp; open cases <span aria-hidden="true">↗</span></button>
+          </form>
+          <p id="memberLoginStatus" class="member-status" role="status" aria-live="polite"></p>
+
+          <section id="memberDashboard" class="member-dashboard" hidden>
+            <div class="member-dashboard-heading"><div><p class="case-kicker">Approved member</p><h2 id="memberWelcome"></h2></div><button id="memberLogout" class="follow-button" type="button">Log out</button></div>
+            <div id="assignedCases" class="assigned-cases"><p class="member-status">Loading assigned cases…</p></div>
+          </section>
+        </div>
+
+        <div class="member-column registration-column">
+          <p class="case-kicker">New detective / student applicant</p>
+          <h2>Register for review</h2>
+          <form id="memberSignupForm" class="member-form">
+            <label>Full name<input name="fullName" maxlength="120" autocomplete="name" required /></label>
+            <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+            <label>Password<input name="password" type="password" autocomplete="new-password" minlength="10" required /></label>
+            <label class="member-consent"><input name="emailConsent" type="checkbox" required /> I understand email verification is required before the private application can be submitted.</label>
+            <button class="case-button" type="submit">Create applicant account <span aria-hidden="true">↗</span></button>
+          </form>
+          <p id="memberSignupStatus" class="member-status" role="status" aria-live="polite"></p>
+
+          <form id="applicationResumeForm" class="member-form" hidden>
+            <p class="member-status">Already registered? Verify your account to complete or check your private application. This does not open the member case register.</p>
+            <label>Email<input name="email" type="email" autocomplete="username" required /></label>
+            <label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
+            <button class="follow-button" type="submit">Continue application</button>
+          </form>
+
+          <form id="memberApplicationForm" class="member-form" hidden>
+            <p class="member-status" id="applicationAccountLabel"></p>
+            <label>Full legal name<input name="fullName" maxlength="120" autocomplete="name" required /></label>
+            <label>Phone<input name="phone" type="tel" maxlength="32" autocomplete="tel" required /></label>
+            <label>Country<input name="country" maxlength="100" autocomplete="country-name" required /></label>
+            <label>State / province<input name="state" maxlength="100" autocomplete="address-level1" /></label>
+            <label>City / town<input name="city" maxlength="100" autocomplete="address-level2" /></label>
+            <label>Languages spoken<input name="languages" maxlength="300" placeholder="Comma-separated languages" /></label>
+            <label>Relevant experience (years)<input name="yearsExperience" type="number" min="0" max="60" required /></label>
+            <label>Investigation specialties<select name="specialties" id="memberSpecialties" multiple required size="8"></select><small>Choose up to 15 specialties you are qualified and authorized to perform.</small></label>
+            <label>Relevant training / qualifications<textarea name="qualifications" maxlength="1200" rows="3"></textarea></label>
+            <label>License or registration details (if applicable)<input name="licenseDetails" maxlength="400" /></label>
+            <label>Profile photo<input name="profilePhoto" type="file" accept="image/jpeg,image/png,image/webp" required /><small>JPG, PNG or WebP, maximum 2 MB. Visible only to the verified owner.</small></label>
+            <label class="member-consent"><input name="applicationConsent" type="checkbox" value="Confirmed" required /> I confirm these details are accurate, authorize private owner review, and understand approval/member ID is required before detective login.</label>
+            <button class="case-button" type="submit">Submit private application <span aria-hidden="true">↗</span></button>
+          </form>
+          <p id="applicationStatus" class="member-status" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+    </main>
+    <footer class="detective-footer">
+      <a class="brand agency-wordmark" href="detective.html">ARRAI<span>FIELD OFFICE</span></a>
+      <p>Private member area · do not share member IDs</p>
+      <a href="detective.html">Agency services</a>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="detective-catalog.js"></script>
+    <script src="script.js"></script>
+    <script src="detective-members.js"></script>
+  </body>
+</html>

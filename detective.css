@@ -74,6 +74,16 @@ body.detective-page::after { display: none; }
 .section-intro h2,.approach-layout h2 { font: 600 3.2rem/1.02 "Barlow Condensed", sans-serif; }
 .section-intro > p:last-child { max-width: 390px; margin-top: 22px; color: var(--muted); font-size: 0.84rem; line-height: 1.8; }
 .investigation-list,.approach-steps { margin: 0; padding: 0; list-style: none; }
+.service-catalog-controls { display: grid; gap: 12px; margin-top: 28px; }
+.service-catalog-controls label { display: grid; gap: 6px; color: var(--muted); font-size: 0.65rem; }
+.service-catalog-controls input,.service-catalog-controls select { width: 100%; min-height: 42px; border: 1px solid var(--line); border-radius: 3px; padding: 10px 11px; color: var(--ink); background: #202722; font: inherit; }
+.service-catalog-controls input:focus,.service-catalog-controls select:focus { outline: 2px solid var(--sky); outline-offset: 2px; }
+.service-catalog-controls > p { margin: 0; color: var(--sky); font: 0.62rem "DM Mono", monospace; }
+.investigation-service { display: grid; grid-template-columns: 1fr; gap: 7px; padding: 18px 0; border-top: 1px solid var(--line); }
+.investigation-service > span { color: var(--sky); font: 0.58rem "DM Mono", monospace; text-transform: uppercase; }
+.investigation-service h3 { margin: 0; color: var(--ink); font-size: 0.88rem; }
+.investigation-service p { margin: 0; color: var(--muted); font-size: 0.7rem; line-height: 1.7; }
+.investigation-list[data-empty="true"]::after { content: "No matching services. Choose ‘Related or Unlisted Investigation Request’ in the enquiry form for a scope review."; padding: 18px 0; color: var(--muted); font-size: 0.75rem; line-height: 1.7; }
 .investigation-list > li { display: grid; grid-template-columns: 42px 1fr; gap: 16px; padding: 20px 0; border-top: 1px solid var(--line); }
 .investigation-list > li:last-child { border-bottom: 1px solid var(--line); }
 .investigation-list h3,.approach-steps h3 { margin: 0; color: var(--ink); font-size: 0.9rem; }

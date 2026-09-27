@@ -151,6 +151,13 @@ if (nav && !nav.querySelector('[href="detective.html"]')) {
   const servicesLink = nav.querySelector('[href="services.html"]');
   servicesLink?.before(detectiveLink);
 }
+if (nav && !nav.querySelector('[href="detective-members.html"]')) {
+  const detectiveMembersLink = document.createElement("a");
+  detectiveMembersLink.href = "detective-members.html";
+  detectiveMembersLink.textContent = "Detective Members";
+  const detectiveLink = nav.querySelector('[href="detective.html"]');
+  detectiveLink?.after(detectiveMembersLink);
+}
 if (nav && !nav.querySelector('[href="calendar.html"]')) {
   const calendarLink = document.createElement("a");
   calendarLink.href = "calendar.html";
@@ -711,6 +718,7 @@ if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
 document.querySelectorAll(".contact-form").forEach((form) =>
   form.addEventListener("submit", (e) => {
     e.preventDefault();
+    if (form.classList.contains("case-form")) return;
     const d = new FormData(form),
       requestType = d.get("requestType") || "Website enquiry",
       s = encodeURIComponent(`${requestType} from ${d.get("name")}`),
