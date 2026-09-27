@@ -1,6 +1,11 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script>
+      if (new URLSearchParams(window.location.search).get("type") === "case") {
+        window.location.replace("detective.html#case-intake");
+      }
+    </script>
     <link rel="icon" href="/assets/app-icon.svg" type="image/svg+xml" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
