@@ -7,6 +7,9 @@
 .owner-member-shortcut[hidden] { display: none; }
 .owner-member-shortcut p { margin: 0; color: var(--muted); font-size: .72rem; line-height: 1.7; }
 .owner-member-shortcut .case-button { justify-self: start; }
+.member-application-options { display: grid; gap: 12px; max-width: 690px; margin-top: 24px; padding: 18px; border: 1px solid var(--line); background: rgba(32, 39, 34, .72); }
+.member-application-options .case-button { justify-self: start; }
+.member-application-options p { margin: 0; color: var(--muted); font-size: .72rem; line-height: 1.7; }
 .member-workspace { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; padding-top: 36px; border-top: 1px solid var(--line); }
 .member-column { min-width: 0; }
 .member-column h2 { margin: 0 0 22px; font: 600 2.2rem/1 "Barlow Condensed", sans-serif; }
