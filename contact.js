@@ -6,6 +6,10 @@ if (quickInquiry) quickInquiry.hidden = isCaseIntake;
 if (caseIntake) caseIntake.hidden = !isCaseIntake;
 if (requestType && isCaseIntake) {
   requestType.value = "Private investigation enquiry";
+  document.title = "Private Case Intake — ARRAI Detective Agency";
+  document.querySelector("#contactEyebrow").textContent = "ARRAI Detective Agency · Ludhiana";
+  document.querySelector("#contactTitle").textContent = "Start a confidential case intake.";
+  document.querySelector("#contactIntro").textContent = "No account is required to submit. You receive a case number and PDF acknowledgement; email OTP is only used later for private case-data access.";
 }
 
 const serviceSelect = document.querySelector("#caseService");

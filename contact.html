@@ -4,8 +4,8 @@
     <link rel="icon" href="/assets/app-icon.svg" type="image/svg+xml" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="description" content="Send an ARRAI Detective Agency enquiry. Choose who you are, the kind of case and the service you need." />
-    <title>Agency Enquiry — ARRAI Detective Agency</title>
+    <meta name="description" content="Contact ARRAI for website, design, project and general enquiries." />
+    <title>Contact — ARRAI</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -20,26 +20,20 @@
     </header>
     <main>
       <section class="page-hero wrap">
-        <p class="eyebrow">ARRAI Detective Agency · Ludhiana</p>
-        <h1>Tell us what kind of help you need.</h1>
-        <p>
-          Individuals, families, legal professionals, public authorities,
-          businesses, insurers, nonprofits and students can submit an enquiry. Choose the
-          closest options; if yours is not listed, select “Other / not sure.”
-          A quick inquiry is only a normal message and needs no login. A private case intake also needs no login to submit; it receives a unique case number and a downloadable draft acknowledgement. Email OTP is requested only later, when someone wants to view private case data. Neither is an official police/court filing or a final service contract.
-        </p>
-        <p class="case-solver-note">Case enquiries are routed for review by <strong>Mr. A</strong>.</p>
+        <p id="contactEyebrow" class="eyebrow">ARRAI · Digital studio</p>
+        <h1 id="contactTitle">Let’s talk about your idea.</h1>
+        <p id="contactIntro">Send a normal message for websites, design, projects, collaborations or general questions. No account is needed.</p>
       </section>
       <section class="content wrap contact-grid">
         <aside class="contact-detail">
-          <p class="eyebrow">Agency contact</p>
+          <p class="eyebrow">Contact ARRAI</p>
           <p>
             <a href="mailto:info@arrai.in">info@arrai.in</a><br /><small
-              >General agency enquiries</small
+              >Website, project &amp; general enquiries</small
             >
           </p>
-          <p>Giaspura, Ludhiana<br />Punjab 141003, India<br /><small>Listed hours: Open 24 hours</small></p>
-          <p class="notice">For immediate danger, contact local emergency services or police directly. This inbox is not monitored as an emergency line.</p>
+          <p>Ludhiana, Punjab, India</p>
+          <p class="notice">For a confidential investigation request, use the ARRAI Detective Agency page—not this normal website contact form.</p>
           <section id="caseDownloadPanel" class="case-download-panel" hidden aria-live="polite">
             <p class="eyebrow">Enquiry saved</p>
             <strong id="caseNumberDisplay">Your case number</strong>
@@ -50,17 +44,17 @@
         </aside>
         <section id="quickInquiry" class="quick-inquiry" aria-labelledby="quickInquiryTitle">
           <p class="eyebrow">Quick inquiry</p>
-          <h2 id="quickInquiryTitle">Just ask. No case file needed.</h2>
-          <p>For a question, availability or first conversation, share only your name, email and a short message. No account or login is needed. No ID, location, evidence or case details are requested here.</p>
+          <h2 id="quickInquiryTitle">Send a normal message.</h2>
+          <p>For a website, project, collaboration or question, share only your name, email and a short message. No account or login is needed.</p>
           <form id="inquiryForm" class="contact-form inquiry-form">
             <label>Your name<input name="name" type="text" maxlength="120" autocomplete="name" required placeholder="Your name" /></label>
             <label>Email address<input name="email" type="email" maxlength="254" autocomplete="email" required placeholder="you@example.com" /></label>
-            <label>What can we help with?<select name="topic" required><option value="General question">General question</option><option value="Service availability">Service availability</option><option value="Pricing or consultation">Pricing or consultation</option><option value="Existing case follow-up">Existing case follow-up</option><option value="Other">Other</option></select></label>
+            <label>What can we help with?<select name="topic" required><option value="General question">General question</option><option value="Website or app project">Website or app project</option><option value="Design or branding">Design or branding</option><option value="Collaboration">Collaboration</option><option value="Other">Other</option></select></label>
             <label>Short message<textarea name="message" maxlength="1000" required placeholder="A short, non-sensitive message"></textarea></label>
             <button class="button primary" type="submit">Send inquiry <b>↗</b></button>
             <p id="inquiryStatus" class="case-submission-status" role="status" aria-live="polite"></p>
           </form>
-          <p class="quick-inquiry-case">Need confidential investigation support? <a href="contact.html?type=case">Open a private case intake →</a></p>
+          <p class="quick-inquiry-case">Need confidential investigation support? <a href="detective.html">Visit ARRAI Detective Agency →</a></p>
         </section>
         <form id="caseIntake" class="contact-form case-form">
           <label>Enquiry type<select name="requestType" id="requestType" required>
