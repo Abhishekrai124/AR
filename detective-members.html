@@ -19,7 +19,7 @@
         <a href="index.html">AR Home</a>
         <a href="detective.html">Agency</a>
         <a class="active" href="detective-members.html" aria-current="page">Member portal</a>
-        <a href="contact.html?type=case">File a case</a>
+        <a href="detective.html#case-intake">File a case</a>
       </nav>
     </header>
     <main class="member-portal wrap">
@@ -50,6 +50,12 @@
           <section id="memberDashboard" class="member-dashboard" hidden>
             <div class="member-dashboard-heading"><div><p class="case-kicker">Approved member</p><h2 id="memberWelcome"></h2></div><button id="memberLogout" class="follow-button" type="button">Log out</button></div>
             <div id="assignedCases" class="assigned-cases"><p class="member-status">Loading assigned cases…</p></div>
+            <section class="member-profile-editor" aria-labelledby="memberProfileTitle">
+              <p class="case-kicker">Your profile</p><h3 id="memberProfileTitle">Update private contact details</h3>
+              <form id="memberProfileForm" class="member-form">
+                <label>Phone<input name="phone" type="tel" maxlength="32" required /></label><label>Country<input name="country" maxlength="100" required /></label><label>State / province<input name="state" maxlength="100" /></label><label>City / town<input name="city" maxlength="100" /></label><label>Postal / PIN code<input name="postalCode" maxlength="24" /></label><label>Address<input name="address" maxlength="300" autocomplete="street-address" /></label><label>Languages<input name="languages" maxlength="300" placeholder="Comma-separated" /></label><label>Qualifications<textarea name="qualifications" maxlength="1200" rows="3"></textarea></label><label>Availability<textarea name="availability" maxlength="500" rows="2"></textarea></label><button class="follow-button" type="submit">Save profile changes</button>
+              </form><p id="memberProfileStatus" class="member-status" role="status" aria-live="polite"></p>
+            </section>
           </section>
         </div>
 
@@ -76,19 +82,28 @@
             <p class="member-status" id="applicationAccountLabel"></p>
             <label>Full legal name<input name="fullName" maxlength="120" autocomplete="name" required /></label>
             <label>Phone<input name="phone" type="tel" maxlength="32" autocomplete="tel" required /></label>
+            <label>Application role<select name="applicantRole" id="applicantRole" required><option value="" selected disabled>Choose your role</option><option value="Private investigator">Private investigator</option><option value="Police / law-enforcement professional">Police / law-enforcement professional</option><option value="Lawyer / legal professional">Lawyer / legal professional</option><option value="Court / judicial professional">Court / judicial professional</option><option value="Government / public authority professional">Government / public authority professional</option><option value="Forensic / security specialist">Forensic / security specialist</option><option value="Student / trainee">Student / trainee</option><option value="Other professional">Other professional</option></select></label>
             <label>Country<input name="country" maxlength="100" autocomplete="country-name" required /></label>
             <label>State / province<input name="state" maxlength="100" autocomplete="address-level1" /></label>
             <label>City / town<input name="city" maxlength="100" autocomplete="address-level2" /></label>
+            <label>Postal / PIN code<input name="postalCode" maxlength="24" autocomplete="postal-code" /></label>
+            <label>Address for private owner review<input name="address" maxlength="300" autocomplete="street-address" /><small>Do not enter a case address. This is visible only to the verified owner.</small></label>
             <label>Languages spoken<input name="languages" maxlength="300" placeholder="Comma-separated languages" /></label>
             <label>Relevant experience (years)<input name="yearsExperience" type="number" min="0" max="60" required /></label>
             <label>Investigation specialties<select name="specialties" id="memberSpecialties" multiple required size="8"></select><small>Choose up to 15 specialties you are qualified and authorized to perform.</small></label>
             <label>Relevant training / qualifications<textarea name="qualifications" maxlength="1200" rows="3"></textarea></label>
+            <div id="roleCredentials" class="role-credentials" hidden><p class="case-form-group-title">Role-specific credentials</p><label id="credentialLabel">Professional licence / registration reference<input name="roleCredential" maxlength="400" placeholder="Reference only — do not upload ID scans" /></label><label id="employerLabel">Employer, authority, court or organization<input name="organization" maxlength="160" /></label></div>
             <label>License, professional ID or registration details (if applicable)<input name="licenseDetails" maxlength="400" placeholder="Licence / registration reference; do not upload identity-document scans" /></label>
+            <label>Why do you want to join ARRAI Detective Agency?<textarea name="motivation" maxlength="1200" required rows="3" placeholder="Your motivation, ethics and the kind of lawful work you want to support"></textarea></label>
+            <label>Availability and preferred area of work<textarea name="availability" maxlength="500" rows="2" placeholder="Hours, travel limits, jurisdictions or remote-work availability"></textarea></label>
             <label>Profile photo<input name="profilePhoto" type="file" accept="image/jpeg,image/png,image/webp" required /><small>JPG, PNG or WebP, maximum 2 MB. Visible only to the verified owner.</small></label>
             <label class="member-consent"><input name="applicationConsent" type="checkbox" value="Confirmed" required /> I confirm these details are accurate, authorize private owner review, and understand approval/member ID is required before detective login.</label>
+            <div class="pdf-action-panel" aria-label="Draft application PDF options"><p>Optional draft copy — submitting is not required.</p><div><button class="follow-button" type="button" data-member-pdf-action="preview">Preview PDF</button><button class="follow-button" type="button" data-member-pdf-action="download">Download PDF</button><button class="follow-button" type="button" data-member-pdf-action="print">Print PDF</button></div></div>
             <button class="case-button" type="submit">Submit private application <span aria-hidden="true">↗</span></button>
           </form>
+          <button id="applicationPdfButton" class="follow-button" type="button" hidden>Download application PDF</button>
           <p id="applicationStatus" class="member-status" role="status" aria-live="polite"></p>
+          <p class="member-manual-option">Having trouble registering? <a href="mailto:info@arrai.in?subject=ARRAI%20Detective%20Member%20Application">Email Mr. A for manual review</a>. Include only your name, contact details and role—do not email ID scans or confidential case information.</p>
         </div>
       </section>
     </main>
@@ -98,6 +113,7 @@
       <a href="detective.html">Agency services</a>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@3.0.2/dist/jspdf.umd.min.js"></script>
     <script src="supabase.js"></script>
     <script src="detective-catalog.js"></script>
     <script src="script.js"></script>

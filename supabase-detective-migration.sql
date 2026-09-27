@@ -99,6 +99,14 @@ alter table public.detective_cases add column if not exists client_email_hash te
 alter table public.detective_cases add column if not exists professional_id_type text not null default '';
 alter table public.detective_cases add column if not exists professional_id_reference text not null default '';
 alter table public.detective_cases add column if not exists professional_verification_status text not null default 'not_required';
+alter table public.detective_member_applications add column if not exists postal_code text not null default '' check (char_length(postal_code) <= 24);
+alter table public.detective_member_applications add column if not exists address text not null default '' check (char_length(address) <= 300);
+alter table public.detective_member_applications add column if not exists applicant_role text not null default '' check (char_length(applicant_role) <= 100);
+alter table public.detective_member_applications add column if not exists organization text not null default '' check (char_length(organization) <= 160);
+alter table public.detective_member_applications add column if not exists role_credential text not null default '' check (char_length(role_credential) <= 400);
+alter table public.detective_member_applications add column if not exists motivation text not null default '' check (char_length(motivation) <= 1200);
+alter table public.detective_member_applications add column if not exists availability text not null default '' check (char_length(availability) <= 500);
+
 alter table public.detective_cases add column if not exists progress_stage text not null default 'case_received';
 alter table public.detective_cases add column if not exists retention_days smallint not null default 7;
 alter table public.detective_cases add column if not exists closed_at timestamptz;

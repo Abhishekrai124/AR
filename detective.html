@@ -19,7 +19,7 @@
         <a class="active" href="detective.html" aria-current="page">Agency</a>
         <a href="#services">Services</a>
         <a href="#approach">Our approach</a>
-        <a href="contact.html?type=case">File a case</a>
+        <a href="#case-intake">File a case</a>
       </nav>
     </header>
     <main>
@@ -29,7 +29,7 @@
           <h1 id="agency-title">Facts matter.<br /><em>So does how we find them.</em></h1>
           <p class="hero-summary">Private investigation enquiries for individuals, families, students, legal professionals, public authorities and organizations. Share the broad outline; we will review fit, authority, location and lawful scope before discussing next steps.</p>
           <div class="hero-actions">
-            <a class="case-button" href="contact.html?type=case">Start a confidential enquiry <span aria-hidden="true">↗</span></a>
+            <a class="case-button" href="#case-intake">Start a confidential enquiry <span aria-hidden="true">↗</span></a>
             <a class="case-text-link" href="#services">Review services <span aria-hidden="true">↓</span></a>
           </div>
             <p class="case-solver-line">Case solver <strong>Mr. A</strong></p>
@@ -109,14 +109,44 @@
         <p class="case-kicker">Other kind of case?</p>
         <h2 id="scope-title">Ask us to review the fit.</h2>
         <p>Fraud, property, workplace, civil-dispute, insurance, online-safety or another investigation request may need a different method or a licensed specialist. Send a short outline and we will tell you whether it is within scope or point you toward the right type of professional or authority.</p>
-        <a class="case-text-link" href="contact.html?type=case">Choose your enquiry type →</a>
+        <a class="case-text-link" href="#case-intake">Choose your enquiry type →</a>
+      </section>
+
+      <section class="case-intake-section" id="case-intake" aria-labelledby="case-intake-title">
+        <div class="wrap case-intake-layout">
+          <div class="case-intake-copy">
+            <p class="case-kicker">Confidential case intake</p>
+            <h2 id="case-intake-title">Start your case<br /><em>in one secure place.</em></h2>
+            <p>Complete this form to create an enquiry record and download your acknowledgement PDF. Please only share a broad, non-sensitive outline here.</p>
+            <div id="caseDownloadPanel" class="case-download-panel" hidden aria-live="polite">
+              <p class="case-kicker">Enquiry saved</p><strong id="caseNumberDisplay">Your case number</strong>
+              <p>Keep this number for reference.</p><a id="casePdfLink" class="case-button" hidden>Download PDF</a>
+              <a id="caseDeskLink" class="case-text-link" href="client-cases.html">Open your private case desk →</a>
+            </div>
+          </div>
+          <form id="caseIntake" class="contact-form case-form">
+            <input type="hidden" name="requestType" id="requestType" value="Private investigation enquiry" />
+            <label>Who are you enquiring as?<select name="clientType" id="clientType" required><option value="" selected disabled>Choose a client type</option><option>Individual</option><option>Family member or representative</option><option>Student</option><option>Parent/guardian for a student</option><option>Lawyer or legal professional</option><option>Police or law-enforcement official</option><option>Public authority or government body</option><option>Business or employer</option><option>Insurer or claims professional</option><option>Nonprofit or community organization</option><option>Other / not sure</option></select></label>
+            <label id="studentStatusField" hidden>Student confirmation<select name="studentStatus" id="studentStatus"><option value="">Choose one</option><option value="adult">I am 18 or older</option><option value="minor_guardian">A parent/guardian is helping me</option></select></label>
+            <div class="professional-fields" id="professionalFields" hidden><p class="case-form-group-title">Professional or organization enquiry</p><label>Organization or agency<input name="organization" maxlength="160" /></label><label>Your role<input name="professionalRole" maxlength="120" /></label><label>Professional ID type<select name="professionalIdType"><option value="">Choose ID type</option><option>Licence or registration number</option><option>Bar / court enrolment number</option><option>Official employee or service ID</option><option>Organization authorization reference</option></select></label><label>Professional ID / reference<input name="professionalIdReference" maxlength="120" /></label><label class="consent-label"><input name="authorizedToEnquire" type="checkbox" value="Confirmed" /> I am authorized to make this enquiry.</label></div>
+            <label>Type of matter<select name="caseCategory" required><option value="" selected disabled>Choose the closest category</option><option>Personal or family matter</option><option>Missing person or locating someone</option><option>Background, identity or address verification</option><option>Harassment, stalking or safety concern</option><option>Relationship or infidelity concern</option><option>Legal, civil or court-support enquiry</option><option>Police or public-authority request</option><option>Business, workplace or corporate matter</option><option>Insurance, claim or suspected fraud</option><option>Online, social media or digital matter</option><option>Property, asset or document-serving enquiry</option><option>Cross-border or international enquiry</option><option>Other / not sure</option></select></label>
+            <label>Service<select name="service" id="caseService" required><option value="" selected disabled>Choose a service</option></select></label>
+            <div class="location-fields"><label>Country<input name="country" maxlength="100" /></label><label>State / region<input name="state" maxlength="100" /></label><label>City / town<input name="city" maxlength="100" /></label><label>Area / neighbourhood<input name="area" maxlength="100" /></label><label>PIN / postal code<input name="postalCode" maxlength="24" /></label><label>Police station (optional)<input name="policeStation" maxlength="120" /></label></div>
+            <input type="hidden" name="district" value="" /><input type="hidden" name="caseReference" value="" />
+            <label>Timing<select name="timing" required><option value="Routine">Routine enquiry</option><option value="Time-sensitive">Time-sensitive</option></select></label>
+            <label>Your name<input required name="name" maxlength="120" autocomplete="name" /></label><label>Email address<input required name="email" type="email" maxlength="254" autocomplete="email" /></label><label>Brief, non-sensitive summary<textarea required name="message" maxlength="1600" placeholder="What happened, where, and what help do you need? Do not enter passwords or private account access."></textarea></label>
+            <label class="consent-label form-consent"><input required name="agreementAccepted" type="checkbox" value="Confirmed" /> I confirm these details are accurate and I am entitled to submit this enquiry. This is not a final contract, legal advice, emergency request or police/court filing.</label>
+            <div class="pdf-action-panel" aria-label="Draft application PDF options"><p>Optional draft copy — submitting is not required.</p><div><button class="follow-button" type="button" data-case-pdf-action="preview">Preview PDF</button><button class="follow-button" type="button" data-case-pdf-action="download">Download PDF</button><button class="follow-button" type="button" data-case-pdf-action="print">Print PDF</button></div></div>
+            <button class="case-button" type="submit">Create case &amp; download PDF <span aria-hidden="true">↗</span></button><p class="case-submission-status" id="caseSubmissionStatus" role="status" aria-live="polite"></p>
+          </form>
+        </div>
       </section>
 
       <section class="privacy-note wrap" aria-labelledby="privacy-title">
         <p class="case-kicker">Before you contact us</p>
         <h2 id="privacy-title">Keep the first message light.</h2>
         <p>Do not email passwords, intimate images, private account access, or sensitive evidence. We do not hack accounts or devices, access private communications without authorization, install spyware, or undertake unlawful surveillance. This page cannot file a police or court case on your behalf.</p>
-        <a class="case-button" href="contact.html?type=case">Open the case enquiry form <span aria-hidden="true">↗</span></a>
+        <a class="case-button" href="#case-intake">Open the case enquiry form <span aria-hidden="true">↗</span></a>
         <p class="emergency-note">If someone is in immediate danger, contact local emergency services.</p>
       </section>
     </main>
@@ -126,8 +156,10 @@
       <a href="services.html">ARRAI digital studio</a>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@3.0.2/dist/jspdf.umd.min.js"></script>
     <script src="supabase.js"></script>
     <script src="detective-catalog.js"></script>
     <script src="script.js"></script>
+    <script src="contact.js"></script>
   </body>
 </html>

@@ -24,7 +24,7 @@ export default async function handler(request, response) {
 
     if (body.action === "applications") {
       const result = await adminFetch(
-        "/rest/v1/detective_member_applications?select=user_id,full_name,email,phone,country,state,city,languages,years_experience,specialties,qualifications,license_details,profile_photo_path,status,member_id_suffix,created_at,reviewed_at&order=created_at.desc&limit=200",
+        "/rest/v1/detective_member_applications?select=user_id,full_name,email,phone,country,state,city,postal_code,address,applicant_role,organization,role_credential,languages,years_experience,specialties,qualifications,license_details,motivation,availability,profile_photo_path,status,member_id_suffix,created_at,reviewed_at&order=created_at.desc&limit=200",
       );
       if (!result.ok) throw new Error("Detective applications could not be loaded.");
       const applications = await result.json();

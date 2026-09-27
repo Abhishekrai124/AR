@@ -7,6 +7,8 @@ const assignedCases = document.querySelector("#assignedCases");
 const loginStatus = document.querySelector("#memberLoginStatus");
 const signupStatus = document.querySelector("#memberSignupStatus");
 const applicationStatus = document.querySelector("#applicationStatus");
+const memberProfileForm = document.querySelector("#memberProfileForm");
+const memberProfileStatus = document.querySelector("#memberProfileStatus");
 let memberToken = "";
 let verifiedMemberId = "";
 const ownerMemberShortcut = document.querySelector("#ownerMemberShortcut");
@@ -79,7 +81,50 @@ const readPhoto = (file) => new Promise((resolve, reject) => {
 });
 
 const specialtySelect = document.querySelector("#memberSpecialties");
+const applicantRole = document.querySelector("#applicantRole");
+const roleCredentials = document.querySelector("#roleCredentials");
+const credentialLabel = document.querySelector("#credentialLabel");
+const employerLabel = document.querySelector("#employerLabel");
+const applicationPdfButton = document.querySelector("#applicationPdfButton");
 window.detectiveServiceCatalog?.forEach(({ title }) => specialtySelect.add(new Option(title, title)));
+
+const updateRoleQuestions = () => {
+  const role = applicantRole?.value || "";
+  const professional = /Police|Lawyer|Court|Government|Forensic|investigator/i.test(role);
+  if (roleCredentials) roleCredentials.hidden = !professional;
+  if (!professional) return;
+  credentialLabel.firstChild.textContent = /Lawyer|Court/.test(role) ? "Bar, court or professional registration reference" : /Police|Government/.test(role) ? "Official service / authorization reference" : "Professional licence / registration reference";
+  employerLabel.firstChild.textContent = /Lawyer/.test(role) ? "Chambers, firm or court" : /Police|Government/.test(role) ? "Authority, department or organization" : "Employer or organization";
+};
+applicantRole?.addEventListener("change", updateRoleQuestions);
+
+const buildApplicationPdf = (values) => {
+  const { jsPDF } = window.jspdf || {};
+  if (!jsPDF) throw new Error("PDF support did not load. Please reload and try again.");
+  const pdf = new jsPDF({ unit: "mm", format: "a4" });
+  const rows = [["ARRAI DETECTIVE AGENCY", "MEMBER APPLICATION COPY"], ["Name", values.get("fullName")], ["Email", values.get("email")], ["Role", values.get("applicantRole")], ["Phone", values.get("phone")], ["Location", [values.get("city"), values.get("state"), values.get("country"), values.get("postalCode")].filter(Boolean).join(", ")], ["Experience", `${values.get("yearsExperience")} years`], ["Qualifications", values.get("qualifications")], ["Credentials", values.get("roleCredential") || values.get("licenseDetails")], ["Motivation", values.get("motivation")], ["Availability", values.get("availability")]];
+  let y = 20;
+  rows.forEach(([label, value]) => { const lines = pdf.splitTextToSize(`${label}: ${value || "Not provided"}`, 170); if (y + lines.length * 6 > 280) { pdf.addPage(); y = 20; } pdf.setFont("helvetica", label === "ARRAI DETECTIVE AGENCY" ? "bold" : "normal"); pdf.text(lines, 20, y); y += lines.length * 6 + 4; });
+  return pdf.output("blob");
+};
+
+const openMemberPdf = (values, action) => {
+  const blob = buildApplicationPdf(values);
+  const url = URL.createObjectURL(blob);
+  if (action === "download") {
+    const link = document.createElement("a"); link.href = url; link.download = "ARRAI-member-application-draft.pdf"; link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000); return;
+  }
+  const preview = window.open(url, "_blank", "noopener");
+  if (!preview) { URL.revokeObjectURL(url); throw new Error("Allow pop-ups to preview or print the PDF."); }
+  if (action === "print") preview.addEventListener("load", () => preview.print(), { once: true });
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+};
+
+document.querySelectorAll("[data-member-pdf-action]").forEach((button) => button.addEventListener("click", () => {
+  try { openMemberPdf(new FormData(memberApplicationForm), button.dataset.memberPdfAction); }
+  catch (error) { setMemberStatus(applicationStatus, error.message || "Draft PDF could not be created."); }
+}));
 
 memberSignupForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -150,16 +195,25 @@ memberApplicationForm.addEventListener("submit", async (event) => {
       country: values.get("country"),
       state: values.get("state"),
       city: values.get("city"),
+      postalCode: values.get("postalCode"),
+      address: values.get("address"),
+      applicantRole: values.get("applicantRole"),
+      organization: values.get("organization"),
+      roleCredential: values.get("roleCredential"),
       languages,
       yearsExperience: Number(values.get("yearsExperience")),
       specialties,
       qualifications: values.get("qualifications"),
       licenseDetails: values.get("licenseDetails"),
+      motivation: values.get("motivation"),
+      availability: values.get("availability"),
       photoType: photo.type,
       photoData,
       applicationConsent: values.get("applicationConsent") === "Confirmed",
     });
     memberApplicationForm.hidden = true;
+    applicationPdfButton.hidden = false;
+    applicationPdfButton.onclick = () => openMemberPdf(values, "download");
     setMemberStatus(applicationStatus, "Application submitted. It stays pending until the owner reviews it and issues a member ID. You cannot access detective cases while pending.");
   } catch (error) {
     setMemberStatus(applicationStatus, error.message || "Application could not be submitted.");
@@ -178,6 +232,15 @@ const renderAssignedCases = (cases) => {
         return `<article class="assigned-case"><h3>${memberEscape(item.case_number)} · ${memberEscape(item.status)}</h3><p>${memberEscape(item.service_name)} · ${memberEscape(item.matter_category)}</p><small>${memberEscape(location)}</small><p>${memberEscape(item.non_sensitive_summary)}</p>${documentLink}</article>`;
       }).join("")
     : '<p class="member-status">No cases are assigned to your account yet.</p>';
+};
+
+const loadMemberProfile = async () => {
+  const result = await memberRequest("member-profile", { memberId: verifiedMemberId });
+  const profile = result.profile;
+  ["phone", "country", "state", "city", "postalCode", "address", "qualifications", "availability"].forEach((name) => {
+    if (memberProfileForm.elements[name]) memberProfileForm.elements[name].value = profile[name] || "";
+  });
+  memberProfileForm.elements.languages.value = (profile.languages || []).join(", ");
 };
 
 memberLoginForm.addEventListener("submit", async (event) => {
@@ -209,12 +272,32 @@ memberLoginForm.addEventListener("submit", async (event) => {
     memberLoginForm.hidden = true;
     const cases = await memberRequest("assigned-cases", { memberId: verifiedMemberId });
     renderAssignedCases(cases.cases);
+    await loadMemberProfile();
     setMemberStatus(loginStatus, "Member access verified.");
   } catch (error) {
     setMemberStatus(loginStatus, error.message || "Member login failed.");
   } finally {
     button.disabled = false;
   }
+});
+
+memberProfileForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!memberProfileForm.reportValidity()) return;
+  const button = memberProfileForm.querySelector('[type="submit"]');
+  const values = new FormData(memberProfileForm);
+  button.disabled = true;
+  setMemberStatus(memberProfileStatus, "Saving your private profile…");
+  try {
+    await memberRequest("update-member-profile", {
+      memberId: verifiedMemberId,
+      phone: values.get("phone"), country: values.get("country"), state: values.get("state"), city: values.get("city"),
+      postalCode: values.get("postalCode"), address: values.get("address"), qualifications: values.get("qualifications"), availability: values.get("availability"),
+      languages: String(values.get("languages") || "").split(",").map((value) => value.trim()).filter(Boolean),
+    });
+    setMemberStatus(memberProfileStatus, "Profile updated. Your owner review status and assigned cases are unchanged.");
+  } catch (error) { setMemberStatus(memberProfileStatus, error.message || "Profile could not be updated."); }
+  finally { button.disabled = false; }
 });
 
 document.querySelector("#memberLogout").addEventListener("click", async () => {

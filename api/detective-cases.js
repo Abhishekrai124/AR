@@ -140,12 +140,17 @@ export default async function handler(request, response) {
           actor: "system",
         }),
       });
-      const ownerEmail = process.env.OWNER_EMAIL || "abhishekrai6897@gmail.com";
+      // Time-sensitive requests are treated as high priority. Only a minimal alert is emailed;
+      // private details remain in the protected case register for owner review.
+      const isHighPriority = caseRecord.timing === "Time-sensitive";
+      const ownerEmail = isHighPriority
+        ? (process.env.HIGH_PRIORITY_CASE_EMAIL || "arraidetectiveagency@proton.me")
+        : (process.env.ROUTINE_CASE_EMAIL || "arraidetectiveagency@gmail.com");
       const ownerNotification = await sendTransactionalEmail({
         to: ownerEmail,
-        subject: `New ARRAI case · ${saved.case_number}`,
-        text: `New private case intake\n\nCase: ${saved.case_number}\nClient: ${clientName} <${clientEmail}>\nType: ${clientType}\nMatter: ${caseRecord.matter_category}\nService: ${caseRecord.service_name}\nTiming: ${caseRecord.timing}\n\nSummary:\n${summary}`,
-        html: `<h2>New private case intake</h2><p><b>Case:</b> ${saved.case_number}</p><p><b>Client:</b> ${clientName.replace(/[&<>"']/g, "")} &lt;${clientEmail.replace(/[&<>"']/g, "")}&gt;</p><p><b>Type:</b> ${clientType.replace(/[&<>"']/g, "")}<br><b>Matter:</b> ${caseRecord.matter_category.replace(/[&<>"']/g, "")}<br><b>Service:</b> ${caseRecord.service_name.replace(/[&<>"']/g, "")}<br><b>Timing:</b> ${caseRecord.timing}</p><p>${summary.replace(/[&<>"']/g, "").replace(/\n/g, "<br>")}</p>`,
+        subject: `${isHighPriority ? "High-priority" : "New routine"} ARRAI case · ${saved.case_number}`,
+        text: `A ${isHighPriority ? "high-priority" : "routine"} ARRAI case was received.\n\nCase: ${saved.case_number}\nTiming: ${caseRecord.timing}\n\nReview the private owner panel for the protected application details.`,
+        html: `<h2>${isHighPriority ? "High-priority" : "New routine"} ARRAI case</h2><p><b>Case:</b> ${saved.case_number}<br><b>Timing:</b> ${caseRecord.timing}</p><p>Review the private owner panel for protected application details.</p>`,
       });
       return response.status(201).json({
         caseId: saved.id,

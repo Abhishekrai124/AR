@@ -1,7 +1,10 @@
 const requestType = document.querySelector("#requestType");
-const isCaseIntake = new URLSearchParams(window.location.search).get("type") === "case";
 const quickInquiry = document.querySelector("#quickInquiry");
 const caseIntake = document.querySelector("#caseIntake");
+const isCaseIntake = Boolean(caseIntake) && new URLSearchParams(window.location.search).get("type") === "case";
+if (isCaseIntake && window.location.pathname.endsWith("contact.html")) {
+  window.location.replace("detective.html#case-intake");
+}
 if (quickInquiry) quickInquiry.hidden = isCaseIntake;
 if (caseIntake) caseIntake.hidden = !isCaseIntake;
 if (requestType && isCaseIntake) {
@@ -331,6 +334,29 @@ const buildCasePdf = (data, caseNumber, createdAt) => {
   }
   return documentPdf.output("blob");
 };
+
+const openPdfAction = (blob, action, fileName) => {
+  const url = URL.createObjectURL(blob);
+  if (action === "download") {
+    const link = document.createElement("a");
+    link.href = url; link.download = fileName; link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return;
+  }
+  const preview = window.open(url, "_blank", "noopener");
+  if (!preview) { URL.revokeObjectURL(url); throw new Error("Allow pop-ups to preview or print the PDF."); }
+  if (action === "print") preview.addEventListener("load", () => preview.print(), { once: true });
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+};
+
+document.querySelectorAll("[data-case-pdf-action]").forEach((button) => button.addEventListener("click", () => {
+  try {
+    if (!caseForm) return;
+    const action = button.dataset.casePdfAction;
+    const pdf = buildCasePdf(new FormData(caseForm), "DRAFT — NOT SUBMITTED", new Date().toISOString());
+    openPdfAction(pdf, action, "ARRAI-case-application-draft.pdf");
+  } catch (error) { if (caseStatus) caseStatus.textContent = error.message || "Draft PDF could not be created."; }
+}));
 
 caseForm?.addEventListener("submit", async (event) => {
   event.preventDefault();

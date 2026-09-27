@@ -20,7 +20,14 @@
 .member-form .member-consent { display: flex; gap: 9px; align-items: flex-start; font-size: 0.68rem; font-weight: 500; line-height: 1.65; }
 .member-form .member-consent input { flex: 0 0 17px; width: 17px; min-height: 17px; margin: 2px 0 0; accent-color: var(--sky); }
 .member-status { color: var(--muted); font-size: 0.72rem; line-height: 1.7; }
+.role-credentials { display: grid; gap: 15px; padding: 15px; border: 1px solid var(--line); }
+.role-credentials[hidden] { display: none; }
+.member-manual-option { margin-top: 22px; color: var(--muted); font-size: .72rem; line-height: 1.7; }
+.member-manual-option a { color: var(--sky); }
+.detective-members-page .pdf-action-panel { margin: 2px 0; }
 .member-dashboard { margin-top: 30px; padding-top: 23px; border-top: 1px solid var(--line); }
+.member-profile-editor { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); }
+.member-profile-editor h3 { margin: 0 0 18px; font-size: 1rem; }
 .member-dashboard-heading { display: flex; justify-content: space-between; align-items: start; gap: 15px; }
 .member-dashboard-heading h2 { margin: 0; font-size: 1.9rem; }
 .assigned-cases { display: grid; gap: 12px; margin-top: 20px; }
