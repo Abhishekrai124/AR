@@ -31,12 +31,14 @@ window.arraiAuth
       googleButton.hidden = true;
       communityButton.hidden = false;
       communityButton.href = "#";
-      communityButton.textContent = "Logout";
+      const isOwner = user?.email?.toLowerCase() === "abhishekrai6897@gmail.com";
+      communityButton.textContent = isOwner ? "Open Owner Studio" : "Logout";
       communityButton.addEventListener(
         "click",
         (event) => {
           event.preventDefault();
-          window.logout();
+          if (isOwner) window.location.assign("owner.html");
+          else window.logout();
         },
         { once: true },
       );

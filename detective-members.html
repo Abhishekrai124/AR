@@ -26,8 +26,13 @@
       <section class="member-portal-intro">
         <p class="case-kicker"><span></span> Restricted access · ARRAI Detective Agency</p>
         <h1>Private work.<br /><em>Verified members only.</em></h1>
-        <p>Anyone may submit a membership application. A detective account stays locked until the owner approves it and issues a member ID. Login requires your account password and that ID.</p>
+        <p>Anyone may submit a membership application. A detective account stays locked until the owner approves it and issues a member ID. After approval, sign in with your account and member ID; the owner can assign cases, and each assigned private PDF appears here.</p>
         <p class="member-boundary">Members see only cases specifically assigned to their approved account. Applications, photos and case files are private; do not upload identity documents or sensitive client evidence here.</p>
+        <aside id="ownerMemberShortcut" class="owner-member-shortcut" hidden>
+          <p class="case-kicker">Owner session active</p>
+          <p>You are already signed in as the owner. No member password or detective ID is needed to review applications, assign detectives or open private case records.</p>
+          <a class="case-button" href="owner.html">Open Owner Studio <span aria-hidden="true">↗</span></a>
+        </aside>
       </section>
 
       <section class="member-workspace" aria-label="Detective member access">
@@ -78,7 +83,7 @@
             <label>Relevant experience (years)<input name="yearsExperience" type="number" min="0" max="60" required /></label>
             <label>Investigation specialties<select name="specialties" id="memberSpecialties" multiple required size="8"></select><small>Choose up to 15 specialties you are qualified and authorized to perform.</small></label>
             <label>Relevant training / qualifications<textarea name="qualifications" maxlength="1200" rows="3"></textarea></label>
-            <label>License or registration details (if applicable)<input name="licenseDetails" maxlength="400" /></label>
+            <label>License, professional ID or registration details (if applicable)<input name="licenseDetails" maxlength="400" placeholder="Licence / registration reference; do not upload identity-document scans" /></label>
             <label>Profile photo<input name="profilePhoto" type="file" accept="image/jpeg,image/png,image/webp" required /><small>JPG, PNG or WebP, maximum 2 MB. Visible only to the verified owner.</small></label>
             <label class="member-consent"><input name="applicationConsent" type="checkbox" value="Confirmed" required /> I confirm these details are accurate, authorize private owner review, and understand approval/member ID is required before detective login.</label>
             <button class="case-button" type="submit">Submit private application <span aria-hidden="true">↗</span></button>

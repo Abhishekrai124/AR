@@ -26,7 +26,7 @@
           Individuals, families, legal professionals, public authorities,
           businesses, insurers, nonprofits and students can submit an enquiry. Choose the
           closest options; if yours is not listed, select “Other / not sure.”
-          Enquiries receive a unique case number and a downloadable draft acknowledgement. This is not an official police/court filing or a final service contract.
+          A quick inquiry is only a normal message and needs no login. A private case intake also needs no login to submit; it receives a unique case number and a downloadable draft acknowledgement. Email OTP is requested only later, when someone wants to view private case data. Neither is an official police/court filing or a final service contract.
         </p>
         <p class="case-solver-note">Case enquiries are routed for review by <strong>Mr. A</strong>.</p>
       </section>
@@ -40,8 +40,29 @@
           </p>
           <p>Giaspura, Ludhiana<br />Punjab 141003, India<br /><small>Listed hours: Open 24 hours</small></p>
           <p class="notice">For immediate danger, contact local emergency services or police directly. This inbox is not monitored as an emergency line.</p>
+          <section id="caseDownloadPanel" class="case-download-panel" hidden aria-live="polite">
+            <p class="eyebrow">Enquiry saved</p>
+            <strong id="caseNumberDisplay">Your case number</strong>
+            <p>Your filled enquiry is saved securely. Keep the case number for reference.</p>
+            <a id="casePdfLink" class="button primary" hidden>Download PDF</a>
+            <a id="caseDeskLink" class="text-link" href="client-cases.html">Open your case desk →</a>
+          </section>
         </aside>
-        <form class="contact-form case-form">
+        <section id="quickInquiry" class="quick-inquiry" aria-labelledby="quickInquiryTitle">
+          <p class="eyebrow">Quick inquiry</p>
+          <h2 id="quickInquiryTitle">Just ask. No case file needed.</h2>
+          <p>For a question, availability or first conversation, share only your name, email and a short message. No account or login is needed. No ID, location, evidence or case details are requested here.</p>
+          <form id="inquiryForm" class="contact-form inquiry-form">
+            <label>Your name<input name="name" type="text" maxlength="120" autocomplete="name" required placeholder="Your name" /></label>
+            <label>Email address<input name="email" type="email" maxlength="254" autocomplete="email" required placeholder="you@example.com" /></label>
+            <label>What can we help with?<select name="topic" required><option value="General question">General question</option><option value="Service availability">Service availability</option><option value="Pricing or consultation">Pricing or consultation</option><option value="Existing case follow-up">Existing case follow-up</option><option value="Other">Other</option></select></label>
+            <label>Short message<textarea name="message" maxlength="1000" required placeholder="A short, non-sensitive message"></textarea></label>
+            <button class="button primary" type="submit">Send inquiry <b>↗</b></button>
+            <p id="inquiryStatus" class="case-submission-status" role="status" aria-live="polite"></p>
+          </form>
+          <p class="quick-inquiry-case">Need confidential investigation support? <a href="contact.html?type=case">Open a private case intake →</a></p>
+        </section>
+        <form id="caseIntake" class="contact-form case-form">
           <label>Enquiry type<select name="requestType" id="requestType" required>
             <option value="Private investigation enquiry">Private investigation case</option>
             <option value="General agency enquiry">General agency question</option>
@@ -69,6 +90,8 @@
             <p class="case-form-group-title">Professional or organization enquiry</p>
             <label>Organization or agency<input name="organization" type="text" maxlength="120" placeholder="Organization name" /></label>
             <label>Your role<input name="professionalRole" type="text" maxlength="100" placeholder="Role or title" /></label>
+            <label>Professional ID type<select name="professionalIdType" id="professionalIdType"><option value="">Choose ID type</option><option value="Licence or registration number">Licence or registration number</option><option value="Bar / court enrolment number">Bar / court enrolment number</option><option value="Official employee or service ID">Official employee or service ID</option><option value="Organization authorization reference">Organization authorization reference</option></select></label>
+            <label>Professional ID / reference<input name="professionalIdReference" id="professionalIdReference" type="text" maxlength="120" placeholder="Only the number/reference — do not upload ID images" /><small>For a professional case, this is reviewed by the agency. Enquiries remain open to everyone; no automatic government-ID verification is claimed.</small></label>
             <label>Internal reference (optional)<input name="caseReference" type="text" maxlength="80" placeholder="Use a reference only; no confidential case details" /></label>
             <label class="consent-label"><input name="authorizedToEnquire" type="checkbox" value="Confirmed" /> I am authorized to make this enquiry for the organization, client or authority named above.</label>
           </div>
@@ -159,7 +182,6 @@
             Create case &amp; download PDF <b>↗</b>
           </button>
           <p class="case-submission-status" id="caseSubmissionStatus" role="status" aria-live="polite"></p>
-          <a id="casePdfLink" class="text-link" hidden></a>
         </form>
       </section>
     </main>

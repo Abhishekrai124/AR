@@ -1,7 +1,9 @@
 const supabaseUrl = "https://atphyjukjgnnbfbnizyx.supabase.co";
 const supabaseKey = "sb_publishable_1mRpCP5-rupEHnhOV3aK1w_lhFwAo6l";
 
-window.arraiSupabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+window.arraiSupabase = window.supabase.createClient(supabaseUrl, supabaseKey, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+});
 window.createArraiSupabase = async () => window.arraiSupabase;
 window.arraiAuth = window.arraiSupabase.auth.getUser().then(({ data, error }) => {
   if (error || !data.user) return { isAuthenticated: false, user: null };

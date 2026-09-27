@@ -99,13 +99,30 @@ export default async function handler(request, response) {
 
     if (body.action === "cases") {
       const result = await adminFetch(
-        "/rest/v1/detective_cases?select=id,case_number,client_name,client_email,client_type,matter_category,service_name,country,state,district,city,area,postal_code,police_station,organization,professional_role,case_reference,authorized_to_enquire,timing,non_sensitive_summary,status,assigned_member_id,pdf_object_path,created_at,updated_at&order=created_at.desc&limit=500",
+        "/rest/v1/detective_cases?select=id,case_number,client_name,client_email,client_type,matter_category,service_name,country,state,district,city,area,postal_code,police_station,organization,professional_role,professional_id_type,professional_id_reference,professional_verification_status,case_reference,authorized_to_enquire,timing,non_sensitive_summary,status,progress_stage,retention_days,closed_at,purged_at,assigned_member_id,pdf_object_path,created_at,updated_at&order=created_at.desc&limit=500",
       );
       if (!result.ok) throw new Error("The case register could not be loaded.");
       const cases = await result.json();
+      const ids = cases.map((item) => item.id);
+      let evidence = [];
+      let invoices = [];
+      if (ids.length) {
+        const filter = encodeURIComponent(`(${ids.join(",")})`);
+        const [evidenceResponse, invoiceResponse] = await Promise.all([
+          adminFetch(`/rest/v1/detective_case_evidence?case_id=in.${filter}&select=id,case_id,object_path,original_name,content_type,byte_size,created_at&order=created_at.desc`),
+          adminFetch(`/rest/v1/detective_case_invoices?case_id=in.${filter}&select=id,case_id,invoice_number,description,amount_minor,currency,payment_method,payment_reference,razorpay_order_id,status,paid_at,created_at&order=created_at.desc`),
+        ]);
+        if (!evidenceResponse.ok || !invoiceResponse.ok) throw new Error("Case evidence or invoices could not be loaded.");
+        [evidence, invoices] = await Promise.all([evidenceResponse.json(), invoiceResponse.json()]);
+      }
       const withDocuments = await Promise.all(cases.map(async (item) => ({
         ...item,
         documentUrl: item.pdf_object_path ? await createPrivateSignedUrl(item.pdf_object_path, 900).catch(() => null) : null,
+        evidence: await Promise.all(evidence.filter((file) => file.case_id === item.id).map(async (file) => ({
+          ...file,
+          downloadUrl: await createPrivateSignedUrl(file.object_path, 900).catch(() => null),
+        }))),
+        invoices: invoices.filter((invoice) => invoice.case_id === item.id),
       })));
       return response.status(200).json({ cases: withDocuments });
     }
@@ -113,34 +130,169 @@ export default async function handler(request, response) {
     if (body.action === "assign-case") {
       const caseId = String(body.caseId || "");
       const memberId = String(body.memberUserId || "");
-      if (!uuidPattern.test(caseId) || !uuidPattern.test(memberId))
+      if (!uuidPattern.test(caseId) || (memberId && !uuidPattern.test(memberId)))
         return response.status(400).json({ error: "Choose a valid case and detective member." });
-      const memberResponse = await adminFetch(
-        `/rest/v1/detective_member_applications?user_id=eq.${memberId}&status=eq.approved&select=user_id`,
+      const caseResponse = await adminFetch(
+        `/rest/v1/detective_cases?id=eq.${caseId}&status=neq.purged&select=id,case_number,pdf_object_path`,
       );
-      if (!memberResponse.ok || !(await memberResponse.json()).length)
-        return response.status(409).json({ error: "Cases can only be assigned to an approved detective member." });
-      const updated = await adminFetch(`/rest/v1/detective_cases?id=eq.${caseId}`, {
+      if (!caseResponse.ok) throw new Error("The case could not be loaded.");
+      const [caseRecord] = await caseResponse.json();
+      if (!caseRecord) return response.status(404).json({ error: "Open case not found." });
+      let member = null;
+      if (memberId) {
+        const memberResponse = await adminFetch(
+          `/rest/v1/detective_member_applications?user_id=eq.${memberId}&status=eq.approved&select=user_id,full_name,email`,
+        );
+        if (!memberResponse.ok) throw new Error("Detective membership could not be verified.");
+        [member] = await memberResponse.json();
+        if (!member) return response.status(409).json({ error: "Cases can only be assigned to an approved detective member." });
+      }
+      const updated = await adminFetch(`/rest/v1/detective_cases?id=eq.${caseId}&status=neq.purged`, {
         method: "PATCH",
         headers: { Prefer: "return=minimal" },
-        body: JSON.stringify({ assigned_member_id: memberId, status: "assigned", updated_at: new Date().toISOString() }),
+        body: JSON.stringify({ assigned_member_id: memberId || null, status: member ? "assigned" : "reviewing", updated_at: new Date().toISOString() }),
       });
       if (!updated.ok) throw new Error("Case assignment could not be saved.");
-      return response.status(200).json({ ok: true });
+      await adminFetch("/rest/v1/detective_case_timeline", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({ case_id: caseId, title: member ? "Investigator assigned" : "Investigator assignment updated", detail: member ? "The agency assigned an approved investigator to this case." : "The agency is reviewing investigator assignment.", visible_to_client: true, actor: "owner" }),
+      });
+      let memberEmailSent = false;
+      if (member) {
+        const documentUrl = caseRecord.pdf_object_path
+          ? await createPrivateSignedUrl(caseRecord.pdf_object_path, 3600).catch(() => null)
+          : null;
+        const notification = await sendTransactionalEmail({
+          to: member.email,
+          subject: `ARRAI case assigned · ${caseRecord.case_number}`,
+          text: `Hello ${member.full_name},\n\nYou have been assigned case ${caseRecord.case_number}. Sign in to the Detective Member Portal with your approved account and owner-issued member ID to review it.${documentUrl ? `\n\nPrivate case PDF (expires in 1 hour): ${documentUrl}` : "\n\nThe case PDF is being prepared and will appear in your portal."}\n\nARRAI Detective Agency`,
+          html: `<p>Hello ${member.full_name.replace(/[&<>"']/g, "")},</p><p>You have been assigned case <strong>${caseRecord.case_number}</strong>. Sign in to the Detective Member Portal with your approved account and owner-issued member ID to review it.</p>${documentUrl ? `<p><a href="${documentUrl}">Open the private case PDF</a> <small>(link expires in 1 hour)</small></p>` : "<p>The case PDF is being prepared and will appear in your portal.</p>"}<p>ARRAI Detective Agency</p>`,
+        }).catch(() => ({ sent: false }));
+        memberEmailSent = notification.sent === true;
+      }
+      return response.status(200).json({ ok: true, memberEmailSent });
     }
 
     if (body.action === "update-case-status") {
       const caseId = String(body.caseId || "");
       const status = safeText(body.status, 30);
-      if (!uuidPattern.test(caseId) || !["new", "reviewing", "assigned", "in_progress", "closed", "declined"].includes(status))
+      const progressStage = safeText(body.progressStage, 40);
+      const retentionDays = Number(body.retentionDays) === 14 ? 14 : 7;
+      if (!uuidPattern.test(caseId) || !["new", "reviewing", "assigned", "in_progress", "closed", "declined"].includes(status) || !["case_received", "osint_analysis_active", "compiling_intelligence", "report_ready"].includes(progressStage))
         return response.status(400).json({ error: "Choose a valid case status." });
       const updated = await adminFetch(`/rest/v1/detective_cases?id=eq.${caseId}`, {
         method: "PATCH",
         headers: { Prefer: "return=minimal" },
-        body: JSON.stringify({ status, updated_at: new Date().toISOString() }),
+        body: JSON.stringify({
+          status,
+          progress_stage: progressStage,
+          retention_days: retentionDays,
+          closed_at: status === "closed" ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString(),
+        }),
       });
       if (!updated.ok) throw new Error("Case status could not be updated.");
+      await adminFetch("/rest/v1/detective_case_timeline", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({ case_id: caseId, title: status === "closed" ? "Case closed" : "Case progress updated", detail: "The agency updated the case status and investigation progress.", visible_to_client: true, actor: "owner" }),
+      });
       return response.status(200).json({ ok: true });
+    }
+
+    if (body.action === "add-timeline-event") {
+      const caseId = String(body.caseId || "");
+      const title = safeText(body.title, 120);
+      const detail = safeText(body.detail, 500);
+      if (!uuidPattern.test(caseId) || title.length < 2)
+        return response.status(400).json({ error: "A case and short timeline title are required." });
+      const result = await adminFetch("/rest/v1/detective_case_timeline", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({ case_id: caseId, title, detail, visible_to_client: body.visibleToClient !== false, actor: "owner" }),
+      });
+      if (!result.ok) throw new Error("Timeline update could not be saved.");
+      return response.status(200).json({ ok: true });
+    }
+
+    if (body.action === "create-invoice") {
+      const caseId = String(body.caseId || "");
+      const description = safeText(body.description, 160);
+      const paymentMethod = body.paymentMethod;
+      const currency = body.currency;
+      const amount = Number(body.amount);
+      if (!uuidPattern.test(caseId) || description.length < 2 || !Number.isFinite(amount) || amount <= 0 || amount > 1000000)
+        return response.status(400).json({ error: "Enter a valid case, description and amount (maximum 1,000,000)." });
+      if (!((paymentMethod === "razorpay" && currency === "INR") || (paymentMethod === "usdt_manual" && currency === "USDT")))
+        return response.status(400).json({ error: "Use Razorpay for INR or manual confirmation for USDT." });
+      if (paymentMethod === "usdt_manual" && (!process.env.USDT_WALLET_ADDRESS || !process.env.USDT_NETWORK))
+        return response.status(503).json({ error: "Set USDT_WALLET_ADDRESS and USDT_NETWORK on the server before issuing a crypto invoice." });
+      const caseLookup = await adminFetch(`/rest/v1/detective_cases?id=eq.${caseId}&status=neq.purged&select=id,case_number`);
+      if (!caseLookup.ok || !(await caseLookup.json()).length)
+        return response.status(404).json({ error: "Open case not found." });
+      const created = await adminFetch("/rest/v1/detective_case_invoices?select=id,invoice_number,amount_minor,currency,payment_method", {
+        method: "POST",
+        headers: { Prefer: "return=representation" },
+        body: JSON.stringify({ case_id: caseId, description, amount_minor: Math.round(amount * 100), currency, payment_method: paymentMethod }),
+      });
+      if (!created.ok) throw new Error("Invoice could not be created.");
+      const [invoice] = await created.json();
+      if (paymentMethod === "razorpay") {
+        const keyId = process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_KEY;
+        const secret = process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_SECRET;
+        if (!keyId || !secret) {
+          await adminFetch(`/rest/v1/detective_case_invoices?id=eq.${invoice.id}`, { method: "DELETE" });
+          return response.status(503).json({ error: "Razorpay is not configured on the server." });
+        }
+        const orderResponse = await fetch("https://api.razorpay.com/v1/orders", {
+          method: "POST",
+          headers: { Authorization: `Basic ${Buffer.from(`${keyId}:${secret}`).toString("base64")}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: invoice.amount_minor, currency: "INR", receipt: invoice.invoice_number, notes: { case_id: caseId, invoice_id: invoice.id } }),
+        });
+        const order = await orderResponse.json().catch(() => ({}));
+        if (!orderResponse.ok || !order.id) {
+          await adminFetch(`/rest/v1/detective_case_invoices?id=eq.${invoice.id}`, { method: "DELETE" });
+          return response.status(502).json({ error: "Razorpay could not create this invoice order." });
+        }
+        const saved = await adminFetch(`/rest/v1/detective_case_invoices?id=eq.${invoice.id}`, {
+          method: "PATCH",
+          headers: { Prefer: "return=minimal" },
+          body: JSON.stringify({ razorpay_order_id: order.id }),
+        });
+        if (!saved.ok) throw new Error("Razorpay order was created but the invoice link could not be saved.");
+      }
+      await adminFetch("/rest/v1/detective_case_timeline", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({ case_id: caseId, title: "Invoice issued", detail: `${invoice.invoice_number} was added to the case payment history.`, visible_to_client: true, actor: "owner" }),
+      });
+      return response.status(201).json({ ok: true, invoiceNumber: invoice.invoice_number });
+    }
+
+    if (body.action === "review-usdt-payment") {
+      const invoiceId = String(body.invoiceId || "");
+      const decision = body.decision;
+      if (!uuidPattern.test(invoiceId) || !["approve", "reject"].includes(decision))
+        return response.status(400).json({ error: "Choose a valid USDT invoice review action." });
+      const invoiceResponse = await adminFetch(`/rest/v1/detective_case_invoices?id=eq.${invoiceId}&payment_method=eq.usdt_manual&select=id,case_id,invoice_number,status`);
+      if (!invoiceResponse.ok) throw new Error("Invoice could not be loaded.");
+      const [invoice] = await invoiceResponse.json();
+      if (!invoice || invoice.status !== "payment_submitted") return response.status(409).json({ error: "This invoice is not awaiting manual payment verification." });
+      const updated = await adminFetch(`/rest/v1/detective_case_invoices?id=eq.${invoice.id}&status=eq.payment_submitted`, {
+        method: "PATCH",
+        headers: { Prefer: "return=representation" },
+        body: JSON.stringify(decision === "approve"
+          ? { status: "paid", paid_at: new Date().toISOString() }
+          : { status: "unpaid", payment_reference: "" }),
+      });
+      if (!updated.ok || !(await updated.json()).length) return response.status(409).json({ error: "Invoice changed during review. Refresh and try again." });
+      await adminFetch("/rest/v1/detective_case_timeline", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({ case_id: invoice.case_id, title: decision === "approve" ? "USDT payment verified" : "USDT reference rejected", detail: `${invoice.invoice_number} manual payment review completed.`, visible_to_client: true, actor: "owner" }),
+      });
+      return response.status(200).json({ ok: true, decision });
     }
 
     return response.status(400).json({ error: "Unknown detective-owner action." });

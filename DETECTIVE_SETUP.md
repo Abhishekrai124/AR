@@ -14,8 +14,11 @@ Set these server-side environment variables in the Vercel project, then redeploy
 - `OWNER_EMAIL` (the verified owner account; defaults to the existing Owner Studio address)
 - `RESEND_API_KEY` (optional until transactional email is ready)
 - `RESEND_FROM_EMAIL` (optional; must be a verified sender in Resend)
+- `CRON_SECRET` (a long random value used only by Vercel's daily retention job)
 
 Case records and PDFs can be created without Resend, but automatic email delivery of the seven-day private PDF link remains off until both Resend variables are configured. The applicant still downloads the PDF, and the owner can access the private case record from Owner Studio.
+
+Quick inquiries are separate from private cases: an inquiry stores only name, email, topic and a short message, then notifies `OWNER_EMAIL` when Resend is configured. A private case creates the tracking record, PDF and client portal entry, and also sends a new-case notification to `OWNER_EMAIL` at the same time.
 
 ## 3. Review applications and cases
 
@@ -23,7 +26,13 @@ Open `/owner.html` with the verified owner account. Detective applications remai
 
 The member application collects a profile photo, contact/location, languages, experience, selected specialties and optional training/license details. It does not request identity-document scans. Member IDs and case numbers are generated server-side; case numbers are immutable. PDF documents are stored in private storage, not public URLs.
 
-## 4. Legal and operational review
+Professional case applicants (for example lawyers, police, public authorities and organizations) provide an organization, role, authorization confirmation, and a licence/service/registration reference. It is explicitly an owner-review workflow, not an automatic government or bar-registry identity verification claim. General enquiries remain available without professional credentials.
+
+## 4. Retention / Burn Rule
+
+`vercel.json` schedules `/api/detective-retention` once daily. After an owner closes a case, the selected 7- or 14-day period is counted from that close time. The job deletes private PDFs, uploaded evidence, invoices and timeline entries, scrubs the stored case fields, and leaves only the case number plus the required purge notice visible to the verified client. Set `CRON_SECRET` before deployment; without it the scheduled job intentionally refuses requests.
+
+## 5. Legal and operational review
 
 The downloaded document is a preliminary intake acknowledgement, not a final binding contract or legal advice. Have qualified counsel approve service scope, pricing, cancellation, privacy/retention and signature terms before using it as a service agreement. Do not advertise a specialty as available unless the agency has the lawful authority, qualifications, tools and coverage to perform it.
 

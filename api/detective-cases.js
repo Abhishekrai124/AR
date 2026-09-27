@@ -66,8 +66,9 @@ export default async function handler(request, response) {
         "Insurer or claims professional",
         "Nonprofit or community organization",
       ]);
-      if (professionals.has(clientType) && (body.authorizedToEnquire !== true || !safeText(body.organization, 160)))
-        return response.status(400).json({ error: "Professional enquiries need an organization and authorization confirmation." });
+      const isProfessionalCase = professionals.has(clientType) && body.requestType === "Private investigation enquiry";
+      if (isProfessionalCase && (body.authorizedToEnquire !== true || !safeText(body.organization, 160) || !safeText(body.professionalRole, 120) || !safeText(body.professionalIdType, 80) || !safeText(body.professionalIdReference, 120)))
+        return response.status(400).json({ error: "Professional cases need organization, role, professional ID/reference and authorization confirmation. General enquiries remain open to everyone." });
       if (clientType === "Student" && !["adult", "minor_guardian"].includes(studentStatus))
         return response.status(400).json({ error: "Student enquiries require adult confirmation or a parent/guardian." });
 
@@ -83,16 +84,21 @@ export default async function handler(request, response) {
       if (!(await quotaResponse.json())) return response.status(429).json({ error: "Too many enquiries from this network or email. Please try again later." });
 
       const downloadToken = randomBytes(32).toString("base64url");
+      const retentionDays = Number(body.retentionDays) === 14 ? 14 : 7;
       const caseRecord = {
         request_type: safeText(body.requestType, 80) || "Private investigation enquiry",
         client_name: clientName,
         client_email: clientEmail,
+        client_email_hash: emailHash,
         client_type: clientType,
         student_status: studentStatus,
         matter_category: safeText(body.matterCategory, 120),
         service_name: safeText(body.service, 160),
         organization: safeText(body.organization, 160),
         professional_role: safeText(body.professionalRole, 120),
+        professional_id_type: safeText(body.professionalIdType, 80),
+        professional_id_reference: safeText(body.professionalIdReference, 120),
+        professional_verification_status: professionals.has(clientType) ? "pending_review" : "not_required",
         case_reference: safeText(body.caseReference, 80),
         authorized_to_enquire: body.authorizedToEnquire === true,
         country: safeText(body.country, 100),
@@ -107,6 +113,8 @@ export default async function handler(request, response) {
         agreement_version: agreementVersion,
         agreement_accepted_name: agreementName,
         agreement_accepted_at: new Date().toISOString(),
+        progress_stage: "case_received",
+        retention_days: retentionDays,
         download_token_hash: sha256(downloadToken),
         ip_rate_hash: ipHash,
         email_rate_hash: emailHash,
@@ -121,12 +129,31 @@ export default async function handler(request, response) {
       });
       if (!created.ok) throw new Error("The case register could not save this enquiry. No case number was issued.");
       const [saved] = await created.json();
+      await adminFetch("/rest/v1/detective_case_timeline", {
+        method: "POST",
+        headers: { Prefer: "return=minimal" },
+        body: JSON.stringify({
+          case_id: saved.id,
+          title: "Case Received",
+          detail: "Your enquiry is recorded. The agency will review scope and next steps.",
+          visible_to_client: true,
+          actor: "system",
+        }),
+      });
+      const ownerEmail = process.env.OWNER_EMAIL || "abhishekrai6897@gmail.com";
+      const ownerNotification = await sendTransactionalEmail({
+        to: ownerEmail,
+        subject: `New ARRAI case · ${saved.case_number}`,
+        text: `New private case intake\n\nCase: ${saved.case_number}\nClient: ${clientName} <${clientEmail}>\nType: ${clientType}\nMatter: ${caseRecord.matter_category}\nService: ${caseRecord.service_name}\nTiming: ${caseRecord.timing}\n\nSummary:\n${summary}`,
+        html: `<h2>New private case intake</h2><p><b>Case:</b> ${saved.case_number}</p><p><b>Client:</b> ${clientName.replace(/[&<>"']/g, "")} &lt;${clientEmail.replace(/[&<>"']/g, "")}&gt;</p><p><b>Type:</b> ${clientType.replace(/[&<>"']/g, "")}<br><b>Matter:</b> ${caseRecord.matter_category.replace(/[&<>"']/g, "")}<br><b>Service:</b> ${caseRecord.service_name.replace(/[&<>"']/g, "")}<br><b>Timing:</b> ${caseRecord.timing}</p><p>${summary.replace(/[&<>"']/g, "").replace(/\n/g, "<br>")}</p>`,
+      });
       return response.status(201).json({
         caseId: saved.id,
         caseNumber: saved.case_number,
         createdAt: saved.created_at,
         uploadToken: downloadToken,
         agreementVersion,
+        ownerNotified: ownerNotification.sent === true,
       });
     }
 
@@ -135,7 +162,7 @@ export default async function handler(request, response) {
       const caseNumber = safeText(request.body.caseNumber, 32);
       const uploadToken = String(request.body.uploadToken || "");
       const pdfBytes = parsePdf(request.body.pdfData);
-      if (!uuidPattern.test(caseId) || !/^DTA-\d{4}-\d{7}$/.test(caseNumber) || uploadToken.length < 30 || !pdfBytes)
+      if (!uuidPattern.test(caseId) || !/^ARRAI-IN-\d{6,}$/.test(caseNumber) || uploadToken.length < 30 || !pdfBytes)
         return response.status(400).json({ error: "The case PDF details are invalid." });
       const lookup = await adminFetch(`/rest/v1/detective_cases?id=eq.${caseId}&case_number=eq.${encodeURIComponent(caseNumber)}&select=id,case_number,client_name,client_email,download_token_hash`);
       if (!lookup.ok) throw new Error("The case record could not be verified.");

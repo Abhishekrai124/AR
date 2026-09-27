@@ -113,12 +113,18 @@ const renderDetectiveCases = (cases) => {
   const members = window.detectiveApprovedMembers || [];
   detectiveCaseRegister.innerHTML = cases.length
     ? cases.map((item) => {
+        if (item.purged_at || item.status === "purged")
+          return `<article class="owner-card-row detective-case-row"><div><b>${escapeHtml(item.case_number)} · data purged</b><p>Case Closed. All sensitive data has been purged according to ARRAI security protocols.</p></div></article>`;
         const selected = item.assigned_member_id || "";
         const memberOptions = `<option value="">Unassigned</option>${members.map((member) => `<option value="${escapeHtml(member.user_id)}" ${member.user_id === selected ? "selected" : ""}>${escapeHtml(member.full_name)}${member.member_id_suffix ? ` · ID …${escapeHtml(member.member_id_suffix)}` : ""}</option>`).join("")}`;
         const statusOptions = ["new", "reviewing", "assigned", "in_progress", "closed", "declined"].map((status) => `<option value="${status}" ${item.status === status ? "selected" : ""}>${status.replaceAll("_", " ")}</option>`).join("");
+        const progressOptions = [["case_received", "Case received"], ["osint_analysis_active", "OSINT analysis active"], ["compiling_intelligence", "Compiling intelligence"], ["report_ready", "Report ready"]].map(([key, label]) => `<option value="${key}" ${item.progress_stage === key ? "selected" : ""}>${label}</option>`).join("");
         const documentLink = item.documentUrl ? `<a href="${escapeHtml(item.documentUrl)}" target="_blank" rel="noreferrer">Open private PDF</a>` : "PDF not attached";
         const location = [item.area, item.city, item.state, item.country].filter(Boolean).join(", ");
-        return `<article class="owner-card-row detective-case-row"><div><b>${escapeHtml(item.case_number)} · ${escapeHtml(item.service_name)}</b><small>${escapeHtml(item.client_name)} · ${escapeHtml(item.client_email)} · ${escapeHtml(item.client_type)}</small><small>${escapeHtml(item.matter_category)}${location ? ` · ${escapeHtml(location)}` : ""}</small><p>${escapeHtml(item.non_sensitive_summary)}</p><small>${documentLink}</small><div class="detective-owner-actions"><label>Assign detective<select data-case-assignee="${escapeHtml(item.id)}">${memberOptions}</select></label><button class="follow-button" type="button" data-assign-case="${escapeHtml(item.id)}">Save assignment</button><label>Case status<select data-case-status="${escapeHtml(item.id)}">${statusOptions}</select></label><button class="follow-button" type="button" data-update-case="${escapeHtml(item.id)}">Update status</button></div></div></article>`;
+        const evidence = (item.evidence || []).map((file) => `<a href="${escapeHtml(file.downloadUrl || "#")}" target="_blank" rel="noreferrer">${escapeHtml(file.original_name)} · ${escapeHtml((file.byte_size / 1024).toFixed(0))} KB</a>`).join("") || "No evidence uploaded.";
+        const invoices = (item.invoices || []).map((invoice) => `<small>${escapeHtml(invoice.invoice_number)} · ${escapeHtml(invoice.description)} · ${(invoice.amount_minor / 100).toFixed(2)} ${escapeHtml(invoice.currency)} · ${escapeHtml(invoice.status)}${invoice.payment_reference ? ` · ref ${escapeHtml(invoice.payment_reference)}` : ""}${invoice.status === "payment_submitted" ? ` <button class="follow-button" type="button" data-usdt-review="approve" data-invoice-id="${escapeHtml(invoice.id)}">Verify USDT</button><button class="follow-button" type="button" data-usdt-review="reject" data-invoice-id="${escapeHtml(invoice.id)}">Reject reference</button>` : ""}</small>`).join("") || "No invoices yet.";
+        const professionalIdentity = item.professional_id_reference ? `<small>Professional identity: ${escapeHtml(item.professional_id_type)} · ${escapeHtml(item.professional_id_reference)} · ${escapeHtml(item.professional_verification_status || "pending review")}</small>` : "";
+        return `<article class="owner-card-row detective-case-row"><div><b>${escapeHtml(item.case_number)} · ${escapeHtml(item.service_name)}</b><small>${escapeHtml(item.client_name)} · ${escapeHtml(item.client_email)} · ${escapeHtml(item.client_type)}</small>${professionalIdentity}<small>${escapeHtml(item.matter_category)}${location ? ` · ${escapeHtml(location)}` : ""}</small><p>${escapeHtml(item.non_sensitive_summary)}</p><small>${documentLink}</small><div class="detective-case-evidence"><b>Private evidence inbox</b>${evidence}</div><div class="detective-case-invoices"><b>Invoice / payment history</b>${invoices}</div><div class="detective-owner-actions"><label>Assign detective<select data-case-assignee="${escapeHtml(item.id)}">${memberOptions}</select></label><button class="follow-button" type="button" data-assign-case="${escapeHtml(item.id)}">Save assignment</button><label>Case status<select data-case-status="${escapeHtml(item.id)}">${statusOptions}</select></label><label>Client progress<select data-case-progress="${escapeHtml(item.id)}">${progressOptions}</select></label><label>Retention after close<select data-retention-days="${escapeHtml(item.id)}"><option value="7" ${item.retention_days === 7 ? "selected" : ""}>7 days</option><option value="14" ${item.retention_days === 14 ? "selected" : ""}>14 days</option></select></label><button class="follow-button" type="button" data-update-case="${escapeHtml(item.id)}">Save status &amp; retention</button></div><form class="detective-owner-actions detective-timeline-form" data-case-timeline="${escapeHtml(item.id)}"><label>Client-visible timeline title<input name="title" maxlength="120" required placeholder="Initial assessment completed" /></label><label>Update detail<input name="detail" maxlength="500" placeholder="Short, non-sensitive update" /></label><label class="owner-check-label"><input name="visibleToClient" type="checkbox" checked /> Show to client</label><button class="follow-button" type="submit">Add timeline event</button></form><form class="detective-owner-actions detective-invoice-form" data-case-invoice="${escapeHtml(item.id)}"><label>Invoice description<input name="description" maxlength="160" required placeholder="Initial assessment" /></label><label>Amount<input name="amount" type="number" min="0.01" max="1000000" step="0.01" required /></label><label>Currency<select name="currency"><option value="INR">INR</option><option value="USDT">USDT (manual)</option></select></label><label>Payment method<select name="paymentMethod"><option value="razorpay">Razorpay</option><option value="usdt_manual">USDT manual verification</option></select></label><button class="follow-button" type="submit">Issue invoice</button></form></div></article>`;
       }).join("")
     : '<p class="empty-state">No case enquiries in the register.</p>';
 };
@@ -170,17 +176,22 @@ detectiveCaseRegister?.addEventListener("click", async (event) => {
   button.disabled = true;
   try {
     if (assign) {
-      await detectiveAdminRequest("assign-case", {
+      const result = await detectiveAdminRequest("assign-case", {
         caseId: assign.dataset.assignCase,
         memberUserId: detectiveCaseRegister.querySelector(`[data-case-assignee="${assign.dataset.assignCase}"]`).value,
       });
+      detectiveAdminStatus.textContent = result.memberEmailSent
+        ? "Case assigned and private PDF notification emailed to the detective."
+        : "Case assignment saved. The detective can open the private PDF in the Member Portal.";
     } else {
       await detectiveAdminRequest("update-case-status", {
         caseId: update.dataset.updateCase,
         status: detectiveCaseRegister.querySelector(`[data-case-status="${update.dataset.updateCase}"]`).value,
+        progressStage: detectiveCaseRegister.querySelector(`[data-case-progress="${update.dataset.updateCase}"]`).value,
+        retentionDays: Number(detectiveCaseRegister.querySelector(`[data-retention-days="${update.dataset.updateCase}"]`).value),
       });
     }
-    detectiveAdminStatus.textContent = "Case register updated.";
+    if (!assign) detectiveAdminStatus.textContent = "Case register updated.";
     await loadDetectiveAdmin();
   } catch (error) {
     detectiveAdminStatus.textContent = error.message;
@@ -629,3 +640,8 @@ editor.addEventListener("click", async (event) => {
     ownerStatus.textContent = error.message;
   }
 })();
+
+window.arraiSupabase.auth.onAuthStateChange((event, session) => {
+  if (event === "TOKEN_REFRESHED" && session?.user?.id === ownerId) ownerToken = session.access_token;
+  if (event === "SIGNED_OUT" && ownerId) window.location.assign("auth.html?next=owner");
+});

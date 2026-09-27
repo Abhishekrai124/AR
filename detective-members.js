@@ -9,6 +9,19 @@ const signupStatus = document.querySelector("#memberSignupStatus");
 const applicationStatus = document.querySelector("#applicationStatus");
 let memberToken = "";
 let verifiedMemberId = "";
+const ownerMemberShortcut = document.querySelector("#ownerMemberShortcut");
+const ownerEmail = "abhishekrai6897@gmail.com";
+
+const showOwnerShortcut = async () => {
+  const { data: { session } } = await window.arraiSupabase.auth.getSession();
+  if (!session?.user?.email || session.user.email.toLowerCase() !== ownerEmail) return;
+  ownerMemberShortcut.hidden = false;
+  memberLoginForm.hidden = true;
+  memberSignupForm.hidden = true;
+  applicationResumeForm.hidden = true;
+  memberApplicationForm.hidden = true;
+  setMemberStatus(loginStatus, "Owner session detected. Open Owner Studio to approve detectives and assign cases.");
+};
 
 const memberEscape = (value) =>
   String(value || "").replace(/[&<>"']/g, (character) =>
@@ -213,3 +226,5 @@ document.querySelector("#memberLogout").addEventListener("click", async () => {
   memberLoginForm.reset();
   setMemberStatus(loginStatus, "Signed out.");
 });
+
+showOwnerShortcut().catch(() => {});

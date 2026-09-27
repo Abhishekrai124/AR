@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#151a17" />
+    <meta name="description" content="Private ARRAI client case tracking, timeline and secure evidence portal." />
+    <title>Client Case Portal · ARRAI</title>
+    <link rel="icon" href="/assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="detective.css" />
+    <link rel="stylesheet" href="client-cases.css" />
+  </head>
+  <body class="detective-page client-cases-page">
+    <header>
+      <a class="brand agency-wordmark" href="detective.html">ARRAI<span>CLIENT DESK</span></a>
+      <button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <nav aria-label="Main navigation">
+        <a href="index.html">AR Home</a>
+        <a href="detective.html">Agency</a>
+        <a class="active" href="client-cases.html" aria-current="page">Client case desk</a>
+        <a href="contact.html?type=case">New enquiry</a>
+      </nav>
+    </header>
+    <main class="client-case-shell wrap">
+      <section class="client-case-intro">
+        <p class="case-kicker"><span></span> Private client area · email verification required</p>
+        <h1>Your case.<br /><em>Clear status, one secure place.</em></h1>
+        <p>Request a one-time code to the email on your enquiry. Only cases registered to that verified email appear here. Session logs out after 10 minutes without activity.</p>
+      </section>
+
+      <section class="client-login-panel" aria-labelledby="clientLoginTitle">
+        <div class="client-login-copy">
+          <p class="case-kicker">Identity check</p>
+          <h2 id="clientLoginTitle">Sign in with an email code</h2>
+          <p>No client password is needed. Use the same email address given on your enquiry.</p>
+        </div>
+        <form id="clientOtpRequest" class="client-otp-form">
+          <label>Email address<input name="email" type="email" autocomplete="email" required placeholder="you@example.com" /></label>
+          <button class="case-button" type="submit">Send one-time code <span aria-hidden="true">↗</span></button>
+        </form>
+        <form id="clientOtpVerify" class="client-otp-form" hidden>
+          <p id="otpSentTo" class="client-muted"></p>
+          <label>6-digit code<input name="token" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" required placeholder="123456" /></label>
+          <button class="case-button" type="submit">Verify &amp; view cases <span aria-hidden="true">↗</span></button>
+          <button id="requestNewCode" class="client-text-button" type="button">Use another email / request another code</button>
+        </form>
+        <p id="clientPortalStatus" class="client-portal-status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section id="clientCaseDashboard" class="client-case-dashboard" hidden>
+        <div class="client-dashboard-head">
+          <div><p class="case-kicker">Verified client</p><h2 id="clientDashboardEmail"></h2><p id="clientIdleNotice" class="client-muted">This session closes after 10 idle minutes.</p></div>
+          <button id="clientSignOut" class="follow-button" type="button">Sign out</button>
+        </div>
+        <div id="clientCases" class="client-cases-list"><p class="client-muted">Loading your cases…</p></div>
+      </section>
+    </main>
+    <footer class="detective-footer">
+      <a class="brand agency-wordmark" href="detective.html">ARRAI<span>CLIENT DESK</span></a>
+      <p>Private case information · do not share your email code</p>
+      <a href="privacy.html">Privacy &amp; retention</a>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@3.0.2/dist/jspdf.umd.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="supabase.js"></script>
+    <script src="script.js"></script>
+    <script src="client-cases.js"></script>
+  </body>
+</html>

@@ -269,6 +269,18 @@ if (window.arraiAuth)
     .then(updateNavigationForUser)
     .catch(() => updateNavigationForUser({ isAuthenticated: false }));
 else updateNavigationForUser({ isAuthenticated: false });
+window.arraiSupabase?.auth.onAuthStateChange((_event, session) => {
+  const source = session?.user;
+  updateNavigationForUser({
+    isAuthenticated: Boolean(source),
+    user: source ? {
+      id: source.id,
+      email: source.email,
+      name: source.user_metadata?.full_name || source.user_metadata?.name || source.email?.split("@")[0],
+      avatarUrl: source.user_metadata?.avatar_url || source.user_metadata?.picture || "",
+    } : null,
+  });
+});
 const communityPreview = document.querySelector("#communityPreview");
 if (communityPreview && window.arraiAuth) {
   window.arraiAuth

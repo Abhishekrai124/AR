@@ -344,6 +344,34 @@ em {
 .case-form .location-lookup input[type="checkbox"] { flex: 0 0 auto; width: 17px; height: 17px; margin: 2px 0 0; accent-color: var(--sky); }
 .case-submission-status { margin: 0; color: var(--lime); font-size: .75rem; line-height: 1.7; }
 .case-form [type="submit"]:disabled { cursor: wait; opacity: .65; }
+.case-download-panel { display: grid; gap: 11px; margin-top: 28px; padding: 18px; border: 1px solid var(--sky); border-radius: 10px; background: rgba(15, 29, 49, .58); }
+.case-download-panel[hidden] { display: none; }
+.case-download-panel .eyebrow,.case-download-panel p { margin: 0; }
+.case-download-panel strong { color: var(--lime); font-size: 1.05rem; letter-spacing: .04em; }
+.case-download-panel p:not(.eyebrow) { color: var(--muted); font-size: .75rem; line-height: 1.65; }
+.case-download-panel .button { justify-content: center; width: 100%; text-decoration: none; }
+.case-download-panel .text-link { justify-self: start; }
+.quick-inquiry { max-width: 680px; padding: 6px 0 30px; }
+.quick-inquiry[hidden],.case-form[hidden] { display: none; }
+.quick-inquiry h2 { margin: 0; font-size: clamp(2rem, 4vw, 3.4rem); }
+.quick-inquiry > p:not(.eyebrow):not(.quick-inquiry-case) { max-width: 610px; color: var(--muted); line-height: 1.75; }
+.inquiry-form { max-width: 620px; margin-top: 24px; padding: 22px; border: 1px solid var(--sky); border-radius: 13px; background: rgba(39, 72, 112, .16); }
+.quick-inquiry-case { margin-top: 20px; color: var(--muted); font-size: .78rem; }
+.quick-inquiry-case a { color: var(--lime); }
+.agency-paths { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; padding-bottom: 74px; }
+.agency-path { display: block; min-height: 220px; padding: 25px; border: 1px solid var(--line); border-radius: 14px; text-decoration: none; transition: transform .22s ease, box-shadow .22s ease; }
+.agency-path:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,.18); }
+.agency-path span { font: .65rem "DM Mono", monospace; letter-spacing: .08em; }
+.agency-path h3 { margin: 18px 0 10px; font-size: 1.55rem; }
+.agency-path p { min-height: 52px; color: var(--muted); font-size: .78rem; line-height: 1.65; }
+.agency-path b { font-size: .75rem; }
+.inquiry-path { border-color: rgba(133, 191, 235, .65); background: linear-gradient(135deg, rgba(83, 139, 195, .18), transparent 65%); }
+.inquiry-path span,.inquiry-path b { color: var(--sky); }
+.case-path { border-color: rgba(213, 173, 111, .65); background: linear-gradient(135deg, rgba(213, 173, 111, .16), transparent 65%); }
+.case-path span,.case-path b { color: var(--lime); }
+@media (max-width: 650px) { .agency-paths { grid-template-columns: 1fr; } }
+.agency-safety-note { margin-bottom: 74px; padding: 18px 22px; border-left: 3px solid var(--pink); background: rgba(237, 152, 180, .08); }
+.agency-safety-note p:last-child { max-width: 820px; margin-bottom: 0; color: var(--muted); font-size: .78rem; line-height: 1.7; }
 .detective-issued-id { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 14px 0; padding: 14px; border: 1px solid var(--lime); }
 .detective-issued-id code { color: var(--lime); font-size: 1rem; font-weight: 800; }
 .detective-application-row { align-items: flex-start; }

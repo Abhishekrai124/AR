@@ -1,5 +1,10 @@
 const requestType = document.querySelector("#requestType");
-if (requestType && new URLSearchParams(window.location.search).get("type") === "case") {
+const isCaseIntake = new URLSearchParams(window.location.search).get("type") === "case";
+const quickInquiry = document.querySelector("#quickInquiry");
+const caseIntake = document.querySelector("#caseIntake");
+if (quickInquiry) quickInquiry.hidden = isCaseIntake;
+if (caseIntake) caseIntake.hidden = !isCaseIntake;
+if (requestType && isCaseIntake) {
   requestType.value = "Private investigation enquiry";
 }
 
@@ -30,8 +35,9 @@ const updateProfessionalFields = () => {
   if (!clientType || !professionalFields) return;
   const isProfessional = professionalTypes.has(clientType.value);
   professionalFields.hidden = !isProfessional;
-  professionalFields.querySelectorAll("input:not([type='checkbox'])").forEach((input) => {
-    input.required = isProfessional && ["organization", "professionalRole"].includes(input.name);
+  const isProfessionalCase = isProfessional && requestType?.value === "Private investigation enquiry";
+  professionalFields.querySelectorAll("input:not([type='checkbox']), select").forEach((input) => {
+    input.required = isProfessionalCase && ["organization", "professionalRole", "professionalIdType", "professionalIdReference"].includes(input.name);
     if (!isProfessional) input.value = "";
   });
   const authorization = professionalFields.querySelector("[name='authorizedToEnquire']");
@@ -48,6 +54,7 @@ const updateProfessionalFields = () => {
 };
 
 clientType?.addEventListener("change", updateProfessionalFields);
+requestType?.addEventListener("change", updateProfessionalFields);
 updateProfessionalFields();
 
 const locationSearch = document.querySelector("#locationSearch");
@@ -178,6 +185,38 @@ policeSuggestions?.addEventListener("change", () => {
 const caseForm = document.querySelector(".case-form");
 const caseStatus = document.querySelector("#caseSubmissionStatus");
 const casePdfLink = document.querySelector("#casePdfLink");
+const caseDownloadPanel = document.querySelector("#caseDownloadPanel");
+const caseNumberDisplay = document.querySelector("#caseNumberDisplay");
+const caseDeskLink = document.querySelector("#caseDeskLink");
+let caseSubmissionComplete = false;
+const inquiryForm = document.querySelector("#inquiryForm");
+const inquiryStatus = document.querySelector("#inquiryStatus");
+
+inquiryForm?.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (!inquiryForm.reportValidity()) return;
+  const button = inquiryForm.querySelector('[type="submit"]');
+  button.disabled = true;
+  inquiryStatus.textContent = "Sending your inquiry…";
+  try {
+    const values = new FormData(inquiryForm);
+    const response = await fetch("/api/detective-inquiry", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(Object.fromEntries(values)),
+    });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || "Your inquiry could not be sent.");
+    inquiryForm.reset();
+    inquiryStatus.textContent = result.emailSent
+      ? "Inquiry sent to the agency. We will reply to your email."
+      : "Inquiry saved. Email notifications are temporarily unavailable; the agency will reply when it is reviewed.";
+  } catch (error) {
+    inquiryStatus.textContent = error.message || "Your inquiry could not be sent.";
+  } finally {
+    button.disabled = false;
+  }
+});
 const toDataUrl = async (blob) => {
   const bytes = new Uint8Array(await blob.arrayBuffer());
   let binary = "";
@@ -194,13 +233,21 @@ const buildCasePdf = (data, caseNumber, createdAt) => {
   const left = 18;
   const right = 192;
   let y = 20;
+  documentPdf.setFillColor(15, 29, 49);
+  documentPdf.rect(0, 0, 210, 52, "F");
+  documentPdf.setDrawColor(213, 173, 111);
+  documentPdf.setLineWidth(0.8);
+  documentPdf.line(left, 44, right, 44);
+  documentPdf.setTextColor(240, 232, 214);
   documentPdf.setFont("helvetica", "bold");
-  documentPdf.setFontSize(16);
+  documentPdf.setFontSize(18);
   documentPdf.text("ARRAI DETECTIVE AGENCY", left, y);
   y += 9;
-  documentPdf.setFontSize(12);
+  documentPdf.setTextColor(213, 173, 111);
+  documentPdf.setFontSize(11);
   documentPdf.text("PRELIMINARY CASE INTAKE ACKNOWLEDGEMENT", left, y);
-  y += 8;
+  y = 61;
+  documentPdf.setTextColor(25, 34, 47);
   documentPdf.setFont("helvetica", "normal");
   documentPdf.setFontSize(10);
   documentPdf.text(`Case number: ${caseNumber}`, left, y);
@@ -216,6 +263,8 @@ const buildCasePdf = (data, caseNumber, createdAt) => {
     ["Student / guardian", data.get("studentStatus")],
     ["Organization / agency", data.get("organization")],
     ["Role", data.get("professionalRole")],
+    ["Professional ID type", data.get("professionalIdType")],
+    ["Professional ID / reference", data.get("professionalIdReference")],
     ["Matter", data.get("caseCategory")],
     ["Requested service", data.get("service")],
     ["Country", data.get("country")],
@@ -281,6 +330,10 @@ const buildCasePdf = (data, caseNumber, createdAt) => {
 
 caseForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (caseSubmissionComplete) {
+    caseStatus.textContent = "This enquiry has already been created. Use the PDF download or case desk link beside the form.";
+    return;
+  }
   if (!caseForm.reportValidity()) return;
   const submitButton = caseForm.querySelector('[type="submit"]');
   const data = new FormData(caseForm);
@@ -300,11 +353,12 @@ caseForm?.addEventListener("submit", async (event) => {
       clientEmail: data.get("email"),
       clientType: clientTypeValue,
       studentStatus: data.get("studentStatus"),
-      studentStatus: data.get("studentStatus"),
       matterCategory: data.get("caseCategory"),
       service: data.get("service"),
       organization: data.get("organization"),
       professionalRole: data.get("professionalRole"),
+      professionalIdType: data.get("professionalIdType"),
+      professionalIdReference: data.get("professionalIdReference"),
       caseReference: data.get("caseReference"),
       authorizedToEnquire: data.get("authorizedToEnquire") === "Confirmed",
       country: data.get("country"),
@@ -333,8 +387,11 @@ caseForm?.addEventListener("submit", async (event) => {
     const objectUrl = URL.createObjectURL(pdf);
     casePdfLink.href = objectUrl;
     casePdfLink.download = fileName;
-    casePdfLink.textContent = `Download case PDF · ${result.caseNumber}`;
+    casePdfLink.textContent = `Download PDF · ${result.caseNumber}`;
     casePdfLink.hidden = false;
+    caseNumberDisplay.textContent = result.caseNumber;
+    caseDeskLink.href = `client-cases.html?email=${encodeURIComponent(String(data.get("email") || "").trim().toLowerCase())}`;
+    caseDownloadPanel.hidden = false;
     casePdfLink.click();
     caseStatus.textContent = `Case ${result.caseNumber} created. Your preliminary acknowledgement PDF is downloading.`;
 
@@ -361,9 +418,12 @@ caseForm?.addEventListener("submit", async (event) => {
     } catch {
       caseStatus.textContent = `Case ${result.caseNumber} created and PDF downloaded. The private email link could not be prepared; contact info@arrai.in with this case number.`;
     }
+    caseSubmissionComplete = true;
+    submitButton.textContent = "Case created";
+    submitButton.setAttribute("aria-disabled", "true");
   } catch (error) {
     caseStatus.textContent = error.message || "Case intake could not be completed.";
   } finally {
-    submitButton.disabled = false;
+    submitButton.disabled = caseSubmissionComplete;
   }
 });
