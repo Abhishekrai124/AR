@@ -35,6 +35,22 @@ const parsePdf = (value) => {
   return bytes;
 };
 
+const caseRegisterError = async (response) => {
+  const details = await response.text().catch(() => "");
+  // Do not expose database internals to a public intake form. These common
+  // responses mean the production database has not received the required
+  // detective migration or the server is using the wrong Supabase key.
+  if (
+    response.status === 401 ||
+    response.status === 403 ||
+    response.status === 404 ||
+    /detective_cases|detective_case_number_seq|client_email_hash|permission denied|schema cache/i.test(details)
+  ) {
+    return "Case intake is not configured yet. The site owner must run supabase-detective-migration.sql in Supabase and set SUPABASE_SERVICE_ROLE_KEY in Vercel, then redeploy.";
+  }
+  return "The case register is temporarily unavailable. Please try again shortly or contact the agency.";
+};
+
 export default async function handler(request, response) {
   response.setHeader("Cache-Control", "no-store");
   if (request.method !== "POST") {
@@ -127,7 +143,7 @@ export default async function handler(request, response) {
         headers: { Prefer: "return=representation" },
         body: JSON.stringify(caseRecord),
       });
-      if (!created.ok) throw new Error("The case register could not save this enquiry. No case number was issued.");
+      if (!created.ok) throw new Error(await caseRegisterError(created));
       const [saved] = await created.json();
       await adminFetch("/rest/v1/detective_case_timeline", {
         method: "POST",
