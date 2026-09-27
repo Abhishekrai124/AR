@@ -26,4 +26,9 @@ const loadPersonalContact = async () => {
   }
 };
 
+const requestType = document.querySelector("#requestType");
+if (requestType && new URLSearchParams(window.location.search).get("type") === "case") {
+  requestType.value = "Private investigation case";
+}
+
 loadPersonalContact();

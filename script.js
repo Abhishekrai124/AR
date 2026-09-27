@@ -705,9 +705,11 @@ document.querySelectorAll(".contact-form").forEach((form) =>
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const d = new FormData(form),
-      s = encodeURIComponent(`Website enquiry from ${d.get("name")}`),
+      requestType = d.get("requestType") || "Website enquiry",
+      service = d.get("service"),
+      s = encodeURIComponent(`${requestType} from ${d.get("name")}`),
       b = encodeURIComponent(
-        `Name: ${d.get("name")}\nEmail: ${d.get("email")}\n\n${d.get("message")}`,
+        `Enquiry type: ${requestType}${service ? `\nService: ${service}` : ""}\nName: ${d.get("name")}\nEmail: ${d.get("email")}\n\n${d.get("message")}`,
       );
     location.href = `mailto:abhishekrai@arrai.in?subject=${s}&body=${b}`;
   }),
