@@ -713,11 +713,11 @@ document.querySelectorAll(".contact-form").forEach((form) =>
     e.preventDefault();
     const d = new FormData(form),
       requestType = d.get("requestType") || "Website enquiry",
-      service = d.get("service"),
+      caseReference = d.get("caseReference"),
       s = encodeURIComponent(`${requestType} from ${d.get("name")}`),
       b = encodeURIComponent(
-        `Enquiry type: ${requestType}${service ? `\nService: ${service}` : ""}\nName: ${d.get("name")}\nEmail: ${d.get("email")}\n\n${d.get("message")}`,
+        `Enquiry type: ${requestType}\nClient type: ${d.get("clientType") || "Not specified"}\nMatter: ${d.get("caseCategory") || "Not specified"}\nService: ${d.get("service") || "Not specified"}\nOrganization: ${d.get("organization") || "Not provided"}\nRole: ${d.get("professionalRole") || "Not provided"}\nReference: ${caseReference || "Not provided"}\nAuthorized to enquire: ${d.get("authorizedToEnquire") || "Not applicable"}\nLocation: ${d.get("location") || "Not provided"}\nTiming: ${d.get("timing") || "Not specified"}\nName: ${d.get("name")}\nEmail: ${d.get("email")}\nEmail-draft acknowledgement: ${d.get("emailDraftAcknowledged") ? "Confirmed" : "Not confirmed"}\n\nNon-sensitive summary:\n${d.get("message")}`,
       );
-    location.href = `mailto:abhishekrai@arrai.in?subject=${s}&body=${b}`;
+    location.href = `mailto:info@arrai.in?subject=${s}&body=${b}`;
   }),
 );

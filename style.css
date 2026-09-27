@@ -322,6 +322,12 @@ em {
 .case-form select { width: 100%; margin-top: 7px; border: 1px solid var(--line); border-radius: 9px; padding: 12px; background: #0f1d31; color: var(--ink); font: inherit; }
 .case-form select:focus,.case-form input:focus,.case-form textarea:focus { border-color: var(--sky); }
 .case-form .notice { line-height: 1.7; }
+.professional-fields { display: grid; gap: 16px; padding: 18px; border: 1px solid var(--line); border-left: 3px solid var(--sky); background: rgba(30, 41, 59, 0.35); }
+.professional-fields[hidden] { display: none; }
+.case-form-group-title { margin: 0; color: var(--sky); font-size: .72rem; font-weight: 800; }
+.case-form .consent-label { display: flex; gap: 10px; align-items: flex-start; color: var(--muted); font-size: .72rem; line-height: 1.6; }
+.case-form .consent-label input { flex: 0 0 auto; width: 17px; height: 17px; margin: 2px 0 0; accent-color: var(--sky); }
+.case-form .form-consent { margin-top: 6px; }
 .founder {
   padding: 35px 0 100px;
   text-align: center;

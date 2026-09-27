@@ -4,7 +4,8 @@
     <link rel="icon" href="/assets/app-icon.svg" type="image/svg+xml" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Contact — arrai.in</title>
+    <meta name="description" content="Send an ARRAI Detective Agency enquiry. Choose who you are, the kind of case and the service you need." />
+    <title>Agency Enquiry — ARRAI Detective Agency</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -20,54 +21,68 @@
     <main>
       <section class="page-hero wrap">
         <p class="eyebrow">ARRAI Detective Agency · Ludhiana</p>
-        <h1>Start a confidential enquiry.</h1>
+        <h1>Tell us what kind of help you need.</h1>
         <p>
-          Share a brief summary and the service you need. This form opens an
-          email draft on your device; it does not submit an official police or
-          court case. Please do not include passwords, intimate images, or
-          sensitive evidence in your first message.
+          Individuals, families, legal professionals, public authorities,
+          businesses, insurers and nonprofits can submit an enquiry. Choose the
+          closest options; if yours is not listed, select “Other / not sure.”
+          The form prepares an email draft and does not file an official case.
         </p>
       </section>
       <section class="content wrap contact-grid">
         <aside class="contact-detail">
-          <p class="eyebrow">Private investigation enquiries</p>
+          <p class="eyebrow">Agency contact</p>
           <p>
             <a href="mailto:info@arrai.in">info@arrai.in</a><br /><small
-              >General enquiries</small
+              >General agency enquiries</small
             >
           </p>
           <p>
-            <a href="mailto:arrai@arrai.in">arrai@arrai.in</a><br /><small
-              >AR team and project enquiries</small
-            >
-          </p>
-          <p>
-            <a href="mailto:support@arrai.in">support@arrai.in</a><br /><small
-              >Need a hand? We’ve got you.</small
-            >
-          </p>
-          <p>
-            <a href="mailto:abhishekrai@arrai.in">abhishekrai@arrai.in</a
-            ><br /><small>Direct founder enquiries</small>
-          </p>
-          <section
-            id="personalContact"
-            class="private-contact-panel"
-            hidden
-          ></section>
-          <p id="personalContactStatus" class="notice">
-            Sign in if you need the private little drawer of contact details.
-          </p>
           <p>Giaspura, Ludhiana<br />Punjab 141003, India<br /><small>Listed hours: Open 24 hours</small></p>
-          <p class="notice">For immediate danger, contact local emergency services. We cannot file police or court cases on your behalf.</p>
+          <p class="notice">For immediate danger, contact local emergency services or police directly. This inbox is not monitored as an emergency line.</p>
         </aside>
         <form class="contact-form case-form">
           <label>Enquiry type<select name="requestType" id="requestType" required>
-            <option value="General enquiry">General enquiry</option>
-            <option value="Private investigation case">File a Case · Private investigation</option>
+            <option value="Private investigation enquiry">Private investigation case</option>
+            <option value="General agency enquiry">General agency question</option>
           </select></label>
-          <label>Service<select name="service" id="caseService">
-            <option value="Not sure yet">Not sure yet</option>
+          <label>Who are you enquiring as?<select name="clientType" id="clientType" required>
+            <option value="" selected disabled>Choose a client type</option>
+            <option>Individual</option>
+            <option>Family member or representative</option>
+            <option>Lawyer or legal professional</option>
+            <option>Police or law-enforcement official</option>
+            <option>Public authority or government body</option>
+            <option>Business or employer</option>
+            <option>Insurer or claims professional</option>
+            <option>Nonprofit or community organization</option>
+            <option>Other / not sure</option>
+          </select></label>
+          <div class="professional-fields" id="professionalFields" hidden>
+            <p class="case-form-group-title">Professional or organization enquiry</p>
+            <label>Organization or agency<input name="organization" type="text" maxlength="120" placeholder="Organization name" /></label>
+            <label>Your role<input name="professionalRole" type="text" maxlength="100" placeholder="Role or title" /></label>
+            <label>Internal reference (optional)<input name="caseReference" type="text" maxlength="80" placeholder="Use a reference only; no confidential case details" /></label>
+            <label class="consent-label"><input name="authorizedToEnquire" type="checkbox" value="Confirmed" /> I am authorized to make this enquiry for the organization, client or authority named above.</label>
+          </div>
+          <label>Type of matter<select name="caseCategory" required>
+            <option value="" selected disabled>Choose the closest category</option>
+            <option>Personal or family matter</option>
+            <option>Missing person or locating someone</option>
+            <option>Background, identity or address verification</option>
+            <option>Harassment, stalking or safety concern</option>
+            <option>Relationship or infidelity concern</option>
+            <option>Legal, civil or court-support enquiry</option>
+            <option>Police or public-authority request</option>
+            <option>Business, workplace or corporate matter</option>
+            <option>Insurance, claim or suspected fraud</option>
+            <option>Online, social media or digital matter</option>
+            <option>Property, asset or document-serving enquiry</option>
+            <option>Other / not sure</option>
+          </select></label>
+          <label>Service<select name="service" id="caseService" required>
+            <option value="" selected disabled>Choose a service or “Not sure yet”</option>
+            <option>Not sure yet / discuss my case</option>
             <option>Private Investigator</option>
             <option>Address report</option>
             <option>Anti-stalking</option>
@@ -83,6 +98,12 @@
             <option>Process serving</option>
             <option>Social media &amp; internet investigations</option>
             <option>Surveillance services</option>
+            <option>Related or unlisted investigation request</option>
+          </select></label>
+          <label>Where is the matter based?<input name="location" type="text" maxlength="120" placeholder="City, state or country" /></label>
+          <label>Timing<select name="timing" required>
+            <option value="Routine">Routine enquiry</option>
+            <option value="Time-sensitive">Time-sensitive (mention any deadline in your summary)</option>
           </select></label>
           <label
             >Your name<input
@@ -100,10 +121,12 @@
             >Brief, non-sensitive summary<textarea
               required
               name="message"
+              maxlength="1600"
               placeholder="What happened, where, and what would you like help with? Keep sensitive details for a secure conversation."
             ></textarea></label
-          ><button class="button primary" type="submit">
-            Prepare email enquiry <b>↗</b>
+          ><label class="consent-label form-consent"><input required name="emailDraftAcknowledged" type="checkbox" value="Confirmed" /> I understand this prepares an email draft only; it does not file a police or court case or request emergency help.</label>
+          <button class="button primary" type="submit">
+            Review enquiry in email <b>↗</b>
           </button>
         </form>
       </section>
