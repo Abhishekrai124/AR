@@ -7,9 +7,10 @@ The floating AR Support assistant works immediately with offline website guidanc
 - `OPENROUTER_API_KEY` — free key; defaults to `meta-llama/llama-3.3-70b-instruct:free`.
 - `HUGGINGFACE_API_KEY` — free Hugging Face token for open models.
 - `GEMINI_API_KEY` — optional non-open fallback from Google AI Studio.
+- `AI_GATEWAY_API_KEY` — optional Vercel AI Gateway fallback. Set `AI_GATEWAY_MODEL` to override the default `openai/gpt-5.5` model.
 - `TAVILY_API_KEY` — optional live web research. Tavily's free plan currently includes 1,000 monthly API credits.
 
-The server tries configured open-source providers in this order: Groq, Cerebras, OpenRouter, Hugging Face, then Gemini. If one provider is rate-limited or unavailable, the next one is tried automatically. Use `GROQ_MODEL`, `CEREBRAS_MODEL`, `OPENROUTER_MODEL`, or `HUGGINGFACE_MODEL` to select another compatible model.
+The server tries configured open-source providers in this order: Groq, Cerebras, OpenRouter, Hugging Face, Gemini, then Vercel AI Gateway. If one provider is rate-limited or unavailable, the next one is tried automatically. Use `GROQ_MODEL`, `CEREBRAS_MODEL`, `OPENROUTER_MODEL`, `HUGGINGFACE_MODEL`, or `AI_GATEWAY_MODEL` to select another compatible model.
 
 Never place keys in `script.js`, HTML, or a public Git repository. They are read only on the server by `api/assistant.js`.
 

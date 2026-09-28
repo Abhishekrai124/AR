@@ -1,3 +1,5 @@
+import { generateText } from "ai";
+
 const websiteContext = `
 You are AR Support, a warm, concise assistant for arrai.in. The founder is Abhishek Rai, Founder & CEO.
 AR is connected with RaiGenZ Foundation (parent company) and AR Tech Solutions. It offers web design,
@@ -68,6 +70,39 @@ const askOpenSourceProvider = async (provider, prompt) => {
   return answer;
 };
 
+const getWebContext = async (question) => {
+  if (!process.env.TAVILY_API_KEY) return "";
+  try {
+    const search = await requestJson("https://api.tavily.com/search", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        api_key: process.env.TAVILY_API_KEY,
+        query: question,
+        search_depth: "basic",
+        max_results: 4,
+      }),
+    });
+    return (search.results || [])
+      .map((item) => `Source: ${item.title}\n${item.content}`)
+      .join("\n\n")
+      .slice(0, 10000);
+  } catch {
+    // Web research is optional. A bad key or temporary outage must not stop chat.
+    return "";
+  }
+};
+
+const askGateway = async (prompt) => {
+  const { text } = await generateText({
+    model: process.env.AI_GATEWAY_MODEL || "openai/gpt-5.5",
+    system: websiteContext,
+    prompt,
+  });
+  if (!text?.trim()) throw new Error("AI Gateway returned an empty answer");
+  return text.trim();
+};
+
 export default async function handler(request, response) {
   if (request.method !== "POST") {
     response.setHeader("Allow", "POST");
@@ -79,26 +114,7 @@ export default async function handler(request, response) {
   if (!question)
     return response.status(400).json({ error: "A question is required." });
   try {
-    let webContext = "";
-    if (process.env.TAVILY_API_KEY) {
-      const search = await fetch("https://api.tavily.com/search", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          api_key: process.env.TAVILY_API_KEY,
-          query: question,
-          search_depth: "basic",
-          max_results: 4,
-        }),
-      });
-      if (search.ok) {
-        const data = await search.json();
-        webContext = (data.results || [])
-          .map((item) => `Source: ${item.title}\n${item.content}`)
-          .join("\n\n")
-          .slice(0, 10000);
-      }
-    }
+    const webContext = await getWebContext(question);
     const prompt = `${webContext ? `Web research (use only when relevant):\n${webContext}\n\n` : ""}User question: ${question}`;
     const configuredProviders = openSourceProviders.filter(
       (provider) => process.env[provider.key],
@@ -112,22 +128,34 @@ export default async function handler(request, response) {
       }
     }
     if (process.env.GEMINI_API_KEY) {
-      const data = await requestJson(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(process.env.GEMINI_API_KEY)}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: `${websiteContext}\n${prompt}` }] }],
-          }),
-        },
-      );
-      const answer = data.candidates?.[0]?.content?.parts
-        ?.map((part) => part.text || "")
-        .join("")
-        .trim();
-      if (answer)
-        return response.status(200).json({ answer, provider: "Gemini" });
+      try {
+        const data = await requestJson(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(process.env.GEMINI_API_KEY)}`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: `${websiteContext}\n${prompt}` }] }],
+            }),
+          },
+        );
+        const answer = data.candidates?.[0]?.content?.parts
+          ?.map((part) => part.text || "")
+          .join("")
+          .trim();
+        if (answer)
+          return response.status(200).json({ answer, provider: "Gemini" });
+      } catch {
+        // Keep the same graceful failure path as the other optional providers.
+      }
+    }
+    if (process.env.AI_GATEWAY_API_KEY) {
+      try {
+        const answer = await askGateway(prompt);
+        return response.status(200).json({ answer, provider: "AI Gateway" });
+      } catch {
+        // A configured gateway can still be temporarily unavailable.
+      }
     }
     return response.status(503).json({ error: "AI is not configured yet." });
   } catch {
