@@ -6,6 +6,7 @@ const professionalFields = document.querySelector("#professionalFields");
 const studentStatusField = document.querySelector("#studentStatusField");
 const studentStatus = document.querySelector("#studentStatus");
 const professionalTypes = new Set(["Lawyer or legal professional", "Police or law-enforcement official", "Public authority or government body", "Cybercrime or IT-security professional", "Doctor or licensed healthcare professional", "Forensic or security specialist", "Business or employer", "Insurer or claims professional", "Nonprofit or community organization"]);
+const caseFormOpenedAt = Date.now();
 
 if (serviceSelect && window.detectiveServiceCatalog) {
   serviceSelect.replaceChildren(new Option("Choose a service", ""));
@@ -129,7 +130,7 @@ caseForm?.addEventListener("submit", async (event) => {
   button.disabled = true;
   caseStatus.textContent = "Creating your confidential case…";
   const payload = {
-    action: "create-case", requestType: formData.get("requestType"), clientName: formData.get("name"), clientEmail: formData.get("email"), clientPhone: formData.get("phone"),
+    action: "create-case", requestType: formData.get("requestType"), clientName: formData.get("name"), clientEmail: formData.get("email"), clientPhone: formData.get("phone"), website: formData.get("website"), formOpenedAt: caseFormOpenedAt,
     clientType: formData.get("clientType"), studentStatus: formData.get("studentStatus"), matterCategory: formData.get("caseCategory"), service: formData.get("service"),
     organization: formData.get("organization"), professionalRole: formData.get("professionalRole"), professionalIdType: formData.get("professionalIdType"), professionalIdReference: formData.get("professionalIdReference"),
     caseReference: formData.get("caseReference"), authorizedToEnquire: formData.get("authorizedToEnquire") === "Confirmed", country: formData.get("country"), state: formData.get("state"),

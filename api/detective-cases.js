@@ -64,6 +64,10 @@ export default async function handler(request, response) {
   try {
     if (request.body?.action === "create-case") {
       const body = request.body;
+      const botField = safeText(body.website, 200);
+      const formOpenedAt = Number(body.formOpenedAt);
+      if (botField || !Number.isFinite(formOpenedAt) || Date.now() - formOpenedAt < 1200)
+        return response.status(400).json({ error: "Automated submissions are not accepted." });
       const clientName = safeText(body.clientName, 120);
       const clientEmail = safeText(body.clientEmail, 254).toLowerCase();
       const clientPhone = safeText(body.clientPhone, 32);
