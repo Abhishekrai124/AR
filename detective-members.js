@@ -10,7 +10,6 @@ const applicationStatus = document.querySelector("#applicationStatus");
 const memberProfileForm = document.querySelector("#memberProfileForm");
 const memberProfileStatus = document.querySelector("#memberProfileStatus");
 let memberToken = "";
-let verifiedMemberId = "";
 const ownerMemberShortcut = document.querySelector("#ownerMemberShortcut");
 const ownerEmail = "abhishekrai6897@gmail.com";
 
@@ -235,7 +234,7 @@ const renderAssignedCases = (cases) => {
 };
 
 const loadMemberProfile = async () => {
-  const result = await memberRequest("member-profile", { memberId: verifiedMemberId });
+  const result = await memberRequest("member-profile");
   const profile = result.profile;
   ["phone", "country", "state", "city", "postalCode", "address", "qualifications", "availability"].forEach((name) => {
     if (memberProfileForm.elements[name]) memberProfileForm.elements[name].value = profile[name] || "";
@@ -257,20 +256,18 @@ memberLoginForm.addEventListener("submit", async (event) => {
     });
     if (error) throw error;
     memberToken = data.session.access_token;
-    verifiedMemberId = String(values.get("memberId") || "").trim();
     let access;
     try {
-      access = await memberRequest("verify-member", { memberId: verifiedMemberId });
+      access = await memberRequest("verify-member");
     } catch (error) {
       await window.arraiSupabase.auth.signOut({ scope: "local" });
       memberToken = "";
-      verifiedMemberId = "";
       throw error;
     }
     memberDashboard.hidden = false;
-    document.querySelector("#memberWelcome").textContent = `${access.member.fullName} · member …${access.member.memberIdSuffix}`;
+    document.querySelector("#memberWelcome").textContent = `${access.member.fullName} · ${access.member.memberId}`;
     memberLoginForm.hidden = true;
-    const cases = await memberRequest("assigned-cases", { memberId: verifiedMemberId });
+    const cases = await memberRequest("assigned-cases");
     renderAssignedCases(cases.cases);
     await loadMemberProfile();
     setMemberStatus(loginStatus, "Member access verified.");
@@ -290,7 +287,6 @@ memberProfileForm.addEventListener("submit", async (event) => {
   setMemberStatus(memberProfileStatus, "Saving your private profile…");
   try {
     await memberRequest("update-member-profile", {
-      memberId: verifiedMemberId,
       phone: values.get("phone"), country: values.get("country"), state: values.get("state"), city: values.get("city"),
       postalCode: values.get("postalCode"), address: values.get("address"), qualifications: values.get("qualifications"), availability: values.get("availability"),
       languages: String(values.get("languages") || "").split(",").map((value) => value.trim()).filter(Boolean),
@@ -301,7 +297,6 @@ memberProfileForm.addEventListener("submit", async (event) => {
 });
 
 document.querySelector("#memberLogout").addEventListener("click", async () => {
-  verifiedMemberId = "";
   memberToken = "";
   await window.arraiSupabase.auth.signOut({ scope: "local" });
   memberDashboard.hidden = true;

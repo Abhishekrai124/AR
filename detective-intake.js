@@ -129,7 +129,7 @@ caseForm?.addEventListener("submit", async (event) => {
   button.disabled = true;
   caseStatus.textContent = "Creating your confidential case…";
   const payload = {
-    action: "create-case", requestType: formData.get("requestType"), clientName: formData.get("name"), clientEmail: formData.get("email"),
+    action: "create-case", requestType: formData.get("requestType"), clientName: formData.get("name"), clientEmail: formData.get("email"), clientPhone: formData.get("phone"),
     clientType: formData.get("clientType"), studentStatus: formData.get("studentStatus"), matterCategory: formData.get("caseCategory"), service: formData.get("service"),
     organization: formData.get("organization"), professionalRole: formData.get("professionalRole"), professionalIdType: formData.get("professionalIdType"), professionalIdReference: formData.get("professionalIdReference"),
     caseReference: formData.get("caseReference"), authorizedToEnquire: formData.get("authorizedToEnquire") === "Confirmed", country: formData.get("country"), state: formData.get("state"),

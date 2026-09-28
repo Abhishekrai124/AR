@@ -5,7 +5,6 @@ import {
   safeText,
   uploadPrivateObject,
   verifyUser,
-  matchesHash,
 } from "../lib/detective-security.js";
 
 const isSameOrigin = (request) => {
@@ -32,15 +31,13 @@ const readPhoto = (dataUrl, declaredType) => {
   return { buffer, extension };
 };
 
-const getApprovedMember = async (user, memberId) => {
-  const code = safeText(memberId, 40).toUpperCase();
-  if (!/^DTA-[A-F0-9]{32}$/.test(code)) return null;
+const getApprovedMember = async (user) => {
   const response = await adminFetch(
-    `/rest/v1/detective_member_applications?user_id=eq.${encodeURIComponent(user.id)}&select=user_id,full_name,email,status,member_id_hash,member_id_suffix`,
+    `/rest/v1/detective_member_applications?user_id=eq.${encodeURIComponent(user.id)}&select=user_id,full_name,email,status,member_id_suffix,member_id_display`,
   );
   if (!response.ok) throw new Error("Member access could not be verified.");
   const [member] = await response.json();
-  if (!member || member.status !== "approved" || !matchesHash(code, member.member_id_hash)) return null;
+  if (!member || member.status !== "approved") return null;
   return member;
 };
 
@@ -138,17 +135,17 @@ export default async function handler(request, response) {
     }
 
     if (body.action === "verify-member") {
-      const member = await getApprovedMember(user, body.memberId);
-      if (!member) return response.status(403).json({ error: "Member ID or owner approval could not be verified." });
+      const member = await getApprovedMember(user);
+      if (!member) return response.status(403).json({ error: "Owner approval is required for member access." });
       return response.status(200).json({
         ok: true,
-        member: { fullName: member.full_name, memberIdSuffix: member.member_id_suffix },
+        member: { fullName: member.full_name, memberId: member.member_id_display || `DTA-…${member.member_id_suffix || ""}` },
       });
     }
 
     if (body.action === "member-profile") {
-      const member = await getApprovedMember(user, body.memberId);
-      if (!member) return response.status(403).json({ error: "Member ID or owner approval could not be verified." });
+      const member = await getApprovedMember(user);
+      if (!member) return response.status(403).json({ error: "Owner approval is required for member access." });
       const result = await adminFetch(`/rest/v1/detective_member_applications?user_id=eq.${encodeURIComponent(user.id)}&select=phone,country,state,city,postal_code,address,languages,qualifications,availability`);
       if (!result.ok) throw new Error("Your profile is temporarily unavailable.");
       const [profile] = await result.json();
@@ -160,8 +157,8 @@ export default async function handler(request, response) {
     }
 
     if (body.action === "update-member-profile") {
-      const member = await getApprovedMember(user, body.memberId);
-      if (!member) return response.status(403).json({ error: "Member ID or owner approval could not be verified." });
+      const member = await getApprovedMember(user);
+      if (!member) return response.status(403).json({ error: "Owner approval is required for member access." });
       const phone = safeText(body.phone, 32);
       const country = safeText(body.country, 100);
       const languages = Array.isArray(body.languages) ? [...new Set(body.languages.map((value) => safeText(value, 40)).filter(Boolean))].slice(0, 12) : [];
@@ -174,8 +171,8 @@ export default async function handler(request, response) {
     }
 
     if (body.action === "assigned-cases") {
-      const member = await getApprovedMember(user, body.memberId);
-      if (!member) return response.status(403).json({ error: "Member ID or owner approval could not be verified." });
+      const member = await getApprovedMember(user);
+      if (!member) return response.status(403).json({ error: "Owner approval is required for member access." });
       const result = await adminFetch(
         `/rest/v1/detective_cases?assigned_member_id=eq.${encodeURIComponent(user.id)}&select=id,case_number,client_name,client_type,matter_category,service_name,country,state,district,city,area,postal_code,police_station,timing,non_sensitive_summary,status,pdf_object_path,created_at,updated_at&order=created_at.desc&limit=100`,
       );

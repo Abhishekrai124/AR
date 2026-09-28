@@ -55,11 +55,13 @@ export default async function handler(request, response) {
         memberId = `DTA-${randomBytes(16).toString("hex").toUpperCase()}`;
         changes.status = "approved";
         changes.member_id_hash = sha256(memberId);
+        changes.member_id_display = memberId;
         changes.member_id_suffix = memberId.slice(-4);
       } else if (decision === "reject") {
         if (application.status !== "pending") return response.status(409).json({ error: "Only a pending application can be rejected." });
         changes.status = "rejected";
         changes.member_id_hash = null;
+        changes.member_id_display = null;
         changes.member_id_suffix = null;
       } else if (decision === "suspend") {
         if (application.status !== "approved") return response.status(409).json({ error: "Only an approved member can be suspended." });
@@ -68,6 +70,7 @@ export default async function handler(request, response) {
         if (application.status !== "approved") return response.status(409).json({ error: "Only an approved member can receive a replacement ID." });
         memberId = `DTA-${randomBytes(16).toString("hex").toUpperCase()}`;
         changes.member_id_hash = sha256(memberId);
+        changes.member_id_display = memberId;
         changes.member_id_suffix = memberId.slice(-4);
       } else {
         if (application.status !== "suspended") return response.status(409).json({ error: "Only a suspended member can be restored." });

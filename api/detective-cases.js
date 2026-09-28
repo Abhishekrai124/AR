@@ -66,12 +66,13 @@ export default async function handler(request, response) {
       const body = request.body;
       const clientName = safeText(body.clientName, 120);
       const clientEmail = safeText(body.clientEmail, 254).toLowerCase();
+      const clientPhone = safeText(body.clientPhone, 32);
       const clientType = safeText(body.clientType, 100);
       const studentStatus = safeText(body.studentStatus, 40);
       const agreementName = safeText(body.agreementName, 120);
       const summary = safeText(body.summary, 2000);
-      if (clientName.length < 2 || !emailPattern.test(clientEmail) || clientType.length < 2 || summary.length < 10)
-        return response.status(400).json({ error: "Name, valid email, client type and a short non-sensitive summary are required." });
+      if (clientName.length < 2 || !emailPattern.test(clientEmail) || clientPhone.length < 5 || clientType.length < 2 || summary.length < 10)
+        return response.status(400).json({ error: "Name, valid email, phone number, client type and a short non-sensitive summary are required." });
       if (body.agreementAccepted !== true || agreementName.toLowerCase() !== clientName.toLowerCase())
         return response.status(400).json({ error: "Confirm the draft intake acknowledgement using the same name entered on the form." });
       const professionals = new Set([
@@ -108,6 +109,7 @@ export default async function handler(request, response) {
         request_type: safeText(body.requestType, 80) || "Private investigation enquiry",
         client_name: clientName,
         client_email: clientEmail,
+        client_phone: clientPhone,
         client_email_hash: emailHash,
         client_type: clientType,
         student_status: studentStatus,
