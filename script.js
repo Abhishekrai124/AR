@@ -281,6 +281,41 @@ window.arraiSupabase?.auth.onAuthStateChange((_event, session) => {
     } : null,
   });
 });
+
+const mountPublicIpStatus = () => {
+  if (!document.body || document.querySelector(".public-ip-status")) return;
+
+  const status = document.createElement("aside");
+  status.className = "public-ip-status";
+  status.setAttribute("aria-live", "polite");
+  status.innerHTML = '<span class="public-ip-label">Your public IP</span><strong>Checking…</strong><button type="button" aria-label="Hide public IP">Hide</button>';
+  document.body.append(status);
+
+  const value = status.querySelector("strong");
+  const toggle = status.querySelector("button");
+  let address = "";
+
+  toggle.addEventListener("click", () => {
+    const hidden = status.classList.toggle("is-hidden");
+    value.textContent = hidden ? "Hidden" : address || "Unavailable";
+    toggle.textContent = hidden ? "Show" : "Hide";
+    toggle.setAttribute("aria-label", hidden ? "Show public IP" : "Hide public IP");
+  });
+
+  fetch("https://api.ipify.org?format=json", { cache: "no-store" })
+    .then((response) => (response.ok ? response.json() : Promise.reject()))
+    .then((data) => {
+      if (!data?.ip) throw new Error("Public IP unavailable");
+      address = data.ip;
+      value.textContent = address;
+    })
+    .catch(() => {
+      value.textContent = "Unavailable";
+      toggle.hidden = true;
+    });
+};
+
+mountPublicIpStatus();
 const communityPreview = document.querySelector("#communityPreview");
 if (communityPreview && window.arraiAuth) {
   window.arraiAuth
