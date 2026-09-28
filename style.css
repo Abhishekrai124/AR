@@ -1029,6 +1029,7 @@ footer div {
 .music-player.is-minimized { width: min(230px, calc(100% - 30px)); left: auto; padding: 7px 10px; grid-template-columns: 36px 1fr 28px; }.music-player.is-minimized audio { display:none; }.music-player.is-minimized .player-enhancements { display:flex; }.music-player.is-minimized .player-enhancements > *:not(#minPlayer) { display:none; }.music-player.is-minimized img { width:36px; height:36px; }
 .music-page .community-status a { color: var(--sky); font-weight: 800; }
 .home-update + .home-update { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }.home-update h3 { margin: 5px 0; }.home-update p:not(.eyebrow) { color: var(--muted); line-height: 1.6; }
+.home-local-info { display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:24px; color:var(--muted); font-size:.68rem; font-weight:700; }.home-local-info span { padding:7px 10px; border:1px solid var(--line); border-radius:999px; background:rgba(15,29,49,.42); }
 @media (max-width:700px) { .music-grid,.music-form { grid-template-columns:1fr; }.music-toolbar { flex-direction:column; }.music-player { grid-template-columns:38px 1fr 28px; }.music-player img { width:38px;height:38px; }.music-player audio { grid-column:1/-1; }.music-form textarea,.music-form label:last-of-type,.music-form button { grid-column:auto; } }
 .featured-payment { background: linear-gradient(135deg, #075985, #312e81); }
 .amounts { display: flex; gap: 8px; margin-bottom: 18px; }

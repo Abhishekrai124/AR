@@ -391,6 +391,27 @@ const applyGlobalTheme = async () => {
 };
 applyGlobalTheme().catch(() => {});
 
+const mountHomeLocalInfo = () => {
+  const time = document.querySelector("#homeDateTime");
+  const weather = document.querySelector("#homeWeather");
+  if (!time && !weather) return;
+  const updateTime = () => {
+    if (time) time.textContent = `🕒 ${new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }).format(new Date())} IST`;
+  };
+  updateTime();
+  setInterval(updateTime, 30_000);
+  fetch("https://api.open-meteo.com/v1/forecast?latitude=30.9000&longitude=75.8573&current=temperature_2m,weather_code&timezone=Asia%2FKolkata")
+    .then((response) => response.ok ? response.json() : Promise.reject())
+    .then((data) => {
+      const current = data.current;
+      if (!current || !weather) return;
+      const labels = { 0: "Clear", 1: "Mostly clear", 2: "Partly cloudy", 3: "Overcast", 45: "Foggy", 51: "Light drizzle", 61: "Rain", 71: "Snow", 80: "Rain showers", 95: "Thunderstorms" };
+      weather.textContent = `☁ ${labels[current.weather_code] || "Local weather"} · ${Math.round(current.temperature_2m)}°C`;
+    })
+    .catch(() => { if (weather) weather.textContent = "☁ Weather is temporarily unavailable"; });
+};
+mountHomeLocalInfo();
+
 // Public home content is editable from Owner Studio and remains readable without login.
 const loadPublicHomeContent = async () => {
   if (!document.querySelector("#founderCards") || !window.arraiSupabase) return;
