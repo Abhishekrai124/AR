@@ -3,6 +3,23 @@ const paymentApp = document.querySelector("#paymentApp");
 const payButton = document.querySelector("#payButton");
 let selectedAmount = 49;
 const vipPayButton = document.querySelector("#vipPayButton");
+const walletPanel = document.querySelector("#walletPanel");
+const walletBalance = document.querySelector("#walletBalance");
+const walletFundId = document.querySelector("#walletFundId");
+const walletLedger = document.querySelector("#walletLedger");
+
+async function loadWallet() {
+  const session = (await window.arraiSupabase.auth.getSession()).data.session;
+  const result = await fetch("/api/wallet", { headers: { Authorization: `Bearer ${session?.access_token || ""}` } });
+  const payload = await result.json().catch(() => ({}));
+  if (!result.ok) throw new Error(payload.error || "Wallet is unavailable.");
+  walletPanel.hidden = false;
+  walletBalance.textContent = `₹${(payload.wallet.balance_paise / 100).toFixed(2)}`;
+  walletFundId.textContent = `Fund ID: ${payload.wallet.fund_id}`;
+  walletLedger.innerHTML = payload.transactions.length
+    ? payload.transactions.map((tx) => `<div class="wallet-entry"><span>${tx.direction === "credit" ? "+" : "−"} ₹${(Number(tx.amount_paise) / 100).toFixed(2)}<small>${escapeHtml(tx.description || tx.kind)}</small></span><time datetime="${escapeHtml(tx.created_at)}">${new Date(tx.created_at).toLocaleDateString()}</time></div>`).join("")
+    : "<p>No ledger activity yet.</p>";
+}
 
 // Payment UI can be warm and playful, but verification must stay boringly exact.
 // Romance belongs in the copy; money belongs behind server-side checks. 💳
@@ -10,6 +27,8 @@ const notify = (text) => {
   if ("Notification" in window && Notification.permission === "granted")
     new Notification("Arrai Pay", { body: text });
 };
+
+const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]);
 
 function setStatus(message, type = "") {
   paymentStatus.textContent = message;
@@ -149,6 +168,10 @@ window.arraiAuth
   .then(({ isAuthenticated }) => {
     if (!isAuthenticated) return window.location.assign("auth.html");
     paymentApp.hidden = false;
+    loadWallet().catch((error) => {
+      walletPanel.hidden = false;
+      walletLedger.innerHTML = `<p>${error.message || "Wallet is unavailable."}</p>`;
+    });
     if ("Notification" in window && Notification.permission === "default")
       Notification.requestPermission().catch(() => {});
     const last = JSON.parse(localStorage.getItem("arraiLastPayment") || "null");

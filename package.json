@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "check": "node --check api/wallet.js && node --check payments.js"
+  },
   "dependencies": {
     "ai": "^7.0.118"
   }

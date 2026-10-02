@@ -46,6 +46,15 @@
         </div>
       </section>
       <p class="community-status" id="paymentStatus">Checking your sign-in…</p>
+      <section class="wallet-panel" id="walletPanel" hidden aria-labelledby="walletTitle">
+        <div>
+          <p class="eyebrow">Shared wallet</p>
+          <h2 id="walletTitle">Your ARRAI Pay balance</h2>
+          <p class="wallet-note">Protected by Supabase Auth. Balance changes are recorded server-side in the immutable ledger.</p>
+        </div>
+        <div class="wallet-balance" aria-live="polite"><span>Available balance</span><strong id="walletBalance">—</strong><small id="walletFundId">Fund ID unavailable</small></div>
+        <div class="wallet-ledger" id="walletLedger"><p>Loading verified ledger activity…</p></div>
+      </section>
       <section class="payment-grid" id="paymentApp" hidden>
         <article class="social-card payment-card featured-payment">
           <span>✦</span>
