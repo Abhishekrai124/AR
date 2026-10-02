@@ -15,6 +15,26 @@ const supabaseRequest = async (path, options = {}) => {
   });
 };
 
+const callLedger = async (operation, payload) => {
+  const response = await supabaseRequest(`/rest/v1/rpc/arrai_wallet_${operation}`, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    const error = new Error(`WALLET_${operation.toUpperCase()}_FAILED`);
+    error.status = response.status;
+    error.detail = detail.slice(0, 240);
+    throw error;
+  }
+  return response.json();
+};
+
+// Server-only hooks for verified payment, case-file, and chess workflows.
+// Callers must supply their own authenticated business decision and a unique reference.
+export const creditWallet = (payload) => callLedger("credit", payload);
+export const debitWallet = (payload) => callLedger("debit", payload);
+
 const authenticate = async (request) => {
   const bearer = request.headers.authorization || "";
   const anonKey = String(process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || "").trim();
