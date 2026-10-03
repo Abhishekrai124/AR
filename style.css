@@ -1217,6 +1217,9 @@ footer div {
 .vip-membership-card h3 { margin: 4px 0; color: #fde68a; font-size: 1.08rem; }
 .vip-membership-card p:last-child { margin: 0; color: var(--muted); font-size: .68rem; line-height: 1.5; }
 .vip-membership-card .eyebrow { margin: 0; }
+.vip-membership-card .wallet-membership-balance { margin-top: 8px; color: var(--sky); }
+.vip-membership-actions { display: grid; justify-items: end; gap: 8px; }
+.vip-membership-actions .text-link,.vip-membership-actions .text-button { font-size: .68rem; }
 .account-checkbox { display: grid !important; grid-template-columns: 20px minmax(0,1fr); align-items: start; gap: 5px 9px !important; color: var(--ink); line-height: 1.45; }
 .account-checkbox input { width: 17px; height: 17px; margin: 1px 0 0; accent-color: var(--sky); }
 .account-checkbox small { grid-column: 2; line-height: 1.5; }
@@ -1240,6 +1243,8 @@ footer div {
 @media (max-width: 700px) {
   .vip-membership-card { align-items: stretch; flex-direction: column; }
   .vip-membership-card .button { width: 100%; }
+  .vip-membership-actions { justify-items: stretch; }
+  .vip-membership-actions .text-link,.vip-membership-actions .text-button { justify-self: center; }
   .chat-call-actions { justify-content: flex-end; }
   .account-dialog { padding: 22px 17px; }
 }

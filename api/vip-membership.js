@@ -92,6 +92,115 @@ async function createOrder(user, authorization, response) {
   });
 }
 
+async function readWalletBalance(user, authorization, response) {
+  const walletResponse = await fetch(
+    `${supabaseUrl}/rest/v1/wallet_accounts?user_id=eq.${encodeURIComponent(user.id)}&select=balance_paise`,
+    { headers: { apikey: anonKey, Authorization: authorization } },
+  );
+  if (!walletResponse.ok) {
+    return response.status(503).json({
+      error:
+        "ARRAI Wallet balance could not be read. Check that Pay and ARRAI use the same Supabase project.",
+    });
+  }
+  const wallets = await walletResponse.json();
+  if (!Array.isArray(wallets) || wallets.length > 1) {
+    return response.status(502).json({
+      error: "ARRAI Wallet returned an invalid balance response.",
+    });
+  }
+  const balancePaise = wallets.length ? Number(wallets[0].balance_paise) : 0;
+  if (!Number.isSafeInteger(balancePaise) || balancePaise < 0) {
+    return response.status(502).json({
+      error: "ARRAI Wallet returned an invalid balance.",
+    });
+  }
+  return response.status(200).json({
+    wallet_exists: wallets.length === 1,
+    balance_paise: balancePaise,
+    required_paise: 4500,
+  });
+}
+
+async function payWithWallet(user, body, response) {
+  const idempotencyKey = body.idempotencyKey;
+  if (
+    typeof idempotencyKey !== "string" ||
+    !/^[a-f\d]{8}-[a-f\d]{4}-[1-8][a-f\d]{3}-[89ab][a-f\d]{3}-[a-f\d]{12}$/i.test(
+      idempotencyKey,
+    )
+  ) {
+    return response.status(400).json({
+      error: "Invalid wallet payment reference. Please try again.",
+    });
+  }
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey) {
+    return response.status(503).json({
+      error: "ARRAI Wallet checkout is not configured. Contact support.",
+    });
+  }
+  const payment = await fetch(
+    `${supabaseUrl}/rest/v1/rpc/arrai_purchase_vip_with_wallet`,
+    {
+      method: "POST",
+      headers: {
+        apikey: serviceKey,
+        Authorization: `Bearer ${serviceKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        p_user_id: user.id,
+        p_idempotency_key: idempotencyKey,
+      }),
+    },
+  );
+  const result = await payment.json().catch(() => null);
+  if (!payment.ok) {
+    const databaseMessage = String(result?.message || "");
+    if (databaseMessage.includes("WALLET_NOT_FOUND")) {
+      return response.status(409).json({
+        error: "Set up your ARRAI Wallet at pay.arrai.in before purchasing VIP.",
+      });
+    }
+    if (databaseMessage.includes("WALLET_INSUFFICIENT")) {
+      return response.status(402).json({
+        error: "Your ARRAI Wallet needs at least ₹45. Add money at pay.arrai.in and try again.",
+      });
+    }
+    if (databaseMessage.includes("VIP_PROFILE_NOT_FOUND")) {
+      return response.status(409).json({
+        error: "Complete your ARRAI Community profile before purchasing VIP.",
+      });
+    }
+    console.error("ARRAI Wallet VIP purchase failed:", payment.status, result);
+    return response.status(502).json({
+      error:
+        "ARRAI Wallet could not complete this purchase. Your balance was not changed unless a successful receipt was returned; retry safely or contact support.",
+    });
+  }
+  if (
+    !Array.isArray(result) ||
+    !result[0] ||
+    typeof result[0].activated !== "boolean" ||
+    !result[0].expires_at ||
+    !Number.isSafeInteger(Number(result[0].balance_after_paise))
+  ) {
+    console.error("ARRAI Wallet VIP purchase returned an invalid result:", result);
+    return response.status(502).json({
+      error: "ARRAI Wallet returned an invalid membership receipt. Contact support.",
+    });
+  }
+  return response.status(200).json({
+    paid: true,
+    provider: "arrai_wallet",
+    amount_paise: 4500,
+    activated: result[0].activated,
+    expires_at: result[0].expires_at,
+    balance_after_paise: Number(result[0].balance_after_paise),
+  });
+}
+
 async function verifyPayment(user, body, response) {
   const { keyId, keySecret } = razorpayCredentials();
   const { orderId, paymentId, signature } = body;
@@ -178,16 +287,23 @@ async function verifyPayment(user, body, response) {
 }
 
 export default async function handler(request, response) {
-  if (request.method !== "POST") {
-    return response.status(405).json({ error: "Method not allowed." });
-  }
   try {
-    const user = await authenticate(request);
-    if (!user) return response.status(401).json({ error: "Sign in to continue." });
-
     const action =
       request.query?.action ||
       new URL(request.url, "http://localhost").searchParams.get("action");
+    if (
+      (action === "wallet-balance" && request.method !== "GET") ||
+      (action !== "wallet-balance" && request.method !== "POST")
+    ) {
+      return response.status(405).json({ error: "Method not allowed." });
+    }
+    const user = await authenticate(request);
+    if (!user) return response.status(401).json({ error: "Sign in to continue." });
+
+    if (action === "wallet-balance")
+      return await readWalletBalance(user, request.headers.authorization, response);
+    if (action === "wallet-pay")
+      return await payWithWallet(user, readBody(request.body), response);
     if (action === "create-order")
       return await createOrder(
         user,

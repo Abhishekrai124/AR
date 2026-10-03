@@ -16,6 +16,8 @@ let activeCallType = "video";
 let queuedCandidates = [];
 let approximateProfileLocation = null;
 let clearProfileLocation = false;
+let walletBalancePaise = 0;
+let walletExists = false;
 let feedMode = "home";
 let feedOffset = 0;
 let feedHasMore = false;
@@ -754,8 +756,10 @@ async function openAccountSettings() {
         : profile.vip_badge === "purchased" && expiresAt
           ? `Membership expired on ${expiresAt.toLocaleDateString()}. Renew to restore VIP benefits.`
         : "Personal themes and a gold profile badge. Membership lasts 12 months.";
-  $("#buyVipMembership").hidden =
-    profile.vip_badge === "owner_granted" && isVipActive();
+  const ownerVip = (profile.vip_badge === "owner_granted" && isVipActive()) ||
+    isOwner();
+  $("#buyVipMembership").hidden = ownerVip;
+  $("#buyVipWithWallet").hidden = ownerVip;
   $("#buyVipMembership").textContent =
     isVipActive() && profile.vip_badge === "purchased"
       ? "Renew VIP · ₹45"
@@ -763,6 +767,11 @@ async function openAccountSettings() {
   $("#accountActivity").innerHTML =
     `<span><b>${postCount || 0}</b> posts</span><span><b>${followerCount || 0}</b> followers</span><span><b>${followingCount || 0}</b> following</span>`;
   $("#accountDialog").showModal();
+  refreshWalletBalance().catch((error) => {
+    $("#arraiWalletBalance").textContent =
+      `Wallet balance unavailable: ${error.message}`;
+    $("#buyVipWithWallet").disabled = true;
+  });
 }
 
 function updateProfileLocationSettings() {
@@ -797,6 +806,95 @@ async function loadRazorpayCheckout() {
     script.onerror = () => reject(new Error("Razorpay checkout could not load."));
     document.head.append(script);
   });
+}
+
+async function refreshWalletBalance() {
+  const {
+    data: { session },
+    error: sessionError,
+  } = await db.auth.getSession();
+  if (sessionError) throw sessionError;
+  if (!session?.access_token)
+    throw new Error("Sign in again to check your ARRAI Wallet.");
+  const response = await fetch(
+    "/api/vip-membership?action=wallet-balance",
+    { headers: { Authorization: `Bearer ${session.access_token}` } },
+  );
+  const result = await response.json();
+  if (!response.ok)
+    throw new Error(result.error || "Could not check your wallet balance.");
+  if (
+    typeof result.wallet_exists !== "boolean" ||
+    !Number.isSafeInteger(result.balance_paise) ||
+    result.balance_paise < 0
+  )
+    throw new Error("ARRAI Wallet returned an invalid balance.");
+  walletBalancePaise = result.balance_paise;
+  walletExists = result.wallet_exists;
+  $("#arraiWalletBalance").textContent = walletExists
+    ? `ARRAI Wallet balance: ${new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+      }).format(walletBalancePaise / 100)}`
+    : "Activate your ARRAI Wallet at pay.arrai.in to use wallet checkout.";
+  $("#buyVipWithWallet").disabled =
+    !walletExists || walletBalancePaise < 4500;
+  if (walletExists && walletBalancePaise < 4500) {
+    $("#arraiWalletBalance").textContent +=
+      " Add at least ₹45 to pay for VIP.";
+  }
+}
+
+async function buyVipWithWallet() {
+  const button = $("#buyVipWithWallet");
+  const originalText = button.textContent;
+  button.disabled = true;
+  button.textContent = "Paying securely from your wallet…";
+  try {
+    const {
+      data: { session },
+      error: sessionError,
+    } = await db.auth.getSession();
+    if (sessionError) throw sessionError;
+    if (!session?.access_token)
+      throw new Error("Please sign in again before purchasing VIP.");
+    const idempotencyStorageKey = `arrai-vip-wallet:${user.sub}`;
+    let idempotencyKey = localStorage.getItem(idempotencyStorageKey);
+    if (!idempotencyKey) {
+      idempotencyKey = crypto.randomUUID();
+      localStorage.setItem(idempotencyStorageKey, idempotencyKey);
+    }
+    const response = await fetch("/api/vip-membership?action=wallet-pay", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ idempotencyKey }),
+    });
+    const result = await response.json();
+    if (!response.ok)
+      throw new Error(result.error || "ARRAI Wallet payment was declined.");
+    await loadProfile();
+    await refreshWalletBalance();
+    localStorage.removeItem(idempotencyStorageKey);
+    $("#accountDialog").close();
+    say(
+      result.activated
+        ? `VIP is active until ${new Date(result.expires_at).toLocaleDateString()}. ₹45 was paid from your ARRAI Wallet.`
+        : `This wallet payment was already completed. VIP is active until ${new Date(result.expires_at).toLocaleDateString()}.`,
+      "success",
+    );
+  } catch (error) {
+    say(error.message || "ARRAI Wallet payment could not be completed.", "error");
+    await refreshWalletBalance().catch((balanceError) => {
+      $("#arraiWalletBalance").textContent =
+        `Wallet balance unavailable: ${balanceError.message}`;
+    });
+  } finally {
+    button.textContent = originalText;
+    button.disabled = !walletExists || walletBalancePaise < 4500;
+  }
 }
 
 async function buyVipMembership() {
@@ -960,6 +1058,16 @@ $("#accountSettings").addEventListener("click", () =>
 $("#closeAccount").addEventListener("click", () => $("#accountDialog").close());
 $("#buyVipMembership").addEventListener("click", () =>
   buyVipMembership().catch((error) => say(error.message, "error")),
+);
+$("#buyVipWithWallet").addEventListener("click", () =>
+  buyVipWithWallet().catch((error) => say(error.message, "error")),
+);
+$("#refreshVipWalletBalance").addEventListener("click", () =>
+  refreshWalletBalance().catch((error) => {
+    $("#arraiWalletBalance").textContent =
+      `Wallet balance unavailable: ${error.message}`;
+    $("#buyVipWithWallet").disabled = true;
+  }),
 );
 $("#useProfileLocation").addEventListener("click", async (event) => {
   const button = event.currentTarget;

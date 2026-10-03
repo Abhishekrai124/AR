@@ -13,6 +13,8 @@ SQL editor:
 5. `supabase-community-platform-migration.sql`
 6. `supabase-vip-membership-migration.sql` for annual VIP and opt-in city display.
 7. `supabase-public-profile-migration.sql` for safe public username pages.
+8. `supabase-vip-wallet-migration.sql` to enable payment from the ARRAI Pay
+   wallet.
 
 The Community page expects the last migration to be applied. It is not applied
 by deploying the static site, and no live database changes are implied by this
@@ -38,6 +40,19 @@ removes purchased VIP access after the recorded expiry. Membership activation
 is server-verified against Razorpay before the database RPC can grant VIP.
 Until the migrations and environment variables are configured in the live
 services, checkout and location persistence are unavailable.
+
+### Pay with ARRAI Wallet
+
+In Community, click the **VIP membership · ₹45/year** button in the page
+header and choose **Pay with ARRAI Wallet**. The page checks the signed-in member's
+`wallet_accounts` balance and requires at least ₹45. Payment is a single,
+atomic wallet debit: it also writes a `vip_membership` entry to
+`wallet_transactions` so the purchase appears in the wallet's activity/history,
+then activates VIP for 12 months. No wallet balance is copied or transferred
+between sites. ARRAI Community and `pay.arrai.in` must use the same Supabase
+project and Auth user for the wallet balance to match. If the balance is short,
+use **Add money in ARRAI Pay**, then return to Community and try again. The
+Razorpay option remains available as an alternative.
 
 ## Connected features
 

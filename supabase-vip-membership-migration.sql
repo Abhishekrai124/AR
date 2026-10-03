@@ -90,10 +90,15 @@ revoke all on function public.arrai_featured_vip_members() from public;
 grant execute on function public.arrai_featured_vip_members() to anon, authenticated;
 
 create table if not exists public.vip_membership_payments (
-  razorpay_order_id text primary key,
-  razorpay_payment_id text not null unique,
+  id uuid primary key default gen_random_uuid(),
+  payment_provider text not null default 'razorpay'
+    check (payment_provider in ('razorpay', 'arrai_wallet')),
+  razorpay_order_id text unique,
+  razorpay_payment_id text unique,
   user_id text not null references public.profiles(id) on delete cascade,
   amount_paise integer not null check (amount_paise = 4500),
+  wallet_idempotency_key uuid unique,
+  wallet_transaction_id uuid,
   created_at timestamptz not null default now()
 );
 alter table public.vip_membership_payments enable row level security;
