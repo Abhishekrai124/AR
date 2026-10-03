@@ -38,7 +38,7 @@ function razorpayCredentials() {
 
 async function createOrder(user, authorization, response) {
   const profileResponse = await fetch(
-    `${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(user.id)}&select=id`,
+    `${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(user.id)}&select=id,account_status`,
     {
       headers: { apikey: anonKey, Authorization: authorization },
     },
@@ -52,6 +52,11 @@ async function createOrder(user, authorization, response) {
   if (!Array.isArray(profiles) || profiles.length !== 1) {
     return response.status(409).json({
       error: "Complete your ARRAI community profile before purchasing VIP.",
+    });
+  }
+  if (profiles[0].account_status !== "active") {
+    return response.status(403).json({
+      error: "This account is not eligible to purchase VIP right now.",
     });
   }
   const { keyId, keySecret } = razorpayCredentials();

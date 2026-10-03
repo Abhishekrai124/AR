@@ -1233,7 +1233,8 @@ footer div {
 .featured-vip-member img { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; }
 .featured-vip-member span { overflow: hidden; max-width: 190px; text-overflow: ellipsis; white-space: nowrap; }
 .chat-call-actions { display: flex; flex-wrap: wrap; gap: 7px; }
-.call-dialog audio { display: none; }
+.call-dialog audio { width: 100%; }
+.call-dialog .call-videos audio { grid-column: 1 / -1; }
 .call-dialog audio[hidden] { display: none; }
 .social-card:hover { transform: translateY(-2px); }
 @media (max-width: 700px) {

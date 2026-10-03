@@ -43,7 +43,7 @@ create table if not exists public.profile_locations (
   updated_at timestamptz not null default now()
 );
 alter table public.profile_locations enable row level security;
-revoke all on public.profile_locations from anon, authenticated;
+revoke all on public.profile_locations from public, anon, authenticated;
 grant select, insert, update, delete on public.profile_locations to authenticated;
 drop policy if exists "Members manage their own approximate location" on public.profile_locations;
 create policy "Members manage their own approximate location"
@@ -63,7 +63,8 @@ as $$
   join public.profiles p on p.id = l.profile_id
   where l.profile_id = p_profile_id
     and l.show_on_profile
-    and p.privacy = 'public';
+    and p.privacy = 'public'
+    and p.account_status = 'active';
 $$;
 revoke all on function public.arrai_public_profile_location(text) from public;
 grant execute on function public.arrai_public_profile_location(text) to anon, authenticated;
@@ -80,6 +81,7 @@ as $$
   where p.is_vip
     and p.vip_badge = 'purchased'
     and p.show_vip_on_home
+    and p.account_status = 'active'
     and (p.vip_expires_at is null or p.vip_expires_at > now())
   order by p.vip_granted_at desc nulls last
   limit 12;

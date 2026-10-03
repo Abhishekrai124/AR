@@ -33,7 +33,7 @@ async function loadProfilePage() {
       ? db
           .from("profiles")
           .select(
-            "id,username,display_name,bio,avatar_url,is_vip,blue_tick,gold_tick,created_at,privacy",
+            "id,username,display_name,bio,avatar_url,is_vip,vip_expires_at,blue_tick,gold_tick,created_at,privacy",
           )
           .eq("username", requestedUsername)
           .maybeSingle()
@@ -54,7 +54,7 @@ async function loadProfilePage() {
     : await db
         .from("profiles")
         .select(
-          "id,username,display_name,bio,avatar_url,is_vip,blue_tick,gold_tick,created_at,privacy",
+          "id,username,display_name,bio,avatar_url,is_vip,vip_expires_at,blue_tick,gold_tick,created_at,privacy",
         )
         .eq("id", id)
         .maybeSingle();
@@ -113,9 +113,13 @@ async function loadProfilePage() {
   const locationMarkup = locationLabel
     ? `<p class="profile-location">📍 ${profileEscape(locationLabel)} <a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(locationLabel)}" target="_blank" rel="noopener noreferrer">Map</a></p>`
     : "";
-  const tick = person.gold_tick
+  const activeVip =
+    person.is_vip &&
+    (!person.vip_expires_at ||
+      new Date(person.vip_expires_at).getTime() > Date.now());
+  const tick = person.gold_tick && activeVip
     ? '<span class="verified gold">✓</span>'
-    : person.blue_tick || person.is_vip
+    : person.blue_tick || activeVip
       ? '<span class="verified blue">✓</span>'
       : "";
   const viewerId = auth.user?.sub;
@@ -123,7 +127,7 @@ async function loadProfilePage() {
     ? `<div class="profile-stats"><span><b>${posts?.length || 0}</b> posts</span><span><b>${followers || 0}</b> followers</span><span><b>${following || 0}</b> following</span></div>`
     : `<div class="profile-stats"><span><b>${posts?.length || 0}</b> posts</span></div>`;
   const card = profilePage$("#profilePage");
-  card.innerHTML = `<section class="profile-page-hero"><img src="${profileEscape(profileAvatar(person))}" alt="${profileEscape(person.display_name)}" /><div><p class="eyebrow">${person.is_vip ? "✦ VIP dreamer" : "AR community member"}</p><h1>${profileEscape(person.display_name)} ${tick}</h1><p class="profile-handle">@${profileEscape(person.username)}</p><p class="profile-bio">${profileEscape(person.bio || "Quietly collecting good ideas and nice moments.")}</p>${locationMarkup}${profileStats}${id !== viewerId ? (viewerId ? `<a class="button primary" href="/dm?with=${encodeURIComponent(id)}">Send a little hello <b>↗</b></a>` : '<a class="button primary" href="auth.html?next=community">Join the community <b>↗</b></a>') : '<a class="button" href="community.html">Edit in community ♡</a>'}</div></section><section class="profile-page-posts"><div><p class="eyebrow">From their corner</p><h2>Little things they’ve shared.</h2></div>${posts?.length ? posts.map((post) => `<article class="social-card"><small>${new Date(post.created_at).toLocaleDateString()}</small><p>${profileEscape(post.body)}</p>${post.image_url ? `<img src="${profileEscape(post.image_url)}" alt="Shared post" />` : ""}</article>`).join("") : '<p class="empty-state">No posts yet. The canvas is delightfully blank.</p>'}</section>`;
+  card.innerHTML = `<section class="profile-page-hero"><img src="${profileEscape(profileAvatar(person))}" alt="${profileEscape(person.display_name)}" /><div><p class="eyebrow">${activeVip ? "✦ VIP dreamer" : "AR community member"}</p><h1>${profileEscape(person.display_name)} ${tick}</h1><p class="profile-handle">@${profileEscape(person.username)}</p><p class="profile-bio">${profileEscape(person.bio || "Quietly collecting good ideas and nice moments.")}</p>${locationMarkup}${profileStats}${id !== viewerId ? (viewerId ? `<a class="button primary" href="/dm?with=${encodeURIComponent(id)}">Send a little hello <b>↗</b></a>` : '<a class="button primary" href="auth.html?next=community">Join the community <b>↗</b></a>') : '<a class="button" href="community.html">Edit in community ♡</a>'}</div></section><section class="profile-page-posts"><div><p class="eyebrow">From their corner</p><h2>Little things they’ve shared.</h2></div>${posts?.length ? posts.map((post) => `<article class="social-card"><small>${new Date(post.created_at).toLocaleDateString()}</small><p>${profileEscape(post.body)}</p>${post.image_url ? `<img src="${profileEscape(post.image_url)}" alt="Shared post" />` : ""}</article>`).join("") : '<p class="empty-state">No posts yet. The canvas is delightfully blank.</p>'}</section>`;
   card.hidden = false;
   profilePageStatus.hidden = true;
 }

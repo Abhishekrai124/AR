@@ -11,8 +11,8 @@ SQL editor:
 4. Optionally, `supabase-public-feed-migration.sql` if enabling the anonymous
    public feed.
 5. `supabase-community-platform-migration.sql`
-6. `supabase-public-profile-migration.sql` for safe public username pages.
-7. `supabase-vip-membership-migration.sql` for annual VIP and opt-in city display.
+6. `supabase-vip-membership-migration.sql` for annual VIP and opt-in city display.
+7. `supabase-public-profile-migration.sql` for safe public username pages.
 
 The Community page expects the last migration to be applied. It is not applied
 by deploying the static site, and no live database changes are implied by this

@@ -21,6 +21,18 @@ let feedOffset = 0;
 let feedHasMore = false;
 const communityOwnerEmail = "abhishekrai6897@gmail.com";
 const isOwner = () => user?.email?.toLowerCase() === communityOwnerEmail;
+const isVipActive = () =>
+  Boolean(
+    profile?.is_vip &&
+      (!profile.vip_expires_at ||
+        new Date(profile.vip_expires_at).getTime() > Date.now()),
+  );
+const isProfileVipActive = (person) =>
+  Boolean(
+    person?.is_vip &&
+        (!person.vip_expires_at ||
+          new Date(person.vip_expires_at).getTime() > Date.now()),
+  );
 
 // This is the neighbourhood: profiles, posts, follows, messages and calls.
 // Each action still checks ownership, because even a friendly community needs doors.
@@ -41,13 +53,13 @@ function avatar(profileData) {
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.display_name)}&background=38bdf8&color=0f172a&bold=true`;
 }
 const badge = (profileData) =>
-  `${profileData?.community_role === "owner" ? '<span class="owner-tag" title="AR owner">arrai.in · OWNER</span>' : ""}${profileData?.blue_tick ? '<span class="verified blue" title="Blue tick">✓</span>' : ""}${profileData?.gold_tick ? '<span class="verified gold" title="Gold tick">✓</span>' : ""}`;
+  `${profileData?.community_role === "owner" ? '<span class="owner-tag" title="AR owner">arrai.in · OWNER</span>' : ""}${profileData?.blue_tick ? '<span class="verified blue" title="Blue tick">✓</span>' : ""}${profileData?.gold_tick && (!profileData.vip_expires_at || new Date(profileData.vip_expires_at).getTime() > Date.now()) ? '<span class="verified gold" title="Gold tick">✓</span>' : ""}`;
 
 async function openProfile(profileId) {
   const { data: person, error } = await db
     .from("profiles")
     .select(
-      "id, username, display_name, bio, avatar_url, is_vip, blue_tick, gold_tick, community_role, privacy, created_at",
+      "id, username, display_name, bio, avatar_url, is_vip, vip_expires_at, blue_tick, gold_tick, community_role, privacy, created_at",
     )
     .eq("id", profileId)
     .maybeSingle();
@@ -170,7 +182,7 @@ async function openProfile(profileId) {
       )
       .join("") || '<span class="empty-state">None yet</span>';
   $("#profileDetails").innerHTML =
-    `<section class="instagram-profile"><img class="profile-hero-avatar" src="${escapeHtml(avatar(person))}" alt="" /><div><p class="eyebrow">${person.is_vip ? "✦ VIP member" : "AR member"}</p><h2>${escapeHtml(person.display_name)}</h2><p class="profile-handle">@${escapeHtml(person.username)}</p><p>${escapeHtml(person.bio || "No bio yet.")}</p>${locationMarkup}<div class="profile-stats"><span><b>${posts.length}</b> posts</span><span><b>${followerCount || 0}</b> followers</span><span><b>${followingCount || 0}</b> following</span></div>${profileActions}</div></section><section class="profile-lists"><div><p class="eyebrow">Followers</p>${memberList(followers, "follower")}</div><div><p class="eyebrow">Following</p>${memberList(following, "following")}</div></section><section class="profile-posts"><p class="eyebrow">Posts</p>${posts.length ? posts.map((post) => `<article class="social-card"><small>${new Date(post.created_at).toLocaleDateString()}</small><p>${escapeHtml(post.body)}</p>${post.image_url ? `<img src="${escapeHtml(post.image_url)}" alt="Member post" />` : ""}</article>`).join("") : '<p class="empty-state">No posts yet.</p>'}</section>`;
+    `<section class="instagram-profile"><img class="profile-hero-avatar" src="${escapeHtml(avatar(person))}" alt="" /><div><p class="eyebrow">${isProfileVipActive(person) ? "✦ VIP member" : "AR member"}</p><h2>${escapeHtml(person.display_name)}</h2><p class="profile-handle">@${escapeHtml(person.username)}</p><p>${escapeHtml(person.bio || "No bio yet.")}</p>${locationMarkup}<div class="profile-stats"><span><b>${posts.length}</b> posts</span><span><b>${followerCount || 0}</b> followers</span><span><b>${followingCount || 0}</b> following</span></div>${profileActions}</div></section><section class="profile-lists"><div><p class="eyebrow">Followers</p>${memberList(followers, "follower")}</div><div><p class="eyebrow">Following</p>${memberList(following, "following")}</div></section><section class="profile-posts"><p class="eyebrow">Posts</p>${posts.length ? posts.map((post) => `<article class="social-card"><small>${new Date(post.created_at).toLocaleDateString()}</small><p>${escapeHtml(post.body)}</p>${post.image_url ? `<img src="${escapeHtml(post.image_url)}" alt="Member post" />` : ""}</article>`).join("") : '<p class="empty-state">No posts yet.</p>'}</section>`;
   $("#profileDetails h2").insertAdjacentHTML("beforeend", ` ${badge(person)}`);
   if (profileId !== user.sub)
     $("#profileDetails .instagram-profile > div").insertAdjacentHTML(
@@ -229,12 +241,12 @@ async function loadProfile() {
   $("#myAvatar").src = avatar(profile);
   $("#myName").textContent = profile.display_name;
   $("#myHandle").textContent = `@${profile.username}`;
-  $("#membershipBadge").textContent = profile.is_vip
+  $("#membershipBadge").textContent = isVipActive()
     ? "✦ VIP member"
     : "Standard member";
   $("#membershipBadge").innerHTML = isOwner()
     ? "♛ Owner · all access"
-    : profile.is_vip
+    : isVipActive()
       ? `${badge(profile)} VIP member`
       : "Standard member";
   const { data: siteSettings } = await db
@@ -244,10 +256,10 @@ async function loadProfile() {
     .maybeSingle();
   const globalTheme = siteSettings?.global_theme || "midnight";
   const personalTheme =
-    profile.is_vip || isOwner() ? profile.theme || globalTheme : globalTheme;
+    isVipActive() || isOwner() ? profile.theme || globalTheme : globalTheme;
   document.body.dataset.globalTheme = globalTheme;
   document.body.dataset.userTheme =
-    profile.is_vip || isOwner() ? personalTheme : "";
+    isVipActive() || isOwner() ? personalTheme : "";
   $("#themeSelect").value = personalTheme;
   document.body.dataset.theme = personalTheme;
   say("You’re connected.", "success");
@@ -737,13 +749,15 @@ async function openAccountSettings() {
   $("#vipMembershipStatus").textContent =
     profile.vip_badge === "owner_granted"
       ? "Owner VIP access is active."
-      : profile.is_vip && expiresAt
+      : isVipActive() && expiresAt
         ? `VIP active until ${expiresAt.toLocaleDateString()}. Your gold badge is ready.`
+        : profile.vip_badge === "purchased" && expiresAt
+          ? `Membership expired on ${expiresAt.toLocaleDateString()}. Renew to restore VIP benefits.`
         : "Personal themes and a gold profile badge. Membership lasts 12 months.";
   $("#buyVipMembership").hidden =
-    profile.vip_badge === "owner_granted" && profile.is_vip;
+    profile.vip_badge === "owner_granted" && isVipActive();
   $("#buyVipMembership").textContent =
-    profile.is_vip && profile.vip_badge === "purchased"
+    isVipActive() && profile.vip_badge === "purchased"
       ? "Renew VIP · ₹45"
       : "Get VIP · ₹45";
   $("#accountActivity").innerHTML =
@@ -978,12 +992,12 @@ $("#accountForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   const data = new FormData(event.currentTarget);
   const theme = data.get("theme");
-  if (theme !== "midnight" && !profile.is_vip && !isOwner())
+  if (theme !== "midnight" && !isVipActive() && !isOwner())
     return say("Exclusive themes are available with VIP membership.", "error");
   if (
     data.get("showVipOnHome") &&
     (profile.vip_badge !== "purchased" ||
-      !profile.is_vip ||
+      !isVipActive() ||
       (profile.vip_expires_at &&
         new Date(profile.vip_expires_at).getTime() <= Date.now()))
   )
@@ -1092,7 +1106,7 @@ $("#avatarInput").addEventListener("change", async (event) => {
 
 $("#themeSelect").addEventListener("change", async (event) => {
   const theme = event.target.value;
-  if (theme !== "midnight" && !profile.is_vip && !isOwner()) {
+  if (theme !== "midnight" && !isVipActive() && !isOwner()) {
     event.target.value = profile.theme || "midnight";
     return say("Exclusive themes are available with VIP membership.", "error");
   }
