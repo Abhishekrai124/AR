@@ -22,9 +22,14 @@ function showStatus(message, type = "") {
 }
 
 window.arraiAuth
-  .then(({ isAuthenticated, user }) => {
+  .then(({ isAuthenticated, user, profileUnavailable }) => {
     if (isAuthenticated) {
-      showStatus(`You are signed in as ${user.name || user.email}.`, "success");
+      showStatus(
+        profileUnavailable
+          ? `You are signed in as ${user.name || user.email}. Wallet profile setup is pending schema availability.`
+          : `You are signed in as ${user.name || user.email}.`,
+        profileUnavailable ? "" : "success",
+      );
       loginForm.hidden = true;
       signupForm.hidden = true;
       switchAuth.hidden = true;
@@ -69,7 +74,13 @@ loginForm.addEventListener("submit", async (event) => {
     email: values.get("email"),
     password: values.get("password"),
   });
-  if (error) return showStatus(error.message, "error");
+  if (error) {
+    const message = /invalid|credentials|password|email/i.test(error.message || "")
+      ? "Invalid email or password. If you already have an account, use Login instead of creating another one."
+      : error.message || "Sign-in could not be completed.";
+    return showStatus(message, "error");
+  }
+  await window.ensureArraiProfile();
   window.location.assign(nextPage);
 });
 
@@ -84,9 +95,16 @@ signupForm.addEventListener("submit", async (event) => {
       emailRedirectTo: `${window.location.origin}/auth.html${authReturn}`,
     },
   });
-  if (error) return showStatus(error.message, "error");
+  if (error) {
+    const message = /already registered|already exists|user already/i.test(error.message || "")
+      ? "An account already exists for these credentials. Switch to Login to use the existing account."
+      : /rate limit|confirm|weak password/i.test(error.message || "")
+        ? error.message
+        : "Account creation could not be completed.";
+    return showStatus(message, "error");
+  }
   showStatus(
-    "Account created. Check your email to confirm it, then log in.",
+    "Account created. Check your email to confirm it, then log in. Your ARRAI Pay wallet uses this same Supabase user ID.",
     "success",
   );
 });

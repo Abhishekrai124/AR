@@ -19,6 +19,39 @@
 
 create extension if not exists pgcrypto;
 
+-- Shared one-user identity bridge. This row is keyed only by Supabase Auth's
+-- UUID; email, phone, handles, and profile fields are never used to merge users.
+create table if not exists public.wallet_profiles (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+alter table public.wallet_profiles enable row level security;
+drop policy if exists "wallet_profiles_select_own" on public.wallet_profiles;
+create policy "wallet_profiles_select_own" on public.wallet_profiles
+  for select to authenticated using ((select auth.uid()) = user_id);
+
+create or replace function public.arrai_wallet_profile_ensure()
+returns public.wallet_profiles
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_profile public.wallet_profiles;
+  v_user uuid := auth.uid();
+begin
+  if v_user is null then raise exception 'AUTH_REQUIRED'; end if;
+  insert into public.wallet_profiles (user_id) values (v_user)
+    on conflict (user_id) do nothing;
+  select * into v_profile from public.wallet_profiles where user_id = v_user;
+  return v_profile;
+end;
+$$;
+revoke execute on function public.arrai_wallet_profile_ensure() from public, anon;
+grant execute on function public.arrai_wallet_profile_ensure() to authenticated;
+
 -- ── Limits and shared constants ───────────────────────────────────────
 -- Kept in one place so the API and the database agree on the ceiling.
 create or replace function public.arrai_wallet_limits()
