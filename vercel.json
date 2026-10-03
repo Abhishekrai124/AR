@@ -4,6 +4,11 @@
     { "path": "/api/detective-retention", "schedule": "0 3 * * *" }
   ],
   "rewrites": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "pay.arrai.in" }],
+      "destination": "/payments.html"
+    },
     { "source": "/api/staff", "destination": "/api/owner?action=staff" },
     { "source": "/api/payments/create-order", "destination": "/api/payments?action=create-order" },
     { "source": "/api/payments/verify", "destination": "/api/payments?action=verify" },

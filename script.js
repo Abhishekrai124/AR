@@ -130,10 +130,13 @@ if (nav && !nav.querySelector('[href="dm.html"]')) {
   const communityLink = nav.querySelector('[href="community.html"]');
   communityLink?.after(dmLink);
 }
-if (nav && !nav.querySelector('[href="payments.html"]')) {
+if (
+  nav &&
+  !nav.querySelector('[href="payments.html"], [href="https://pay.arrai.in/"]')
+) {
   const paymentsLink = document.createElement("a");
   paymentsLink.href = "payments.html";
-  paymentsLink.textContent = "Payments";
+  paymentsLink.textContent = "ARRAI Pay";
   const authLink = nav.querySelector('[href="auth.html"]');
   nav.insertBefore(paymentsLink, authLink || null);
 }

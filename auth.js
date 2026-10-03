@@ -4,17 +4,29 @@ const signupForm = document.querySelector("#signupForm");
 const switchAuth = document.querySelector("#switchAuth");
 const googleButton = document.querySelector("#googleButton");
 const communityButton = document.querySelector("#communityButton");
-const requestedPage = new URLSearchParams(window.location.search).get("next");
+const authParams = new URLSearchParams(window.location.search);
+const requestedPage = authParams.get("next");
+const requestToken =
+  requestedPage === "payments" &&
+  /^[A-Za-z0-9_-]{24,64}$/.test(authParams.get("request") || "")
+    ? authParams.get("request")
+    : "";
 const nextPage =
   requestedPage === "chess"
     ? "chess.html"
     : requestedPage === "owner"
       ? "owner.html"
-      : "community.html";
+      : requestedPage === "payments"
+        ? "payments.html"
+        : "community.html";
+const destination =
+  nextPage === "payments.html" && requestToken
+    ? `${nextPage}?request=${encodeURIComponent(requestToken)}`
+    : nextPage;
 const authReturn =
   nextPage === "community.html"
     ? ""
-    : `?next=${nextPage === "chess.html" ? "chess" : "owner"}`;
+    : `?next=${nextPage === "chess.html" ? "chess" : nextPage === "owner.html" ? "owner" : "payments"}${requestToken ? `&request=${encodeURIComponent(requestToken)}` : ""}`;
 
 function showStatus(message, type = "") {
   authStatus.textContent = message;
@@ -24,6 +36,10 @@ function showStatus(message, type = "") {
 window.arraiAuth
   .then(({ isAuthenticated, user }) => {
     if (isAuthenticated) {
+      if (requestedPage && nextPage !== "community.html") {
+        window.location.replace(destination);
+        return;
+      }
       showStatus(`You are signed in as ${user.name || user.email}.`, "success");
       loginForm.hidden = true;
       signupForm.hidden = true;
@@ -70,7 +86,7 @@ loginForm.addEventListener("submit", async (event) => {
     password: values.get("password"),
   });
   if (error) return showStatus(error.message, "error");
-  window.location.assign(nextPage);
+  window.location.assign(destination);
 });
 
 signupForm.addEventListener("submit", async (event) => {

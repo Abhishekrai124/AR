@@ -3,16 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Arrai payments." />
-    <title>Payments — arrai.in</title>
+    <meta
+      name="description"
+      content="ARRAI Pay wallet demo: transfers, money requests and payment history."
+    />
+    <meta name="theme-color" content="#0f172a" />
+    <title>ARRAI Pay — Wallet</title>
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body class="community-page">
+  <body class="community-page wallet-page">
     <div class="ambient one"></div>
     <div class="ambient two"></div>
     <header>
-      <a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a
-      ><button
+      <a class="brand" href="https://arrai.in/">ar<span>rai</span>.in <b>✦</b></a>
+      <button
         class="menu-button"
         aria-label="Open navigation"
         aria-expanded="false"
@@ -20,169 +24,228 @@
         ☰
       </button>
       <nav>
-        <a href="index.html">Home</a><a href="about.html">About</a
-        ><a href="projects.html">Projects</a><a href="chess.html">Chess</a
-        ><a href="community.html">Community</a
-        ><a class="active" href="payments.html">Payments</a
-        ><a href="auth.html">Login / Register</a>
+        <a href="https://arrai.in/">Home</a>
+        <a href="https://arrai.in/community.html">Community</a>
+        <a class="active" href="https://pay.arrai.in/">ARRAI Pay</a>
+        <a href="auth.html">Account</a>
       </nav>
     </header>
-    <main class="payments-wrap">
-      <section class="community-hero">
+    <main class="payments-wrap wallet-wrap">
+      <section class="community-hero wallet-hero">
         <div>
-          <p class="eyebrow">Arrai pay</p>
-          <h1>Simple payments,<br /><em>clearly done.</em></h1>
+          <p class="eyebrow">ARRAI PAY · ONE ARRAI ACCOUNT</p>
+          <h1>Your money,<br /><em>your people.</em></h1>
           <p class="payment-hero-copy">
-            Pay any amount securely to Abhishek Rai using the verified Razorpay
-            merchant checkout.
+            A simple wallet experience for ARRAI members: check your demo
+            balance, send to a member, request money and see every ledger entry.
           </p>
           <a
             class="button primary pay-anywhere"
             href="https://razorpay.me/@arrai"
             target="_blank"
             rel="noopener noreferrer"
-            >Pay any amount ↗</a
+            >Pay Abhishek ↗</a
           >
         </div>
+        <div class="wallet-safety">
+          <span aria-hidden="true">◇</span>
+          <b>DEMO WALLET</b>
+          <p>Test balances only. No cash value or bank withdrawals.</p>
+        </div>
       </section>
-      <p class="community-status" id="paymentStatus">Checking your sign-in…</p>
-      <section class="payment-grid" id="paymentApp" hidden>
-        <article class="social-card payment-card featured-payment">
-          <span>✦</span>
-          <p class="eyebrow">VIP membership</p>
-          <h2>Gold membership · ₹45</h2>
-          <p>Unlock VIP profile themes and Gold tick after verified payment.</p>
-          <button class="button primary" id="vipPayButton" type="button">
-            Buy Gold VIP <b>↗</b></button
-          ><small
-            >Secure Razorpay checkout. Access is granted only after server
-            verification.</small
-          >
-        </article>
-        <article class="social-card payment-card">
-          <span>₹</span>
-          <p class="eyebrow">Custom amount</p>
-          <h2>Make a payment</h2>
-          <p>Choose an amount to open Razorpay checkout.</p>
-          <div class="amounts">
-            <button data-amount="49">₹49</button
-            ><button data-amount="99">₹99</button
-            ><button data-amount="299">₹299</button>
+      <p class="community-status" id="paymentStatus" role="status" aria-live="polite">
+        Checking your ARRAI account…
+      </p>
+
+      <section class="wallet-app" id="paymentApp" hidden>
+        <article class="social-card wallet-pay-request" id="payRequestCard" hidden>
+          <div>
+            <p class="eyebrow">ARRAI MEMBER PAYMENT REQUEST</p>
+            <h2 id="payRequestTitle">Loading request…</h2>
+            <p id="payRequestDescription"></p>
           </div>
-          <label class="social-form"
-            >Other amount (₹)<input
-              id="customAmount"
-              type="number"
-              min="10"
-              max="10000"
-              placeholder="Enter amount" /></label
-          ><button class="button primary" id="payButton" type="button">
-            Continue to pay <b>↗</b>
+          <button class="button primary" id="payRequestButton" type="button">
+            Pay from demo wallet
           </button>
         </article>
-        <article class="social-card payment-card">
-          <span>▣</span>
-          <p class="eyebrow">UPI QR</p>
-          <h2>Pay directly to UPI</h2>
-          <label class="social-form"
-            >Amount (₹)<input
-              id="upiAmount"
-              type="number"
-              min="1"
-              max="100000"
-              value="45" /></label
-          ><label class="social-form"
-            >UPI ID<input
-              id="upiId"
-              value="kuzu@ptyes"
-              placeholder="yourupi@bank" /></label
-          ><button class="button" id="generateUpi" type="button">
-            Generate QR</button
-          ><img id="upiQr" class="upi-qr" alt="UPI payment QR" hidden /><small
-            >Verify payment in your UPI app. This direct QR cannot automatically
-            grant VIP.</small
-          >
-        </article>
-        <article class="social-card payment-card vip-benefits">
-          <span>♕</span>
-          <p class="eyebrow">Gold lounge</p>
-          <h2>What you unlock</h2>
-          <ul>
-            <li>Gold verification tick</li>
-            <li>All profile themes</li>
-            <li>VIP badge on posts</li>
-            <li>Priority community features</li>
-          </ul>
-          <small>One-time ₹45 membership.</small>
-        </article>
-        <article class="social-card payment-card">
-          <span>↗</span>
-          <p class="eyebrow">Send money</p>
-          <h2>Business payouts</h2>
+        <div class="wallet-grid">
+          <article class="social-card wallet-balance-card">
+            <div class="wallet-card-top">
+              <div>
+                <p class="eyebrow">AVAILABLE DEMO BALANCE</p>
+                <h2 id="walletBalance">₹0.00</h2>
+              </div>
+              <span class="wallet-chip">ARRAI<br />PAY</span>
+            </div>
+            <p class="wallet-user-line">
+              Signed in as <b id="walletUsername">@member</b>
+            </p>
+            <div class="wallet-id-line">
+              <span>Wallet code</span>
+              <b id="walletCode">Loading…</b>
+              <button class="wallet-copy" id="copyWalletCode" type="button">
+                Copy
+              </button>
+            </div>
+            <small>Use your username or wallet code to receive a member transfer.</small>
+          </article>
+
+          <article class="social-card wallet-action-card">
+            <p class="eyebrow">ADD DEMO FUNDS</p>
+            <h2>Top up</h2>
+            <p>Razorpay test checkout only. Test funds cannot be withdrawn or redeemed.</p>
+            <form id="topupForm" class="wallet-form">
+              <label class="social-form"
+                >Amount (₹)
+                <input
+                  name="amount"
+                  type="number"
+                  min="10"
+                  max="50000"
+                  step="1"
+                  value="100"
+                  required
+                />
+              </label>
+              <button class="button primary" type="submit">Add demo funds ↗</button>
+            </form>
+          </article>
+
+          <article class="social-card wallet-action-card">
+            <p class="eyebrow">MEMBER TRANSFER</p>
+            <h2>Send money</h2>
+            <form id="sendForm" class="wallet-form">
+              <label class="social-form"
+                >ARRAI username or wallet code
+                <input
+                  name="recipient"
+                  autocomplete="off"
+                  placeholder="@username or AR12345678"
+                  maxlength="24"
+                  required
+                />
+              </label>
+              <small class="wallet-recipient-preview" id="recipientPreview" aria-live="polite">
+                Verify the member name before you send.
+              </small>
+              <label class="social-form"
+                >Amount (₹)
+                <input
+                  name="amount"
+                  type="number"
+                  min="1"
+                  max="10000"
+                  step="0.01"
+                  placeholder="0.00"
+                  required
+                />
+              </label>
+              <label class="social-form"
+                >Note (optional)
+                <input name="note" maxlength="200" placeholder="What is it for?" />
+              </label>
+              <button class="button primary" type="submit">Review &amp; send</button>
+            </form>
+            <small>Transfers are recorded in the demo ledger and cannot be reversed in the app.</small>
+          </article>
+
+          <article class="social-card wallet-action-card">
+            <p class="eyebrow">GET PAID BY A MEMBER</p>
+            <h2>Request money</h2>
+            <form id="requestForm" class="wallet-form">
+              <label class="social-form"
+                >Amount (₹)
+                <input
+                  name="amount"
+                  type="number"
+                  min="1"
+                  max="10000"
+                  step="0.01"
+                  placeholder="0.00"
+                  required
+                />
+              </label>
+              <label class="social-form"
+                >What is it for?
+                <input name="note" maxlength="200" placeholder="Add a short note" />
+              </label>
+              <button class="button primary" type="submit">Create payment link</button>
+            </form>
+            <div class="wallet-share" id="requestShare" hidden>
+              <label class="social-form"
+                >Share this request
+                <input id="requestLink" readonly />
+              </label>
+              <div class="wallet-share-actions">
+                <button class="button" id="copyRequestLink" type="button">Copy link</button>
+                <button class="button" id="showRequestQr" type="button">Show QR</button>
+              </div>
+              <img id="requestQr" class="upi-qr" alt="QR code for this ARRAI Pay request" hidden />
+              <small>The QR image is created by a third-party service from this share link.</small>
+            </div>
+          </article>
+
+          <article class="social-card wallet-history-card">
+            <div class="wallet-section-heading">
+              <div>
+                <p class="eyebrow">YOUR WALLET</p>
+                <h2>Recent activity</h2>
+              </div>
+              <button class="button wallet-refresh" id="refreshWallet" type="button">
+                Refresh
+              </button>
+            </div>
+            <div class="wallet-transactions" id="walletTransactions">
+              <p class="empty-state">Loading your activity…</p>
+            </div>
+          </article>
+
+          <article class="social-card wallet-history-card">
+            <div class="wallet-section-heading">
+              <div>
+                <p class="eyebrow">PAYMENT LINKS</p>
+                <h2>Your requests</h2>
+              </div>
+            </div>
+            <div class="wallet-requests" id="walletRequests">
+              <p class="empty-state">Loading your requests…</p>
+            </div>
+          </article>
+        </div>
+
+        <section class="wallet-coming-soon" aria-labelledby="wallet-services-title">
+          <p class="eyebrow">CONNECTING SOON · NOT AVAILABLE FOR REAL PAYMENTS</p>
+          <h2 id="wallet-services-title">More ways to pay</h2>
           <p>
-            Send-money requires a verified RazorpayX business account and KYC.
+            These options appear here as a roadmap. No money is sent and no bill or
+            recharge is placed until ARRAI connects an approved provider and completes
+            the required business verification.
           </p>
-          <button class="button" type="button" disabled>
-            RazorpayX required
+          <div class="wallet-service-chips" aria-label="Planned payment services">
+            <span>UPI payments</span><span>Bank transfer</span><span>Scan &amp; pay</span>
+            <span>Mobile recharge</span><span>DTH</span><span>Electricity</span>
+            <span>Water &amp; gas</span><span>Broadband</span><span>FASTag</span>
+            <span>Credit card bills</span><span>Insurance</span>
+          </div>
+        </section>
+        <article class="social-card wallet-vip-card">
+          <div>
+            <p class="eyebrow">ARRAI COMMUNITY</p>
+            <h2>Gold VIP membership · ₹45</h2>
+            <p>Support ARRAI and unlock the existing Gold membership benefits.</p>
+          </div>
+          <button class="button primary" id="vipPayButton" type="button">
+            Continue to secure checkout ↗
           </button>
-        </article>
-        <article class="social-card payment-card">
-          <span>⌁</span>
-          <p class="eyebrow">Recharge request</p>
-          <h2>Mobile recharge</h2>
-          <p>
-            Pay securely, then your recharge request is queued for confirmation.
-          </p>
-          <label class="social-form"
-            >Mobile number<input
-              id="rechargePhone"
-              inputmode="numeric"
-              maxlength="10"
-              placeholder="10-digit number" /></label
-          ><label class="social-form"
-            >Amount (₹)<input
-              id="rechargeAmount"
-              type="number"
-              min="10"
-              max="5000"
-              value="199" /></label
-          ><button class="button primary" id="rechargeButton" type="button">
-            Pay & request recharge <b>↗</b>
-          </button>
-        </article>
-        <article class="social-card payment-card">
-          <span>↓</span>
-          <p class="eyebrow">Receive money</p>
-          <h2>Payment links</h2>
-          <p>
-            Use secure checkout to collect payments. Transaction history will be
-            added after live verification is enabled.
-          </p>
-          <a class="text-link" href="contact.html">Request a payment link →</a>
-        </article>
-        <article class="social-card payment-card merchant-card">
-          <span>♡</span>
-          <p class="eyebrow">Pay any amount</p>
-          <h2>Direct merchant payment</h2>
-          <p>
-            Choose any amount and pay directly to Abhishek Rai through the
-            verified Razorpay merchant page.
-          </p>
-          <a
-            class="button primary"
-            href="https://razorpay.me/@arrai"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Open merchant checkout ↗</a
-          ><small>Merchant handle: Abhishek Rai</small>
         </article>
       </section>
     </main>
     <footer>
-      <a class="brand" href="index.html">ar<span>rai</span>.in</a>
-      <p>© 2026 Abhishek Rai. All rights reserved.</p>
+      <a class="brand" href="https://arrai.in/">ar<span>rai</span>.in</a>
+      <p>© 2026 Abhishek Rai. ARRAI Pay wallet demo.</p>
       <div>
-        <a href="privacy.html">Privacy</a><a href="privacy.html#terms">Terms</a>
+        <a href="https://arrai.in/privacy.html">Privacy</a>
+        <a href="https://arrai.in/privacy.html#terms">Terms</a>
       </div>
     </footer>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
