@@ -216,6 +216,11 @@ begin
 end;
 $$;
 
+-- These RPCs are server-only ledger primitives. PostgREST otherwise grants
+-- EXECUTE to PUBLIC when a function is created.
+revoke execute on function public.arrai_wallet_ensure(text) from public, anon, authenticated;
+grant execute on function public.arrai_wallet_ensure(text) to service_role;
+
 -- Adds money. Repeating the same reference returns the original row, so a
 -- retried Razorpay callback can never double-credit an account.
 create or replace function public.arrai_wallet_credit(

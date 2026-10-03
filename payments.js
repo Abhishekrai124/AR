@@ -102,10 +102,11 @@ async function startCheckout(
               : result.error || "Payment is pending verification.";
           setStatus(text, verified.ok ? "success" : "error");
           notify(text);
-          localStorage.setItem(
-            "arraiLastPayment",
-            JSON.stringify({ text, at: new Date().toISOString(), product }),
-          );
+          if (verified.ok) {
+            loadWallet().catch(() => {
+              // Payment verification remains authoritative if the wallet refresh is unavailable.
+            });
+          }
         } catch {
           setStatus(
             "Payment received, but verification could not be completed. Contact support.",
@@ -174,11 +175,8 @@ window.arraiAuth
     });
     if ("Notification" in window && Notification.permission === "default")
       Notification.requestPermission().catch(() => {});
-    const last = JSON.parse(localStorage.getItem("arraiLastPayment") || "null");
     setStatus(
-      last
-        ? `${last.text} · ${new Date(last.at).toLocaleString()}`
-        : "Razorpay checkout ready. Configure live keys before accepting real money.",
+      "Razorpay checkout ready. Configure live keys before accepting real money.",
       "success",
     );
   })
