@@ -29,32 +29,65 @@ async function loadProfilePage() {
   }
   const db = window.arraiSupabase;
   const profileRequest = requestedUsername
-    ? db
-        .from("profiles")
-        .select("id")
-        .eq("username", requestedUsername)
-        .maybeSingle()
+    ? auth.isAuthenticated
+      ? db
+          .from("profiles")
+          .select(
+            "id,username,display_name,bio,avatar_url,is_vip,blue_tick,gold_tick,created_at,privacy",
+          )
+          .eq("username", requestedUsername)
+          .maybeSingle()
+      : db.rpc("arrai_public_profile", { p_username: requestedUsername })
     : Promise.resolve({ data: { id: queryId || auth.user?.sub } });
-  const { data: requested, error: requestedError } = await profileRequest;
+  const { data: requestedData, error: requestedError } = await profileRequest;
   if (requestedError) throw requestedError;
+  const requested = requestedUsername && !auth.isAuthenticated
+    ? requestedData?.[0]
+    : requestedData;
   const id = requested?.id;
   if (!id)
     throw new Error(
       "We couldn’t find that profile. Check the username and try again.",
     );
+  const profileResult = requestedUsername
+    ? { data: requested, error: null }
+    : await db
+        .from("profiles")
+        .select(
+          "id,username,display_name,bio,avatar_url,is_vip,blue_tick,gold_tick,created_at,privacy",
+        )
+        .eq("id", id)
+        .maybeSingle();
+  const { data: person, error } = profileResult;
+  if (error) throw error;
+  if (!person)
+    throw new Error(
+      "We couldn’t find that profile. Maybe they wandered off to get cookies.",
+    );
+  if (person.privacy === "private" && id !== auth.user?.sub) {
+    if (!auth.isAuthenticated)
+      throw new Error("This profile is private. Sign in to check follower access.");
+    const { data: follows, error: followError } = await db
+      .from("follows")
+      .select("following_id")
+      .eq("follower_id", auth.user.sub)
+      .eq("following_id", id)
+      .maybeSingle();
+    if (followError) throw followError;
+    if (!follows) {
+      profilePage$("#profilePage").innerHTML =
+        `<section class="profile-page-hero"><img src="${profileEscape(profileAvatar(person))}" alt="" /><div><p class="eyebrow">Private account</p><h1>${profileEscape(person.display_name)}</h1><p class="profile-handle">@${profileEscape(person.username)}</p><p>This profile is visible to approved followers only.</p></div></section>`;
+      profilePage$("#profilePage").hidden = false;
+      profilePageStatus.hidden = true;
+      return;
+    }
+  }
   const [
-    { data: person, error },
     { count: followers },
     { count: following },
-    { data: posts },
+    { data: posts, error: postsError },
+    { data: locationRows, error: locationError },
   ] = await Promise.all([
-    db
-      .from("profiles")
-      .select(
-        "id,username,display_name,bio,avatar_url,is_vip,blue_tick,gold_tick,created_at",
-      )
-      .eq("id", id)
-      .maybeSingle(),
     db
       .from("follows")
       .select("*", { count: "exact", head: true })
@@ -69,20 +102,28 @@ async function loadProfilePage() {
       .eq("author_id", id)
       .order("created_at", { ascending: false })
       .limit(18),
+    db.rpc("arrai_public_profile_location", { p_profile_id: id }),
   ]);
-  if (error) throw error;
-  if (!person)
-    throw new Error(
-      "We couldn’t find that profile. Maybe they wandered off to get cookies.",
-    );
+  if (postsError) throw postsError;
+  if (locationError) throw locationError;
+  const location = locationRows?.[0];
+  const locationLabel = location
+    ? [location.city, location.state, location.country].filter(Boolean).join(", ")
+    : "";
+  const locationMarkup = locationLabel
+    ? `<p class="profile-location">📍 ${profileEscape(locationLabel)} <a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(locationLabel)}" target="_blank" rel="noopener noreferrer">Map</a></p>`
+    : "";
   const tick = person.gold_tick
     ? '<span class="verified gold">✓</span>'
     : person.blue_tick || person.is_vip
       ? '<span class="verified blue">✓</span>'
       : "";
   const viewerId = auth.user?.sub;
+  const profileStats = auth.isAuthenticated
+    ? `<div class="profile-stats"><span><b>${posts?.length || 0}</b> posts</span><span><b>${followers || 0}</b> followers</span><span><b>${following || 0}</b> following</span></div>`
+    : `<div class="profile-stats"><span><b>${posts?.length || 0}</b> posts</span></div>`;
   const card = profilePage$("#profilePage");
-  card.innerHTML = `<section class="profile-page-hero"><img src="${profileAvatar(person)}" alt="${profileEscape(person.display_name)}" /><div><p class="eyebrow">${person.is_vip ? "✦ VIP dreamer" : "AR community member"}</p><h1>${profileEscape(person.display_name)} ${tick}</h1><p class="profile-handle">@${profileEscape(person.username)}</p><p class="profile-bio">${profileEscape(person.bio || "Quietly collecting good ideas and nice moments.")}</p><div class="profile-stats"><span><b>${posts?.length || 0}</b> posts</span><span><b>${followers || 0}</b> followers</span><span><b>${following || 0}</b> following</span></div>${id !== viewerId ? (viewerId ? `<a class="button primary" href="/dm?with=${encodeURIComponent(id)}">Send a little hello <b>↗</b></a>` : '<a class="button primary" href="auth.html?next=community">Join the community <b>↗</b></a>') : '<a class="button" href="community.html">Edit in community ♡</a>'}</div></section><section class="profile-page-posts"><div><p class="eyebrow">From their corner</p><h2>Little things they’ve shared.</h2></div>${posts?.length ? posts.map((post) => `<article class="social-card"><small>${new Date(post.created_at).toLocaleDateString()}</small><p>${profileEscape(post.body)}</p>${post.image_url ? `<img src="${profileEscape(post.image_url)}" alt="Shared post" />` : ""}</article>`).join("") : '<p class="empty-state">No posts yet. The canvas is delightfully blank.</p>'}</section>`;
+  card.innerHTML = `<section class="profile-page-hero"><img src="${profileEscape(profileAvatar(person))}" alt="${profileEscape(person.display_name)}" /><div><p class="eyebrow">${person.is_vip ? "✦ VIP dreamer" : "AR community member"}</p><h1>${profileEscape(person.display_name)} ${tick}</h1><p class="profile-handle">@${profileEscape(person.username)}</p><p class="profile-bio">${profileEscape(person.bio || "Quietly collecting good ideas and nice moments.")}</p>${locationMarkup}${profileStats}${id !== viewerId ? (viewerId ? `<a class="button primary" href="/dm?with=${encodeURIComponent(id)}">Send a little hello <b>↗</b></a>` : '<a class="button primary" href="auth.html?next=community">Join the community <b>↗</b></a>') : '<a class="button" href="community.html">Edit in community ♡</a>'}</div></section><section class="profile-page-posts"><div><p class="eyebrow">From their corner</p><h2>Little things they’ve shared.</h2></div>${posts?.length ? posts.map((post) => `<article class="social-card"><small>${new Date(post.created_at).toLocaleDateString()}</small><p>${profileEscape(post.body)}</p>${post.image_url ? `<img src="${profileEscape(post.image_url)}" alt="Shared post" />` : ""}</article>`).join("") : '<p class="empty-state">No posts yet. The canvas is delightfully blank.</p>'}</section>`;
   card.hidden = false;
   profilePageStatus.hidden = true;
 }

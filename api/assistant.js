@@ -12,7 +12,7 @@ You know these public areas of the website:
 - Projects: portfolio and current work.
 - Contact: business enquiries.
 - Community: signed-in members can manage profiles, posts, follows, messages and calls.
-- Chess, music, calendar and payments: their dedicated public pages provide their respective experiences.
+- Chess, music and calendar: their dedicated public pages provide their respective experiences. ARRAI Pay is hosted at https://pay.arrai.in.
 - ARRAI Detective Agency: lawful, authorized enquiry review only. It does not provide emergency response, legal advice,
   police/court filing, hacking, spyware, unauthorized surveillance, access to private accounts, or private communications.
   Case intake asks for a broad non-sensitive summary. Clients use the private case desk; approved members use the member portal.

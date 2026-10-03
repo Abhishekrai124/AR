@@ -1,17 +1,11 @@
 {
   "cleanUrls": true,
   "crons": [
-    { "path": "/api/detective-retention", "schedule": "0 3 * * *" }
+    { "path": "/api/detective-retention", "schedule": "0 3 * * *" },
+    { "path": "/api/vip-expiry", "schedule": "15 3 * * *" }
   ],
   "rewrites": [
-    {
-      "source": "/",
-      "has": [{ "type": "host", "value": "pay.arrai.in" }],
-      "destination": "/payments.html"
-    },
     { "source": "/api/staff", "destination": "/api/owner?action=staff" },
-    { "source": "/api/payments/create-order", "destination": "/api/payments?action=create-order" },
-    { "source": "/api/payments/verify", "destination": "/api/payments?action=verify" },
     { "source": "/about", "destination": "/about.html" },
     { "source": "/services", "destination": "/services.html" },
     { "source": "/detective", "destination": "/detective.html" },
@@ -23,7 +17,6 @@
     { "source": "/chess", "destination": "/chess.html" },
     { "source": "/auth", "destination": "/auth.html" },
     { "source": "/owner", "destination": "/owner.html" },
-    { "source": "/payments", "destination": "/payments.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/community", "destination": "/community.html" },
     { "source": "/dm", "destination": "/dm.html" },

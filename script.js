@@ -44,27 +44,6 @@ window.cuteNotice = (message, type = "success") => {
     setTimeout(() => notice.remove(), 220);
   }, 3200);
 };
-// A tiny, calm heads-up for first-time visitors: this cosy corner is still growing.
-if (
-  location.pathname.endsWith("/") ||
-  location.pathname.endsWith("index.html")
-) {
-  const betaKey = "arrai-beta-hello";
-  if (!sessionStorage.getItem(betaKey)) {
-    sessionStorage.setItem(betaKey, "seen");
-    const beta = document.createElement("aside");
-    beta.className = "beta-hello";
-    beta.setAttribute("role", "status");
-    beta.innerHTML =
-      "<span>✦</span><div><b>A tiny beta heads-up</b><p>This dreamy little world is still under construction. A few pixels may be dancing out of line.</p></div>";
-    document.body.append(beta);
-    requestAnimationFrame(() => beta.classList.add("show"));
-    setTimeout(() => {
-      beta.classList.remove("show");
-      setTimeout(() => beta.remove(), 260);
-    }, 5000);
-  }
-}
 if (!document.querySelector('link[rel="icon"]')) {
   const icon = document.createElement("link");
   icon.rel = "icon";
@@ -132,10 +111,10 @@ if (nav && !nav.querySelector('[href="dm.html"]')) {
 }
 if (
   nav &&
-  !nav.querySelector('[href="payments.html"], [href="https://pay.arrai.in/"]')
+  !nav.querySelector('[href="https://pay.arrai.in/"]')
 ) {
   const paymentsLink = document.createElement("a");
-  paymentsLink.href = "payments.html";
+  paymentsLink.href = "https://pay.arrai.in/";
   paymentsLink.textContent = "ARRAI Pay";
   const authLink = nav.querySelector('[href="auth.html"]');
   nav.insertBefore(paymentsLink, authLink || null);
@@ -205,7 +184,7 @@ const loadNavigationProfile = async (user) => {
     .maybeSingle();
   return data || {};
 };
-const updateNavigationForUser = ({ isAuthenticated, user }) => {
+const updateNavigationForUser = async ({ isAuthenticated, user }) => {
   if (!nav) return;
   const loginLink = nav.querySelector('[href="auth.html"]');
   if (isAuthenticated) {
@@ -243,20 +222,12 @@ const updateNavigationForUser = ({ isAuthenticated, user }) => {
         nav.insertBefore(makeAccountLink(user, profile), logout || null);
       });
     const welcomeKey = `arrai-welcome-${user?.id || user?.email}`;
-    if (
-      !sessionStorage.getItem(welcomeKey) &&
-      !document.body.classList.contains("auth-page")
-    ) {
+    if (!sessionStorage.getItem(welcomeKey) && !document.body.classList.contains("auth-page")) {
       sessionStorage.setItem(welcomeKey, "1");
-      const welcome = document.createElement("section");
-      const ownerGreeting = user?.email?.toLowerCase() === ownerEmail;
-      welcome.className = "prince-welcome";
-      welcome.innerHTML = `<div><button type="button" aria-label="Close welcome">×</button><span>✦</span><p>${ownerGreeting ? "The Prince is here" : "Welcome back"}</p><h2>${ownerGreeting ? "Abhishek Rai" : user?.name || "beautiful human"}</h2><small>${ownerGreeting ? "Your dreamy kingdom is ready." : "Your little AR space is waiting."}</small></div>`;
-      document.body.append(welcome);
-      welcome
-        .querySelector("button")
-        .addEventListener("click", () => welcome.remove());
-      setTimeout(() => welcome.remove(), 5200);
+      const profile = await loadNavigationProfile(user).catch(() => ({}));
+      window.cuteNotice(
+        `Welcome back, ${profile.display_name || user?.name || "friend"}. Your AR space is ready.`,
+      );
     }
   } else if (!loginLink && !document.body.classList.contains("auth-page")) {
     nav.querySelector(".nav-account")?.remove();
@@ -285,40 +256,6 @@ window.arraiSupabase?.auth.onAuthStateChange((_event, session) => {
   });
 });
 
-const mountPublicIpStatus = () => {
-  if (!document.body || document.querySelector(".public-ip-status")) return;
-
-  const status = document.createElement("aside");
-  status.className = "public-ip-status";
-  status.setAttribute("aria-live", "polite");
-  status.innerHTML = '<span class="public-ip-label">Your public IP</span><strong>Checking…</strong><button type="button" aria-label="Hide public IP">Hide</button>';
-  document.body.append(status);
-
-  const value = status.querySelector("strong");
-  const toggle = status.querySelector("button");
-  let address = "";
-
-  toggle.addEventListener("click", () => {
-    const hidden = status.classList.toggle("is-hidden");
-    value.textContent = hidden ? "Hidden" : address || "Unavailable";
-    toggle.textContent = hidden ? "Show" : "Hide";
-    toggle.setAttribute("aria-label", hidden ? "Show public IP" : "Hide public IP");
-  });
-
-  fetch("https://api.ipify.org?format=json", { cache: "no-store" })
-    .then((response) => (response.ok ? response.json() : Promise.reject()))
-    .then((data) => {
-      if (!data?.ip) throw new Error("Public IP unavailable");
-      address = data.ip;
-      value.textContent = address;
-    })
-    .catch(() => {
-      value.textContent = "Unavailable";
-      toggle.hidden = true;
-    });
-};
-
-mountPublicIpStatus();
 const communityPreview = document.querySelector("#communityPreview");
 if (communityPreview && window.arraiAuth) {
   window.arraiAuth
@@ -377,8 +314,36 @@ if (button && nav)
   button.addEventListener("click", () => {
     const open = nav.classList.toggle("open");
     button.setAttribute("aria-expanded", open);
+    button.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
     button.textContent = open ? "×" : "☰";
   });
+if (nav)
+  nav.addEventListener("click", (event) => {
+    if (!event.target.closest("a")) return;
+    nav.classList.remove("open");
+    button?.setAttribute("aria-expanded", "false");
+    button?.setAttribute("aria-label", "Open navigation");
+    if (button) button.textContent = "☰";
+  });
+document.addEventListener("click", (event) => {
+  if (
+    !nav?.classList.contains("open") ||
+    event.target.closest("header")
+  )
+    return;
+  nav.classList.remove("open");
+  button?.setAttribute("aria-expanded", "false");
+  button?.setAttribute("aria-label", "Open navigation");
+  if (button) button.textContent = "☰";
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || !nav?.classList.contains("open")) return;
+  nav.classList.remove("open");
+  button?.setAttribute("aria-expanded", "false");
+  button?.setAttribute("aria-label", "Open navigation");
+  if (button) button.textContent = "☰";
+  button?.focus();
+});
 
 const localAssistantReply = (question) => {
   const q = question.toLowerCase();
@@ -429,26 +394,126 @@ const applyGlobalTheme = async () => {
 };
 applyGlobalTheme().catch(() => {});
 
+const locationStorageKey = "arrai-approximate-city";
+window.arraiGetApproximateLocation = async () => {
+  if (!navigator.geolocation) {
+    throw new Error("This browser does not support location sharing.");
+  }
+  const position = await new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: false,
+      timeout: 12000,
+      maximumAge: 300000,
+    });
+  });
+  const latitude = Math.round(position.coords.latitude * 100) / 100;
+  const longitude = Math.round(position.coords.longitude * 100) / 100;
+  const query = new URLSearchParams({
+    format: "jsonv2",
+    lat: String(latitude),
+    lon: String(longitude),
+    zoom: "10",
+    addressdetails: "1",
+  });
+  const response = await fetch(
+    `https://nominatim.openstreetmap.org/reverse?${query}`,
+    { headers: { Accept: "application/json" } },
+  );
+  if (!response.ok) throw new Error("Approximate city lookup is unavailable.");
+  const result = await response.json();
+  const address = result.address || {};
+  const city =
+    address.city ||
+    address.town ||
+    address.village ||
+    address.municipality ||
+    address.county;
+  if (!city || !address.country) {
+    throw new Error("We couldn’t identify a city from this location.");
+  }
+  const location = {
+    city,
+    state: address.state || address.region || "",
+    country: address.country,
+  };
+  location.label = [location.city, location.state, location.country]
+    .filter(Boolean)
+    .join(", ");
+  localStorage.setItem(locationStorageKey, JSON.stringify(location));
+  return location;
+};
+
 const mountHomeLocalInfo = () => {
   const time = document.querySelector("#homeDateTime");
-  const weather = document.querySelector("#homeWeather");
-  if (!time && !weather) return;
+  const location = document.querySelector("#homeLocation");
+  const button = document.querySelector("#requestHomeLocation");
+  const map = document.querySelector("#homeLocationMap");
+  if (!time && !location && !button) return;
   const updateTime = () => {
-    if (time) time.textContent = `🕒 ${new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }).format(new Date())} IST`;
+    if (time)
+      time.textContent = `🕒 ${new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(new Date())} (your local time)`;
   };
   updateTime();
-  setInterval(updateTime, 30_000);
-  fetch("https://api.open-meteo.com/v1/forecast?latitude=30.9000&longitude=75.8573&current=temperature_2m,weather_code&timezone=Asia%2FKolkata")
-    .then((response) => response.ok ? response.json() : Promise.reject())
-    .then((data) => {
-      const current = data.current;
-      if (!current || !weather) return;
-      const labels = { 0: "Clear", 1: "Mostly clear", 2: "Partly cloudy", 3: "Overcast", 45: "Foggy", 51: "Light drizzle", 61: "Rain", 71: "Snow", 80: "Rain showers", 95: "Thunderstorms" };
-      weather.textContent = `☁ ${labels[current.weather_code] || "Local weather"} · ${Math.round(current.temperature_2m)}°C`;
-    })
-    .catch(() => { if (weather) weather.textContent = "☁ Weather is temporarily unavailable"; });
+  setInterval(updateTime, 30000);
+  try {
+    const saved = JSON.parse(localStorage.getItem(locationStorageKey) || "null");
+    if (saved?.city && saved?.country) {
+      location.textContent = `📍 ${saved.label}`;
+      map.href = `https://www.openstreetmap.org/search?query=${encodeURIComponent(saved.label)}`;
+      map.hidden = false;
+      button.textContent = "Refresh city";
+    }
+  } catch {
+    localStorage.removeItem(locationStorageKey);
+  }
+  button?.addEventListener("click", async () => {
+    button.disabled = true;
+    button.textContent = "Finding your city…";
+    try {
+      const result = await window.arraiGetApproximateLocation();
+      location.textContent = `📍 ${result.label}`;
+      map.href = `https://www.openstreetmap.org/search?query=${encodeURIComponent(result.label)}`;
+      map.hidden = false;
+      button.textContent = "Refresh city";
+      window.cuteNotice("City updated. Your exact coordinates stay off the profile.");
+    } catch (error) {
+      button.textContent = "Set approximate city";
+      window.cuteNotice(error.message || "Could not find your city.", "warning");
+    } finally {
+      button.disabled = false;
+    }
+  });
 };
 mountHomeLocalInfo();
+
+const loadFeaturedVipMembers = async () => {
+  const section = document.querySelector("#featuredVip");
+  const list = document.querySelector("#featuredVipMembers");
+  if (!section || !list || !window.arraiSupabase) return;
+  const { data, error } = await window.arraiSupabase.rpc(
+    "arrai_featured_vip_members",
+  );
+  if (error) {
+    console.error("Could not load featured VIP members:", error.message);
+    return;
+  }
+  if (!data?.length) return;
+  list.replaceChildren();
+  data.forEach((member) => {
+    const item = document.createElement("a");
+    item.className = "featured-vip-member";
+    item.href = `/${encodeURIComponent(member.username)}`;
+    const image = document.createElement("img");
+    image.src = member.avatar_url || avatarFallback(member.display_name);
+    image.alt = "";
+    const name = document.createElement("span");
+    name.textContent = member.display_name;
+    item.append(image, name, document.createTextNode("✦"));
+    list.append(item);
+  });
+  section.hidden = false;
+};
+loadFeaturedVipMembers();
 
 // Public home content is editable from Owner Studio and remains readable without login.
 const loadPublicHomeContent = async () => {

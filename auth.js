@@ -6,27 +6,16 @@ const googleButton = document.querySelector("#googleButton");
 const communityButton = document.querySelector("#communityButton");
 const authParams = new URLSearchParams(window.location.search);
 const requestedPage = authParams.get("next");
-const requestToken =
-  requestedPage === "payments" &&
-  /^[A-Za-z0-9_-]{24,64}$/.test(authParams.get("request") || "")
-    ? authParams.get("request")
-    : "";
 const nextPage =
   requestedPage === "chess"
     ? "chess.html"
     : requestedPage === "owner"
       ? "owner.html"
-      : requestedPage === "payments"
-        ? "payments.html"
-        : "community.html";
-const destination =
-  nextPage === "payments.html" && requestToken
-    ? `${nextPage}?request=${encodeURIComponent(requestToken)}`
-    : nextPage;
+      : "community.html";
 const authReturn =
   nextPage === "community.html"
     ? ""
-    : `?next=${nextPage === "chess.html" ? "chess" : nextPage === "owner.html" ? "owner" : "payments"}${requestToken ? `&request=${encodeURIComponent(requestToken)}` : ""}`;
+    : `?next=${nextPage === "chess.html" ? "chess" : "owner"}`;
 
 function showStatus(message, type = "") {
   authStatus.textContent = message;
@@ -37,7 +26,7 @@ window.arraiAuth
   .then(({ isAuthenticated, user }) => {
     if (isAuthenticated) {
       if (requestedPage && nextPage !== "community.html") {
-        window.location.replace(destination);
+        window.location.replace(nextPage);
         return;
       }
       showStatus(`You are signed in as ${user.name || user.email}.`, "success");
@@ -86,7 +75,7 @@ loginForm.addEventListener("submit", async (event) => {
     password: values.get("password"),
   });
   if (error) return showStatus(error.message, "error");
-  window.location.assign(destination);
+  window.location.assign(nextPage);
 });
 
 signupForm.addEventListener("submit", async (event) => {
