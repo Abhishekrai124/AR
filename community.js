@@ -1809,6 +1809,9 @@ document
       window.dispatchEvent(
         new CustomEvent("arrai:profile-ready", { detail: { db, user, profile } }),
       );
+      if (new URLSearchParams(location.search).get("membership") === "1") {
+        await openAccountSettings();
+      }
     }
   } catch (error) {
     say(error.message || "Could not load the community.", "error");

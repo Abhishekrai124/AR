@@ -74,8 +74,8 @@ implemented; existing followers retain access.
 - Complete poll, event and expiring-story creation/voting/reminder flows.
   Story media cleanup also needs a scheduled provider task.
 - ARRAI Pay's wallet and merchant payment features are hosted separately at
-  `https://pay.arrai.in/`. The ₹45 annual VIP membership is a separate Razorpay
-  checkout and does not create a shared wallet balance.
+  `https://pay.arrai.in/`. VIP can be purchased by an atomic wallet debit or
+  separate Razorpay checkout; wallet balances are not copied between sites.
 - Approximate profile location is opt-in and uses browser permission. Rounded
   coordinates are sent to OpenStreetMap for city lookup; only city, state and
   country are saved. Exact coordinates and IP-based location are not used.
@@ -83,3 +83,20 @@ implemented; existing followers retain access.
 Existing direct messages and channel messages are not end-to-end encrypted.
 Provider-dependent capabilities must remain unavailable until their services,
 policies and production setup are implemented and verified.
+
+## Navigation and owner console
+
+The shared three-dot menu links to Home, ARRAI Pay, Search, Community, and the
+signed-in user's profile. Search ranks ARRAI pages locally and offers an
+optional Google link for web-wide results. The home VIP prompt is dismissible
+and limited to once per browser session.
+
+The Admin Console (`/admin`) and Owner Studio are protected by the existing
+Supabase owner account and server-side owner/service-role checks. Configure
+`SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, and
+`OWNER_EMAIL` in the deployment environment. Do not use a static client-side
+admin password. The console displays recent wallet/VIP ledger entries and
+reports; full member, VIP, role, and site controls remain in Owner Studio.
+Browser sessions are origin-scoped, so users may need to sign in on both
+`arrai.in` and `pay.arrai.in`, even when both sites use the same Supabase
+account and database.

@@ -10,7 +10,7 @@
     <meta name="theme-color" content="#0f172a" />
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body>
+  <body class="home-page">
     <div class="ambient one"></div>
     <div class="ambient two"></div>
 
@@ -243,6 +243,22 @@
           >Say hello, no pressure <b>↗</b></a
         >
       </section>
+      <aside
+        class="membership-home-prompt"
+        id="membershipHomePrompt"
+        aria-label="ARRAI VIP membership"
+        hidden
+      >
+        <span class="membership-spark" aria-hidden="true">✦</span>
+        <p>
+          <b>ARRAI VIP · ₹45/year</b>
+          Gold badge, VIP themes and a little extra sparkle.
+        </p>
+        <a href="auth.html?next=membership">See VIP</a>
+        <button type="button" id="dismissMembershipPrompt" aria-label="Dismiss membership suggestion">
+          ×
+        </button>
+      </aside>
     </main>
     <footer>
       <a class="brand" href="index.html">ar<span>rai</span>.in</a>

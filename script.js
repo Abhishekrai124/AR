@@ -1,6 +1,26 @@
 const button = document.querySelector(".menu-button"),
   nav = document.querySelector("header nav");
 let deferredInstallPrompt;
+const header = document.querySelector("header");
+let walletMenuLink;
+if (button && nav && header) {
+  button.type = "button";
+  button.textContent = "⋮";
+  button.setAttribute("aria-label", "Open site menu");
+  button.setAttribute("aria-haspopup", "true");
+  button.setAttribute("aria-controls", "siteMenu");
+  nav.id = "siteMenu";
+  nav.setAttribute("aria-label", "Site menu");
+  const tools = document.createElement("div");
+  tools.className = "header-menu-tools";
+  walletMenuLink = document.createElement("a");
+  walletMenuLink.className = "wallet-balance-link";
+  walletMenuLink.href = "https://pay.arrai.in/";
+  walletMenuLink.textContent = "Wallet · Open Pay";
+  walletMenuLink.setAttribute("aria-label", "Open ARRAI Pay wallet");
+  button.replaceWith(tools);
+  tools.append(walletMenuLink, button);
+}
 
 // The shared stage manager for every page: navigation, themes, notices and
 // Miss Makima meet here so the site feels like one connected little world.
@@ -147,6 +167,46 @@ if (nav && !nav.querySelector('[href="calendar.html"]')) {
   const contactLink = nav.querySelector('[href="contact.html"]');
   contactLink?.before(calendarLink);
 }
+const ensureMenuLink = (href, label, className = "") => {
+  if (!nav) return null;
+  let link = nav.querySelector(`a[href="${href}"]`);
+  if (!link) {
+    link = document.createElement("a");
+    link.href = href;
+    nav.append(link);
+  }
+  if (className) link.classList.add(className);
+  link.textContent = label;
+  return link;
+};
+const normalizeSiteMenu = (isAuthenticated = false) => {
+  if (!nav) return;
+  const primary = [
+    ensureMenuLink("index.html", "Home", "site-menu-primary"),
+    ensureMenuLink("https://pay.arrai.in/", "ARRAI Pay", "site-menu-primary"),
+    ensureMenuLink("search.html", "Search", "site-menu-primary"),
+    ensureMenuLink("community.html", "Community", "site-menu-primary"),
+  ];
+  let profileLink = nav.querySelector(
+    ".site-menu-primary[href='profile.html'], .site-menu-primary[href='auth.html']",
+  );
+  if (!profileLink) {
+    profileLink = document.createElement("a");
+    profileLink.className = "site-menu-primary";
+  }
+  profileLink.href = isAuthenticated ? "profile.html" : "auth.html";
+  profileLink.textContent = isAuthenticated ? "My profile" : "Profile · Sign in";
+  if (isAuthenticated) nav.querySelector('a[href="auth.html"]')?.remove();
+  const ordered = [
+    ...primary,
+    profileLink,
+    ...[...nav.children].filter(
+      (item) => !primary.includes(item) && item !== profileLink,
+    ),
+  ];
+  ordered.forEach((item) => item && nav.append(item));
+};
+normalizeSiteMenu(false);
 const ownerEmail = "abhishekrai6897@gmail.com";
 const avatarFallback = (name) =>
   `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "AR")}&background=38bdf8&color=0f172a&bold=true`;
@@ -206,6 +266,12 @@ const updateNavigationForUser = async ({ isAuthenticated, user }) => {
       ownerLink.textContent = "Owner studio";
       nav.append(ownerLink);
     }
+    if (user?.email?.toLowerCase() === ownerEmail) {
+      ensureMenuLink("admin.html", "Admin console", "site-menu-admin");
+    } else {
+      nav.querySelector('[href="admin.html"]')?.remove();
+      nav.querySelector('[href="owner.html"]')?.remove();
+    }
     if (!nav.querySelector(".nav-logout")) {
       const logout = document.createElement("button");
       logout.type = "button";
@@ -221,6 +287,29 @@ const updateNavigationForUser = async ({ isAuthenticated, user }) => {
         const logout = nav.querySelector(".nav-logout");
         nav.insertBefore(makeAccountLink(user, profile), logout || null);
       });
+    const profileLink = nav.querySelector(".site-menu-primary[href='profile.html']");
+    if (profileLink) profileLink.textContent = "My profile";
+    if (walletMenuLink) {
+      walletMenuLink.textContent = "Wallet · Loading…";
+      window.arraiSupabase
+        ?.from("wallet_accounts")
+        .select("balance_paise")
+        .eq("user_id", user.id)
+        .maybeSingle()
+        .then(({ data, error }) => {
+          if (error) throw error;
+          walletMenuLink.textContent = data
+            ? `₹${(Number(data.balance_paise) / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} · Wallet`
+            : "Wallet · Set up";
+          walletMenuLink.title = data
+            ? "Your ARRAI Pay wallet balance"
+            : "Set up your wallet at ARRAI Pay";
+        })
+        .catch((error) => {
+          walletMenuLink.textContent = "Wallet · Open Pay";
+          walletMenuLink.title = `Wallet balance unavailable: ${error.message}`;
+        });
+    }
     const welcomeKey = `arrai-welcome-${user?.id || user?.email}`;
     if (!sessionStorage.getItem(welcomeKey) && !document.body.classList.contains("auth-page")) {
       sessionStorage.setItem(welcomeKey, "1");
@@ -229,14 +318,15 @@ const updateNavigationForUser = async ({ isAuthenticated, user }) => {
         `Welcome back, ${profile.display_name || user?.name || "friend"}. Your AR space is ready.`,
       );
     }
-  } else if (!loginLink && !document.body.classList.contains("auth-page")) {
+  } else if (!document.body.classList.contains("auth-page")) {
     nav.querySelector(".nav-account")?.remove();
     nav.querySelector(".nav-logout")?.remove();
-    const authLink = document.createElement("a");
-    authLink.href = "auth.html";
-    authLink.textContent = "Login / Register";
-    nav.append(authLink);
+    nav.querySelector('[href="profile.html"]')?.setAttribute("href", "auth.html");
+    walletMenuLink?.replaceChildren(document.createTextNode("Wallet · Open Pay"));
+    nav.querySelector('[href="owner.html"]')?.remove();
+    nav.querySelector('[href="admin.html"]')?.remove();
   }
+  normalizeSiteMenu(Boolean(isAuthenticated));
 };
 if (window.arraiAuth)
   window.arraiAuth
@@ -314,8 +404,8 @@ if (button && nav)
   button.addEventListener("click", () => {
     const open = nav.classList.toggle("open");
     button.setAttribute("aria-expanded", open);
-    button.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
-    button.textContent = open ? "×" : "☰";
+    button.setAttribute("aria-label", open ? "Close site menu" : "Open site menu");
+    button.textContent = open ? "×" : "⋮";
   });
 if (nav)
   nav.addEventListener("click", (event) => {
@@ -323,7 +413,7 @@ if (nav)
     nav.classList.remove("open");
     button?.setAttribute("aria-expanded", "false");
     button?.setAttribute("aria-label", "Open navigation");
-    if (button) button.textContent = "☰";
+    if (button) button.textContent = "⋮";
   });
 document.addEventListener("click", (event) => {
   if (
@@ -334,14 +424,14 @@ document.addEventListener("click", (event) => {
   nav.classList.remove("open");
   button?.setAttribute("aria-expanded", "false");
   button?.setAttribute("aria-label", "Open navigation");
-  if (button) button.textContent = "☰";
+  if (button) button.textContent = "⋮";
 });
 document.addEventListener("keydown", (event) => {
   if (event.key !== "Escape" || !nav?.classList.contains("open")) return;
   nav.classList.remove("open");
   button?.setAttribute("aria-expanded", "false");
   button?.setAttribute("aria-label", "Open navigation");
-  if (button) button.textContent = "☰";
+  if (button) button.textContent = "⋮";
   button?.focus();
 });
 
@@ -514,6 +604,48 @@ const loadFeaturedVipMembers = async () => {
   section.hidden = false;
 };
 loadFeaturedVipMembers();
+const membershipHomePrompt = document.querySelector("#membershipHomePrompt");
+if (membershipHomePrompt) {
+  const membershipPromptKey = "arrai-vip-prompt-dismissed";
+  const dismissMembershipPrompt = document.querySelector(
+    "#dismissMembershipPrompt",
+  );
+  const closeMembershipPrompt = () => {
+    membershipHomePrompt.hidden = true;
+    sessionStorage.setItem(membershipPromptKey, "1");
+  };
+  dismissMembershipPrompt?.addEventListener("click", closeMembershipPrompt);
+  if (!sessionStorage.getItem(membershipPromptKey)) {
+    window.arraiAuth
+      ?.then(async ({ isAuthenticated, user }) => {
+        if (isAuthenticated && window.arraiSupabase) {
+          const { data, error } = await window.arraiSupabase
+            .from("profiles")
+            .select("is_vip,vip_expires_at")
+            .eq("id", user.id)
+            .maybeSingle();
+          if (error) {
+            console.warn("VIP home suggestion could not check membership:", error.message);
+            return;
+          }
+          if (
+            data?.is_vip &&
+            (!data.vip_expires_at ||
+              new Date(data.vip_expires_at).getTime() > Date.now())
+          )
+            return;
+        }
+        setTimeout(() => {
+          if (sessionStorage.getItem(membershipPromptKey)) return;
+          sessionStorage.setItem(membershipPromptKey, "1");
+          membershipHomePrompt.hidden = false;
+        }, 8500);
+      })
+      .catch((error) => {
+        console.warn("VIP home suggestion was skipped:", error.message);
+      });
+  }
+}
 
 // Public home content is editable from Owner Studio and remains readable without login.
 const loadPublicHomeContent = async () => {

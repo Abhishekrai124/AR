@@ -168,6 +168,23 @@ export default async function handler(request, response) {
         );
       return response.status(200).json({ profiles: await upstream.json() });
     }
+    if (request.body.action === "admin-profiles") {
+      const query = String(request.body.query || "")
+        .replace(/[^a-zA-Z0-9_.-]/g, "")
+        .slice(0, 50);
+      const filter = query
+        ? `&or=(id.eq.${encodeURIComponent(query)},username.ilike.*${encodeURIComponent(query)}*,display_name.ilike.*${encodeURIComponent(query)}*)`
+        : "";
+      const upstream = await fetch(
+        `${supabaseUrl}/rest/v1/profiles?select=id,display_name,username,account_status,community_role&order=created_at.desc&limit=30${filter}`,
+        { headers: adminHeaders() },
+      );
+      if (!upstream.ok)
+        throw new Error(
+          `Could not search members (Supabase ${upstream.status}). Check the Supabase project URL and service_role key.`,
+        );
+      return response.status(200).json({ profiles: await upstream.json() });
+    }
     if (request.body.action === "update-profile") {
       const id = String(request.body.id || "");
       const isOwnProfile = owner.id === id;
@@ -275,16 +292,145 @@ export default async function handler(request, response) {
             .length,
         });
     }
+    if (request.body.action === "admin-overview") {
+      const tableRequest = async (path) => {
+        const result = await fetch(`${supabaseUrl}/rest/v1/${path}`, {
+          headers: { ...adminHeaders(), Prefer: "count=exact" },
+        });
+        if (!result.ok) {
+          return {
+            available: false,
+            error: `${path.split("?")[0]} returned ${result.status}. Apply its migration or verify the service configuration.`,
+            rows: [],
+            count: null,
+          };
+        }
+        const rows = await result.json();
+        const countHeader = result.headers.get("content-range")?.split("/")[1];
+        const count = countHeader === "*" ? null : Number(countHeader);
+        return {
+          available: true,
+          rows,
+          count: Number.isFinite(count) ? count : rows.length,
+        };
+      };
+      const [
+        reportResult,
+        walletResult,
+        vipResult,
+        profileResult,
+        postResult,
+        messageResult,
+      ] = await Promise.all([
+        tableRequest(
+          "community_reports?select=id,reporter_id,target_type,target_id,reason,details,status,created_at&status=eq.open&order=created_at.desc&limit=30",
+        ),
+        tableRequest(
+          "wallet_transactions?select=id,user_id,amount_paise,transaction_type,status,provider,provider_reference,created_at&order=created_at.desc&limit=30",
+        ),
+        tableRequest(
+          "vip_membership_payments?select=id,user_id,amount_paise,payment_provider,razorpay_payment_id,wallet_transaction_id,created_at&order=created_at.desc&limit=30",
+        ),
+        tableRequest("profiles?select=id&limit=1"),
+        tableRequest("posts?select=id&limit=1"),
+        tableRequest("direct_messages?select=id&status=eq.request&limit=1"),
+      ]);
+      const isAvailable = (result) => result.available;
+      const services = [
+        {
+          name: "Supabase authentication",
+          status: "connected",
+          detail: "The owner session was verified for this request.",
+        },
+        {
+          name: "Supabase database",
+          status: profileResult.available ? "connected" : "unavailable",
+          detail: profileResult.error,
+        },
+        {
+          name: "ARRAI Pay wallet ledger",
+          status: walletResult.available ? "connected" : "unavailable",
+          detail: walletResult.error,
+        },
+        {
+          name: "Razorpay checkout",
+          status:
+            process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET
+              ? "configured"
+              : "not_configured",
+        },
+        {
+          name: "Community reports",
+          status: reportResult.available ? "connected" : "unavailable",
+          detail: reportResult.error,
+        },
+        {
+          name: "Central support/service request inbox",
+          status: "not_connected",
+          detail:
+            "Contact and support requests are not currently stored in a shared admin inbox.",
+        },
+      ];
+      return response.status(200).json({
+        generatedAt: new Date().toISOString(),
+        services,
+        metrics: {
+          members: isAvailable(profileResult) ? profileResult.count : null,
+          openReports: isAvailable(reportResult) ? reportResult.count : null,
+          walletTransactions: isAvailable(walletResult)
+            ? walletResult.rows.length
+            : null,
+          vipPayments: isAvailable(vipResult)
+            ? vipResult.rows.length
+            : null,
+          pendingMessageRequests: isAvailable(messageResult)
+            ? messageResult.count
+            : null,
+          posts: isAvailable(postResult) ? postResult.count : null,
+        },
+        reports: reportResult.rows,
+        walletTransactions: walletResult.rows,
+        vipPayments: vipResult.rows,
+        sources: {
+          reports: reportResult.available,
+          wallet: walletResult.available,
+          vipPayments: vipResult.available,
+          members: profileResult.available,
+          messages: messageResult.available,
+          posts: postResult.available,
+        },
+        errors: [
+          reportResult.error,
+          walletResult.error,
+          vipResult.error,
+          profileResult.error,
+          postResult.error,
+          messageResult.error,
+        ].filter(Boolean),
+      });
+    }
     if (request.body.action === "moderate") {
       const id = String(request.body.id || "");
       const action = String(request.body.moderationAction || "");
       if (
         !id ||
-        !["active", "suspended", "banned", "dismissed", "vip"].includes(action)
+        id === owner.id ||
+        !["active", "suspended", "banned", "vip"].includes(action)
       )
         return response
           .status(400)
           .json({ error: "Invalid moderation action." });
+      const targetResponse = await fetch(
+        `${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(id)}&select=community_role`,
+        { headers: adminHeaders() },
+      );
+      if (!targetResponse.ok)
+        throw new Error("Could not verify the target member.");
+      const [targetProfile] = await targetResponse.json();
+      if (!targetProfile || targetProfile.community_role === "owner")
+        return response
+          .status(403)
+          .json({ error: "The owner account cannot be moderated." });
       const changes =
         action === "vip"
           ? { is_vip: true, vip_granted_at: new Date().toISOString() }

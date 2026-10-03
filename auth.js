@@ -7,15 +7,27 @@ const communityButton = document.querySelector("#communityButton");
 const authParams = new URLSearchParams(window.location.search);
 const requestedPage = authParams.get("next");
 const nextPage =
-  requestedPage === "chess"
-    ? "chess.html"
-    : requestedPage === "owner"
-      ? "owner.html"
-      : "community.html";
+  requestedPage === "membership"
+    ? "community.html?membership=1"
+    : requestedPage === "chess"
+      ? "chess.html"
+      : requestedPage === "owner"
+        ? "owner.html"
+        : requestedPage === "admin"
+          ? "admin.html"
+          : "community.html";
 const authReturn =
   nextPage === "community.html"
     ? ""
-    : `?next=${nextPage === "chess.html" ? "chess" : "owner"}`;
+    : `?next=${
+        requestedPage === "membership"
+          ? "membership"
+          : nextPage === "chess.html"
+            ? "chess"
+            : requestedPage === "admin"
+              ? "admin"
+              : "owner"
+      }`;
 
 function showStatus(message, type = "") {
   authStatus.textContent = message;

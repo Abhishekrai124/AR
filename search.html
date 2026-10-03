@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Search ARRAI pages, projects, community and services."
+    />
+    <title>Search ARRAI — arrai.in</title>
+    <link rel="icon" href="/assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="search-page">
+    <div class="ambient one"></div>
+    <div class="ambient two"></div>
+    <header>
+      <a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a>
+      <button class="menu-button" aria-label="Open site menu" aria-expanded="false">
+        ⋮
+      </button>
+      <nav aria-label="Site menu">
+        <a href="index.html">Home</a>
+        <a href="https://pay.arrai.in/">ARRAI Pay</a>
+        <a class="active" href="search.html">Search</a>
+        <a href="community.html">Community</a>
+        <a href="auth.html">Profile</a>
+      </nav>
+    </header>
+    <main class="search-wrap">
+      <section class="search-hero">
+        <p class="eyebrow">Find your way around ARRAI</p>
+        <h1>What are you<br /><em>looking for?</em></h1>
+        <form class="site-search-form" id="siteSearchForm" role="search">
+          <label class="sr-only" for="siteSearchInput">Search ARRAI</label>
+          <span aria-hidden="true">⌕</span>
+          <input
+            id="siteSearchInput"
+            name="q"
+            type="search"
+            autocomplete="off"
+            placeholder="Search projects, services, community…"
+            maxlength="120"
+            required
+          />
+          <button class="button primary" type="submit">Search</button>
+        </form>
+        <p class="search-hint" id="searchHint">
+          Search this website, or send your query to Google for the wider web.
+        </p>
+        <a id="googleSearchLink" class="text-link google-search-link" href="https://www.google.com/" target="_blank" rel="noopener noreferrer">
+          Search the web with Google ↗
+        </a>
+      </section>
+      <section class="search-results-section" aria-live="polite">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow" id="searchResultEyebrow">A few good places to start</p>
+            <h2 id="searchResultTitle">Explore ARRAI</h2>
+          </div>
+        </div>
+        <div id="searchResults" class="search-results-grid"></div>
+      </section>
+    </main>
+    <footer>
+      <a class="brand" href="index.html">ar<span>rai</span>.in</a>
+      <p>© 2026 Abhishek Rai. All rights reserved.</p>
+      <div><a href="privacy.html">Privacy</a><a href="privacy.html#terms">Terms</a></div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="script.js"></script>
+    <script src="search.js"></script>
+  </body>
+</html>

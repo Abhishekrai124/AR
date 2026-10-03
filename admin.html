@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="ARRAI operations dashboard for the verified site owner."
+    />
+    <title>Admin console — arrai.in</title>
+    <link rel="icon" href="/assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="admin-page">
+    <div class="ambient one"></div>
+    <div class="ambient two"></div>
+    <header>
+      <a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a>
+      <button class="menu-button" aria-label="Open site menu" aria-expanded="false">⋮</button>
+      <nav aria-label="Site menu">
+        <a href="index.html">Home</a>
+        <a href="https://pay.arrai.in/">ARRAI Pay</a>
+        <a href="search.html">Search</a>
+        <a href="community.html">Community</a>
+        <a href="profile.html">My profile</a>
+      </nav>
+    </header>
+    <main class="admin-wrap">
+      <section class="admin-heading">
+        <div>
+          <p class="eyebrow">Verified owner access</p>
+          <h1>ARRAI <em>admin console.</em></h1>
+          <p class="admin-subtitle">
+            A live overview of member reports, wallet activity and service
+            connections. Use Owner Studio for existing full-control tools.
+          </p>
+        </div>
+        <a class="button primary" href="owner.html">Open Owner Studio ↗</a>
+      </section>
+      <p id="adminStatus" class="community-status" aria-live="polite">
+        Verifying your owner session…
+      </p>
+      <section id="adminDashboard" hidden>
+        <div id="adminMetrics" class="admin-metrics"></div>
+        <section class="owner-panel admin-panel">
+          <div class="admin-section-heading">
+            <div>
+              <p class="eyebrow">Platform health</p>
+              <h2>Connected services &amp; known gaps</h2>
+            </div>
+            <button class="text-button" id="refreshAdmin" type="button">Refresh</button>
+          </div>
+          <div id="adminServices" class="admin-service-grid"></div>
+        </section>
+        <section class="owner-panel admin-panel">
+          <div class="admin-section-heading">
+            <div>
+              <p class="eyebrow">Member controls</p>
+              <h2>Find an account</h2>
+            </div>
+          </div>
+          <form id="adminMemberSearch" class="admin-search-form">
+            <label class="sr-only" for="adminMemberQuery">Search members</label>
+            <input id="adminMemberQuery" type="search" maxlength="50" placeholder="Username, display name or user ID" />
+            <button class="button" type="submit">Search members</button>
+          </form>
+          <div id="adminMemberResults" class="owner-card-list">
+            <p class="empty-state">Search for a member to review account status.</p>
+          </div>
+        </section>
+        <section class="owner-panel admin-panel">
+          <div class="admin-section-heading">
+            <div>
+              <p class="eyebrow">Community safety</p>
+              <h2>Open member reports</h2>
+            </div>
+            <a class="text-link" href="community.html#communityModerationPanel">
+              Review in Community ↗
+            </a>
+          </div>
+          <div id="adminReports" class="owner-card-list">
+            <p class="empty-state">Loading reports…</p>
+          </div>
+        </section>
+        <section class="owner-panel admin-panel">
+          <div class="admin-section-heading">
+            <div>
+              <p class="eyebrow">Payment monitoring</p>
+              <h2>Recent ARRAI wallet activity</h2>
+              <p>Latest ledger entries; no card, UPI PIN or bank credentials are shown.</p>
+            </div>
+            <a class="text-link" href="https://pay.arrai.in/" target="_blank" rel="noopener noreferrer">
+              Open ARRAI Pay ↗
+            </a>
+          </div>
+          <div id="adminWalletTransactions" class="admin-table-wrap">
+            <p class="empty-state">Loading wallet transactions…</p>
+          </div>
+        </section>
+        <section class="owner-panel admin-panel">
+          <div class="admin-section-heading">
+            <div>
+              <p class="eyebrow">VIP payment register</p>
+              <h2>Recent membership purchases</h2>
+            </div>
+          </div>
+          <div id="adminVipPayments" class="admin-table-wrap">
+            <p class="empty-state">Loading VIP payment records…</p>
+          </div>
+        </section>
+        <section class="owner-panel admin-panel admin-limit-note">
+          <p class="eyebrow">Support inbox status</p>
+          <h2>Central service requests are not connected yet.</h2>
+          <p>
+            Contact forms and external ARRAI Pay support are not currently
+            stored in one ARRAI admin queue. This console reports that gap
+            instead of inventing or losing request records.
+          </p>
+        </section>
+        <div id="adminErrors" class="admin-error-list" hidden></div>
+      </section>
+    </main>
+    <footer>
+      <a class="brand" href="index.html">ar<span>rai</span>.in</a>
+      <p>Private operations view · access is checked by the server.</p>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="script.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>
