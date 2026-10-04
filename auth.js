@@ -15,7 +15,9 @@ const nextPage =
         ? "owner.html"
         : requestedPage === "admin"
           ? "admin.html"
-          : "community.html";
+          : requestedPage === "family"
+            ? "family.html"
+            : "community.html";
 const authReturn =
   nextPage === "community.html"
     ? ""
@@ -26,6 +28,8 @@ const authReturn =
             ? "chess"
             : requestedPage === "admin"
               ? "admin"
+              : requestedPage === "family"
+                ? "family"
               : "owner"
       }`;
 

@@ -15,10 +15,12 @@ SQL editor:
 7. `supabase-public-profile-migration.sql` for safe public username pages.
 8. `supabase-vip-wallet-migration.sql` to enable payment from the ARRAI Pay
    wallet.
+9. `supabase-arrai-family-migration.sql` to enable ARRAI Family contributions
+   and the opt-in public donor leaderboard.
 
-The Community page expects the last migration to be applied. It is not applied
-by deploying the static site, and no live database changes are implied by this
-repository update.
+The Community and ARRAI Family pages each require their listed migrations.
+Migrations are not applied by deploying the static site, and no live database
+changes are implied by this repository update.
 
 Public profile pages use a column-limited RPC so anonymous visitors do not get
 direct access to phone numbers, birth dates, or other profile-table columns.
@@ -86,10 +88,11 @@ policies and production setup are implemented and verified.
 
 ## Navigation and owner console
 
-The shared three-dot menu links to Home, ARRAI Pay, Search, Community, and the
-signed-in user's profile. Search ranks ARRAI pages locally and offers an
-optional Google link for web-wide results. The home VIP prompt is dismissible
-and limited to once per browser session.
+The shared three-dot menu links to Home, ARRAI Pay, Search, Community, ARRAI
+Family, and the signed-in user's profile. Search ranks ARRAI pages locally and
+offers an optional Google link for web-wide results. A dismissible ARRAI
+Family/VIP suggestion appears across site pages no more than once every five
+days per browser.
 
 The Admin Console (`/admin`) and Owner Studio are protected by the existing
 Supabase owner account and server-side owner/service-role checks. Configure
@@ -100,3 +103,29 @@ reports; full member, VIP, role, and site controls remain in Owner Studio.
 Browser sessions are origin-scoped, so users may need to sign in on both
 `arrai.in` and `pay.arrai.in`, even when both sites use the same Supabase
 account and database.
+
+## ARRAI Family giving and VIP
+
+The `/family` page links to the existing ₹45/year VIP checkout and supports
+donations through Razorpay or direct UPI to `kuzu@ptyes`. Configure
+`RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `SUPABASE_URL`,
+`SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` in Vercel; apply
+`supabase-arrai-family-migration.sql` before enabling donations. Razorpay
+donations enter the public totals only after server-side signature and
+captured-payment verification. UPI donors submit the payment-app UTR; the
+verified owner must match it and approve the donation before it appears.
+Public ranking of a donor's name/photo/amount requires explicit opt-in at the
+time of donation. Private donations contribute only to the overall verified
+total and are never included in donor rankings.
+
+No extra 1.5% donor surcharge is applied. Payment processing charges and the
+permission to pass them through depend on the payment provider, payment method,
+and applicable rules; enable a customer fee only after Razorpay has explicitly
+approved the merchant setup and the fee treatment has been confirmed.
+
+When signed in on `arrai.in`, the header wallet pill loads the authenticated
+user's current `wallet_accounts.balance_paise` through `/api/wallet-balance`.
+That endpoint verifies the Supabase session and selects only that user's
+balance server-side; the service-role key must remain in Vercel environment
+variables and is never sent to the browser. `pay.arrai.in` and `arrai.in` must
+point to the same Supabase project for the balance to match.

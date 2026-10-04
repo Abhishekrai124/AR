@@ -39,6 +39,20 @@ const adminRequest = async (action, values = {}) => {
   if (!response.ok) throw new Error(result.error || "Admin request failed.");
   return result;
 };
+const familyAdminRequest = async (action, values = {}, method = "GET") => {
+  const response = await fetch(`/api/family?action=${action}`, {
+    method,
+    headers: {
+      ...(method === "POST" ? { "Content-Type": "application/json" } : {}),
+      Authorization: `Bearer ${adminToken}`,
+    },
+    ...(method === "POST" ? { body: JSON.stringify(values) } : {}),
+    cache: "no-store",
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || "Donation review failed.");
+  return result;
+};
 const makeText = (tag, text, className) => {
   const element = document.createElement(tag);
   element.textContent = text;
@@ -191,6 +205,71 @@ async function loadAdminOverview() {
   data.errors.forEach((message) => errors.append(makeText("p", message)));
   adminDashboard.hidden = false;
   setAdminStatus(`Secure overview refreshed ${adminDate(data.generatedAt)}.`, "success");
+  await loadFamilyDonationReviews();
+}
+
+async function loadFamilyDonationReviews() {
+  const root = document.querySelector("#adminFamilyDonations");
+  try {
+    const { donations } = await familyAdminRequest("admin-list");
+    root.replaceChildren();
+    if (!donations.length) {
+      root.append(makeText("p", "No direct UPI donations are waiting for review.", "empty-state"));
+      return;
+    }
+    donations.forEach((donation) => {
+      const row = document.createElement("article");
+      row.className = "admin-report-row";
+      const details = document.createElement("div");
+      const profile = donation.profiles || {};
+      details.append(
+        makeText(
+          "b",
+          `${profile.display_name || "ARRAI member"} · ${adminMoney(donation.amount_paise)}`,
+        ),
+        makeText(
+          "small",
+          `@${profile.username || "member"} · UTR ${donation.upi_reference || "missing"} · submitted ${adminDate(donation.utr_submitted_at)}`,
+        ),
+        makeText(
+          "small",
+          donation.display_public
+            ? "Donor opted in to public recognition."
+            : "Private donation; do not publish donor identity.",
+        ),
+      );
+      const actions = document.createElement("div");
+      actions.className = "admin-member-actions";
+      ["verify", "reject"].forEach((decision) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "follow-button";
+        button.textContent = decision === "verify" ? "Verify UTR" : "Reject";
+        button.addEventListener("click", async () => {
+          const confirmed = await window.cuteConfirm(
+            `${decision === "verify" ? "Approve only after matching" : "Reject"} UTR ${adminEscape(donation.upi_reference)} for ${adminMoney(donation.amount_paise)}?`,
+            {
+              title: decision === "verify" ? "Verify UPI donation" : "Reject UPI donation",
+              danger: decision === "reject",
+            },
+          );
+          if (!confirmed) return;
+          try {
+            await familyAdminRequest("admin-review", { id: donation.id, decision }, "POST");
+            await loadFamilyDonationReviews();
+            setAdminStatus("ARRAI Family donation review saved.", "success");
+          } catch (error) {
+            setAdminStatus(error.message, "error");
+          }
+        });
+        actions.append(button);
+      });
+      row.append(details, actions);
+      root.append(row);
+    });
+  } catch (error) {
+    root.replaceChildren(makeText("p", error.message, "empty-state"));
+  }
 }
 
 function renderMemberResults(profiles) {
@@ -270,6 +349,13 @@ document
   .querySelector("#refreshAdmin")
   .addEventListener("click", () =>
     loadAdminOverview().catch((error) => setAdminStatus(error.message, "error")),
+  );
+document
+  .querySelector("#refreshFamilyDonations")
+  .addEventListener("click", () =>
+    loadFamilyDonationReviews().catch((error) =>
+      setAdminStatus(error.message, "error"),
+    ),
   );
 
 (async () => {

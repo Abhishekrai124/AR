@@ -187,6 +187,11 @@ const normalizeSiteMenu = (isAuthenticated = false) => {
     ensureMenuLink("search.html", "Search", "site-menu-primary"),
     ensureMenuLink("community.html", "Community", "site-menu-primary"),
   ];
+  const familyLink = ensureMenuLink(
+    "family.html",
+    "ARRAI Family",
+    "site-menu-primary",
+  );
   let profileLink = nav.querySelector(
     ".site-menu-primary[href='profile.html'], .site-menu-primary[href='auth.html']",
   );
@@ -199,9 +204,11 @@ const normalizeSiteMenu = (isAuthenticated = false) => {
   if (isAuthenticated) nav.querySelector('a[href="auth.html"]')?.remove();
   const ordered = [
     ...primary,
+    familyLink,
     profileLink,
     ...[...nav.children].filter(
-      (item) => !primary.includes(item) && item !== profileLink,
+      (item) =>
+        !primary.includes(item) && item !== familyLink && item !== profileLink,
     ),
   ];
   ordered.forEach((item) => item && nav.append(item));
@@ -291,23 +298,43 @@ const updateNavigationForUser = async ({ isAuthenticated, user }) => {
     if (profileLink) profileLink.textContent = "My profile";
     if (walletMenuLink) {
       walletMenuLink.textContent = "Wallet · Loading…";
-      window.arraiSupabase
-        ?.from("wallet_accounts")
-        .select("balance_paise")
-        .eq("user_id", user.id)
-        .maybeSingle()
+      walletMenuLink.title = "Loading your ARRAI Pay wallet balance";
+      window.arraiSupabase.auth
+        .getSession()
         .then(({ data, error }) => {
           if (error) throw error;
-          walletMenuLink.textContent = data
-            ? `₹${(Number(data.balance_paise) / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} · Wallet`
+          const token = data.session?.access_token;
+          if (!token) throw new Error("Sign in again to view your wallet.");
+          return fetch("/api/wallet-balance", {
+            headers: { Authorization: `Bearer ${token}` },
+            cache: "no-store",
+          });
+        })
+        .then(async (response) => {
+          const result = await response.json();
+          if (!response.ok)
+            throw new Error(result.error || "Wallet balance unavailable.");
+          const amount = (result.balance_paise / 100).toLocaleString("en-IN", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+          walletMenuLink.textContent = result.wallet_exists
+            ? `₹${amount} · Wallet`
             : "Wallet · Set up";
-          walletMenuLink.title = data
-            ? "Your ARRAI Pay wallet balance"
-            : "Set up your wallet at ARRAI Pay";
+          walletMenuLink.title = result.wallet_exists
+            ? `Live balance from your ARRAI Pay wallet: ₹${amount}`
+            : "No ARRAI Pay wallet is set up for this account yet";
+          walletMenuLink.setAttribute(
+            "aria-label",
+            result.wallet_exists
+              ? `ARRAI Pay wallet balance ₹${amount}`
+              : "Set up your ARRAI Pay wallet",
+          );
         })
         .catch((error) => {
           walletMenuLink.textContent = "Wallet · Open Pay";
           walletMenuLink.title = `Wallet balance unavailable: ${error.message}`;
+          walletMenuLink.setAttribute("aria-label", "Open ARRAI Pay wallet");
         });
     }
     const welcomeKey = `arrai-welcome-${user?.id || user?.email}`;
@@ -323,6 +350,9 @@ const updateNavigationForUser = async ({ isAuthenticated, user }) => {
     nav.querySelector(".nav-logout")?.remove();
     nav.querySelector('[href="profile.html"]')?.setAttribute("href", "auth.html");
     walletMenuLink?.replaceChildren(document.createTextNode("Wallet · Open Pay"));
+    walletMenuLink?.setAttribute("aria-label", "Open ARRAI Pay wallet");
+    if (walletMenuLink)
+      walletMenuLink.title = "Sign in to view your ARRAI Pay wallet balance";
     nav.querySelector('[href="owner.html"]')?.remove();
     nav.querySelector('[href="admin.html"]')?.remove();
   }
@@ -604,46 +634,48 @@ const loadFeaturedVipMembers = async () => {
   section.hidden = false;
 };
 loadFeaturedVipMembers();
-const membershipHomePrompt = document.querySelector("#membershipHomePrompt");
+let membershipHomePrompt = document.querySelector("#membershipHomePrompt");
+const familyPromptExcludedPages = ["family-page", "admin-page", "auth-page", "owner-page"];
+if (
+  !membershipHomePrompt &&
+  !familyPromptExcludedPages.some((page) => document.body.classList.contains(page))
+) {
+  membershipHomePrompt = document.createElement("aside");
+  membershipHomePrompt.id = "membershipHomePrompt";
+  membershipHomePrompt.className = "membership-home-prompt";
+  membershipHomePrompt.setAttribute("aria-label", "ARRAI Family suggestion");
+  membershipHomePrompt.innerHTML = `<span class="membership-spark" aria-hidden="true">✦</span><p><b>ARRAI Family</b>Support the community or explore optional ₹45/year VIP.</p><span class="family-prompt-actions"><a href="family.html">Visit family</a><a href="auth.html?next=membership">Explore VIP</a></span><button type="button" aria-label="Dismiss ARRAI Family suggestion">×</button>`;
+  document.body.append(membershipHomePrompt);
+}
 if (membershipHomePrompt) {
-  const membershipPromptKey = "arrai-vip-prompt-dismissed";
-  const dismissMembershipPrompt = document.querySelector(
-    "#dismissMembershipPrompt",
-  );
-  const closeMembershipPrompt = () => {
+  const membershipPromptKey = "arrai-family-prompt-last-shown";
+  const dismissMembershipPrompt =
+    membershipHomePrompt.querySelector("#dismissMembershipPrompt") ||
+    membershipHomePrompt.querySelector("button");
+  let lastShownAt = 0;
+  try {
+    lastShownAt = Number(localStorage.getItem(membershipPromptKey) || 0);
+  } catch (error) {
+    console.warn("ARRAI Family suggestion storage is unavailable:", error.message);
+  }
+  const isOnCooldown = Date.now() - lastShownAt < 5 * 24 * 60 * 60 * 1000;
+  dismissMembershipPrompt?.addEventListener("click", () => {
     membershipHomePrompt.hidden = true;
-    sessionStorage.setItem(membershipPromptKey, "1");
-  };
-  dismissMembershipPrompt?.addEventListener("click", closeMembershipPrompt);
-  if (!sessionStorage.getItem(membershipPromptKey)) {
-    window.arraiAuth
-      ?.then(async ({ isAuthenticated, user }) => {
-        if (isAuthenticated && window.arraiSupabase) {
-          const { data, error } = await window.arraiSupabase
-            .from("profiles")
-            .select("is_vip,vip_expires_at")
-            .eq("id", user.id)
-            .maybeSingle();
-          if (error) {
-            console.warn("VIP home suggestion could not check membership:", error.message);
-            return;
-          }
-          if (
-            data?.is_vip &&
-            (!data.vip_expires_at ||
-              new Date(data.vip_expires_at).getTime() > Date.now())
-          )
-            return;
-        }
-        setTimeout(() => {
-          if (sessionStorage.getItem(membershipPromptKey)) return;
-          sessionStorage.setItem(membershipPromptKey, "1");
-          membershipHomePrompt.hidden = false;
-        }, 8500);
-      })
-      .catch((error) => {
-        console.warn("VIP home suggestion was skipped:", error.message);
-      });
+    try {
+      localStorage.setItem(membershipPromptKey, String(Date.now()));
+    } catch (error) {
+      console.warn("ARRAI Family suggestion preference could not be saved:", error.message);
+    }
+  });
+  if (!isOnCooldown) {
+    window.setTimeout(() => {
+      membershipHomePrompt.hidden = false;
+      try {
+        localStorage.setItem(membershipPromptKey, String(Date.now()));
+      } catch (error) {
+        console.warn("ARRAI Family suggestion timing could not be saved:", error.message);
+      }
+    }, 12000 + Math.random() * 12000);
   }
 }
 

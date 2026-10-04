@@ -36,6 +36,12 @@ const searchablePages = [
     keywords: "vip membership gold badge themes annual price rupees",
   },
   {
+    title: "ARRAI Family",
+    url: "family.html",
+    description: "Support ARRAI, explore the optional ₹45 VIP membership and see verified opt-in donor recognition.",
+    keywords: "family donation donate supporters leaderboard vip membership UPI QR",
+  },
+  {
     title: "Music Room",
     url: "music.html",
     description: "Visit the ARRAI music room.",
