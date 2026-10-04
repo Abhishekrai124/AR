@@ -797,17 +797,6 @@ function updateProfileLocationSettings() {
   }
 }
 
-async function loadRazorpayCheckout() {
-  if (window.Razorpay) return;
-  await new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.onload = resolve;
-    script.onerror = () => reject(new Error("Razorpay checkout could not load."));
-    document.head.append(script);
-  });
-}
-
 async function refreshWalletBalance() {
   const {
     data: { session },
@@ -901,100 +890,34 @@ async function buyVipMembership() {
   const button = $("#buyVipMembership");
   const originalText = button.textContent;
   button.disabled = true;
-  button.textContent = "Opening secure checkout…";
+  button.textContent = "Opening PayU checkout…";
   try {
-    const {
-      data: { session },
-      error: sessionError,
-    } = await db.auth.getSession();
+    const { data: { session }, error: sessionError } = await db.auth.getSession();
     if (sessionError) throw sessionError;
-    if (!session?.access_token)
-      throw new Error("Please sign in again before purchasing VIP.");
+    if (!session?.access_token) throw new Error("Please sign in again before purchasing VIP.");
     const orderResponse = await fetch("/api/vip-membership?action=create-order", {
       method: "POST",
       headers: { Authorization: `Bearer ${session.access_token}` },
     });
     const order = await orderResponse.json();
-    if (!orderResponse.ok)
-      throw new Error(order.error || "Could not start VIP checkout.");
-    if (
-      order.amount !== 4500 ||
-      order.currency !== "INR" ||
-      typeof order.order_id !== "string" ||
-      typeof order.key_id !== "string"
-    )
-      throw new Error("The server returned an invalid membership order.");
-    await loadRazorpayCheckout();
-    const checkout = new window.Razorpay({
-      key: order.key_id,
-      amount: order.amount,
-      currency: order.currency,
-      name: "ARRAI",
-      description: "One-year VIP membership",
-      order_id: order.order_id,
-      prefill: {
-        name: profile.display_name,
-        email: user.email,
-      },
-      theme: { color: "#38bdf8" },
-      handler: async (payment) => {
-        try {
-          const verifyResponse = await fetch(
-            "/api/vip-membership?action=verify",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${session.access_token}`,
-              },
-              body: JSON.stringify({
-                orderId: payment.razorpay_order_id,
-                paymentId: payment.razorpay_payment_id,
-                signature: payment.razorpay_signature,
-              }),
-            },
-          );
-          const verification = await verifyResponse.json();
-          if (!verifyResponse.ok)
-            throw new Error(
-              verification.error || "VIP payment could not be verified.",
-            );
-          await loadProfile();
-          $("#accountDialog").close();
-          say(
-            `VIP is active until ${new Date(verification.expires_at).toLocaleDateString()}. Welcome in!`,
-            "success",
-          );
-        } catch (error) {
-          say(
-            `${error.message} If your payment was charged, contact support with payment ID ${payment.razorpay_payment_id}.`,
-            "error",
-          );
-        } finally {
-          button.disabled = false;
-          button.textContent = originalText;
-        }
-      },
-      modal: {
-        ondismiss: () => {
-          button.disabled = false;
-          button.textContent = originalText;
-        },
-      },
+    if (!orderResponse.ok) throw new Error(order.error || "Could not start VIP checkout.");
+    if (!order.action || !order.hash || !order.txnid) throw new Error("The server returned an invalid PayU checkout.");
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = order.action;
+    form.style.display = "none";
+    ["key", "txnid", "amount", "productinfo", "firstname", "email", "surl", "furl", "udf1", "hash"].forEach((name) => {
+      const input = document.createElement("input");
+      input.name = name;
+      input.value = order[name];
+      form.append(input);
     });
-    checkout.on("payment.failed", (event) => {
-      button.disabled = false;
-      button.textContent = originalText;
-      say(
-        event.error?.description || "VIP payment did not complete.",
-        "error",
-      );
-    });
-    checkout.open();
+    document.body.append(form);
+    form.submit();
   } catch (error) {
     button.disabled = false;
     button.textContent = originalText;
-    say(error.message || "VIP checkout could not be opened.", "error");
+    say(error.message || "PayU checkout could not be opened.", "error");
   }
 }
 

@@ -27,16 +27,18 @@ async function authenticate(request) {
   return user?.id ? user : null;
 }
 
-function razorpayCredentials() {
-  const keyId = String(process.env.RAZORPAY_KEY_ID || "").trim();
-  const keySecret = String(process.env.RAZORPAY_KEY_SECRET || "").trim();
-  if (!keyId || !keySecret) {
-    throw new Error("Razorpay membership checkout is not configured.");
-  }
-  return { keyId, keySecret };
+function payuCredentials() {
+  const key = String(process.env.PAYU_MERCHANT_KEY || "").trim();
+  const salt = String(process.env.PAYU_MERCHANT_SALT || "").trim();
+  if (!key || !salt) throw new Error("PayU membership checkout is not configured.");
+  return { key, salt };
 }
 
-async function createOrder(user, authorization, response) {
+function payuHash(values) {
+  return crypto.createHash("sha512").update(values.join("|")).digest("hex");
+}
+
+async function createOrder(user, authorization, response, request) {
   const profileResponse = await fetch(
     `${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(user.id)}&select=id,account_status`,
     {
@@ -59,36 +61,27 @@ async function createOrder(user, authorization, response) {
       error: "This account is not eligible to purchase VIP right now.",
     });
   }
-  const { keyId, keySecret } = razorpayCredentials();
-  const upstream = await fetch("https://api.razorpay.com/v1/orders", {
-    method: "POST",
-    headers: {
-      Authorization: `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString("base64")}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      amount: 4500,
-      currency: "INR",
-      receipt: `vip_${crypto.randomUUID().replaceAll("-", "").slice(0, 24)}`,
-      notes: {
-        product: "arrai_annual_vip",
-        user_id: user.id,
-      },
-    }),
-  });
-  const result = await upstream.json().catch(() => ({}));
-  if (!upstream.ok || !result.id) {
-    return response.status(502).json({
-      error:
-        result.error?.description ||
-        "Razorpay could not create the membership checkout.",
-    });
-  }
+  const { key } = payuCredentials();
+  const txnid = `vip_${crypto.randomUUID().replaceAll("-", "").slice(0, 24)}`;
+  const amount = "45.00";
+  const productinfo = "ARRAI Annual VIP Membership";
+  const firstname = String(user.user_metadata?.full_name || user.email?.split("@")[0] || "ARRAI member").slice(0, 60);
+  const email = String(user.email || "").trim();
+  const surl = `${new URL(request.url, "http://localhost").origin}/api/vip-membership?action=payu-callback`;
+  const furl = surl;
+  const hash = payuHash([key, txnid, amount, productinfo, firstname, email, user.id, "", "", "", "", "", "", "", "", "", process.env.PAYU_MERCHANT_SALT]);
   return response.status(200).json({
-    order_id: result.id,
-    amount: result.amount,
-    currency: result.currency,
-    key_id: keyId,
+    action: "https://secure.payu.in/_payment",
+    key,
+    txnid,
+    amount,
+    productinfo,
+    firstname,
+    email,
+    surl,
+    furl,
+    udf1: user.id,
+    hash,
   });
 }
 
@@ -201,6 +194,37 @@ async function payWithWallet(user, body, response) {
   });
 }
 
+async function handlePayuCallback(body, response) {
+  const { key, salt } = payuCredentials();
+  const status = String(body.status || "");
+  const txnid = String(body.txnid || "");
+  const amount = String(body.amount || "");
+  const productinfo = String(body.productinfo || "");
+  const firstname = String(body.firstname || "");
+  const email = String(body.email || "");
+  const udf1 = String(body.udf1 || "");
+  const receivedHash = String(body.hash || "").toLowerCase();
+  const expectedHash = payuHash([salt, status, "", "", "", "", "", "", "", "", "", udf1, email, firstname, productinfo, amount, txnid, key]);
+  if (!txnid || !udf1 || receivedHash !== expectedHash) {
+    return response.redirect(303, "/community.html?membership=1&payment=failed");
+  }
+  if (status !== "success" || amount !== "45.00" || productinfo !== "ARRAI Annual VIP Membership") {
+    return response.redirect(303, "/community.html?membership=1&payment=failed");
+  }
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!serviceKey) throw new Error("Payment verified, but VIP activation is not configured.");
+  const activation = await fetch(`${supabaseUrl}/rest/v1/rpc/arrai_activate_vip_membership`, {
+    method: "POST",
+    headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ p_user_id: udf1, p_order_id: txnid, p_payment_id: String(body.mihpayid || txnid) }),
+  });
+  const result = await activation.json().catch(() => null);
+  if (!activation.ok || !Array.isArray(result) || !result[0]) {
+    throw new Error("Payment was verified, but membership activation failed.");
+  }
+  return response.redirect(303, `/community.html?membership=1&payment=success&expires=${encodeURIComponent(result[0].expires_at)}`);
+}
+
 async function verifyPayment(user, body, response) {
   const { keyId, keySecret } = razorpayCredentials();
   const { orderId, paymentId, signature } = body;
@@ -291,6 +315,10 @@ export default async function handler(request, response) {
     const action =
       request.query?.action ||
       new URL(request.url, "http://localhost").searchParams.get("action");
+    if (action === "payu-callback") {
+      if (request.method !== "POST") return response.status(405).send("Method not allowed.");
+      return await handlePayuCallback(readBody(request.body), response);
+    }
     if (
       (action === "wallet-balance" && request.method !== "GET") ||
       (action !== "wallet-balance" && request.method !== "POST")
@@ -309,10 +337,8 @@ export default async function handler(request, response) {
         user,
         request.headers.authorization,
         response,
+        request,
       );
-    if (action === "verify") {
-      return await verifyPayment(user, readBody(request.body), response);
-    }
     return response.status(404).json({ error: "Unknown membership action." });
   } catch (error) {
     console.error("VIP membership request failed:", error);
