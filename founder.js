@@ -8,7 +8,7 @@
     crown: "♛",
     bio: "Building soft places on the internet, following music home, and saving a little wonder for ordinary days. ✨",
     description: "Founder of ARRAI · Digital creator · I like thoughtful technology, honest stories, late-night melodies, and people who make the world feel kinder.",
-    avatar_url: "/assets/abhishek-rai.jpg",
+    avatar_url: "/assets/abhishek-rai-public.jpeg",
     location: "",
     links: {
       instagram: "https://instagram.com/abhishekyadav312_",
@@ -27,7 +27,7 @@
       {
         id: "first-chord",
         text: "Somewhere between a half-written dream and a song I can’t quite name, I found this little corner. May it feel like a warm light left on for you. 🌙✨",
-        image_url: "/assets/abhishek-rai.jpg",
+        image_url: "/assets/abhishek-rai-public.jpeg",
         location: "",
         music_title: "",
         music_url: "",
@@ -81,7 +81,8 @@
   const founderImageUrl = (value = "") => {
     const url = safeUrl(value);
     if (!url) return "";
-    return new URL(url, location.origin).pathname.endsWith("/founder.jpg")
+    const pathname = new URL(url, location.origin).pathname;
+    return pathname.endsWith("/founder.jpg") || pathname.endsWith("/abhishek-rai.jpg")
       ? DEFAULT_PAGE.avatar_url
       : url;
   };
@@ -143,6 +144,79 @@
         showStatus(`This page theme could not be saved: ${error.message}`, "error");
       }
     });
+
+    const atmosphereSelect = byId("founderAtmosphereSelect");
+    const validAtmospheres = [
+      "none",
+      "sakura",
+      "rose",
+      "stars",
+      "sakura-rose",
+      "flowers-stars",
+      "moon-bloom",
+      "rose-night",
+    ];
+    let atmosphere = "none";
+    try {
+      const savedAtmosphere = localStorage.getItem("arrai-founder-atmosphere");
+      if (savedAtmosphere && validAtmospheres.includes(savedAtmosphere)) atmosphere = savedAtmosphere;
+    } catch (error) {
+      console.warn("Page atmosphere preference could not be restored:", error);
+    }
+    document.body.dataset.founderAtmosphere = atmosphere;
+    if (atmosphereSelect) atmosphereSelect.value = atmosphere;
+    atmosphereSelect?.addEventListener("change", () => {
+      const selected = atmosphereSelect.value;
+      if (!validAtmospheres.includes(selected)) return;
+      try {
+        localStorage.setItem("arrai-founder-atmosphere", selected);
+        document.body.dataset.founderAtmosphere = selected;
+      } catch (error) {
+        showStatus(`This page mood could not be saved: ${error.message}`, "error");
+      }
+    });
+
+    const quoteToast = byId("founderQuoteToast");
+    const quoteText = byId("founderQuoteText");
+    const closeQuote = byId("closeFounderQuote");
+    if (quoteToast && quoteText && closeQuote) {
+      const notes = [
+        ["en", "Somewhere, someone is wishing you a softer day."],
+        ["hi", "कहीं कोई तुम्हारे दिन के थोड़ा और नरम होने की दुआ कर रहा है।"],
+        ["pa", "ਕਿਤੇ ਕੋਈ ਤੇਰੇ ਦਿਨ ਦੇ ਹੋਰ ਸੋਹਣੇ ਹੋਣ ਦੀ ਦੁਆ ਕਰ ਰਿਹਾ ਹੈ।"],
+        ["ur", "کہیں کوئی تمہارے دن کے نرم اور خوبصورت ہونے کی دعا کر رہا ہے۔"],
+        ["ar", "في مكان ما، يتمنى لك أحدهم يومًا أكثر لطفًا."],
+        ["fr", "Quelque part, quelqu’un te souhaite une journée plus douce."],
+        ["es", "En algún lugar, alguien te desea un día más amable."],
+        ["bn", "কোথাও কেউ তোমার জন্য আরও কোমল একটি দিন কামনা করছে।"],
+        ["ja", "どこかで誰かが、あなたにやさしい一日を願っている。"],
+        ["fa", "یک‌جایی، کسی برایت روزی آرام‌تر آرزو می‌کند."],
+      ];
+      let lastNoteIndex = -1;
+      let hideNoteTimer;
+      const showNote = () => {
+        let index = Math.floor(Math.random() * notes.length);
+        if (notes.length > 1 && index === lastNoteIndex) index = (index + 1) % notes.length;
+        lastNoteIndex = index;
+        const [language, text] = notes[index];
+        quoteText.lang = language;
+        quoteText.dir = ["ur", "ar", "fa"].includes(language) ? "rtl" : "auto";
+        quoteText.textContent = text;
+        quoteToast.hidden = false;
+        clearTimeout(hideNoteTimer);
+        hideNoteTimer = window.setTimeout(() => {
+          quoteToast.hidden = true;
+        }, 9000);
+      };
+      closeQuote.addEventListener("click", () => {
+        clearTimeout(hideNoteTimer);
+        quoteToast.hidden = true;
+      });
+      window.setTimeout(showNote, 8000);
+      window.setInterval(() => {
+        if (quoteToast.hidden) showNote();
+      }, 52000);
+    }
   }
 
   function updateLocalClock() {

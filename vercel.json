@@ -21,7 +21,7 @@
     { "source": "/owner", "destination": "/owner.html" },
     { "source": "/privacy", "destination": "/privacy.html" },
     { "source": "/community", "destination": "/community.html" },
-    { "source": "/membership", "destination": "/community.html?membership=1" },
+    { "source": "/membership", "destination": "/membership.html" },
     { "source": "/search", "destination": "/search.html" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/family", "destination": "/family.html" },

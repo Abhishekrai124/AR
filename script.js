@@ -21,6 +21,30 @@ if (!document.querySelector(".site-bottom-nav")) {
   }).join("");
   document.body.append(bottomNav);
 }
+const founderPublicImage = "/assets/abhishek-rai-public.jpeg";
+document.querySelectorAll('.site-bottom-nav-item[href="/abhishek-rai"]').forEach((link) => {
+  const icon = link.querySelector(".site-bottom-nav-icon");
+  if (!icon || icon.tagName === "IMG") return;
+  const image = document.createElement("img");
+  image.className = "site-bottom-nav-avatar";
+  image.src = founderPublicImage;
+  image.alt = "";
+  image.setAttribute("aria-hidden", "true");
+  icon.replaceWith(image);
+});
+document.querySelectorAll(".brand:not(.site-bottom-nav .brand)").forEach((brand) => {
+  if (brand.querySelector(".founder-brand-avatar")) return;
+  const image = document.createElement("img");
+  image.className = "founder-brand-avatar";
+  image.src = founderPublicImage;
+  image.alt = "";
+  image.setAttribute("aria-hidden", "true");
+  brand.prepend(image);
+});
+document.querySelectorAll('link[rel~="icon"]').forEach((icon) => {
+  icon.href = founderPublicImage;
+  icon.type = "image/jpeg";
+});
 const siteMoods = [
   ["English", "Some hearts feel like a quiet home.", "May your day be gentle with you.", "You are allowed to bloom slowly."],
   ["हिन्दी", "कुछ दिल, घर जैसा सुकून देते हैं।", "आज अपने साथ थोड़ा नरम रहना।", "धीरे खिलना भी खिलना ही है।"],
@@ -473,7 +497,7 @@ const updateProfileBottomNav = (user, profile = {}) => {
   const icon = link.querySelector(".site-bottom-nav-icon");
   const authenticated = Boolean(user);
   const avatarUrl = profile.avatar_url || user?.avatarUrl ||
-    (user?.email?.toLowerCase() === ownerEmail ? "/assets/abhishek-rai.jpg" : "/assets/app-icon.svg");
+    (user?.email?.toLowerCase() === ownerEmail ? founderPublicImage : "/assets/app-icon.svg");
   link.href = authenticated ? "/profile.html" : "/auth.html";
   const name = profile.display_name || user?.name || "my";
   link.setAttribute("aria-label", authenticated ? `Open ${name}'s profile` : "Sign in to profile");

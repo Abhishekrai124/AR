@@ -11,7 +11,7 @@ const requestedPage = authParams.get("next");
 const isPasswordReset = authParams.get("reset") === "1";
 const nextPage =
   requestedPage === "membership"
-    ? "community.html?membership=1"
+    ? "membership.html?checkout=1"
     : requestedPage === "chess"
       ? "chess.html"
       : requestedPage === "owner"

@@ -7,11 +7,17 @@
       name="description"
       content="The public page of Abhishek Rai: notes, music, links and moments."
     />
+    <meta property="og:title" content="Abhishek Rai — my little corner" />
+    <meta property="og:description" content="Notes, music, projects and moments from Abhishek Rai, founder of ARRAI." />
+    <meta property="og:image" content="https://arrai.in/assets/abhishek-rai-public.jpeg" />
+    <meta property="og:image:alt" content="Abhishek Rai with his guitar" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://arrai.in/assets/abhishek-rai-public.jpeg" />
     <meta name="theme-color" content="#101018" />
     <title>Abhishek Rai — my little corner</title>
-    <link rel="icon" href="assets/app-icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="style.css?v=20261005-founder-v2" />
-    <link rel="stylesheet" href="founder.css?v=20261005-founder-v2" />
+    <link rel="icon" href="assets/abhishek-rai-public.jpeg" type="image/jpeg" />
+    <link rel="stylesheet" href="style.css?v=20261012-founder-public-photo" />
+    <link rel="stylesheet" href="founder.css?v=20261012-founder-public-photo" />
   </head>
   <body class="founder-page">
     <div class="ambient one"></div>
@@ -31,6 +37,7 @@
       <nav>
         <a href="/">Home</a>
         <a class="active" href="/abhishek-rai">Abhishek</a>
+        <a href="/membership">Membership</a>
         <a href="/community">Community</a>
         <a href="/music">Music</a>
         <a href="/contact">Contact</a>
@@ -79,7 +86,18 @@
               <option value="cyber">Cyber</option>
               <option value="retro">Retro</option>
             </select>
-            <small>This changes this page only.</small>
+            <label class="founder-atmosphere-label" for="founderAtmosphereSelect">Mood</label>
+            <select id="founderAtmosphereSelect" aria-label="Choose a romantic page atmosphere">
+              <option value="none">Clean</option>
+              <option value="sakura">Sakura petals</option>
+              <option value="rose">Rose glow</option>
+              <option value="stars">Starlight</option>
+              <option value="sakura-rose">Sakura + rose</option>
+              <option value="flowers-stars">Flowers + stars</option>
+              <option value="moon-bloom">Moonlit bloom</option>
+              <option value="rose-night">Rose night</option>
+            </select>
+            <small>Page-only colour and mood; choose Clean to turn effects off.</small>
           </div>
           <div class="creator-owner-actions">
             <button id="founderVipButton" class="founder-button founder-membership-link" type="button">♡ Join VIP · ₹45/year</button>
@@ -189,6 +207,12 @@
       </section>
     </main>
 
+    <aside id="founderQuoteToast" class="founder-quote-toast" role="status" aria-live="polite" hidden>
+      <span class="founder-quote-spark" aria-hidden="true">✦</span>
+      <p id="founderQuoteText"></p>
+      <button id="closeFounderQuote" type="button" aria-label="Dismiss this little note">×</button>
+    </aside>
+
     <dialog id="visitorLocationDialog" class="founder-dialog">
       <form id="visitorLocationForm" class="founder-form">
         <div class="founder-dialog-heading">
@@ -283,8 +307,8 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase.js"></script>
-    <script src="script.js?v=20261005-founder-v2"></script>
-    <script src="founder.js?v=20261005-founder-v2"></script>
-    <script src="founder-live.js?v=20261005-founder-v2"></script>
+    <script src="script.js?v=20261012-founder-public-photo"></script>
+    <script src="founder.js?v=20261012-founder-public-photo"></script>
+    <script src="founder-live.js?v=20261012-founder-public-photo"></script>
   </body>
 </html>

@@ -117,7 +117,7 @@
       });
       const order = await response.json();
       if (response.status === 409) {
-        window.location.assign("/membership");
+        window.location.assign("/community?membership=1");
         return;
       }
       if (!response.ok) throw new Error(order.error || "Razorpay could not start VIP checkout.");
@@ -244,6 +244,18 @@
   $("#founderVipButton")?.addEventListener("click", (event) => {
     startMembershipCheckout(event.currentTarget);
   });
+  if (
+    document.body.classList.contains("membership-page") &&
+    new URLSearchParams(window.location.search).get("checkout") === "1"
+  ) {
+    const checkoutUrl = new URL(window.location.href);
+    checkoutUrl.searchParams.delete("checkout");
+    window.history.replaceState({}, "", checkoutUrl);
+    window.setTimeout(() => {
+      const button = $("#founderVipButton");
+      if (button) startMembershipCheckout(button);
+    }, 0);
+  }
 
   $("#founderNewsButton")?.addEventListener("click", async (event) => {
     const button = event.currentTarget;
