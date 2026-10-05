@@ -87,11 +87,13 @@
   let publicMusicTracks = [];
   let editingPostId = "";
   let randomTrack = null;
+  let databaseChecked = false;
+  let eventsInstalled = false;
   const founderThemeStorageKey = "arrai-founder-theme";
   const visitorSessionKey = "arrai-visitor-session";
   let visitorSessionId = "";
 
-  async function initializePageTheme() {
+  function initializePageTheme() {
     const select = byId("founderThemeSelect");
     const validThemes = window.arraiThemeOptions || ["midnight", "warm"];
     let theme = "midnight";
@@ -104,12 +106,21 @@
       console.warn("Page-only theme preference could not be restored:", error);
     }
     if (!visitorSessionId) visitorSessionId = crypto.randomUUID();
-    if (window.arraiCanUseTheme && !(await window.arraiCanUseTheme(theme))) {
-      theme = "midnight";
-      showStatus("Your saved page-only premium theme is unavailable for this account now; Midnight is selected.", "info");
-    }
     document.body.dataset.founderTheme = theme;
     if (select) select.value = theme;
+    if (window.arraiCanUseTheme && !["midnight", "warm"].includes(theme)) {
+      const savedTheme = theme;
+      window.arraiCanUseTheme(savedTheme).then((allowed) => {
+        if (!allowed && document.body.dataset.founderTheme === savedTheme) {
+          document.body.dataset.founderTheme = "midnight";
+          if (select) select.value = "midnight";
+          showStatus("Your saved page-only premium theme is unavailable for this account now; Midnight is selected.", "info");
+        }
+      }).catch((error) => {
+        console.error("The saved page theme could not be verified:", error);
+        showStatus(`The saved page theme could not be verified: ${error.message}`, "error");
+      });
+    }
     select?.addEventListener("change", async () => {
       const selected = select.value;
       if (!validThemes.includes(selected)) return;
@@ -495,9 +506,24 @@
 
   function setOwnerControls() {
     const isOwner = auth.user?.email?.toLowerCase() === OWNER_EMAIL;
-    byId("editProfileButton").hidden = !isOwner || !databaseReady;
-    byId("newPostButton").hidden = !isOwner || !databaseReady;
-    byId("ownerSignIn").hidden = auth.isAuthenticated;
+    const editButton = byId("editProfileButton");
+    const postButton = byId("newPostButton");
+    editButton.hidden = !isOwner;
+    postButton.hidden = !isOwner;
+    editButton.disabled = !databaseReady;
+    postButton.disabled = !databaseReady;
+    editButton.title = databaseReady ? "" : databaseChecked
+      ? "The page database needs its setup migration before edits can be saved."
+      : "Checking the page database; editing will be enabled when it is ready.";
+    postButton.title = editButton.title;
+    byId("ownerSignIn").hidden = isOwner;
+    const studioStatus = byId("ownerStudioStatus");
+    studioStatus.hidden = !isOwner;
+    studioStatus.textContent = databaseReady
+      ? `Owner Studio · signed in as ${auth.user.email}. Your page edits are enabled.`
+      : databaseChecked
+        ? `Owner Studio · signed in as ${auth.user.email}. This page is showing a preview; check the message above and apply supabase-founder-page-migration.sql in Supabase if it is not installed.`
+        : `Owner Studio · signed in as ${auth.user.email}. Checking the shared page data; edits will unlock when it is ready.`;
     byId("creatorPosts").dataset.owner = String(isOwner);
   }
 
@@ -789,9 +815,32 @@
   }
 
   async function initialize() {
-    await initializePageTheme();
+    initializePageTheme();
+    render();
+    setOwnerControls();
+    if (!eventsInstalled) {
+      installEvents();
+      eventsInstalled = true;
+    }
+    const authCheck = Promise.resolve(authPromise);
     try {
-      auth = await authPromise;
+      const resolvedAuth = await Promise.race([
+        authCheck,
+        new Promise((resolve) => window.setTimeout(() => resolve(null), 2500)),
+      ]);
+      if (resolvedAuth) {
+        auth = resolvedAuth;
+      } else {
+        showStatus("Checking your sign-in securely. The public page is available while that check completes.", "info");
+        authCheck.then((lateAuth) => {
+          if (lateAuth) auth = lateAuth;
+          setOwnerControls();
+          renderPosts();
+        }).catch((error) => {
+          console.error("Sign-in status could not be checked:", error);
+          showStatus(`Sign-in status could not be checked: ${error.message}`, "error");
+        });
+      }
     } catch (error) {
       showStatus("Sign-in status could not be checked. Public page editing and interactions are unavailable.", "error");
     }
@@ -805,23 +854,31 @@
       if (!data?.content) throw new Error("The public page has not been initialized in the database.");
       page = { ...DEFAULT_PAGE, ...data.content, links: { ...DEFAULT_PAGE.links, ...data.content.links } };
       databaseReady = true;
-      await loadInteractions();
     } catch (error) {
       showStatus(`Showing a preview because the public page database is not ready: ${error.message} Apply supabase-founder-page-migration.sql to enable shared edits and interactions.`, "error");
     }
-    await loadPublicMusic();
-    try {
-      await recordVisitorSession();
-      await loadVisitorStats();
-    } catch (error) {
-      console.error("Public visitor totals could not be loaded:", error);
-      showStatus(`Visitor totals are not ready yet: ${error.message} Apply the visitor analytics SQL in supabase-founder-page-migration.sql.`, "info");
-    }
-    chooseRandomTrack();
+    databaseChecked = true;
     setOwnerControls();
     render();
-    playRandomTrack();
-    installEvents();
+    if (databaseReady) {
+      try {
+        await loadInteractions();
+      } catch (error) {
+        showStatus(`The page loaded, but likes and notes could not refresh: ${error.message}`, "error");
+      }
+      render();
+    }
+    void loadPublicMusic().then(() => {
+      chooseRandomTrack();
+      renderProfile();
+      playRandomTrack();
+    });
+    void recordVisitorSession()
+      .then(loadVisitorStats)
+      .catch((error) => {
+        console.error("Public visitor totals could not be loaded:", error);
+        showStatus(`Visitor totals are not ready yet: ${error.message} Apply the visitor analytics SQL in supabase-founder-page-migration.sql.`, "info");
+      });
   }
 
   initialize().catch((error) => {

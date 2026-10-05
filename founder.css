@@ -36,6 +36,8 @@
 .founder-page header { z-index: 5; }
 .founder-main { width: min(1050px, calc(100% - 36px)); margin: 0 auto; padding: 124px 0 78px; }
 .founder-status { margin: 0 0 16px; padding: 12px 16px; border: 1px solid rgba(255, 173, 145, .28); border-radius: 13px; color: #ffe0d4; background: rgba(102, 44, 37, .4); font-size: .78rem; line-height: 1.6; }
+.owner-studio-status { margin: 0 0 16px; padding: 12px 16px; border: 1px solid rgba(242, 208, 146, .35); border-radius: 13px; color: #ffe9c0; background: rgba(76, 55, 32, .48); font-size: .74rem; line-height: 1.6; }
+.founder-page .founder-button:disabled { opacity: .55; cursor: not-allowed; }
 .creator-cover { position: relative; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 36px; align-items: center; overflow: hidden; padding: clamp(24px, 5vw, 56px); border: 1px solid var(--founder-line); border-radius: 30px; background: radial-gradient(ellipse at 6% 15%, rgba(168, 62, 53, .3), transparent 40%), linear-gradient(135deg, rgba(42, 32, 33, .98), rgba(21, 19, 22, .96)); box-shadow: 0 28px 90px rgba(0,0,0,.26); }
 .creator-cover-photo { position: relative; width: 220px; height: 260px; }
 .creator-cover-photo::before { position: absolute; inset: 12px -12px -12px 12px; border: 1px solid rgba(242, 208, 146, .6); border-radius: 120px 120px 24px 24px; content: ""; }

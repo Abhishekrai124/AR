@@ -3,6 +3,24 @@ const button = document.querySelector(".menu-button"),
 let deferredInstallPrompt;
 const header = document.querySelector("header");
 let walletMenuLink;
+const currentPath = location.pathname.replace(/\/+$/, "") || "/";
+const bottomNavItems = [
+  { href: "/", label: "Home", icon: "⌂", paths: ["/", "/index.html"] },
+  { href: "/search", label: "Search", icon: "⌕", paths: ["/search", "/search.html"] },
+  { href: "/abhishek-rai", label: "My page", icon: "✦", paths: ["/abhishek-rai", "/founder.html"] },
+  { href: "/community", label: "Community", icon: "☷", paths: ["/community", "/community.html"] },
+  { href: "/profile.html", label: "Profile", icon: "◉", paths: ["/profile", "/profile.html"] },
+];
+if (!document.querySelector(".site-bottom-nav")) {
+  const bottomNav = document.createElement("nav");
+  bottomNav.className = "site-bottom-nav";
+  bottomNav.setAttribute("aria-label", "Main navigation");
+  bottomNav.innerHTML = bottomNavItems.map((item) => {
+    const active = item.paths.includes(currentPath);
+    return `<a class="site-bottom-nav-item${active ? " active" : ""}" href="${item.href}"${active ? ' aria-current="page"' : ""}><span class="site-bottom-nav-icon" aria-hidden="true">${item.icon}</span><span>${item.label}</span></a>`;
+  }).join("");
+  document.body.append(bottomNav);
+}
 if (button && nav && header) {
   button.type = "button";
   button.textContent = "⋮";
@@ -129,24 +147,6 @@ if (header && !document.querySelector("#siteThemePicker")) {
   (document.querySelector(".header-menu-tools") || header).append(themeLabel);
 }
 
-const currentPath = location.pathname.replace(/\/+$/, "") || "/";
-const bottomNavItems = [
-  { href: "/", label: "Home", icon: "⌂", paths: ["/", "/index.html"] },
-  { href: "/search", label: "Search", icon: "⌕", paths: ["/search", "/search.html"] },
-  { href: "/abhishek-rai", label: "My page", icon: "✦", paths: ["/abhishek-rai", "/founder.html"] },
-  { href: "/community", label: "Community", icon: "☷", paths: ["/community", "/community.html"] },
-  { href: "/profile.html", label: "Profile", icon: "◉", paths: ["/profile", "/profile.html"] },
-];
-if (!document.querySelector(".site-bottom-nav")) {
-  const bottomNav = document.createElement("nav");
-  bottomNav.className = "site-bottom-nav";
-  bottomNav.setAttribute("aria-label", "Main navigation");
-  bottomNav.innerHTML = bottomNavItems.map((item) => {
-    const active = item.paths.includes(currentPath);
-    return `<a class="site-bottom-nav-item${active ? " active" : ""}" href="${item.href}"${active ? ' aria-current="page"' : ""}><span class="site-bottom-nav-icon" aria-hidden="true">${item.icon}</span><span>${item.label}</span></a>`;
-  }).join("");
-  document.body.append(bottomNav);
-}
 const natureNotes = [
   "🌱 A small beginning still counts as a beginning.",
   "🌙 You do not need to bloom on anyone else’s schedule.",
@@ -246,7 +246,10 @@ const installApp = async () => {
 };
 if ("serviceWorker" in navigator)
   window.addEventListener("load", () =>
-    navigator.serviceWorker.register("/sw.js").catch(() => {}),
+    navigator.serviceWorker
+      .register("/sw.js", { updateViaCache: "none" })
+      .then((registration) => registration.update())
+      .catch((error) => console.error("The ARRAI offline cache could not be updated:", error)),
   );
 if (nav && !nav.querySelector("[data-install-app]")) {
   const install = document.createElement("button");
