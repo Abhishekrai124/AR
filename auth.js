@@ -17,7 +17,9 @@ const nextPage =
           ? "admin.html"
           : requestedPage === "family"
             ? "family.html"
-            : "community.html";
+            : requestedPage === "founder"
+              ? "/abhishek-rai"
+              : "community.html";
 const authReturn =
   nextPage === "community.html"
     ? ""
@@ -30,7 +32,9 @@ const authReturn =
               ? "admin"
               : requestedPage === "family"
                 ? "family"
-              : "owner"
+                : requestedPage === "founder"
+                  ? "founder"
+                  : "owner"
       }`;
 
 function showStatus(message, type = "") {

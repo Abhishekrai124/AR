@@ -24,6 +24,7 @@
     { "source": "/family", "destination": "/family.html" },
     { "source": "/dm", "destination": "/dm.html" },
     { "source": "/calendar", "destination": "/calendar.html" },
+    { "source": "/abhishek-rai", "destination": "/founder.html" },
     { "source": "/:username", "destination": "/profile.html" }
   ]
 }

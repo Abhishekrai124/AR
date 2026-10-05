@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="The public page of Abhishek Rai: notes, music, links and moments."
+    />
+    <meta name="theme-color" content="#101018" />
+    <title>Abhishek Rai — my little corner</title>
+    <link rel="icon" href="/assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/style.css" />
+    <link rel="stylesheet" href="/founder.css" />
+  </head>
+  <body class="founder-page">
+    <div class="ambient one"></div>
+    <div class="ambient two"></div>
+    <header>
+      <a class="brand" href="/">ar<span>rai</span>.in <b>✦</b></a>
+      <button class="menu-button" aria-label="Open navigation" aria-expanded="false">
+        ☰
+      </button>
+      <nav>
+        <a href="/">Home</a>
+        <a class="active" href="/abhishek-rai">Abhishek</a>
+        <a href="/community">Community</a>
+        <a href="/music">Music</a>
+        <a href="/contact">Contact</a>
+      </nav>
+    </header>
+
+    <main class="founder-main">
+      <p id="founderStatus" class="founder-status" role="status" hidden></p>
+      <section class="creator-cover" aria-labelledby="creatorName">
+        <div class="creator-cover-photo">
+          <img id="creatorAvatar" src="/assets/abhishek-rai.jpg" alt="Abhishek Rai" />
+          <span id="creatorCrown" class="creator-crown" aria-hidden="true">♛</span>
+        </div>
+        <div class="creator-intro">
+          <p id="creatorTitle" class="founder-eyebrow">A little corner of the internet</p>
+          <h1 id="creatorName">Abhishek Rai</h1>
+          <p id="creatorHandle" class="creator-handle">@abhishekrai</p>
+          <p id="creatorBio" class="creator-bio"></p>
+          <p id="creatorLocation" class="creator-location" hidden></p>
+          <p id="creatorDescription" class="creator-description"></p>
+          <div class="creator-stats" aria-label="Page statistics">
+            <span><b id="postCount">0</b> moments</span>
+            <span><b id="likeCount">0</b> appreciations</span>
+            <span><b id="commentCount">0</b> notes</span>
+          </div>
+          <div id="creatorLinks" class="creator-links" aria-label="Social links"></div>
+          <div class="creator-owner-actions">
+            <button id="editProfileButton" class="founder-button founder-button-light" type="button" hidden>
+              ✦ Edit my page
+            </button>
+            <button id="newPostButton" class="founder-button" type="button" hidden>
+              ＋ Add a moment
+            </button>
+            <a id="ownerSignIn" class="founder-signin" href="/auth?next=founder" hidden>
+              Owner sign in
+            </a>
+            <a class="founder-button founder-button-light" href="/contact">Say hello ↗</a>
+          </div>
+        </div>
+        <aside id="creatorMusic" class="creator-music" hidden></aside>
+      </section>
+
+      <section id="creatorStoriesSection" class="creator-stories-section" hidden>
+        <div class="founder-section-heading">
+          <div><p class="founder-eyebrow">Tiny chapters</p><h2>Highlights</h2></div>
+        </div>
+        <div id="creatorStories" class="creator-stories"></div>
+      </section>
+
+      <section class="creator-feed" aria-labelledby="feedTitle">
+        <div class="founder-section-heading">
+          <div>
+            <p class="founder-eyebrow">Notes from my side of the sky</p>
+            <h2 id="feedTitle">The little moments</h2>
+          </div>
+          <span class="feed-live"><i></i> Public page</span>
+        </div>
+        <div id="creatorPosts" class="creator-posts" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <dialog id="founderProfileDialog" class="founder-dialog">
+      <form id="founderProfileForm" class="founder-form">
+        <div class="founder-dialog-heading">
+          <div><p class="founder-eyebrow">OWNER STUDIO</p><h2>Edit my page</h2></div>
+          <button class="founder-close" type="button" data-close-dialog aria-label="Close">×</button>
+        </div>
+        <p class="founder-dialog-note">Everything saved here is public. Only the account owner can save changes.</p>
+        <div class="founder-form-grid">
+          <label>Display name<input name="name" maxlength="60" required /></label>
+          <label>Username<input name="username" maxlength="40" /></label>
+          <label>Title / daily words<input name="title" maxlength="100" /></label>
+          <label>Crown / emoji<input name="crown" maxlength="8" /></label>
+          <label class="founder-form-wide">Short bio<textarea name="bio" maxlength="240" rows="2"></textarea></label>
+          <label class="founder-form-wide">About this page<textarea name="description" maxlength="500" rows="3"></textarea></label>
+          <label>Profile photo URL<input name="avatar_url" type="url" /></label>
+          <label>Or upload a profile photo<input name="avatar_file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" /></label>
+          <label>Optional location<input name="location" maxlength="100" placeholder="City, country" /></label>
+          <label>Featured music title<input name="music_title" maxlength="100" /></label>
+          <label>Artist / note<input name="music_artist" maxlength="100" /></label>
+          <label class="founder-form-wide">Music link or direct audio URL<input name="music_url" type="url" /></label>
+          <label class="founder-form-wide">Or upload an audio track<input name="music_file" type="file" accept="audio/mpeg,audio/mp4,audio/ogg,audio/wav,audio/aac,audio/x-m4a" /></label>
+          <label>Instagram URL<input name="instagram" type="url" /></label>
+          <label>Threads URL<input name="threads" type="url" /></label>
+          <label>X URL<input name="x" type="url" /></label>
+          <label>LinkedIn URL<input name="linkedin" type="url" /></label>
+          <label>Facebook URL<input name="facebook" type="url" /></label>
+          <label>GitHub URL<input name="github" type="url" /></label>
+          <label>YouTube URL<input name="youtube" type="url" /></label>
+          <label>Website URL<input name="website" type="url" /></label>
+          <label>Email<input name="email" type="email" /></label>
+          <label class="founder-form-wide">Highlights — one per line: title | image URL<textarea name="stories" rows="3" placeholder="On repeat | https://example.com/photo.jpg"></textarea></label>
+        </div>
+        <p class="founder-form-error" id="profileFormError" role="alert" hidden></p>
+        <div class="founder-form-actions">
+          <button class="founder-button founder-button-light" type="button" data-close-dialog>Cancel</button>
+          <button class="founder-button" type="submit">Save public page</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="founderPostDialog" class="founder-dialog">
+      <form id="founderPostForm" class="founder-form">
+        <div class="founder-dialog-heading">
+          <div><p class="founder-eyebrow">OWNER STUDIO</p><h2 id="postDialogTitle">Add a moment</h2></div>
+          <button class="founder-close" type="button" data-close-dialog aria-label="Close">×</button>
+        </div>
+        <label>What would you like to share?<textarea name="text" maxlength="1000" rows="4" required></textarea></label>
+        <div class="founder-form-grid">
+          <label>Photo URL<input name="image_url" type="url" /></label>
+          <label>Or upload a photo<input name="image_file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" /></label>
+          <label>Optional location<input name="location" maxlength="100" /></label>
+          <label>Optional date &amp; time<input name="created_at" type="datetime-local" /></label>
+          <label>Music title<input name="music_title" maxlength="100" /></label>
+          <label>Music / audio URL<input name="music_url" type="url" /></label>
+          <label class="founder-form-wide">Or upload an audio track<input name="music_file" type="file" accept="audio/mpeg,audio/mp4,audio/ogg,audio/wav,audio/aac,audio/x-m4a" /></label>
+        </div>
+        <p class="founder-form-error" id="postFormError" role="alert" hidden></p>
+        <div class="founder-form-actions">
+          <button id="deletePostButton" class="founder-button founder-button-danger" type="button" hidden>Delete moment</button>
+          <span></span>
+          <button class="founder-button founder-button-light" type="button" data-close-dialog>Cancel</button>
+          <button class="founder-button" type="submit">Publish moment</button>
+        </div>
+      </form>
+    </dialog>
+
+    <footer>
+      <a class="brand" href="/">ar<span>rai</span>.in</a>
+      <p>© 2026 Abhishek Rai · A small corner, shared with care.</p>
+      <div><a href="/">Home</a><a href="/privacy">Privacy</a></div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/supabase.js"></script>
+    <script src="/script.js"></script>
+    <script src="/founder.js"></script>
+  </body>
+</html>
