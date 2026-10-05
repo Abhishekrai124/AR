@@ -708,7 +708,7 @@ em {
 .ai-launcher {
   position: fixed;
   right: 22px;
-  bottom: calc(86px + env(safe-area-inset-bottom));
+  bottom: calc(174px + env(safe-area-inset-bottom));
   z-index: 50;
   width: 58px;
   height: 58px;
@@ -725,7 +725,7 @@ em {
 .ai-panel {
   position: fixed;
   right: 22px;
-  bottom: calc(156px + env(safe-area-inset-bottom));
+  bottom: calc(244px + env(safe-area-inset-bottom));
   z-index: 50;
   display: none;
   width: min(380px, calc(100vw - 32px));
@@ -1128,7 +1128,7 @@ header nav#siteMenu .nav-account { display: none; }
   header nav#siteMenu { right: 0; width: min(360px,calc(100vw - 32px)); }
   .wallet-balance-link { min-height: 35px; max-width: 150px; padding: 0 9px; overflow: hidden; font-size: .6rem; text-overflow: ellipsis; }
   .header-menu-tools { gap: 7px; }
-  .membership-home-prompt { right: 12px; bottom: 76px; }
+  .membership-home-prompt { right: 12px; bottom: calc(86px + env(safe-area-inset-bottom)); }
 }
 @media(prefers-reduced-motion:reduce) {
   .membership-home-prompt { animation: none; }
@@ -1373,8 +1373,8 @@ header nav#siteMenu .nav-account { display: none; }
     font-size: 0.75rem;
     padding: 11px;
   }
-  .ai-launcher { right: 15px; bottom: 15px; }
-  .ai-panel { right: 16px; bottom: 84px; }
+  .ai-launcher { right: 15px; bottom: calc(170px + env(safe-area-inset-bottom)); }
+  .ai-panel { right: 16px; bottom: calc(240px + env(safe-area-inset-bottom)); }
   .service {
     grid-template-columns: 40px 1fr;
   }
