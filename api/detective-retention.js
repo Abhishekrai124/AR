@@ -78,7 +78,26 @@ export default async function handler(request, response) {
       });
       if (!purged.ok) throw new Error("Case purge marker could not be saved.");
     }
-    return response.status(200).json({ ok: true, purgedCases: eligible.length });
+    const expiredVip = await adminFetch(
+      `/rest/v1/profiles?is_vip=eq.true&vip_badge=eq.purchased&vip_expires_at=lte.${encodeURIComponent(new Date().toISOString())}`,
+      {
+        method: "PATCH",
+        headers: { Prefer: "return=representation" },
+        body: JSON.stringify({
+          is_vip: false,
+          vip_badge: "none",
+          gold_tick: false,
+          show_vip_on_home: false,
+        }),
+      },
+    );
+    if (!expiredVip.ok) throw new Error("Expired VIP memberships could not be updated.");
+    const expiredMembers = await expiredVip.json();
+    return response.status(200).json({
+      ok: true,
+      purgedCases: eligible.length,
+      expiredVipMembers: expiredMembers.length,
+    });
   } catch (error) {
     return response.status(500).json({ error: error.message || "Scheduled retention cleanup failed." });
   }

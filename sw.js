@@ -1,5 +1,16 @@
-const CACHE = "arrai-shell-v3";
-const SHELL = ["/", "/index.html", "/style.css", "/script.js", "/manifest.webmanifest", "/assets/app-icon.svg"];
+const CACHE = "arrai-shell-v4";
+const SHELL = [
+  "/",
+  "/index.html",
+  "/founder.html",
+  "/auth.html",
+  "/style.css",
+  "/founder.css",
+  "/script.js",
+  "/founder.js",
+  "/manifest.webmanifest",
+  "/assets/app-icon.svg",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -31,7 +42,16 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(
     fetch(request).then((response) => {
-      if (response.ok) {
+      const isShellResource = SHELL.includes(url.pathname);
+      const contentType = response.headers.get("content-type") || "";
+      const expectedType = url.pathname.endsWith(".js")
+        ? contentType.includes("javascript")
+        : url.pathname.endsWith(".css")
+          ? contentType.includes("text/css")
+          : url.pathname.endsWith(".html") || url.pathname === "/"
+            ? contentType.includes("text/html")
+            : true;
+      if (response.ok && isShellResource && expectedType) {
         const copy = response.clone();
         event.waitUntil(caches.open(CACHE).then((cache) => cache.put(request, copy)));
       }

@@ -1,11 +1,13 @@
 {
   "cleanUrls": true,
   "crons": [
-    { "path": "/api/detective-retention", "schedule": "0 3 * * *" },
-    { "path": "/api/vip-expiry", "schedule": "15 3 * * *" }
+    { "path": "/api/detective-retention", "schedule": "0 3 * * *" }
   ],
   "rewrites": [
     { "source": "/api/staff", "destination": "/api/owner?action=staff" },
+    { "source": "/api/contact", "destination": "/api/public?action=contact" },
+    { "source": "/api/assistant", "destination": "/api/public?action=assistant" },
+    { "source": "/api/wallet-balance", "destination": "/api/public?action=wallet-balance" },
     { "source": "/about", "destination": "/about.html" },
     { "source": "/services", "destination": "/services.html" },
     { "source": "/detective", "destination": "/detective.html" },
