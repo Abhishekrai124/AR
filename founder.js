@@ -84,7 +84,9 @@
   let page = structuredClone(DEFAULT_PAGE);
   let comments = [];
   let reactions = [];
+  let publicMusicTracks = [];
   let editingPostId = "";
+  let randomTrack = null;
 
   function showStatus(message, type = "info") {
     const status = byId("founderStatus");
@@ -106,6 +108,41 @@
 
   function postReactions(postId, kind) {
     return reactions.filter((reaction) => reaction.post_id === postId && reaction.kind === kind);
+  }
+
+  function chooseRandomTrack() {
+    const tracks = [
+      ...publicMusicTracks,
+      page.music,
+      ...(page.posts || []).map((post) => ({
+        title: post.music_title,
+        artist: page.name,
+        url: post.music_url,
+      })),
+    ].filter((track) => {
+      const url = safeUrl(track?.url);
+      if (!url || /^https?:\/\/(www\.)?(youtube\.com|youtu\.be|spotify\.com|soundcloud\.com)\//i.test(url)) {
+        return false;
+      }
+      return /\.(mp3|m4a|ogg|wav|aac)$/i.test(new URL(url).pathname) ||
+        track?.media_type?.startsWith("audio/");
+    });
+    randomTrack = tracks.length
+      ? tracks[Math.floor(Math.random() * tracks.length)]
+      : null;
+  }
+
+  async function playRandomTrack() {
+    const audio = byId("founderRandomAudio");
+    if (!audio) return;
+    try {
+      audio.volume = 0.38;
+      await audio.play();
+      byId("founderMusicPlay").hidden = true;
+    } catch {
+      byId("founderMusicPlay").hidden = false;
+      byId("founderMusicPlay").textContent = "▶ Tap to play";
+    }
   }
 
   function renderLinks() {
@@ -141,16 +178,27 @@
       : "";
     renderLinks();
 
-    const music = page.music || {};
-    const musicUrl = safeUrl(music.url);
     const musicBox = byId("creatorMusic");
-    musicBox.hidden = !music.title && !musicUrl;
-    musicBox.innerHTML = musicBox.hidden ? "" : `
-      <span class="creator-music-icon" aria-hidden="true">♫</span>
-      <span><b>${escapeHtml(music.title || "On repeat")}</b><small>${escapeHtml(music.artist || "A track I'm loving")}</small></span>
-      ${musicUrl ? (/\.(mp3|m4a|ogg|wav|aac)(\?.*)?$/i.test(musicUrl)
-        ? `<audio controls preload="none" src="${escapeHtml(musicUrl)}" aria-label="Play ${escapeHtml(music.title || "featured music")}"></audio>`
-        : `<a class="creator-music-link" href="${escapeHtml(musicUrl)}" target="_blank" rel="noopener noreferrer">Listen ↗</a>`) : ""}`;
+    const musicUrl = safeUrl(randomTrack?.url);
+    const trackKey = `${musicUrl}|${randomTrack?.title || ""}|${randomTrack?.artist || ""}`;
+    musicBox.hidden = false;
+    if (!randomTrack) {
+      musicBox.dataset.trackKey = "no-track";
+      musicBox.innerHTML = `<span class="creator-music-icon" aria-hidden="true">♫</span><span><b>Random soundtrack, coming soon</b><small>Add an audio track to the public music room to turn on random play.</small></span><a class="creator-music-link" href="/music">Music room ↗</a>`;
+    } else if (musicBox.dataset.trackKey !== trackKey) {
+      musicBox.dataset.trackKey = trackKey;
+      musicBox.innerHTML = `
+        <span class="creator-music-icon" aria-hidden="true">♫</span>
+        <span><b>${escapeHtml(randomTrack.title || "A little soundtrack")}</b><small>${escapeHtml(randomTrack.artist || page.name)} · picked at random</small></span>
+        <div class="creator-random-controls"><audio id="founderRandomAudio" controls autoplay preload="auto" src="${escapeHtml(musicUrl)}" aria-label="Random song: ${escapeHtml(randomTrack.title || "Abhishek's music")}"></audio><button id="founderMusicPlay" class="founder-button founder-button-light" type="button" hidden>▶ Tap to play</button></div>`;
+      byId("founderRandomAudio").addEventListener("error", () => {
+        byId("founderMusicPlay").hidden = false;
+        byId("founderMusicPlay").textContent = "Track unavailable — tap to retry";
+      });
+      byId("founderMusicPlay").addEventListener("click", () => {
+        playRandomTrack().catch((error) => showStatus(error.message, "error"));
+      });
+    }
 
     const stories = (page.stories || []).filter((story) => story.title && safeUrl(story.image_url));
     byId("creatorStoriesSection").hidden = !stories.length;
@@ -223,6 +271,25 @@
     if (reactionResult.error) throw reactionResult.error;
     comments = commentResult.data || [];
     reactions = reactionResult.data || [];
+  }
+
+  async function loadPublicMusic() {
+    if (!window.arraiSupabase) return;
+    const { data, error } = await window.arraiSupabase
+      .from("music_tracks")
+      .select("title,artist,media_url,media_type")
+      .order("created_at", { ascending: false })
+      .limit(40);
+    if (error) {
+      console.error("Could not load public songs for the random soundtrack:", error);
+      return;
+    }
+    publicMusicTracks = (data || []).map((track) => ({
+      title: track.title,
+      artist: track.artist,
+      url: track.media_url,
+      media_type: track.media_type,
+    }));
   }
 
   function setOwnerControls() {
@@ -391,6 +458,10 @@
       if (nextPage.music.url && !safeUrl(nextPage.music.url)) return reportFormError("profileFormError", "Music link must be a valid http(s) URL.");
       try {
         await persistPage(nextPage);
+        chooseRandomTrack();
+        byId("creatorMusic").dataset.trackKey = "";
+        renderProfile();
+        playRandomTrack();
         byId("founderProfileDialog").close();
         showStatus("Your public page has been updated.", "success");
       } catch (error) {
@@ -430,6 +501,10 @@
           ? page.posts.map((item) => item.id === editingPostId ? post : item)
           : [post, ...(page.posts || [])];
         await persistPage({ ...page, posts });
+        chooseRandomTrack();
+        byId("creatorMusic").dataset.trackKey = "";
+        renderProfile();
+        playRandomTrack();
         byId("founderPostDialog").close();
         showStatus(editingPostId ? "Your moment has been updated." : "Your new moment is now public.", "success");
       } catch (error) {
@@ -531,8 +606,11 @@
     } catch (error) {
       showStatus(`Showing a preview because the public page database is not ready: ${error.message} Apply supabase-founder-page-migration.sql to enable shared edits and interactions.`, "error");
     }
+    await loadPublicMusic();
+    chooseRandomTrack();
     setOwnerControls();
     render();
+    playRandomTrack();
     installEvents();
   }
 

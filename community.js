@@ -257,13 +257,19 @@ async function loadProfile() {
     .eq("id", "global")
     .maybeSingle();
   const globalTheme = siteSettings?.global_theme || "midnight";
-  const personalTheme =
-    isVipActive() || isOwner() ? profile.theme || globalTheme : globalTheme;
+  const savedTheme = localStorage.getItem("arrai-site-theme");
+  const personalTheme = savedTheme === "warm"
+    ? "warm"
+    : isVipActive() || isOwner()
+      ? savedTheme || profile.theme || globalTheme
+      : globalTheme;
   document.body.dataset.globalTheme = globalTheme;
   document.body.dataset.userTheme =
-    isVipActive() || isOwner() ? personalTheme : "";
+    isVipActive() || isOwner() || personalTheme === "warm" ? personalTheme : "";
   $("#themeSelect").value = personalTheme;
   document.body.dataset.theme = personalTheme;
+  const globalThemePicker = $("#siteThemePicker");
+  if (globalThemePicker) globalThemePicker.value = personalTheme;
   say("You’re connected.", "success");
   return true;
 }
@@ -1214,7 +1220,7 @@ $("#avatarInput").addEventListener("change", async (event) => {
 
 $("#themeSelect").addEventListener("change", async (event) => {
   const theme = event.target.value;
-  if (theme !== "midnight" && !isVipActive() && !isOwner()) {
+  if (theme !== "midnight" && theme !== "warm" && !isVipActive() && !isOwner()) {
     event.target.value = profile.theme || "midnight";
     return say("Exclusive themes are available with VIP membership.", "error");
   }
@@ -1225,6 +1231,9 @@ $("#themeSelect").addEventListener("change", async (event) => {
   if (error) return say(error.message, "error");
   profile.theme = theme;
   document.body.dataset.theme = theme;
+  localStorage.setItem("arrai-site-theme", theme);
+  const globalThemePicker = $("#siteThemePicker");
+  if (globalThemePicker) globalThemePicker.value = theme;
   say("Your theme has been updated. ✦", "success");
 });
 

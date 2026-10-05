@@ -22,6 +22,133 @@ if (button && nav && header) {
   tools.append(walletMenuLink, button);
 }
 
+const siteThemeOptions = [
+  ["midnight", "Midnight"],
+  ["warm", "Warm"],
+  ["sakura", "Sakura"],
+  ["rose", "Rose"],
+  ["ocean", "Ocean"],
+  ["royal", "Royal"],
+  ["emerald", "Emerald"],
+  ["ruby", "Ruby"],
+  ["gold", "Gold"],
+  ["nebula", "Nebula"],
+  ["lava", "Lava"],
+  ["cyber", "Cyber"],
+  ["retro", "Retro"],
+];
+const siteThemeStorageKey = "arrai-site-theme";
+window.arraiThemeOptions = siteThemeOptions.map(([value]) => value);
+window.arraiApplyTheme = (theme) => {
+  if (!window.arraiThemeOptions.includes(theme)) return false;
+  document.body.dataset.theme = theme;
+  document.body.dataset.userTheme = theme;
+  return true;
+};
+try {
+  const savedTheme = localStorage.getItem(siteThemeStorageKey);
+  if (savedTheme && window.arraiApplyTheme(savedTheme)) {
+    document.documentElement.dataset.savedTheme = savedTheme;
+  }
+} catch (error) {
+  console.warn("Saved theme preference is unavailable:", error);
+}
+
+if (header && !document.querySelector("#siteThemePicker")) {
+  const themeLabel = document.createElement("label");
+  themeLabel.className = "site-theme-picker";
+  themeLabel.htmlFor = "siteThemePicker";
+  themeLabel.title = "Change the website colours";
+  themeLabel.innerHTML = `<span aria-hidden="true">◐</span><span class="site-theme-label">Theme</span>`;
+  const themePicker = document.createElement("select");
+  themePicker.id = "siteThemePicker";
+  themePicker.setAttribute("aria-label", "Choose website theme");
+  themePicker.innerHTML = siteThemeOptions
+    .map(([value, label]) => `<option value="${value}">${label}</option>`)
+    .join("");
+  const currentTheme = document.body.dataset.userTheme ||
+    document.body.dataset.theme ||
+    document.body.dataset.globalTheme ||
+    "midnight";
+  themePicker.value = window.arraiThemeOptions.includes(currentTheme)
+    ? currentTheme
+    : "midnight";
+  themePicker.addEventListener("change", async () => {
+    const selectedTheme = themePicker.value;
+    if (!siteThemeOptions.some(([value]) => value === selectedTheme)) return;
+    if (!["midnight", "warm"].includes(selectedTheme)) {
+      const auth = (await window.arraiAuth) || {
+        isAuthenticated: false,
+        user: null,
+      };
+      if (!auth.isAuthenticated) {
+        themePicker.value = document.body.dataset.userTheme || "midnight";
+        window.cuteNotice("Sign in to choose a personal colour theme.", "warning");
+        return;
+      }
+      const isOwner = auth.user?.email?.toLowerCase() === ownerEmail;
+      if (!isOwner) {
+        if (!window.arraiSupabase) {
+          themePicker.value = document.body.dataset.userTheme || "midnight";
+          window.cuteNotice("Account theme access is unavailable right now.", "error");
+          return;
+        }
+        const { data: profile, error } = await window.arraiSupabase
+          .from("profiles")
+          .select("is_vip,vip_expires_at")
+          .eq("id", auth.user.sub)
+          .maybeSingle();
+        if (error) {
+          themePicker.value = document.body.dataset.userTheme || "midnight";
+          window.cuteNotice(`Your theme access could not be checked: ${error.message}`, "error");
+          return;
+        }
+        const vipActive = profile?.is_vip &&
+          (!profile.vip_expires_at || Date.parse(profile.vip_expires_at) > Date.now());
+        if (!vipActive) {
+          themePicker.value = document.body.dataset.userTheme || "midnight";
+          window.cuteNotice("Personal colour themes are available to ARRAI VIP members.", "warning");
+          return;
+        }
+      }
+    }
+    try {
+      localStorage.setItem(siteThemeStorageKey, selectedTheme);
+      window.arraiApplyTheme(selectedTheme);
+      if (selectedTheme === "midnight") delete document.documentElement.dataset.savedTheme;
+      else document.documentElement.dataset.savedTheme = selectedTheme;
+      const profileTheme = document.querySelector("#themeSelect");
+      if (profileTheme && [...profileTheme.options].some((option) => option.value === selectedTheme)) {
+        profileTheme.value = selectedTheme;
+      }
+      window.cuteNotice(`${themePicker.selectedOptions[0].textContent} theme applied across the site.`, "success");
+    } catch (error) {
+      window.cuteNotice(`Your theme could not be saved: ${error.message}`, "error");
+    }
+  });
+  themeLabel.append(themePicker);
+  (document.querySelector(".header-menu-tools") || header).append(themeLabel);
+}
+
+const currentPath = location.pathname.replace(/\/+$/, "") || "/";
+const bottomNavItems = [
+  { href: "/", label: "Home", icon: "⌂", paths: ["/", "/index.html"] },
+  { href: "/search", label: "Search", icon: "⌕", paths: ["/search", "/search.html"] },
+  { href: "/abhishek-rai", label: "My page", icon: "✦", paths: ["/abhishek-rai", "/founder.html"] },
+  { href: "/community", label: "Community", icon: "☷", paths: ["/community", "/community.html"] },
+  { href: "/profile.html", label: "Profile", icon: "◉", paths: ["/profile", "/profile.html"] },
+];
+if (!document.querySelector(".site-bottom-nav")) {
+  const bottomNav = document.createElement("nav");
+  bottomNav.className = "site-bottom-nav";
+  bottomNav.setAttribute("aria-label", "Main navigation");
+  bottomNav.innerHTML = bottomNavItems.map((item) => {
+    const active = item.paths.includes(currentPath);
+    return `<a class="site-bottom-nav-item${active ? " active" : ""}" href="${item.href}"${active ? ' aria-current="page"' : ""}><span class="site-bottom-nav-icon" aria-hidden="true">${item.icon}</span><span>${item.label}</span></a>`;
+  }).join("");
+  document.body.append(bottomNav);
+}
+
 // The shared stage manager for every page: navigation, themes, notices and
 // Miss Makima meet here so the site feels like one connected little world.
 // Friendly, app-style confirmations used across the site.
@@ -497,7 +624,12 @@ const applyGlobalTheme = async () => {
     ? data.special_day_theme || "sakura"
     : data?.global_theme || "midnight";
   document.body.dataset.globalTheme = theme;
-  if (!document.body.dataset.userTheme) document.body.dataset.theme = theme;
+  const savedTheme = localStorage.getItem(siteThemeStorageKey);
+  if (savedTheme && window.arraiApplyTheme(savedTheme)) {
+    document.documentElement.dataset.savedTheme = savedTheme;
+  } else if (!document.body.dataset.userTheme) {
+    document.body.dataset.theme = theme;
+  }
   if (specialActive && !document.querySelector(".special-day-banner")) {
     const banner = document.createElement("aside");
     banner.className = "special-day-banner";
