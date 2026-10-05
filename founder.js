@@ -87,6 +87,207 @@
   let publicMusicTracks = [];
   let editingPostId = "";
   let randomTrack = null;
+  const founderThemeStorageKey = "arrai-founder-theme";
+  const visitorSessionKey = "arrai-visitor-session";
+  let visitorSessionId = "";
+
+  async function initializePageTheme() {
+    const select = byId("founderThemeSelect");
+    const validThemes = window.arraiThemeOptions || ["midnight", "warm"];
+    let theme = "midnight";
+    try {
+      const savedTheme = localStorage.getItem(founderThemeStorageKey);
+      if (savedTheme && validThemes.includes(savedTheme)) theme = savedTheme;
+      visitorSessionId = sessionStorage.getItem(visitorSessionKey) || crypto.randomUUID();
+      sessionStorage.setItem(visitorSessionKey, visitorSessionId);
+    } catch (error) {
+      console.warn("Page-only theme preference could not be restored:", error);
+    }
+    if (!visitorSessionId) visitorSessionId = crypto.randomUUID();
+    if (window.arraiCanUseTheme && !(await window.arraiCanUseTheme(theme))) {
+      theme = "midnight";
+      showStatus("Your saved page-only premium theme is unavailable for this account now; Midnight is selected.", "info");
+    }
+    document.body.dataset.founderTheme = theme;
+    if (select) select.value = theme;
+    select?.addEventListener("change", async () => {
+      const selected = select.value;
+      if (!validThemes.includes(selected)) return;
+      if (window.arraiCanUseTheme && !(await window.arraiCanUseTheme(selected))) {
+        select.value = document.body.dataset.founderTheme || "midnight";
+        showStatus("Sign in to use Warm, or choose an eligible account for the other page-only themes.", "info");
+        return;
+      }
+      try {
+        localStorage.setItem(founderThemeStorageKey, selected);
+        document.body.dataset.founderTheme = selected;
+      } catch (error) {
+        showStatus(`This page theme could not be saved: ${error.message}`, "error");
+      }
+    });
+  }
+
+  function updateLocalClock() {
+    const clock = byId("founderLocalTime");
+    if (!clock) return;
+    clock.dateTime = new Date().toISOString();
+    clock.textContent = new Intl.DateTimeFormat(undefined, {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    }).format(new Date());
+  }
+
+  async function loadVisitorStats() {
+    const { data, error } = await window.arraiSupabase.rpc("arrai_public_visitor_stats");
+    if (error) throw error;
+    const total = Number(data?.visits || 0);
+    byId("siteVisitorCount").textContent = new Intl.NumberFormat().format(total);
+    const cities = Array.isArray(data?.cities) ? data.cities : [];
+    byId("siteVisitorPlaces").textContent = cities.length
+      ? `Opt-in city lights: ${cities.map((item) => `${item.city}, ${item.region}, ${item.country} · ${item.visits}`).join("  ✦  ")}. Only groups of 3+ are shown.`
+      : "Only grouped city/state/country totals with at least three opt-ins appear here. No IP addresses, names or precise locations are published.";
+  }
+
+  async function recordVisitorSession() {
+    const { error } = await window.arraiSupabase.rpc("arrai_record_site_visit", {
+      p_session_id: visitorSessionId,
+    });
+    if (error) throw error;
+  }
+
+  async function showCityWeather(city, region, country) {
+    const weather = byId("founderWeather");
+    weather.hidden = false;
+    weather.textContent = `Checking the sky above ${city}…`;
+    const lookupUrl = new URL("https://geocoding-api.open-meteo.com/v1/search");
+    lookupUrl.search = new URLSearchParams({ name: city, count: "10", language: "en", format: "json" });
+    const placeResponse = await fetch(lookupUrl);
+    if (!placeResponse.ok) throw new Error(`City lookup failed (${placeResponse.status}).`);
+    const placeData = await placeResponse.json();
+    const place = (placeData.results || []).find((item) =>
+      item.name?.toLowerCase() === city.toLowerCase() &&
+      (!region || item.admin1?.toLowerCase() === region.toLowerCase()) &&
+      (!country || item.country?.toLowerCase() === country.toLowerCase()),
+    );
+    if (!place) throw new Error("Could not match that city to a weather station.");
+    const weatherUrl = new URL("https://api.open-meteo.com/v1/forecast");
+    weatherUrl.search = new URLSearchParams({
+      latitude: String(place.latitude),
+      longitude: String(place.longitude),
+      current: "temperature_2m,apparent_temperature,weather_code",
+      timezone: place.timezone || "auto",
+    });
+    const weatherResponse = await fetch(weatherUrl);
+    if (!weatherResponse.ok) throw new Error(`Weather lookup failed (${weatherResponse.status}).`);
+    const result = await weatherResponse.json();
+    const current = result.current;
+    if (!current || !Number.isFinite(current.temperature_2m)) {
+      throw new Error("Current weather is not available for that city.");
+    }
+    const symbols = {
+      0: "☀️ Clear",
+      1: "🌤️ Mostly clear",
+      2: "⛅ Partly cloudy",
+      3: "☁️ Cloudy",
+      45: "🌫️ Foggy",
+      48: "🌫️ Foggy",
+      51: "🌦️ Drizzle",
+      53: "🌦️ Drizzle",
+      55: "🌧️ Drizzle",
+      61: "🌧️ Rain",
+      63: "🌧️ Rain",
+      65: "🌧️ Heavy rain",
+      71: "🌨️ Snow",
+      73: "🌨️ Snow",
+      75: "❄️ Heavy snow",
+      80: "🌦️ Showers",
+      81: "🌧️ Showers",
+      82: "⛈️ Heavy showers",
+      95: "⛈️ Thunderstorm",
+      96: "⛈️ Thunderstorm",
+      99: "⛈️ Thunderstorm",
+    };
+    const localTime = new Intl.DateTimeFormat(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+      timeZone: place.timezone || undefined,
+    }).format(new Date());
+    weather.textContent = `${symbols[current.weather_code] || "🌥️ Sky"} · ${Math.round(current.temperature_2m)}°C in ${place.name} · ${localTime}`;
+    weather.title = `Feels like ${Math.round(current.apparent_temperature)}°C. Weather from Open-Meteo.`;
+  }
+
+  function installVisitorSharing() {
+    const dialog = byId("visitorLocationDialog");
+    const form = byId("visitorLocationForm");
+    byId("shareVisitorCity").addEventListener("click", () => dialog.showModal());
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const values = new FormData(form);
+      if (!values.get("consent")) return;
+      const location = {
+        city: String(values.get("city") || "").trim(),
+        region: String(values.get("region") || "").trim(),
+        country: String(values.get("country") || "").trim(),
+      };
+      const errorTarget = byId("visitorLocationError");
+      errorTarget.hidden = true;
+      try {
+        const { error } = await window.arraiSupabase.rpc("arrai_share_visitor_city", {
+          p_session_id: visitorSessionId,
+          p_city: location.city,
+          p_region: location.region,
+          p_country: location.country,
+          p_consent: values.get("consent") === "on",
+        });
+        if (error) throw error;
+        sessionStorage.setItem("arrai-visitor-city", JSON.stringify(location));
+        dialog.close();
+        showStatus("Thanks for sharing a little city light. Your location stays in anonymous, grouped totals.", "success");
+        try {
+          await loadVisitorStats();
+        } catch (error) {
+          showStatus(`Your city was shared, but totals could not refresh: ${error.message}`, "error");
+        }
+        try {
+          await showCityWeather(location.city, location.region, location.country);
+        } catch (error) {
+          const weather = byId("founderWeather");
+          weather.hidden = false;
+          weather.textContent = `Weather unavailable: ${error.message}`;
+        }
+      } catch (error) {
+        errorTarget.textContent = error.message || "Your city could not be shared.";
+        errorTarget.hidden = false;
+      }
+    });
+  }
+
+  function installPageEngagementEvents() {
+    const themeSelect = byId("founderThemeSelect");
+    const pageTheme = document.body.dataset.founderTheme || "midnight";
+    if (themeSelect) themeSelect.value = pageTheme;
+    byId("founderLocalTime").dateTime = new Date().toISOString();
+    updateLocalClock();
+    window.setInterval(updateLocalClock, 60_000);
+    installVisitorSharing();
+    try {
+      const savedCity = sessionStorage.getItem("arrai-visitor-city");
+      if (savedCity) {
+        const city = JSON.parse(savedCity);
+        if (city.city && city.region && city.country) {
+          showCityWeather(city.city, city.region, city.country).catch((error) => {
+            byId("founderWeather").hidden = false;
+            byId("founderWeather").textContent = `Weather unavailable: ${error.message}`;
+          });
+        }
+      }
+    } catch (error) {
+      console.warn("The optional city weather preference could not be restored:", error);
+    }
+  }
 
   function showStatus(message, type = "info") {
     const status = byId("founderStatus");
@@ -395,6 +596,7 @@
   }
 
   function installEvents() {
+    installPageEngagementEvents();
     byId("editProfileButton").addEventListener("click", openProfileEditor);
     byId("newPostButton").addEventListener("click", () => openPostEditor());
     document.querySelectorAll("[data-close-dialog]").forEach((button) =>
@@ -587,6 +789,7 @@
   }
 
   async function initialize() {
+    await initializePageTheme();
     try {
       auth = await authPromise;
     } catch (error) {
@@ -607,6 +810,13 @@
       showStatus(`Showing a preview because the public page database is not ready: ${error.message} Apply supabase-founder-page-migration.sql to enable shared edits and interactions.`, "error");
     }
     await loadPublicMusic();
+    try {
+      await recordVisitorSession();
+      await loadVisitorStats();
+    } catch (error) {
+      console.error("Public visitor totals could not be loaded:", error);
+      showStatus(`Visitor totals are not ready yet: ${error.message} Apply the visitor analytics SQL in supabase-founder-page-migration.sql.`, "info");
+    }
     chooseRandomTrack();
     setOwnerControls();
     render();

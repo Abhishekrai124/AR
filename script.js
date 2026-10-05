@@ -45,6 +45,30 @@ window.arraiApplyTheme = (theme) => {
   document.body.dataset.userTheme = theme;
   return true;
 };
+window.arraiCanUseTheme = async (theme) => {
+  if (!window.arraiThemeOptions.includes(theme)) return false;
+  if (["midnight", "warm"].includes(theme)) return true;
+  let auth;
+  try {
+    auth = await window.arraiAuth;
+  } catch {
+    return false;
+  }
+  if (!auth?.isAuthenticated) return false;
+  if (auth.user?.email?.toLowerCase() === "abhishekrai6897@gmail.com") return true;
+  if (!window.arraiSupabase) return false;
+  const { data: profile, error } = await window.arraiSupabase
+    .from("profiles")
+    .select("is_vip,vip_expires_at")
+    .eq("id", auth.user.sub)
+    .maybeSingle();
+  if (error) {
+    console.error("Could not verify personal theme eligibility:", error);
+    return false;
+  }
+  return Boolean(profile?.is_vip &&
+    (!profile.vip_expires_at || Date.parse(profile.vip_expires_at) > Date.now()));
+};
 try {
   const savedTheme = localStorage.getItem(siteThemeStorageKey);
   if (savedTheme && window.arraiApplyTheme(savedTheme)) {
@@ -76,41 +100,16 @@ if (header && !document.querySelector("#siteThemePicker")) {
   themePicker.addEventListener("change", async () => {
     const selectedTheme = themePicker.value;
     if (!siteThemeOptions.some(([value]) => value === selectedTheme)) return;
-    if (!["midnight", "warm"].includes(selectedTheme)) {
-      const auth = (await window.arraiAuth) || {
-        isAuthenticated: false,
-        user: null,
-      };
-      if (!auth.isAuthenticated) {
-        themePicker.value = document.body.dataset.userTheme || "midnight";
-        window.cuteNotice("Sign in to choose a personal colour theme.", "warning");
-        return;
-      }
-      const isOwner = auth.user?.email?.toLowerCase() === ownerEmail;
-      if (!isOwner) {
-        if (!window.arraiSupabase) {
-          themePicker.value = document.body.dataset.userTheme || "midnight";
-          window.cuteNotice("Account theme access is unavailable right now.", "error");
-          return;
-        }
-        const { data: profile, error } = await window.arraiSupabase
-          .from("profiles")
-          .select("is_vip,vip_expires_at")
-          .eq("id", auth.user.sub)
-          .maybeSingle();
-        if (error) {
-          themePicker.value = document.body.dataset.userTheme || "midnight";
-          window.cuteNotice(`Your theme access could not be checked: ${error.message}`, "error");
-          return;
-        }
-        const vipActive = profile?.is_vip &&
-          (!profile.vip_expires_at || Date.parse(profile.vip_expires_at) > Date.now());
-        if (!vipActive) {
-          themePicker.value = document.body.dataset.userTheme || "midnight";
-          window.cuteNotice("Personal colour themes are available to ARRAI VIP members.", "warning");
-          return;
-        }
-      }
+    if (!(await window.arraiCanUseTheme(selectedTheme))) {
+      themePicker.value = document.body.dataset.userTheme || "midnight";
+      const auth = await window.arraiAuth;
+      window.cuteNotice(
+        auth?.isAuthenticated
+          ? "Personal colour themes are available to ARRAI VIP members."
+          : "Sign in to choose a personal colour theme.",
+        "warning",
+      );
+      return;
     }
     try {
       localStorage.setItem(siteThemeStorageKey, selectedTheme);
@@ -147,6 +146,30 @@ if (!document.querySelector(".site-bottom-nav")) {
     return `<a class="site-bottom-nav-item${active ? " active" : ""}" href="${item.href}"${active ? ' aria-current="page"' : ""}><span class="site-bottom-nav-icon" aria-hidden="true">${item.icon}</span><span>${item.label}</span></a>`;
   }).join("");
   document.body.append(bottomNav);
+}
+const natureNotes = [
+  "🌱 A small beginning still counts as a beginning.",
+  "🌙 You do not need to bloom on anyone else’s schedule.",
+  "🌿 Take one slow breath. You are allowed to grow gently.",
+  "✨ Even the quietest night leaves room for a little light.",
+  "🌼 Rest is part of becoming, too.",
+];
+try {
+  const today = new Date().toISOString().slice(0, 10);
+  if (localStorage.getItem("arrai-nature-note-day") !== today) {
+    window.setTimeout(() => {
+      if (typeof window.cuteNotice !== "function") return;
+      const note = natureNotes[Math.floor(Math.random() * natureNotes.length)];
+      window.cuteNotice(note, "success");
+      try {
+        localStorage.setItem("arrai-nature-note-day", today);
+      } catch (error) {
+        console.warn("The daily nature note could not be remembered:", error);
+      }
+    }, 2200);
+  }
+} catch (error) {
+  console.warn("Daily nature-note preference is unavailable:", error);
 }
 
 // The shared stage manager for every page: navigation, themes, notices and

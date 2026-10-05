@@ -119,3 +119,142 @@ create policy "Page owner removes founder page comments"
   using (lower(auth.jwt() ->> 'email') = 'abhishekrai6897@gmail.com');
 grant select on public.founder_page_comments to anon, authenticated;
 grant insert, delete on public.founder_page_comments to authenticated;
+
+-- Session-only visitor totals. A random browser session UUID is used instead
+-- of network identifiers; IP addresses and precise coordinates are not stored.
+create table if not exists public.founder_page_visits (
+  session_id uuid not null,
+  visit_date date not null default current_date,
+  created_at timestamptz not null default now(),
+  primary key (session_id, visit_date)
+);
+alter table public.founder_page_visits enable row level security;
+
+create table if not exists public.founder_page_visitor_cities (
+  session_id uuid not null,
+  shared_on date not null default current_date,
+  city text not null check (char_length(trim(city)) between 2 and 80),
+  region text not null check (char_length(trim(region)) between 2 and 80),
+  country text not null check (char_length(trim(country)) between 2 and 80),
+  primary key (session_id, shared_on),
+  foreign key (session_id, shared_on)
+    references public.founder_page_visits(session_id, visit_date)
+    on delete cascade
+);
+alter table public.founder_page_visitor_cities enable row level security;
+
+create table if not exists public.founder_page_visit_totals (
+  id text primary key check (id = 'public'),
+  total_visits bigint not null default 0 check (total_visits >= 0)
+);
+alter table public.founder_page_visit_totals enable row level security;
+insert into public.founder_page_visit_totals (id, total_visits)
+values ('public', 0)
+on conflict (id) do nothing;
+revoke all on public.founder_page_visits, public.founder_page_visitor_cities,
+  public.founder_page_visit_totals from public, anon, authenticated;
+
+create or replace function public.arrai_record_site_visit(p_session_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_new_visit uuid;
+begin
+  if p_session_id is null then
+    raise exception 'A temporary visitor session is required.';
+  end if;
+  delete from public.founder_page_visits
+  where visit_date < current_date - 30;
+  insert into public.founder_page_visits (session_id, visit_date)
+  values (p_session_id, current_date)
+  on conflict (session_id, visit_date) do nothing
+  returning session_id into v_new_visit;
+  if v_new_visit is not null then
+    update public.founder_page_visit_totals
+    set total_visits = total_visits + 1
+    where id = 'public';
+  end if;
+end;
+$$;
+revoke all on function public.arrai_record_site_visit(uuid) from public;
+grant execute on function public.arrai_record_site_visit(uuid) to anon, authenticated;
+
+drop function if exists public.arrai_share_visitor_city(uuid, text, text, text);
+create or replace function public.arrai_share_visitor_city(
+  p_session_id uuid,
+  p_city text,
+  p_region text,
+  p_country text,
+  p_consent boolean
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  if p_session_id is null
+    or p_consent is not true
+    or char_length(trim(coalesce(p_city, ''))) not between 2 and 80
+    or char_length(trim(coalesce(p_region, ''))) not between 2 and 80
+    or char_length(trim(coalesce(p_country, ''))) not between 2 and 80
+  then
+    raise exception 'Enter a city, state or region, and country (2–80 characters each).';
+  end if;
+  if not exists (
+    select 1 from public.founder_page_visits
+    where session_id = p_session_id and visit_date = current_date
+  ) then
+    raise exception 'Open the public page before sharing a city.';
+  end if;
+  insert into public.founder_page_visitor_cities
+    (session_id, shared_on, city, region, country)
+  values (
+    p_session_id, current_date,
+    trim(p_city), trim(p_region), trim(p_country)
+  )
+  on conflict (session_id, shared_on) do update
+    set city = excluded.city, region = excluded.region, country = excluded.country;
+end;
+$$;
+revoke all on function public.arrai_share_visitor_city(uuid, text, text, text, boolean) from public;
+grant execute on function public.arrai_share_visitor_city(uuid, text, text, text, boolean) to anon, authenticated;
+
+create or replace function public.arrai_public_visitor_stats()
+returns jsonb
+language sql
+stable
+security definer
+set search_path = public, pg_temp
+as $$
+  with city_totals as (
+    select
+      initcap(lower(city)) as city,
+      initcap(lower(region)) as region,
+      initcap(lower(country)) as country,
+      count(*)::integer as visits
+    from public.founder_page_visitor_cities
+    where shared_on >= current_date - 30
+    group by lower(city), lower(region), lower(country)
+    having count(*) >= 3
+    order by count(*) desc, country, region, city
+    limit 8
+  )
+  select jsonb_build_object(
+    'visits', (select total_visits from public.founder_page_visit_totals where id = 'public'),
+    'cities', coalesce(
+      (select jsonb_agg(jsonb_build_object(
+        'city', city,
+        'region', region,
+        'country', country,
+        'visits', visits
+      )) from city_totals),
+      '[]'::jsonb
+    )
+  );
+$$;
+revoke all on function public.arrai_public_visitor_stats() from public;
+grant execute on function public.arrai_public_visitor_stats() to anon, authenticated;

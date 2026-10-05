@@ -50,6 +50,25 @@
             <span><b id="commentCount">0</b> notes</span>
           </div>
           <div id="creatorLinks" class="creator-links" aria-label="Social links"></div>
+          <div class="creator-theme-tools">
+            <label for="founderThemeSelect">Page colours</label>
+            <select id="founderThemeSelect" aria-label="Choose a colour theme for Abhishek's page">
+              <option value="midnight">Midnight</option>
+              <option value="warm">Warm</option>
+              <option value="sakura">Sakura</option>
+              <option value="rose">Rose</option>
+              <option value="ocean">Ocean</option>
+              <option value="royal">Royal</option>
+              <option value="emerald">Emerald</option>
+              <option value="ruby">Ruby</option>
+              <option value="gold">Gold</option>
+              <option value="nebula">Nebula</option>
+              <option value="lava">Lava</option>
+              <option value="cyber">Cyber</option>
+              <option value="retro">Retro</option>
+            </select>
+            <small>This changes this page only.</small>
+          </div>
           <div class="creator-owner-actions">
             <button id="editProfileButton" class="founder-button founder-button-light" type="button" hidden>
               ✦ Edit my page
@@ -64,6 +83,19 @@
           </div>
         </div>
         <aside id="creatorMusic" class="creator-music" hidden></aside>
+      </section>
+
+      <section class="founder-visit-card" aria-labelledby="visitCardTitle">
+        <div class="founder-visit-copy">
+          <p class="founder-eyebrow">A little hello from around the world</p>
+          <h2 id="visitCardTitle"><span id="siteVisitorCount">—</span> visits, shared kindly.</h2>
+          <p id="siteVisitorPlaces">Only city-level totals with at least three opt-ins appear here. No IP addresses or precise locations are published.</p>
+        </div>
+        <div class="founder-visit-actions">
+          <time id="founderLocalTime"></time>
+          <span id="founderWeather" class="founder-weather" hidden></span>
+          <button id="shareVisitorCity" class="founder-button founder-button-light" type="button">Share my city (optional)</button>
+        </div>
       </section>
 
       <section id="creatorStoriesSection" class="creator-stories-section" hidden>
@@ -84,6 +116,27 @@
         <div id="creatorPosts" class="creator-posts" aria-live="polite"></div>
       </section>
     </main>
+
+    <dialog id="visitorLocationDialog" class="founder-dialog">
+      <form id="visitorLocationForm" class="founder-form">
+        <div class="founder-dialog-heading">
+          <div><p class="founder-eyebrow">YOUR CHOICE, YOUR PRIVACY</p><h2>Share a little city light</h2></div>
+          <button class="founder-close" type="button" data-close-dialog aria-label="Close">×</button>
+        </div>
+        <p class="founder-dialog-note">If you choose to share, only your city, state/region and country are counted with other visitors. Your name, IP address, exact area and coordinates are never shown or saved here. A city appears publicly only after at least three visitors opt in. A city lookup for local weather is sent to Open-Meteo. We do not guess your MLA/CM from a city or IP; constituency boundaries need a verified official source.</p>
+        <div class="founder-form-grid">
+          <label>City<input name="city" maxlength="80" autocomplete="address-level2" required /></label>
+          <label>State / region<input name="region" maxlength="80" autocomplete="address-level1" required /></label>
+          <label class="founder-form-wide">Country<input name="country" maxlength="80" autocomplete="country-name" required /></label>
+        </div>
+        <label class="visitor-consent"><input name="consent" type="checkbox" required /><span>I agree to share these city-level details in anonymous, grouped visitor totals.</span></label>
+        <p id="visitorLocationError" class="founder-form-error" role="alert" hidden></p>
+        <div class="founder-form-actions">
+          <button class="founder-button founder-button-light" type="button" data-close-dialog>Not now</button>
+          <button class="founder-button" type="submit">Share city &amp; see weather</button>
+        </div>
+      </form>
+    </dialog>
 
     <dialog id="founderProfileDialog" class="founder-dialog">
       <form id="founderProfileForm" class="founder-form">

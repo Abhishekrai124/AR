@@ -34,11 +34,12 @@
     </header>
     <main class="auth-main">
       <section class="auth-card" aria-labelledby="authTitle">
-        <p class="eyebrow">Your Arrai profile</p>
+        <div class="auth-dream-mark" aria-hidden="true">✦</div>
+        <p class="eyebrow">A gentle doorway to your ARRAI world</p>
         <h1 id="authTitle">Welcome <em>in.</em></h1>
         <p class="auth-copy">
-          Create an account with email and password, or continue securely with
-          Google.
+          Sign in for your little corner, kind conversations and good things
+          still waiting to happen.
         </p>
         <form class="auth-form" id="loginForm">
           <label
@@ -88,11 +89,17 @@
             Create account <b>✦</b>
           </button>
         </form>
+        <form class="auth-form" id="resetForm" hidden>
+          <label>New password<input name="password" type="password" autocomplete="new-password" minlength="6" required placeholder="At least 6 characters" /></label>
+          <button class="button primary" type="submit">Save new password <b>✦</b></button>
+        </form>
         <div class="auth-actions">
           <button class="button" id="switchAuth" type="button">
             Create a new account</button
           ><button class="button" id="googleButton" type="button">
             Continue with Google</button
+          ><button class="text-button auth-reset-button" id="resetPasswordButton" type="button" hidden>
+            I forgot my password</button
           ><a
             class="button primary"
             id="communityButton"
