@@ -21,7 +21,22 @@ if (!document.querySelector(".site-bottom-nav")) {
   }).join("");
   document.body.append(bottomNav);
 }
-const founderPublicImage = "/assets/abhishek-rai-public.jpeg";
+const founderPublicImage = location.protocol === "file:"
+  ? "assets/abhishek-rai-public.jpeg"
+  : "/assets/abhishek-rai-public.jpeg";
+const founderPhotoSource = (value) => {
+  if (!value) return founderPublicImage;
+  try {
+    const path = new URL(value, document.baseURI).pathname;
+    return path.endsWith("/founder.jpg") || path.endsWith("/abhishek-rai.jpg")
+      ? founderPublicImage
+      : location.protocol === "file:" && path.startsWith("/assets/")
+        ? `assets/${path.slice("/assets/".length)}`
+        : value;
+  } catch {
+    return founderPublicImage;
+  }
+};
 document.querySelectorAll('.site-bottom-nav-item[href="/abhishek-rai"]').forEach((link) => {
   const icon = link.querySelector(".site-bottom-nav-icon");
   if (!icon || icon.tagName === "IMG") return;
@@ -123,6 +138,11 @@ if (button && nav && header) {
   walletMenuLink.setAttribute("aria-label", "Open ARRAI Pay wallet");
   button.replaceWith(tools);
   tools.append(walletMenuLink, button);
+}
+const themePicker = document.querySelector(".site-theme-picker");
+if (themePicker && !themePicker.isConnected) {
+  (document.querySelector("header .header-menu-tools") || document.querySelector("header"))
+    ?.append(themePicker);
 }
 
 const siteThemeOptions = [
@@ -1031,7 +1051,7 @@ const loadPublicHomeContent = async () => {
           .join("");
     }
     const pic = document.querySelector("#heroFounderPic");
-    if (pic && settings.hero_image_url) pic.src = settings.hero_image_url;
+    if (pic && settings.hero_image_url) pic.src = founderPhotoSource(settings.hero_image_url);
     const name = document.querySelector("#founder-title span");
     if (name && settings.founder_name) name.textContent = settings.founder_name;
     const role = document.querySelector(".founder-role");
@@ -1065,7 +1085,7 @@ const loadPublicHomeContent = async () => {
     cards.forEach((card) => {
       const node = document.createElement("article");
       node.className = "founder-card public-founder-card";
-      node.innerHTML = `<div class="founder-photo-frame"><img src="${safe(card.image_url || "assets/founder.jpg")}" alt="${safe(card.title)}" /></div><p class="eyebrow">Community spotlight</p><h2 class="prince-name"><span>${safe(card.title)}</span></h2><p class="founder-role">${safe(card.subtitle || "")}</p><p class="founder-note">${safe(card.description || "")}</p><div class="founder-tags">${String(
+      node.innerHTML = `<div class="founder-photo-frame"><img src="${safe(founderPhotoSource(card.image_url))}" alt="${safe(card.title)}" /></div><p class="eyebrow">Community spotlight</p><h2 class="prince-name"><span>${safe(card.title)}</span></h2><p class="founder-role">${safe(card.subtitle || "")}</p><p class="founder-note">${safe(card.description || "")}</p><div class="founder-tags">${String(
         card.tags || "",
       )
         .split(/\r?\n/)

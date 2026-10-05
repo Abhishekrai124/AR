@@ -31,7 +31,7 @@ values (
     'crown', '♛',
     'bio', 'Building meaningful digital spaces and collecting little moments along the way. ✨',
     'description', 'Founder of ARRAI · Digital creator · Music, ideas, and everyday stories.',
-    'avatar_url', '/assets/abhishek-rai.jpg',
+    'avatar_url', '/assets/abhishek-rai-public.jpeg',
     'location', '',
     'links', jsonb_build_object(
       'instagram', 'https://instagram.com/abhishekyadav312_',
@@ -49,7 +49,7 @@ values (
     'posts', jsonb_build_array(jsonb_build_object(
       'id', 'first-chord',
       'text', 'Finding my own rhythm — one little idea and one chord at a time. 🎸',
-      'image_url', '/assets/abhishek-rai.jpg',
+      'image_url', '/assets/abhishek-rai-public.jpeg',
       'location', '',
       'music_title', '',
       'music_url', '',

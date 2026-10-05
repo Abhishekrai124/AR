@@ -1,7 +1,7 @@
 -- Migration for site settings and additional cards
 create table if not exists public.site_settings (
   id text primary key default 'global',
-  hero_image_url text default 'assets/founder.jpg',
+  hero_image_url text default '/assets/abhishek-rai-public.jpeg',
   global_theme text default 'midnight',
   site_name text default 'arrai.in',
   site_description text default 'Digital experiences by Abhishek Rai.',
@@ -10,7 +10,7 @@ create table if not exists public.site_settings (
 
 -- Insert default settings if not exists
 insert into public.site_settings (id) values ('global') on conflict (id) do nothing;
-alter table public.site_settings add column if not exists hero_image_url text default 'assets/founder.jpg';
+alter table public.site_settings add column if not exists hero_image_url text default '/assets/abhishek-rai-public.jpeg';
 alter table public.site_settings add column if not exists global_theme text default 'midnight';
 alter table public.site_settings add column if not exists site_name text default 'arrai.in';
 alter table public.site_settings add column if not exists site_description text default 'Digital experiences by Abhishek Rai.';

@@ -115,6 +115,10 @@ header {
   z-index: 20;
 }
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
   color: var(--ink);
   font-size: 1.35rem;
   font-weight: 800;
@@ -123,16 +127,21 @@ header {
 }
 .founder-brand-avatar {
   display: inline-block;
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
-  margin-right: 5px;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
   border: 1.5px solid rgba(249, 168, 212, .72);
   border-radius: 50%;
   object-fit: cover;
   object-position: center 34%;
-  vertical-align: middle;
   box-shadow: 0 0 16px rgba(249, 168, 212, .18);
+}
+@media (max-width: 420px) {
+  .header-menu-tools { min-width: 0; gap: 6px; }
+  .header-menu-tools > .wallet-balance-link { display: none; }
+  .header-menu-tools > .site-theme-picker { min-width: 38px; min-height: 35px; gap: 3px; padding: 0 5px; }
+  .header-menu-tools > .site-theme-picker select { width: 27px; max-width: 27px; padding: 0; }
+  .header-menu-tools > .site-theme-picker .site-theme-label { display: none; }
 }
 .brand span {
   font-family: "Playfair Display", serif;
