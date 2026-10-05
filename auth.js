@@ -21,7 +21,7 @@ const nextPage =
           : requestedPage === "family"
             ? "family.html"
             : requestedPage === "founder"
-              ? "/abhishek-rai"
+              ? "/founder.html"
               : "community.html";
 const authReturn =
   nextPage === "community.html"

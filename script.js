@@ -7,7 +7,7 @@ const currentPath = location.pathname.replace(/\/+$/, "") || "/";
 const bottomNavItems = [
   { href: "/", label: "Home", icon: "⌂", paths: ["/", "/index.html"] },
   { href: "/search", label: "Search", icon: "⌕", paths: ["/search", "/search.html"] },
-  { href: "/abhishek-rai", label: "My page", icon: "✦", paths: ["/abhishek-rai", "/founder.html"] },
+  { href: "/founder.html", label: "My page", icon: "✦", paths: ["/founder.html"] },
   { href: "/community", label: "Community", icon: "☷", paths: ["/community", "/community.html"] },
   { href: "/profile.html", label: "Profile", icon: "◉", paths: ["/profile", "/profile.html"] },
 ];
@@ -37,7 +37,7 @@ const founderPhotoSource = (value) => {
     return founderPublicImage;
   }
 };
-document.querySelectorAll('.site-bottom-nav-item[href="/abhishek-rai"]').forEach((link) => {
+document.querySelectorAll('.site-bottom-nav-item[href="/founder.html"]').forEach((link) => {
   const icon = link.querySelector(".site-bottom-nav-icon");
   if (!icon || icon.tagName === "IMG") return;
   const image = document.createElement("img");

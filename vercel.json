@@ -1,8 +1,5 @@
 {
   "cleanUrls": true,
-  "redirects": [
-    { "source": "/founder.html", "destination": "/abhishek-rai", "permanent": true }
-  ],
   "crons": [
     { "path": "/api/detective-retention", "schedule": "0 3 * * *" }
   ],
@@ -30,7 +27,6 @@
     { "source": "/family", "destination": "/family.html" },
     { "source": "/dm", "destination": "/dm.html" },
     { "source": "/calendar", "destination": "/calendar.html" },
-    { "source": "/abhishek-rai", "destination": "/founder.html" },
     { "source": "/:username", "destination": "/profile.html" }
   ]
 }
