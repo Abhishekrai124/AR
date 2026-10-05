@@ -22,6 +22,9 @@ let feedMode = "home";
 let feedOffset = 0;
 let feedHasMore = false;
 const communityOwnerEmail = "abhishekrai6897@gmail.com";
+const locationSchemaUnavailable = (error) =>
+  ["42P01", "PGRST202", "PGRST205"].includes(error?.code) ||
+  /profile_locations|arrai_public_profile_location/i.test(error?.message || "");
 const isOwner = () => user?.email?.toLowerCase() === communityOwnerEmail;
 const isVipActive = () =>
   Boolean(
@@ -134,8 +137,13 @@ async function openProfile(profileId) {
           p_profile_id: profileId,
         }),
   ]);
-  if (postError || followerError || followingError || locationError)
-    throw postError || followerError || followingError || locationError;
+  if (postError || followerError || followingError)
+    throw postError || followerError || followingError;
+  if (locationError && !locationSchemaUnavailable(locationError))
+    throw locationError;
+  if (locationError) {
+    console.warn("Profile location is unavailable until its Supabase migration is applied:", locationError);
+  }
   const profileLocation = locationRows?.[0];
   const locationMarkup = profileLocation
     ? `<p class="profile-location">📍 ${escapeHtml(
@@ -733,7 +741,11 @@ async function openAccountSettings() {
       .eq("profile_id", user.sub)
       .maybeSingle(),
   ]);
-  if (locationError) throw locationError;
+  if (locationError && !locationSchemaUnavailable(locationError)) throw locationError;
+  if (locationError) {
+    console.warn("Profile location is unavailable until its Supabase migration is applied:", locationError);
+    say("Location settings need the profile-locations Supabase migration. Membership and other account settings are still available.", "info");
+  }
   const form = $("#accountForm");
   form.elements.privacy.value = profile.privacy || "public";
   form.elements.whoCanFollow.value = profile.who_can_follow || "everyone";
@@ -1049,6 +1061,8 @@ $("#profileForm").addEventListener("submit", async (event) => {
       window.dispatchEvent(
         new CustomEvent("arrai:profile-ready", { detail: { db, user, profile } }),
       );
+      if (new URLSearchParams(location.search).get("membership") === "1")
+        await openAccountSettings();
     }
   } catch (error) {
     say(
@@ -1809,7 +1823,12 @@ document
 (async () => {
   try {
     const auth = await window.arraiAuth;
-    if (!auth.isAuthenticated) return window.location.assign("auth.html");
+    if (!auth.isAuthenticated) {
+      const next = new URLSearchParams(location.search).get("membership") === "1"
+        ? "?next=membership"
+        : "";
+      return window.location.assign(`auth.html${next}`);
+    }
     user = auth.user;
     db = await window.createArraiSupabase();
     if (await loadProfile()) {

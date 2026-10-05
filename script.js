@@ -339,6 +339,7 @@ const normalizeSiteMenu = (isAuthenticated = false) => {
     ensureMenuLink("https://pay.arrai.in/", "ARRAI Pay", "site-menu-primary"),
     ensureMenuLink("search.html", "Search", "site-menu-primary"),
     ensureMenuLink("community.html", "Community", "site-menu-primary"),
+    ensureMenuLink("/membership", "VIP Membership · ₹45", "site-menu-primary"),
   ];
   const familyLink = ensureMenuLink(
     "family.html",

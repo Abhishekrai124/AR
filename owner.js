@@ -618,26 +618,46 @@ editor.addEventListener("click", async (event) => {
 });
 
 (async () => {
-  const {
-    data: { session },
-  } = await window.arraiSupabase.auth.getSession();
-  if (!session) return window.location.assign("auth.html?next=owner");
-  ownerId = session.user.id;
-  ownerToken = session.access_token;
   try {
-    await Promise.all([
-      searchProfiles(),
-      loadAnalytics(),
-      loadSiteControls(),
-      loadCards(),
-    ]);
+    const {
+      data: { session },
+      error,
+    } = await window.arraiSupabase.auth.getSession();
+    if (error) throw error;
+    if (!session) return window.location.assign("auth.html?next=owner");
+    ownerId = session.user.id;
+    ownerToken = session.access_token;
+
+    // This protected request is the server-side owner check; optional panels
+    // should not prevent the rest of Owner Studio from opening.
+    await loadAnalytics();
     ownerTools.hidden = false;
     ownerStatus.textContent = "Owner access verified. God Mode is ready.";
-    loadDetectiveAdmin().catch((error) => {
-      if (detectiveAdminStatus) detectiveAdminStatus.textContent = error.message;
-    });
+
+    const panels = [
+      ["member search", searchProfiles],
+      ["site controls", loadSiteControls],
+      ["site cards", loadCards],
+      ["private contact", loadPrivateContact],
+      ["calendar", loadOwnerEvents],
+      ["Detective Agency", loadDetectiveAdmin],
+    ];
+    const results = await Promise.allSettled(
+      panels.map(([, load]) => load()),
+    );
+    const unavailable = results.flatMap((result, index) =>
+      result.status === "rejected"
+        ? [
+            `${panels[index][0]}: ${
+              result.reason?.message || String(result.reason || "unavailable")
+            }`,
+          ]
+        : [],
+    );
+    if (unavailable.length)
+      ownerStatus.textContent = `Owner Studio is open; some panels need attention. ${unavailable.join(" · ")}`;
   } catch (error) {
-    ownerStatus.textContent = error.message;
+    ownerStatus.textContent = error.message || "Owner access could not be verified.";
   }
 })();
 
