@@ -1,4 +1,4 @@
-const CACHE = "arrai-shell-v4";
+const CACHE = "arrai-shell-v6";
 const SHELL = [
   "/",
   "/index.html",
@@ -8,6 +8,7 @@ const SHELL = [
   "/founder.css",
   "/script.js",
   "/founder.js",
+  "/founder-live.js",
   "/manifest.webmanifest",
   "/assets/app-icon.svg",
 ];

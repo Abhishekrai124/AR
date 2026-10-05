@@ -6,6 +6,12 @@ const searchablePages = [
     keywords: "home founder studio Abhishek Rai",
   },
   {
+    title: "Abhishek Rai — Founder page",
+    url: "abhishek-rai",
+    description: "A dreamy founder page with Abhishek's story, music, links and ARRAI projects.",
+    keywords: "founder Abhishek Rai bio story music Instagram GitHub shayari",
+  },
+  {
     title: "Services",
     url: "services.html",
     description: "Explore web, design, creative and digital services from ARRAI.",
@@ -31,7 +37,7 @@ const searchablePages = [
   },
   {
     title: "ARRAI VIP Membership",
-    url: "community.html?membership=1",
+    url: "/membership",
     description: "See the ₹45 one-year VIP membership and its account benefits.",
     keywords: "vip membership gold badge themes annual price rupees",
   },
@@ -128,8 +134,62 @@ const renderSearchResults = (query) => {
     const empty = document.createElement("p");
     empty.className = "empty-state search-empty";
     empty.textContent =
-      "No ARRAI pages matched that phrase. Try a shorter query or use Google for the wider web.";
-    searchResults.append(empty);
+      "No ARRAI pages matched that phrase. Ask Gemini for a grounded web search or try Google.";
+    const geminiButton = document.createElement("button");
+    geminiButton.className = "button primary";
+    geminiButton.type = "button";
+    geminiButton.textContent = `Ask Gemini to search for “${query.trim()}”`;
+    geminiButton.addEventListener("click", async () => {
+      geminiButton.disabled = true;
+      geminiButton.textContent = "Searching with Gemini…";
+      const answerCard = document.createElement("article");
+      answerCard.className = "search-result-card search-ai-answer";
+      const heading = document.createElement("h3");
+      heading.textContent = "Gemini web search";
+      const answer = document.createElement("p");
+      answer.textContent = "Looking for current sources…";
+      answerCard.append(heading, answer);
+      searchResults.replaceChildren(answerCard);
+      try {
+        const response = await fetch("/api/assistant", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ question: query.trim(), webSearch: true }),
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Gemini search is unavailable.");
+        answer.textContent = result.answer;
+        const sources = (result.sources || []).filter((source) => {
+          try {
+            return new URL(source.url).protocol === "https:";
+          } catch {
+            return false;
+          }
+        });
+        if (sources.length) {
+          const sourceList = document.createElement("ul");
+          sourceList.className = "search-ai-sources";
+          sources.forEach((source) => {
+            const item = document.createElement("li");
+            const link = document.createElement("a");
+            link.href = source.url;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = source.title;
+            item.append(link);
+            sourceList.append(item);
+          });
+          answerCard.append(sourceList);
+        }
+      } catch (error) {
+        answer.textContent = `${error.message} Try again later or use Google for the wider web.`;
+      } finally {
+        geminiButton.disabled = false;
+        geminiButton.textContent = `Ask Gemini to search for “${query.trim()}”`;
+        if (!document.body.contains(geminiButton)) answerCard.append(geminiButton);
+      }
+    });
+    searchResults.append(empty, geminiButton);
     return;
   }
   results.forEach((result) => {

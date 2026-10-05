@@ -21,6 +21,67 @@ if (!document.querySelector(".site-bottom-nav")) {
   }).join("");
   document.body.append(bottomNav);
 }
+const siteMoods = [
+  ["English", "Some hearts feel like a quiet home.", "May your day be gentle with you.", "You are allowed to bloom slowly."],
+  ["हिन्दी", "कुछ दिल, घर जैसा सुकून देते हैं।", "आज अपने साथ थोड़ा नरम रहना।", "धीरे खिलना भी खिलना ही है।"],
+  ["ਪੰਜਾਬੀ", "ਕੁਝ ਦਿਲ ਘਰ ਵਰਗਾ ਸਕੂਨ ਦਿੰਦੇ ਨੇ।", "ਅੱਜ ਆਪਣੇ ਨਾਲ ਨਰਮੀ ਰੱਖੀਂ।", "ਹੌਲੀ ਖਿੜਨਾ ਵੀ ਖਿੜਨਾ ਹੀ ਹੁੰਦਾ ਹੈ।"],
+  ["اردو", "کچھ دل گھر جیسا سکون دیتے ہیں۔", "آج اپنے ساتھ نرمی سے پیش آؤ۔", "آہستہ کھلنا بھی کھلنا ہی ہے۔"],
+  ["العربية", "بعض القلوب تشبه البيت والطمأنينة.", "كن لطيفًا مع نفسك اليوم.", "التفتح ببطء يظل تفتحًا."],
+  ["বাংলা", "কিছু হৃদয় ঘরের মতো শান্তি দেয়।", "আজ নিজের প্রতি একটু কোমল থেকো।", "ধীরে ফোটাও ফোটাই।"],
+  ["தமிழ்", "சில இதயங்கள் வீடு போன்ற அமைதியைத் தரும்.", "இன்று உன்னிடம் மென்மையாக இரு.", "மெதுவாக மலர்வதும் மலர்வதே."],
+  ["తెలుగు", "కొన్ని మనసులు ఇంటిలా హాయినిస్తాయి.", "ఈ రోజు నీతో నువ్వు మృదువుగా ఉండు.", "నెమ్మదిగా వికసించినా వికసించినట్టే."],
+  ["मराठी", "काही मने घरासारखी शांतता देतात.", "आज स्वतःशी थोडे प्रेमाने वाग.", "हळू उमलणेही उमलणेच असते."],
+  ["ગુજરાતી", "કેટલાક દિલ ઘર જેવી શાંતિ આપે છે.", "આજે પોતાની સાથે નરમ રહેજો.", "ધીમે ખીલવું પણ ખીલવું જ છે."],
+  ["ಕನ್ನಡ", "ಕೆಲವು ಹೃದಯಗಳು ಮನೆಯ ನೆಮ್ಮದಿಯಂತಿವೆ.", "ಇಂದು ನಿನ್ನೊಂದಿಗೆ ಮೃದುವಾಗಿರು.", "ನಿಧಾನವಾಗಿ ಅರಳುವುದೂ ಅರಳುವುದೇ."],
+  ["മലയാളം", "ചില ഹൃദയങ്ങൾ വീടുപോലെ ആശ്വാസം നൽകും.", "ഇന്ന് നിന്നോട് തന്നെ കരുണയോടെ ഇരിക്കൂ.", "പതുക്കെ വിരിയുന്നതും വിരിയലാണ്."],
+  ["Français", "Certains cœurs ressemblent à un chez-soi.", "Sois doux avec toi-même aujourd’hui.", "Fleurir lentement, c’est fleurir aussi."],
+  ["Español", "Hay corazones que se sienten como hogar.", "Trátate con ternura hoy.", "Florecer despacio también es florecer."],
+  ["Deutsch", "Manche Herzen fühlen sich wie Zuhause an.", "Sei heute freundlich zu dir selbst.", "Langsam zu blühen heißt trotzdem zu blühen."],
+  ["日本語", "心が帰る場所のような人がいる。", "今日は自分にもやさしくしてね。", "ゆっくり咲くのも、咲くこと。"],
+  ["فارسی", "بعضی دل‌ها شبیه خانه و آرامش‌اند.", "امروز با خودت مهربان باش.", "آهسته شکفتن هم شکفتن است."],
+];
+const addSiteMood = () => {
+  const header = document.querySelector("header");
+  if (!header || document.querySelector(".site-mood")) return;
+  const banner = document.createElement("aside");
+  banner.className = "site-mood";
+  banner.setAttribute("aria-label", "A little note for today");
+  banner.innerHTML = '<span class="site-mood-sparkle" aria-hidden="true">✦</span><span class="site-mood-quote" aria-live="polite"></span><div class="site-mood-checkin"><span>How’s your heart today?</span><button type="button">Lovely ✨</button><button type="button">Dreamy ☁️</button><button type="button">Need softness 🌙</button></div>';
+  header.after(banner);
+  const quote = banner.querySelector(".site-mood-quote");
+  let previous = -1;
+  const showNextMood = () => {
+    let index = Math.floor(Math.random() * siteMoods.length);
+    if (siteMoods.length > 1 && index === previous) index = (index + 1) % siteMoods.length;
+    previous = index;
+    const [language, ...lines] = siteMoods[index];
+    quote.lang = ({ English: "en", हिन्दी: "hi", ਪੰਜਾਬੀ: "pa", اردو: "ur", العربية: "ar", বাংলা: "bn", தமிழ்: "ta", తెలుగు: "te", मराठी: "mr", ગુજરાતી: "gu", ಕನ್ನಡ: "kn", മലയാളം: "ml", Français: "fr", Español: "es", Deutsch: "de", 日本語: "ja", فارسی: "fa" })[language] || "en";
+    quote.dir = ["اردو", "العربية", "فارسی"].includes(language) ? "rtl" : "auto";
+    quote.textContent = `${lines[Math.floor(Math.random() * lines.length)]}  ·  ${language}`;
+  };
+  showNextMood();
+  window.setInterval(showNextMood, 12_000);
+  const checkin = banner.querySelector(".site-mood-checkin");
+  const today = new Date();
+  const localDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+  const checkinKey = `arrai-checkin-${localDate}`;
+  try {
+    if (localStorage.getItem(checkinKey)) checkin.hidden = true;
+  } catch (error) {
+    console.warn("Daily check-in preference could not be restored:", error);
+  }
+  checkin.addEventListener("click", (event) => {
+    const choice = event.target.closest("button");
+    if (!choice) return;
+    try {
+      localStorage.setItem(checkinKey, "done");
+    } catch (error) {
+      console.warn("Daily check-in preference could not be saved:", error);
+    }
+    checkin.innerHTML = "<span>Thanks for checking in · take it softly ✨</span>";
+  });
+};
+addSiteMood();
 if (button && nav && header) {
   button.type = "button";
   button.textContent = "⋮";
@@ -405,7 +466,30 @@ const loadNavigationProfile = async (user) => {
     .maybeSingle();
   return data || {};
 };
+const updateProfileBottomNav = (user, profile = {}) => {
+  const link = document.querySelector('.site-bottom-nav-item[href="/profile.html"]');
+  if (!link) return;
+  const label = link.querySelector("span:last-child");
+  const icon = link.querySelector(".site-bottom-nav-icon");
+  const authenticated = Boolean(user);
+  const avatarUrl = profile.avatar_url || user?.avatarUrl ||
+    (user?.email?.toLowerCase() === ownerEmail ? "/assets/abhishek-rai.jpg" : "/assets/app-icon.svg");
+  link.href = authenticated ? "/profile.html" : "/auth.html";
+  const name = profile.display_name || user?.name || "my";
+  link.setAttribute("aria-label", authenticated ? `Open ${name}'s profile` : "Sign in to profile");
+  if (label) label.textContent = "Profile";
+  if (icon && icon.tagName !== "IMG") {
+    const image = document.createElement("img");
+    image.className = "site-bottom-nav-avatar";
+    image.alt = "";
+    image.src = avatarUrl;
+    icon.replaceWith(image);
+  } else if (icon) {
+    icon.src = avatarUrl;
+  }
+};
 const updateNavigationForUser = async ({ isAuthenticated, user }) => {
+  updateProfileBottomNav(isAuthenticated ? user : null);
   if (!nav) return;
   const loginLink = nav.querySelector('[href="auth.html"]');
   if (isAuthenticated) {
@@ -442,8 +526,12 @@ const updateNavigationForUser = async ({ isAuthenticated, user }) => {
       nav.append(logout);
     }
     loadNavigationProfile(user)
-      .catch(() => ({}))
+      .catch((error) => {
+        console.warn("Profile avatar could not be loaded for navigation:", error);
+        return {};
+      })
       .then((profile) => {
+        updateProfileBottomNav(user, profile);
         nav.querySelector(".nav-account")?.remove();
         const logout = nav.querySelector(".nav-logout");
         nav.insertBefore(makeAccountLink(user, profile), logout || null);

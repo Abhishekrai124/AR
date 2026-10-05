@@ -4,10 +4,10 @@
   const DEFAULT_PAGE = {
     name: "Abhishek Rai",
     username: "abhishekyadav312_",
-    title: "A little corner of the internet",
+    title: "A little room for wonder",
     crown: "♛",
-    bio: "Building meaningful digital spaces and collecting little moments along the way. ✨",
-    description: "Founder of ARRAI · Digital creator · Music, ideas, and everyday stories.",
+    bio: "Building soft places on the internet, following music home, and saving a little wonder for ordinary days. ✨",
+    description: "Founder of ARRAI · Digital creator · I like thoughtful technology, honest stories, late-night melodies, and people who make the world feel kinder.",
     avatar_url: "/assets/abhishek-rai.jpg",
     location: "",
     links: {
@@ -16,7 +16,7 @@
       x: "https://x.com/abhishekrai781",
       linkedin: "https://linkedin.com/in/abhishekrai1576",
       facebook: "https://facebook.com/iiabhishekrai",
-      github: "",
+      github: "https://github.com/Abhishekrai124",
       youtube: "https://youtube.com/@abhishekyadavrai",
       website: "https://arrai.in",
       email: "abhishekrai6897@gmail.com",
@@ -26,7 +26,7 @@
     posts: [
       {
         id: "first-chord",
-        text: "Finding my own rhythm — one little idea and one chord at a time. 🎸",
+        text: "Somewhere between a half-written dream and a song I can’t quite name, I found this little corner. May it feel like a warm light left on for you. 🌙✨",
         image_url: "/assets/abhishek-rai.jpg",
         location: "",
         music_title: "",
@@ -77,6 +77,13 @@
     } catch {
       return "";
     }
+  };
+  const founderImageUrl = (value = "") => {
+    const url = safeUrl(value);
+    if (!url) return "";
+    return new URL(url, location.origin).pathname.endsWith("/founder.jpg")
+      ? DEFAULT_PAGE.avatar_url
+      : url;
   };
   const authPromise = window.arraiAuth;
   let auth = { isAuthenticated: false, user: null };
@@ -360,11 +367,12 @@
   function renderLinks() {
     byId("creatorLinks").innerHTML = linkDetails
       .map(([key, label, icon]) => {
-        const raw = key === "email" && page.links?.email
-          ? `mailto:${page.links.email}`
-          : page.links?.[key];
+        const value = page.links?.[key] || DEFAULT_PAGE.links[key];
+        const raw = key === "email" && value
+          ? `mailto:${value}`
+          : value;
         const href = key === "email"
-          ? (page.links?.email ? `mailto:${escapeHtml(page.links.email)}` : "")
+          ? (value ? `mailto:${escapeHtml(value)}` : "")
           : safeUrl(raw);
         if (!href) return "";
         return `<a href="${escapeHtml(href)}" ${key === "email" ? "" : 'target="_blank" rel="noopener noreferrer"'}><span aria-hidden="true">${icon}</span>${label}</a>`;
@@ -373,7 +381,7 @@
   }
 
   function renderProfile() {
-    const avatar = safeUrl(page.avatar_url) || DEFAULT_PAGE.avatar_url;
+    const avatar = founderImageUrl(page.avatar_url) || DEFAULT_PAGE.avatar_url;
     byId("creatorAvatar").src = avatar;
     byId("creatorAvatar").alt = page.name || DEFAULT_PAGE.name;
     byId("creatorCrown").textContent = page.crown || "";
@@ -412,10 +420,10 @@
       });
     }
 
-    const stories = (page.stories || []).filter((story) => story.title && safeUrl(story.image_url));
+    const stories = (page.stories || []).filter((story) => story.title && founderImageUrl(story.image_url));
     byId("creatorStoriesSection").hidden = !stories.length;
     byId("creatorStories").innerHTML = stories.map((story) =>
-      `<div class="creator-story"><img src="${escapeHtml(safeUrl(story.image_url))}" alt="" loading="lazy" /><span>${escapeHtml(story.title)}</span></div>`,
+      `<div class="creator-story"><img src="${escapeHtml(founderImageUrl(story.image_url))}" alt="" loading="lazy" /><span>${escapeHtml(story.title)}</span></div>`,
     ).join("");
     byId("postCount").textContent = page.posts?.length || 0;
     byId("likeCount").textContent = reactions.filter((reaction) => reaction.kind === "like").length;
@@ -432,7 +440,7 @@
     }
     container.innerHTML = page.posts.map((post) => {
       const id = String(post.id || "");
-      const image = safeUrl(post.image_url);
+      const image = founderImageUrl(post.image_url);
       const audioUrl = safeUrl(post.music_url);
       const liked = reactions.some((reaction) => reaction.post_id === id && reaction.kind === "like" && reaction.user_id === auth.user?.sub);
       const reposted = reactions.some((reaction) => reaction.post_id === id && reaction.kind === "repost" && reaction.user_id === auth.user?.sub);
@@ -453,7 +461,7 @@
         `<article class="creator-comment"><div class="creator-comment-head"><b>${escapeHtml(comment.display_name || "Community member")}</b>${auth.user?.email?.toLowerCase() === OWNER_EMAIL ? `<button data-action="delete-comment" data-comment="${escapeHtml(comment.id)}" type="button" aria-label="Delete note">Delete</button>` : ""}</div><p>${escapeHtml(comment.body)}</p><time>${formatDate(comment.created_at)}</time></article>`,
       ).join("");
       return `<article class="creator-post" id="post-${escapeHtml(id)}">
-        <header class="creator-post-head"><div class="creator-post-author"><img src="${escapeHtml(safeUrl(page.avatar_url) || DEFAULT_PAGE.avatar_url)}" alt="" loading="lazy" /><span><b>${escapeHtml(page.name)}</b><time>${formatDate(post.created_at)}</time></span></div>${ownerEdit}</header>
+        <header class="creator-post-head"><div class="creator-post-author"><img src="${escapeHtml(founderImageUrl(page.avatar_url) || DEFAULT_PAGE.avatar_url)}" alt="" loading="lazy" /><span><b>${escapeHtml(page.name)}</b><time>${formatDate(post.created_at)}</time></span></div>${ownerEdit}</header>
         <p class="creator-post-copy">${escapeHtml(post.text || "")}</p>${location}${media}${audio}
         <div class="creator-post-actions">
           <button data-action="like" data-post="${escapeHtml(id)}" class="${liked ? "is-active" : ""}" type="button" aria-pressed="${liked}">♡ <span>${postReactions(id, "like").length}</span> Appreciate</button>
@@ -529,13 +537,14 @@
 
   function openProfileEditor() {
     const form = byId("founderProfileForm");
-    for (const key of ["name", "username", "title", "crown", "bio", "description", "avatar_url", "location"]) {
-      form.elements.namedItem(key).value = page[key] || "";
-    }
+    for (const key of ["name", "username", "title", "crown", "bio", "description", "avatar_url", "location"])
+      form.elements.namedItem(key).value = key === "avatar_url"
+        ? founderImageUrl(page[key]) || DEFAULT_PAGE.avatar_url
+        : page[key] || "";
     for (const key of ["title", "artist", "url"]) {
       form.elements.namedItem(`music_${key}`).value = page.music?.[key] || "";
     }
-    for (const [key] of linkDetails) form.elements.namedItem(key).value = page.links?.[key] || "";
+    for (const [key] of linkDetails) form.elements.namedItem(key).value = page.links?.[key] || DEFAULT_PAGE.links[key] || "";
     form.elements.namedItem("stories").value = (page.stories || [])
       .map((story) => `${story.title} | ${story.image_url}`).join("\n");
     byId("profileFormError").hidden = true;
@@ -853,6 +862,16 @@
       if (error) throw error;
       if (!data?.content) throw new Error("The public page has not been initialized in the database.");
       page = { ...DEFAULT_PAGE, ...data.content, links: { ...DEFAULT_PAGE.links, ...data.content.links } };
+      if (page.title === "A little corner of the internet") page.title = DEFAULT_PAGE.title;
+      if (page.bio === "Building meaningful digital spaces and collecting little moments along the way. ✨") page.bio = DEFAULT_PAGE.bio;
+      if (page.description === "Founder of ARRAI · Digital creator · Music, ideas, and everyday stories.") page.description = DEFAULT_PAGE.description;
+      if (!page.links.github) page.links.github = DEFAULT_PAGE.links.github;
+      page.posts = (page.posts || []).map((post) =>
+        post.id === "first-chord" &&
+        post.text === "Finding my own rhythm — one little idea and one chord at a time. 🎸"
+          ? { ...post, text: DEFAULT_PAGE.posts[0].text }
+          : post,
+      );
       databaseReady = true;
     } catch (error) {
       showStatus(`Showing a preview because the public page database is not ready: ${error.message} Apply supabase-founder-page-migration.sql to enable shared edits and interactions.`, "error");

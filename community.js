@@ -777,7 +777,7 @@ async function openAccountSettings() {
   const ownerVip = (profile.vip_badge === "owner_granted" && isVipActive()) ||
     isOwner();
   $("#buyVipMembership").hidden = ownerVip;
-  $("#buyVipWithWallet").hidden = ownerVip;
+  $("#buyVipWithWallet").hidden = true;
   $("#buyVipMembership").textContent =
     isVipActive() && profile.vip_badge === "purchased"
       ? "Renew VIP · ₹45"
@@ -785,11 +785,6 @@ async function openAccountSettings() {
   $("#accountActivity").innerHTML =
     `<span><b>${postCount || 0}</b> posts</span><span><b>${followerCount || 0}</b> followers</span><span><b>${followingCount || 0}</b> following</span>`;
   $("#accountDialog").showModal();
-  refreshWalletBalance().catch((error) => {
-    $("#arraiWalletBalance").textContent =
-      `Wallet balance unavailable: ${error.message}`;
-    $("#buyVipWithWallet").disabled = true;
-  });
 }
 
 function updateProfileLocationSettings() {

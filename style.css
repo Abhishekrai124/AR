@@ -1554,3 +1554,13 @@ body { padding-bottom: 94px; }
 .auth-page .auth-status.success { color: #b9f2d1; }
 @media(max-width:480px) { .auth-page .auth-main { min-height: calc(100vh - 155px); padding: 28px 13px 60px; }.auth-page .auth-card { border-radius: 24px; }.auth-page .auth-actions { grid-template-columns: 1fr; }.auth-page .auth-actions .auth-reset-button { grid-column: auto; } }
 @media(prefers-reduced-motion:reduce) { .auth-page::before,.auth-page .auth-card { animation: none; } }
+.site-mood { position: relative; z-index: 4; display: flex; width: min(1050px,calc(100% - 36px)); min-height: 48px; align-items: center; justify-content: space-between; gap: 14px; margin: 10px auto 0; padding: 8px 13px; border: 1px solid rgba(249,168,212,.2); border-radius: 16px; color: var(--ink); background: linear-gradient(110deg,rgba(95,44,78,.45),rgba(32,36,65,.58)); box-shadow: 0 10px 30px rgba(5,8,24,.12); backdrop-filter: blur(12px); }
+.site-mood-sparkle { flex: 0 0 auto; color: var(--pink); }
+.site-mood-quote { min-width: 0; flex: 1; color: var(--muted); font: 600 .76rem/1.45 "Playfair Display",Georgia,serif; }
+.site-mood-checkin { display: flex; flex: 0 0 auto; flex-wrap: wrap; align-items: center; justify-content: end; gap: 5px; color: var(--pink); font-size: .59rem; font-weight: 800; }
+.site-mood-checkin button { padding: 6px 8px; border: 1px solid rgba(249,168,212,.18); border-radius: 999px; color: var(--ink); background: rgba(255,255,255,.05); font: inherit; cursor: pointer; }
+.site-mood-checkin button:hover { border-color: var(--pink); background: rgba(249,168,212,.12); }
+.site-mood-checkin button:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+.site-bottom-nav-avatar { width: 23px; height: 23px; flex: 0 0 23px; border: 1.5px solid var(--pink); border-radius: 50%; object-fit: cover; box-shadow: 0 0 12px rgba(249,168,212,.2); }
+@media(max-width:700px) { .site-mood { align-items: flex-start; gap: 9px; padding: 10px; }.site-mood-quote { padding-top: 2px; font-size: .7rem; }.site-mood-checkin { flex-basis: 100%; justify-content: flex-start; }.site-mood-checkin>span { width: 100%; }.site-mood-checkin button { padding: 6px 7px; font-size: .57rem; } }
+@media(prefers-reduced-motion:reduce) { .site-mood,.site-mood-checkin button { scroll-behavior: auto; } }

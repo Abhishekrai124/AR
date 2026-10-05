@@ -92,6 +92,35 @@ async function createOrder(user, authorization, response) {
   });
 }
 
+async function createDonationOrder(response) {
+  const { keyId, keySecret } = razorpayCredentials();
+  const upstream = await fetch("https://api.razorpay.com/v1/orders", {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString("base64")}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      amount: 4500,
+      currency: "INR",
+      receipt: `support_${crypto.randomUUID().replaceAll("-", "").slice(0, 24)}`,
+      notes: { product: "arrai_voluntary_support" },
+    }),
+  });
+  const result = await upstream.json().catch(() => ({}));
+  if (!upstream.ok || !result.id) {
+    return response.status(502).json({
+      error: result.error?.description || "Razorpay could not start the support payment.",
+    });
+  }
+  return response.status(200).json({
+    order_id: result.id,
+    amount: result.amount,
+    currency: result.currency,
+    key_id: keyId,
+  });
+}
+
 async function readWalletBalance(user, authorization, response) {
   const walletResponse = await fetch(
     `${supabaseUrl}/rest/v1/wallet_accounts?user_id=eq.${encodeURIComponent(user.id)}&select=balance_paise`,
@@ -286,19 +315,84 @@ async function verifyPayment(user, body, response) {
   });
 }
 
+async function verifyDonation(body, response) {
+  const { keyId, keySecret } = razorpayCredentials();
+  const { orderId, paymentId, signature } = body;
+  if (
+    typeof orderId !== "string" ||
+    typeof paymentId !== "string" ||
+    typeof signature !== "string" ||
+    !orderId ||
+    !paymentId ||
+    !/^[a-f\d]{64}$/i.test(signature)
+  ) {
+    return response.status(400).json({ error: "Invalid Razorpay payment response." });
+  }
+  const expected = crypto
+    .createHmac("sha256", keySecret)
+    .update(`${orderId}|${paymentId}`)
+    .digest();
+  const received = Buffer.from(signature, "hex");
+  if (received.length !== expected.length || !crypto.timingSafeEqual(expected, received)) {
+    return response.status(400).json({ error: "Payment verification failed." });
+  }
+  const upstream = await fetch(
+    `https://api.razorpay.com/v1/orders/${encodeURIComponent(orderId)}`,
+    {
+      headers: {
+        Authorization: `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString("base64")}`,
+      },
+    },
+  );
+  const order = await upstream.json().catch(() => ({}));
+  if (
+    !upstream.ok ||
+    order.id !== orderId ||
+    order.status !== "paid" ||
+    order.currency !== "INR" ||
+    Number(order.amount) !== 4500 ||
+    order.notes?.product !== "arrai_voluntary_support"
+  ) {
+    return response.status(400).json({
+      error: "Paid order does not match the ₹45 ARRAI support payment.",
+    });
+  }
+  return response.status(200).json({ verified: true, amount: 4500 });
+}
+
 export default async function handler(request, response) {
   try {
     const action =
       request.query?.action ||
       new URL(request.url, "http://localhost").searchParams.get("action");
+    const donationAction = ["create-donation-order", "verify-donation"].includes(action);
     if (
       (action === "wallet-balance" && request.method !== "GET") ||
       (action !== "wallet-balance" && request.method !== "POST")
     ) {
       return response.status(405).json({ error: "Method not allowed." });
     }
-    const user = await authenticate(request);
-    if (!user) return response.status(401).json({ error: "Sign in to continue." });
+    if (action === "create-donation-order") {
+      const origin = request.headers.origin;
+      const host = request.headers.host;
+      let sameOrigin = false;
+      try {
+        sameOrigin = Boolean(origin && host && new URL(origin).host === host);
+      } catch {
+        sameOrigin = false;
+      }
+      if (!sameOrigin)
+        return response.status(403).json({
+          error: "Open ARRAI directly to start a support checkout.",
+        });
+    }
+    const user = donationAction ? null : await authenticate(request);
+    if (!donationAction && !user)
+      return response.status(401).json({ error: "Sign in to continue." });
+
+    if (action === "create-donation-order") return await createDonationOrder(response);
+    if (action === "verify-donation")
+      return await verifyDonation(readBody(request.body), response);
 
     if (action === "wallet-balance")
       return await readWalletBalance(user, request.headers.authorization, response);

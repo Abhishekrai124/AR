@@ -10,8 +10,8 @@
     <meta name="theme-color" content="#101018" />
     <title>Abhishek Rai — my little corner</title>
     <link rel="icon" href="/assets/app-icon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="/style.css?v=20261005-ten-functions" />
-    <link rel="stylesheet" href="/founder.css?v=20261005-ten-functions" />
+    <link rel="stylesheet" href="/style.css?v=20261005-founder-v2" />
+    <link rel="stylesheet" href="/founder.css?v=20261005-founder-v2" />
   </head>
   <body class="founder-page">
     <div class="ambient one"></div>
@@ -52,6 +52,10 @@
           <p id="creatorBio" class="creator-bio"></p>
           <p id="creatorLocation" class="creator-location" hidden></p>
           <p id="creatorDescription" class="creator-description"></p>
+          <blockquote class="founder-poetry" id="founderPoetry">
+            “I make a little room for wonder, and leave the door open for you.”
+            <span>— Abhishek</span>
+          </blockquote>
           <div class="creator-stats" aria-label="Page statistics">
             <span><b id="postCount">0</b> moments</span>
             <span><b id="likeCount">0</b> appreciations</span>
@@ -78,6 +82,9 @@
             <small>This changes this page only.</small>
           </div>
           <div class="creator-owner-actions">
+            <button id="founderVipButton" class="founder-button founder-membership-link" type="button">♡ Join VIP · ₹45/year</button>
+            <button id="founderDonateButton" class="founder-button founder-button-light" type="button">☼ Leave a little support · ₹45</button>
+            <span class="founder-pay-note">Secure one-time Razorpay checkout</span>
             <button id="editProfileButton" class="founder-button founder-button-light" type="button" hidden>
               ✦ Edit my page
             </button>
@@ -91,6 +98,63 @@
           </div>
         </div>
         <aside id="creatorMusic" class="creator-music" hidden></aside>
+      </section>
+
+      <section class="founder-businesses" aria-labelledby="businessesTitle">
+        <div class="founder-section-heading">
+          <div>
+            <p class="founder-eyebrow">Little worlds in progress</p>
+            <h2 id="businessesTitle">Things I’m building</h2>
+          </div>
+          <span class="feed-live">Made with care · by Abhishek</span>
+        </div>
+        <div class="founder-business-grid">
+          <a class="founder-business-card" href="https://arrai.in/">
+            <span aria-hidden="true">✦</span><div><b>ARRAI</b><small>Founder · a softer space for ideas, people and digital experiences</small></div><i>↗</i>
+          </a>
+          <a class="founder-business-card" href="https://pay.arrai.in/" target="_blank" rel="noopener noreferrer">
+            <span aria-hidden="true">♡</span><div><b>ARRAI Pay</b><small>ARRAI wallet · payments and everyday money tools</small></div><i>↗</i>
+          </a>
+          <a class="founder-business-card" href="/detective">
+            <span aria-hidden="true">⌕</span><div><b>ARRAI Detective Agency</b><small>Founder · a private, member-led investigation initiative</small></div><i>↗</i>
+          </a>
+          <a class="founder-business-card" href="/family">
+            <span aria-hidden="true">☾</span><div><b>ARRAI Family</b><small>Founder · community, connection and shared moments</small></div><i>↗</i>
+          </a>
+          <a class="founder-business-card" href="/projects">
+            <span aria-hidden="true">⌘</span><div><b>Projects &amp; experiments</b><small>Small ideas, playful builds and things still becoming</small></div><i>↗</i>
+          </a>
+          <a class="founder-business-card" href="/music">
+            <span aria-hidden="true">♫</span><div><b>Music room</b><small>Sounds and songs shared by the ARRAI community</small></div><i>↗</i>
+          </a>
+        </div>
+      </section>
+
+      <section class="founder-live-grid" aria-label="Little live things">
+        <article class="founder-live-card founder-news-card">
+          <div class="founder-live-heading">
+            <div><p class="founder-eyebrow">The wider world, softly</p><h2>Today’s little headlines</h2></div>
+            <span class="founder-live-pulse" aria-hidden="true"></span>
+          </div>
+          <p class="founder-live-note">Fresh headlines from Google Search grounding, with source links. They load only when you ask.</p>
+          <div id="founderNewsResult" class="founder-news-result" aria-live="polite">A small window to today’s world is ready when you are.</div>
+          <button id="founderNewsButton" class="founder-button founder-button-light" type="button">✦ Find today’s headlines</button>
+        </article>
+        <article class="founder-live-card founder-chat-card">
+          <div class="founder-live-heading">
+            <div><p class="founder-eyebrow">A little conversation</p><h2>Ask ARRAI</h2></div>
+            <span class="founder-ai-mark">AI</span>
+          </div>
+          <p class="founder-live-note">Ask about ARRAI, ideas, or anything on your mind. Gemini replies warmly; please don’t share private details.</p>
+          <div id="founderChatMessages" class="founder-chat-messages" aria-live="polite">
+            <p class="founder-chat-bubble is-assistant">Hello, you. What’s on your mind? ✨</p>
+          </div>
+          <form id="founderChatForm" class="founder-chat-form">
+            <label class="sr-only" for="founderChatInput">Ask ARRAI a question</label>
+            <input id="founderChatInput" name="question" maxlength="500" placeholder="Ask something, softly…" required />
+            <button class="founder-button" type="submit">Ask ↗</button>
+          </form>
+        </article>
       </section>
 
       <section class="founder-visit-card" aria-labelledby="visitCardTitle">
@@ -219,7 +283,8 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="/supabase.js"></script>
-    <script src="/script.js?v=20261005-ten-functions"></script>
-    <script src="/founder.js?v=20261005-ten-functions"></script>
+    <script src="/script.js?v=20261005-founder-v2"></script>
+    <script src="/founder.js?v=20261005-founder-v2"></script>
+    <script src="/founder-live.js?v=20261005-founder-v2"></script>
   </body>
 </html>
