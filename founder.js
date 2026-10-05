@@ -9,8 +9,8 @@
     bio: "Building soft places on the internet, following music home, and saving a little wonder for ordinary days. ✨",
     description: "Founder of ARRAI · Digital creator · I like thoughtful technology, honest stories, late-night melodies, and people who make the world feel kinder.",
     avatar_url: location.protocol === "file:"
-      ? "assets/abhishek-rai-public.jpeg"
-      : "/assets/abhishek-rai-public.jpeg",
+      ? "assets/abhishek-rai-2026.jpeg"
+      : "/assets/abhishek-rai-2026.jpeg",
     location: "",
     links: {
       instagram: "https://instagram.com/abhishekyadav312_",
@@ -30,8 +30,8 @@
         id: "first-chord",
         text: "Somewhere between a half-written dream and a song I can’t quite name, I found this little corner. May it feel like a warm light left on for you. 🌙✨",
         image_url: location.protocol === "file:"
-          ? "assets/abhishek-rai-public.jpeg"
-          : "/assets/abhishek-rai-public.jpeg",
+          ? "assets/abhishek-rai-2026.jpeg"
+          : "/assets/abhishek-rai-2026.jpeg",
         location: "",
         music_title: "",
         music_url: "",
@@ -89,7 +89,7 @@
     const url = safeUrl(value);
     if (!url) return "";
     const pathname = new URL(url, document.baseURI).pathname;
-    return pathname.endsWith("/founder.jpg") || pathname.endsWith("/abhishek-rai.jpg")
+    return /\/(?:founder|abhishek-rai(?:-public)?)\.(?:jpe?g)$/i.test(pathname)
       ? DEFAULT_PAGE.avatar_url
       : url;
   };

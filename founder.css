@@ -136,6 +136,8 @@
 .founder-form-wide { grid-column: 1/-1; }
 .founder-form-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding-top: 5px; }
 .founder-form-error { margin: 0; color: #ffb8b8; font-size: .68rem; }
+.founder-payment-choices { display: grid; gap: 10px; }
+.founder-payment-choices .founder-button { width: 100%; white-space: normal; }
 .founder-visit-card { display: flex; justify-content: space-between; gap: 18px; align-items: center; margin-top: 24px; padding: 18px 21px; border: 1px solid var(--founder-line); border-radius: 19px; background: linear-gradient(120deg,rgba(255,255,255,.045),rgba(255,255,255,.015)); }
 .founder-visit-copy { min-width: 0; }
 .founder-visit-copy .founder-eyebrow { margin-bottom: 6px; }

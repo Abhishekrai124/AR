@@ -238,10 +238,14 @@
     }
   }
 
+  const paymentChoiceDialog = $("#founderPaymentChoiceDialog");
+  $("#founderPaymentChoiceButton")?.addEventListener("click", () => paymentChoiceDialog?.showModal());
   $("#founderDonateButton")?.addEventListener("click", (event) => {
+    paymentChoiceDialog?.close();
     startSupportCheckout(event.currentTarget);
   });
   $("#founderVipButton")?.addEventListener("click", (event) => {
+    paymentChoiceDialog?.close();
     startMembershipCheckout(event.currentTarget);
   });
   if (

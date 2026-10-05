@@ -1,5 +1,8 @@
 {
   "cleanUrls": true,
+  "redirects": [
+    { "source": "/founder.html", "destination": "/abhishek-rai", "permanent": true }
+  ],
   "crons": [
     { "path": "/api/detective-retention", "schedule": "0 3 * * *" }
   ],

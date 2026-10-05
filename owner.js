@@ -371,7 +371,7 @@ const loadCards = async () => {
     ? cards
         .map(
           (c) =>
-            `<article class="owner-card-row"><img src="${escapeHtml(c.image_url || "assets/abhishek-rai-public.jpeg")}" alt=""><div><b>${escapeHtml(c.title)}</b><small>${escapeHtml(c.subtitle || "")}</small></div><button class="follow-button" data-edit-card="${c.id}" type="button">Edit</button><button class="follow-button" data-delete-card="${c.id}" type="button">Remove</button></article>`,
+            `<article class="owner-card-row"><img src="${escapeHtml(c.image_url || "assets/abhishek-rai-2026.jpeg")}" alt=""><div><b>${escapeHtml(c.title)}</b><small>${escapeHtml(c.subtitle || "")}</small></div><button class="follow-button" data-edit-card="${c.id}" type="button">Edit</button><button class="follow-button" data-delete-card="${c.id}" type="button">Remove</button></article>`,
         )
         .join("")
     : "<p class=empty-state>No public cards yet.</p>";

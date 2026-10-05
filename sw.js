@@ -1,11 +1,10 @@
-const CACHE = "arrai-shell-v9";
+const CACHE = "arrai-shell-v10";
 const SHELL = [
   "/",
   "/index.html",
   "/founder.html",
-  "/assets/abhishek-rai-public.jpeg",
-  "/assets/abhishek-rai.jpg",
-  "/assets/founder.jpg",
+  "/abhishek-rai",
+  "/assets/abhishek-rai-2026.jpeg",
   "/membership.html",
   "/membership",
   "/auth.html",

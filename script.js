@@ -22,13 +22,13 @@ if (!document.querySelector(".site-bottom-nav")) {
   document.body.append(bottomNav);
 }
 const founderPublicImage = location.protocol === "file:"
-  ? "assets/abhishek-rai-public.jpeg"
-  : "/assets/abhishek-rai-public.jpeg";
+  ? "assets/abhishek-rai-2026.jpeg"
+  : "/assets/abhishek-rai-2026.jpeg";
 const founderPhotoSource = (value) => {
   if (!value) return founderPublicImage;
   try {
     const path = new URL(value, document.baseURI).pathname;
-    return path.endsWith("/founder.jpg") || path.endsWith("/abhishek-rai.jpg")
+    return /\/(?:founder|abhishek-rai(?:-public)?)\.(?:jpe?g)$/i.test(path)
       ? founderPublicImage
       : location.protocol === "file:" && path.startsWith("/assets/")
         ? `assets/${path.slice("/assets/".length)}`

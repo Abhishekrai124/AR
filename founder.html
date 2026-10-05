@@ -9,15 +9,15 @@
     />
     <meta property="og:title" content="Abhishek Rai — my little corner" />
     <meta property="og:description" content="Notes, music, projects and moments from Abhishek Rai, founder of ARRAI." />
-    <meta property="og:image" content="https://arrai.in/assets/abhishek-rai-public.jpeg" />
+    <meta property="og:image" content="https://arrai.in/assets/abhishek-rai-2026.jpeg" />
     <meta property="og:image:alt" content="Abhishek Rai with his guitar" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:image" content="https://arrai.in/assets/abhishek-rai-public.jpeg" />
+    <meta name="twitter:image" content="https://arrai.in/assets/abhishek-rai-2026.jpeg" />
     <meta name="theme-color" content="#101018" />
     <title>Abhishek Rai — my little corner</title>
-    <link rel="icon" href="assets/abhishek-rai-public.jpeg" type="image/jpeg" />
-    <link rel="stylesheet" href="style.css?v=founder-public-photo-v3" />
-    <link rel="stylesheet" href="founder.css?v=founder-public-photo-v3" />
+    <link rel="icon" href="assets/abhishek-rai-2026.jpeg" type="image/jpeg" />
+    <link rel="stylesheet" href="style.css?v=founder-photo-v4" />
+    <link rel="stylesheet" href="founder.css?v=founder-photo-v4" />
   </head>
   <body class="founder-page">
     <div class="ambient one"></div>
@@ -49,7 +49,7 @@
       <p id="ownerStudioStatus" class="owner-studio-status" role="status" hidden></p>
       <section class="creator-cover" aria-labelledby="creatorName">
         <div class="creator-cover-photo">
-          <img id="creatorAvatar" src="assets/abhishek-rai.jpg" alt="Abhishek Rai" />
+          <img id="creatorAvatar" src="assets/abhishek-rai-2026.jpeg" alt="Abhishek Rai with his guitar" />
           <span id="creatorCrown" class="creator-crown" aria-hidden="true">♛</span>
         </div>
         <div class="creator-intro">
@@ -100,9 +100,8 @@
             <small>Page-only colour and mood; choose Clean to turn effects off.</small>
           </div>
           <div class="creator-owner-actions">
-            <button id="founderVipButton" class="founder-button founder-membership-link" type="button">♡ Join VIP · ₹45/year</button>
-            <button id="founderDonateButton" class="founder-button founder-button-light" type="button">☼ Leave a little support · ₹45</button>
-            <span class="founder-pay-note">Secure one-time Razorpay checkout</span>
+            <button id="founderPaymentChoiceButton" class="founder-button founder-membership-link" type="button">♡ Support ARRAI</button>
+            <span class="founder-pay-note">First choose optional support or a VIP membership; checkout opens only after your choice.</span>
             <button id="editProfileButton" class="founder-button founder-button-light" type="button" hidden>
               ✦ Edit my page
             </button>
@@ -234,6 +233,20 @@
       </form>
     </dialog>
 
+    <dialog id="founderPaymentChoiceDialog" class="founder-dialog founder-payment-dialog" aria-labelledby="founderPaymentChoiceTitle">
+      <div class="founder-form">
+        <div class="founder-dialog-heading">
+          <div><p class="founder-eyebrow">YOUR CHOICE</p><h2 id="founderPaymentChoiceTitle">How would you like to help?</h2></div>
+          <button class="founder-close" type="button" data-close-dialog aria-label="Close payment choices">×</button>
+        </div>
+        <p class="founder-dialog-note">Support is a one-time ₹45 contribution with no membership benefits. VIP is ₹45 for one year and includes member perks.</p>
+        <div class="founder-payment-choices">
+          <button id="founderDonateButton" class="founder-button founder-button-light" type="button">Leave one-time support · ₹45</button>
+          <button id="founderVipButton" class="founder-button" type="button">Join VIP for one year · ₹45</button>
+        </div>
+      </div>
+    </dialog>
+
     <dialog id="founderProfileDialog" class="founder-dialog">
       <form id="founderProfileForm" class="founder-form">
         <div class="founder-dialog-heading">
@@ -307,8 +320,8 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase.js"></script>
-    <script src="script.js?v=founder-public-photo-v3"></script>
-    <script src="founder.js?v=founder-public-photo-v3"></script>
-    <script src="founder-live.js?v=founder-public-photo-v3"></script>
+    <script src="script.js?v=founder-photo-v4"></script>
+    <script src="founder.js?v=founder-photo-v4"></script>
+    <script src="founder-live.js?v=founder-photo-v4"></script>
   </body>
 </html>
