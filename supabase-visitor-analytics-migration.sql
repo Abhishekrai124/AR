@@ -48,34 +48,35 @@ $$;
 revoke all on function public.site_visit_analytics() from public, anon, authenticated;
 grant execute on function public.site_visit_analytics() to service_role;
 
-create table if not exists public.site_page_views (
-  visit_date date primary key,
-  page_views bigint not null default 0 check (page_views >= 0),
-  updated_at timestamptz not null default now()
+create table if not exists public.site_visit_sessions (
+  session_hash text not null check (session_hash ~ '^[0-9a-f]{64}$'),
+  visit_date date not null,
+  primary key (session_hash, visit_date),
+  first_seen timestamptz not null default now()
 );
 
-alter table public.site_page_views enable row level security;
-revoke all on public.site_page_views from anon, authenticated;
-grant all on public.site_page_views to service_role;
+alter table public.site_visit_sessions enable row level security;
+revoke all on public.site_visit_sessions from anon, authenticated;
+grant all on public.site_visit_sessions to service_role;
 
-create or replace function public.site_page_view_counts()
+create or replace function public.site_visit_session_counts()
 returns jsonb
 language sql
 security definer
 set search_path = public, pg_temp
 as $$
   select jsonb_build_object(
-    'today', coalesce(sum(page_views) filter (where visit_date = (now() at time zone 'UTC')::date), 0),
-    'yesterday', coalesce(sum(page_views) filter (where visit_date = (now() at time zone 'UTC')::date - 1), 0),
-    'week', coalesce(sum(page_views) filter (where visit_date >= (now() at time zone 'UTC')::date - 6), 0),
-    'month', coalesce(sum(page_views) filter (where visit_date >= date_trunc('month', now() at time zone 'UTC')::date), 0),
-    'year', coalesce(sum(page_views) filter (where visit_date >= date_trunc('year', now() at time zone 'UTC')::date), 0),
-    'total', coalesce(sum(page_views), 0)
+    'today', count(distinct session_hash) filter (where visit_date = (now() at time zone 'UTC')::date),
+    'yesterday', count(distinct session_hash) filter (where visit_date = (now() at time zone 'UTC')::date - 1),
+    'week', count(distinct session_hash) filter (where visit_date >= (now() at time zone 'UTC')::date - 6),
+    'month', count(distinct session_hash) filter (where visit_date >= date_trunc('month', now() at time zone 'UTC')::date),
+    'year', count(distinct session_hash) filter (where visit_date >= date_trunc('year', now() at time zone 'UTC')::date),
+    'total', count(distinct session_hash)
   )
-  from public.site_page_views;
+  from public.site_visit_sessions;
 $$;
 
-create or replace function public.record_site_page_view()
+create or replace function public.record_site_visit_session(p_session_hash text)
 returns jsonb
 language plpgsql
 security definer
@@ -84,19 +85,20 @@ as $$
 declare
   today_utc date := (now() at time zone 'UTC')::date;
 begin
-  insert into public.site_page_views as current_day(visit_date, page_views)
-  values (today_utc, 1)
-  on conflict (visit_date) do update
-  set page_views = current_day.page_views + 1,
-      updated_at = now();
-  return public.site_page_view_counts();
+  if p_session_hash !~ '^[0-9a-f]{64}$' then
+    raise exception 'Invalid visitor session hash.' using errcode = '22023';
+  end if;
+  insert into public.site_visit_sessions(session_hash, visit_date)
+  values (p_session_hash, today_utc)
+  on conflict (session_hash, visit_date) do nothing;
+  return public.site_visit_session_counts();
 end;
 $$;
 
-revoke all on function public.site_page_view_counts() from public, anon, authenticated;
-revoke all on function public.record_site_page_view() from public, anon, authenticated;
-grant execute on function public.site_page_view_counts() to service_role;
-grant execute on function public.record_site_page_view() to service_role;
+revoke all on function public.site_visit_session_counts() from public, anon, authenticated;
+revoke all on function public.record_site_visit_session(text) from public, anon, authenticated;
+grant execute on function public.site_visit_session_counts() to service_role;
+grant execute on function public.record_site_visit_session(text) to service_role;
 
 do $$
 begin

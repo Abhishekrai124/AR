@@ -20,7 +20,7 @@ The home page clock uses the browser's local time zone. Weather location is requ
 
 ## Visitor counts and notifications
 
-Run `supabase-visitor-analytics-migration.sql` in the Supabase SQL Editor and set `SUPABASE_SERVICE_ROLE_KEY` in Vercel. Page views are counted automatically on every page load and stored as daily aggregate totals; no visitor ID, account name, or IP address is stored. The public footer shows the all-time page-view count, and the verified owner can see daily, weekly, monthly, yearly, and all-time totals in Owner Studio. Page views are not unique people.
+Run `supabase-visitor-analytics-migration.sql` in the Supabase SQL Editor and set `SUPABASE_SERVICE_ROLE_KEY` in Vercel. Each browser-tab session is counted once per day, so navigating between pages does not inflate the count; the all-time total counts distinct sessions. The browser keeps a random session ID in session storage, and the server stores only its keyed hash for deduplication. No raw IP address, account name, or profile is associated with these counts. The public footer shows the all-time total, and the verified owner can see daily, weekly, monthly, yearly, and all-time totals in Owner Studio. These are browser session estimates, not verified unique people.
 
 The sign-in page loads the enabled OAuth providers from Supabase Auth settings. The current project advertises email and Google, so the page provides password, one-time email link, and Google sign-in. Passkey sign-in and registration are also enabled when the project reports passkeys enabled and the visitor's browser supports WebAuthn. Keep the Supabase JavaScript client at v2.105.0 or newer; passkey support is experimental in Supabase Auth.
 

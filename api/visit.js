@@ -1,3 +1,5 @@
+import { createHmac } from "node:crypto";
+
 const supabaseUrl = String(process.env.SUPABASE_URL || "https://atphyjukjgnnbfbnizyx.supabase.co").trim();
 
 export default async function handler(request, response) {
@@ -23,16 +25,21 @@ export default async function handler(request, response) {
 
   const serviceKey = String(process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
   if (!serviceKey) return response.status(503).json({ error: "Visitor counts are not configured." });
+  const sessionId = typeof request.body?.sessionId === "string" ? request.body.sessionId : "";
+  if (!/^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/i.test(sessionId)) {
+    return response.status(400).json({ error: "A valid visitor session is required." });
+  }
 
   try {
-    const stored = await fetch(`${supabaseUrl}/rest/v1/rpc/record_site_page_view`, {
+    const sessionHash = createHmac("sha256", serviceKey).update(sessionId).digest("hex");
+    const stored = await fetch(`${supabaseUrl}/rest/v1/rpc/record_site_visit_session`, {
       method: "POST",
       headers: {
         apikey: serviceKey,
         Authorization: `Bearer ${serviceKey}`,
         "Content-Type": "application/json",
       },
-      body: "{}",
+      body: JSON.stringify({ p_session_hash: sessionHash }),
     });
     if (!stored.ok) throw new Error(`Analytics storage failed (${stored.status}).`);
     response.setHeader("Cache-Control", "no-store");

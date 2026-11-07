@@ -49,16 +49,16 @@ export default async function handler(request, response) {
       return response.status(200).json({ ok: true });
     }
     if (request.body.action === "analytics") {
-      const [profiles, posts, messages, visits, pageViews] = await Promise.all([
+      const [profiles, posts, messages, visits, visitorSessions] = await Promise.all([
         fetch(`${supabaseUrl}/rest/v1/profiles?select=id,is_vip,account_status`, { headers: { ...adminHeaders(), Prefer: "count=exact" } }),
         fetch(`${supabaseUrl}/rest/v1/posts?select=id`, { headers: { ...adminHeaders(), Prefer: "count=exact" } }),
         fetch(`${supabaseUrl}/rest/v1/direct_messages?select=id,status`, { headers: { ...adminHeaders(), Prefer: "count=exact" } }),
         fetch(`${supabaseUrl}/rest/v1/rpc/site_visit_analytics`, { method: "POST", headers: adminHeaders(), body: "{}" }),
-        fetch(`${supabaseUrl}/rest/v1/rpc/site_page_view_counts`, { method: "POST", headers: adminHeaders(), body: "{}" }),
+        fetch(`${supabaseUrl}/rest/v1/rpc/site_visit_session_counts`, { method: "POST", headers: adminHeaders(), body: "{}" }),
       ]);
-      if (!profiles.ok || !posts.ok || !messages.ok || !visits.ok || !pageViews.ok) throw new Error("Could not load owner analytics. Check that the visitor analytics migration is installed.");
+      if (!profiles.ok || !posts.ok || !messages.ok || !visits.ok || !visitorSessions.ok) throw new Error("Could not load owner analytics. Check that the visitor analytics migration is installed.");
       const profileRows = await profiles.json(), messageRows = await messages.json();
-      return response.status(200).json({ members: profileRows.length, vip: profileRows.filter((p) => p.is_vip).length, suspended: profileRows.filter((p) => p.account_status !== "active").length, posts: (await posts.json()).length, messageRequests: messageRows.filter((m) => m.status === "request").length, visits: await visits.json(), pageViews: await pageViews.json() });
+      return response.status(200).json({ members: profileRows.length, vip: profileRows.filter((p) => p.is_vip).length, suspended: profileRows.filter((p) => p.account_status !== "active").length, posts: (await posts.json()).length, messageRequests: messageRows.filter((m) => m.status === "request").length, visits: await visits.json(), visitorSessions: await visitorSessions.json() });
     }
     if (request.body.action === "moderate") {
       const id = String(request.body.id || ""); const action = String(request.body.moderationAction || "");

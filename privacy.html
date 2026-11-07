@@ -32,14 +32,15 @@
             We do not sell personal information.
           </p>
           <p>
-            The site automatically counts page visits using daily aggregate
-            totals. These new counts do not create a visitor ID, store raw IP
-            addresses, or associate the count with a name or account. The public
-            footer shows the all-time page-view total; the private owner
-            dashboard shows daily, weekly, monthly, yearly, and all-time totals.
-            These are page views, not a count of unique people. Older,
-            previously consented analytics records may remain in private owner
-            reports.
+            The site automatically counts browser-tab sessions. A random
+            session ID is kept in session storage to avoid counting each page
+            navigation as a new visit; only a keyed hash is stored for counting.
+            The site does not store raw IP addresses or associate these counts
+            with a name or account. The public footer shows the all-time count,
+            and the private owner dashboard shows daily, weekly, monthly,
+            yearly, and all-time session totals. These are session estimates,
+            not verified individual people. Older, previously consented
+            analytics records may remain in private owner reports.
           </p>
           <p>
             Location access is optional and used only when you request local

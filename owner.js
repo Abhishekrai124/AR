@@ -23,10 +23,10 @@ const renderProfiles = (profiles) => {
 const loadAnalytics = async () => {
   const data = await ownerRequest("analytics");
   const visits = data.visits || {};
-  const pageViews = data.pageViews || {};
-  ownerAnalytics.innerHTML = `<span>${data.members} members</span><span>${data.vip} VIP</span><span>${data.posts} posts</span><span>${data.messageRequests} requests</span><span>${data.suspended} moderated</span><span>Today: ${Number(pageViews.today) || 0} page views</span><span>Yesterday: ${Number(pageViews.yesterday) || 0}</span><span>7 days: ${Number(pageViews.week) || 0}</span><span>This month: ${Number(pageViews.month) || 0}</span><span>This year: ${Number(pageViews.year) || 0}</span><span data-page-views-total>Total page views: ${Number(pageViews.total) || 0}</span><span>Earlier unique visitors: ${Number(visits.total) || 0}</span>`;
-  const totalViews = ownerAnalytics.querySelector("[data-page-views-total]");
-  if (totalViews) totalViews.textContent = `Total page views: ${new Intl.NumberFormat().format(Number(pageViews.total) || 0)}`;
+  const visitorSessions = data.visitorSessions || {};
+  ownerAnalytics.innerHTML = `<span>${data.members} members</span><span>${data.vip} VIP</span><span>${data.posts} posts</span><span>${data.messageRequests} requests</span><span>${data.suspended} moderated</span><span>Today: ${Number(visitorSessions.today) || 0} sessions</span><span>Yesterday: ${Number(visitorSessions.yesterday) || 0}</span><span>7 days: ${Number(visitorSessions.week) || 0}</span><span>This month: ${Number(visitorSessions.month) || 0}</span><span>This year: ${Number(visitorSessions.year) || 0}</span><span data-visitor-sessions-total>All-time visitor sessions: ${Number(visitorSessions.total) || 0}</span><span>Earlier consented unique visitors: ${Number(visits.total) || 0}</span>`;
+  const totalVisitors = ownerAnalytics.querySelector("[data-visitor-sessions-total]");
+  if (totalVisitors) totalVisitors.textContent = `All-time visitor sessions: ${new Intl.NumberFormat().format(Number(visitorSessions.total) || 0)}`;
   const visitors = Array.isArray(visits.recentUsers) ? visits.recentUsers : [];
   recentVisitors.innerHTML = visitors.length
     ? visitors.map((visitor) => `<li><b>${escapeHtml(visitor.display_name)}</b> · @${escapeHtml(visitor.username)} <time>${new Date(visitor.last_seen).toLocaleString()}</time></li>`).join("")

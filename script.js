@@ -443,26 +443,41 @@ weatherButton?.addEventListener("click", () => {
 
 const pageVisitCounter = document.querySelector(".site-visit-counter") || document.createElement("small");
 pageVisitCounter.className = "site-visit-counter";
-pageVisitCounter.textContent = "Total website visits: counting…";
+pageVisitCounter.title = "Counts browser-tab sessions, not verified individual people.";
+pageVisitCounter.setAttribute("aria-live", "polite");
+pageVisitCounter.textContent = "Total visitors: counting…";
 if (!pageVisitCounter.isConnected) document.querySelector("footer")?.append(pageVisitCounter);
 try {
   localStorage.removeItem("arrai-visitor-id");
   localStorage.removeItem("arrai-analytics-consent");
 } catch (error) { console.error("Legacy analytics settings could not be cleared:", error); }
-fetch("/api/visit", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
-  .then(async (response) => {
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(result.error || "Visit total is unavailable.");
-    if (!Number.isFinite(Number(result.total))) throw new Error("The visit counter returned an invalid total.");
-    pageVisitCounter.textContent = `Total website visits: ${new Intl.NumberFormat().format(Number(result.total))}`;
-    document.querySelectorAll(".owner-analytics [data-page-views-total]").forEach((item) => {
-      item.textContent = `Total page views: ${new Intl.NumberFormat().format(Number(result.total))}`;
+const countVisitorSession = async () => {
+  try {
+    const storageKey = "arrai-visitor-session";
+    let sessionId = sessionStorage.getItem(storageKey);
+    if (!/^[\da-f]{8}-[\da-f]{4}-[1-8][\da-f]{3}-[89ab][\da-f]{3}-[\da-f]{12}$/i.test(sessionId || "")) {
+      sessionId = crypto.randomUUID();
+      sessionStorage.setItem(storageKey, sessionId);
+    }
+    const response = await fetch("/api/visit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId }),
     });
-  })
-  .catch((error) => {
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || "Visitor total is unavailable.");
+    if (!Number.isFinite(Number(result.total))) throw new Error("The visitor counter returned an invalid total.");
+    const total = new Intl.NumberFormat().format(Number(result.total));
+    pageVisitCounter.textContent = `Total visitors: ${total}`;
+    document.querySelectorAll(".owner-analytics [data-visitor-sessions-total]").forEach((item) => {
+      item.textContent = `All-time visitor sessions: ${total}`;
+    });
+  } catch (error) {
     console.error("Automatic visitor count failed:", error);
-    pageVisitCounter.textContent = "Total website visits: unavailable";
-  });
+    pageVisitCounter.textContent = "Total visitors: unavailable";
+  }
+};
+void countVisitorSession();
 
 const musicStateKey = "arrai-music-session";
 const musicPlayer = document.createElement("aside");
