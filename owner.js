@@ -2,6 +2,8 @@ const ownerStatus = document.querySelector("#ownerStatus");
 const ownerTools = document.querySelector("#ownerTools");
 const ownerResults = document.querySelector("#ownerResults");
 const ownerAnalytics = document.querySelector("#ownerAnalytics");
+const recentVisitors = document.querySelector("#recentVisitors");
+const visitorDetails = document.querySelector(".owner-visitor-details");
 const editor = document.querySelector("#ownerEditor");
 let ownerToken = "";
 let ownerId = "";
@@ -20,8 +22,19 @@ const renderProfiles = (profiles) => {
 };
 const loadAnalytics = async () => {
   const data = await ownerRequest("analytics");
-  ownerAnalytics.innerHTML = `<span>${data.members} members</span><span>${data.vip} VIP</span><span>${data.posts} posts</span><span>${data.messageRequests} requests</span><span>${data.suspended} moderated</span>`;
+  const visits = data.visits || {};
+  const pageViews = data.pageViews || {};
+  ownerAnalytics.innerHTML = `<span>${data.members} members</span><span>${data.vip} VIP</span><span>${data.posts} posts</span><span>${data.messageRequests} requests</span><span>${data.suspended} moderated</span><span>Today: ${Number(pageViews.today) || 0} page views</span><span>Yesterday: ${Number(pageViews.yesterday) || 0}</span><span>7 days: ${Number(pageViews.week) || 0}</span><span>This month: ${Number(pageViews.month) || 0}</span><span>This year: ${Number(pageViews.year) || 0}</span><span data-page-views-total>Total page views: ${Number(pageViews.total) || 0}</span><span>Earlier unique visitors: ${Number(visits.total) || 0}</span>`;
+  const totalViews = ownerAnalytics.querySelector("[data-page-views-total]");
+  if (totalViews) totalViews.textContent = `Total page views: ${new Intl.NumberFormat().format(Number(pageViews.total) || 0)}`;
+  const visitors = Array.isArray(visits.recentUsers) ? visits.recentUsers : [];
+  recentVisitors.innerHTML = visitors.length
+    ? visitors.map((visitor) => `<li><b>${escapeHtml(visitor.display_name)}</b> · @${escapeHtml(visitor.username)} <time>${new Date(visitor.last_seen).toLocaleString()}</time></li>`).join("")
+    : "<li>No signed-in visitors recorded yet.</li>";
 };
+visitorDetails?.addEventListener("toggle", () => {
+  document.querySelector("#visitorListToggle").textContent = visitorDetails.open ? "Hide" : "Show";
+});
 const searchProfiles = async () => renderProfiles((await ownerRequest("profiles", { query: document.querySelector("#ownerSearch").value })).profiles);
 
 const parseLines = (value) => String(value || "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean);

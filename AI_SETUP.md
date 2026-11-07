@@ -12,9 +12,19 @@ Open the Brain Studio from Owner Studio after signing into the configured owner 
 
 ## Optional live search
 
-Only explicit outside-world questions (for example, current weather or today's news) may use the external bridge. Add `EXTERNAL_AI_KEY` (Gemini-compatible) and `TAVILY_API_KEY` in Vercel to enable it. Without both keys, the assistant stays local and explains that live search is unavailable. Internal wallet, profile, post, and message questions are not sent to the external bridge.
+Only explicit outside-world questions may use a public source. Wikipedia lookups use the Wikimedia API, and the home page's user-requested local weather uses Open-Meteo; neither requires an API key. Makima can look up weather for a named city. Other live search uses the Gemini-compatible `EXTERNAL_AI_KEY` and `TAVILY_API_KEY` in Vercel. Without those keys, general live search is unavailable. Internal wallet, profile, post, and message questions are not sent to external APIs.
 
 Keep all server keys out of `script.js`, HTML, and public repositories. On Vercel: Project → Settings → Environment Variables → add keys for the required environments → redeploy.
+
+The home page clock uses the browser's local time zone. Weather location is requested only after the visitor presses its button; ask Makima about a named city for a weather lookup.
+
+## Visitor counts and notifications
+
+Run `supabase-visitor-analytics-migration.sql` in the Supabase SQL Editor and set `SUPABASE_SERVICE_ROLE_KEY` in Vercel. Page views are counted automatically on every page load and stored as daily aggregate totals; no visitor ID, account name, or IP address is stored. The public footer shows the all-time page-view count, and the verified owner can see daily, weekly, monthly, yearly, and all-time totals in Owner Studio. Page views are not unique people.
+
+The sign-in page loads the enabled OAuth providers from Supabase Auth settings. The current project advertises email and Google, so the page provides password, one-time email link, and Google sign-in. Passkey sign-in and registration are also enabled when the project reports passkeys enabled and the visitor's browser supports WebAuthn. Keep the Supabase JavaScript client at v2.105.0 or newer; passkey support is experimental in Supabase Auth.
+
+Browser notifications are opt-in and require a supported browser and permission. While the site is open, opted-in signed-in users can receive message and new-post notifications. Push delivery while the site is closed is not configured. Music playback state is restored when navigating between pages, but browser autoplay policy may require the visitor to tap Play again.
 
 ## Action boundaries
 

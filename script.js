@@ -288,8 +288,8 @@ const mountAssistant = () => {
         const { data: { session } = {} } = await window.arraiSupabase?.auth.getSession() || {};
         const response = await fetch("/api/assistant", { method: "POST", headers: { "Content-Type": "application/json", ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}) }, body: JSON.stringify({ question }) });
         const external = await response.json();
-        if (response.ok && external.answer) result = { ...result, text: external.answer };
-      } catch { /* Keep the internal answer if the optional bridge is unavailable. */ }
+        result = { ...result, text: response.ok ? external.answer || "The live source returned an empty reply." : external.error || "Live lookup is unavailable." };
+      } catch (error) { result = { ...result, text: `Live lookup failed: ${error.message || "the service could not be reached."}` }; }
     }
     status.remove();
     if (result.action && core) appendAction(result.text, result.action, context, core);
@@ -387,3 +387,215 @@ document.querySelectorAll(".contact-form").forEach((form) =>
     location.href = `mailto:abhishekrai@arrai.in?subject=${s}&body=${b}`;
   }),
 );
+
+const localClock = document.querySelector("#localClock");
+const localTimezone = document.querySelector("#localTimezone");
+const localGreeting = document.querySelector("#localGreeting");
+if (localClock) {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "device time";
+  const updateClock = () => { localClock.textContent = new Date().toLocaleString(undefined, { dateStyle: "full", timeStyle: "medium" }); };
+  updateClock();
+  setInterval(updateClock, 1000);
+  localTimezone.textContent = `Using your device time zone: ${timezone}`;
+  window.arraiAuth?.then(async ({ isAuthenticated, user }) => {
+    if (!isAuthenticated || !user?.id) return;
+    const { data, error } = await window.arraiSupabase.from("profiles").select("display_name,username").eq("id", user.id).maybeSingle();
+    if (error) throw error;
+    localGreeting.textContent = `Hello, ${data?.display_name || user.name || data?.username || "there"} ✦`;
+  }).catch((error) => console.error("Could not personalize the local greeting:", error));
+}
+
+const weatherButton = document.querySelector("#weatherButton");
+const localWeather = document.querySelector("#localWeather");
+const weatherDescription = (code) => ({
+  0: "clear sky", 1: "mostly clear", 2: "partly cloudy", 3: "overcast",
+  45: "fog", 48: "freezing fog", 51: "light drizzle", 53: "drizzle", 55: "heavy drizzle",
+  61: "light rain", 63: "rain", 65: "heavy rain", 71: "light snow", 73: "snow",
+  75: "heavy snow", 80: "rain showers", 81: "rain showers", 82: "heavy rain showers",
+  95: "thunderstorm", 96: "thunderstorm with hail", 99: "thunderstorm with hail",
+}[code] || "conditions unavailable");
+weatherButton?.addEventListener("click", () => {
+  if (!navigator.geolocation) { localWeather.textContent = "This browser does not support location access."; return; }
+  weatherButton.disabled = true;
+  weatherButton.textContent = "Finding your local weather…";
+  navigator.geolocation.getCurrentPosition(async ({ coords }) => {
+    try {
+      const location = { latitude: coords.latitude, longitude: coords.longitude };
+      sessionStorage.setItem("arraiWeatherLocation", JSON.stringify(location));
+      const url = new URL("https://api.open-meteo.com/v1/forecast");
+      url.search = new URLSearchParams({ ...location, current: "temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m", timezone: "auto" }).toString();
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("The weather service is temporarily unavailable.");
+      const { current, timezone } = await response.json();
+      if (!current) throw new Error("The weather service returned no current conditions.");
+      localWeather.textContent = `${weatherDescription(current.weather_code)} · ${current.temperature_2m}°C (feels like ${current.apparent_temperature}°C), humidity ${current.relative_humidity_2m}%, wind ${current.wind_speed_10m} km/h · ${timezone || "local time"}`;
+      weatherButton.textContent = "Refresh my local weather";
+    } catch (error) {
+      localWeather.textContent = error.message || "Could not load local weather.";
+      weatherButton.textContent = "Try weather again";
+    } finally { weatherButton.disabled = false; }
+  }, (error) => {
+    localWeather.textContent = error.code === 1 ? "Location permission was denied. You can enable it in your browser settings." : "Your location could not be determined right now.";
+    weatherButton.disabled = false;
+    weatherButton.textContent = "Try weather again";
+  }, { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 });
+});
+
+const pageVisitCounter = document.querySelector(".site-visit-counter") || document.createElement("small");
+pageVisitCounter.className = "site-visit-counter";
+pageVisitCounter.textContent = "Total website visits: counting…";
+if (!pageVisitCounter.isConnected) document.querySelector("footer")?.append(pageVisitCounter);
+try {
+  localStorage.removeItem("arrai-visitor-id");
+  localStorage.removeItem("arrai-analytics-consent");
+} catch (error) { console.error("Legacy analytics settings could not be cleared:", error); }
+fetch("/api/visit", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
+  .then(async (response) => {
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || "Visit total is unavailable.");
+    if (!Number.isFinite(Number(result.total))) throw new Error("The visit counter returned an invalid total.");
+    pageVisitCounter.textContent = `Total website visits: ${new Intl.NumberFormat().format(Number(result.total))}`;
+    document.querySelectorAll(".owner-analytics [data-page-views-total]").forEach((item) => {
+      item.textContent = `Total page views: ${new Intl.NumberFormat().format(Number(result.total))}`;
+    });
+  })
+  .catch((error) => {
+    console.error("Automatic visitor count failed:", error);
+    pageVisitCounter.textContent = "Total website visits: unavailable";
+  });
+
+const musicStateKey = "arrai-music-session";
+const musicPlayer = document.createElement("aside");
+musicPlayer.className = "music-player";
+musicPlayer.id = "musicPlayer";
+musicPlayer.hidden = true;
+musicPlayer.innerHTML = '<img id="playerArt" src="assets/app-icon.svg" alt=""><div class="music-player-track"><b id="playerTitle">—</b><small id="playerArtist">—</small><small id="playerResume" hidden></small></div><audio id="audioPlayer" controls preload="metadata"></audio><button id="closePlayer" type="button" aria-label="Close music player">×</button>';
+document.body.append(musicPlayer);
+const musicAudio = musicPlayer.querySelector("#audioPlayer");
+let musicState = null;
+let resumeAt = 0;
+let musicLeavingPage = false;
+const saveMusicState = (wasPlaying = !musicAudio.paused) => {
+  if (!musicState) return;
+  musicState.currentTime = Number.isFinite(musicAudio.currentTime) ? musicAudio.currentTime : musicState.currentTime || 0;
+  musicState.wasPlaying = wasPlaying;
+  try { sessionStorage.setItem(musicStateKey, JSON.stringify(musicState)); } catch (error) { console.error("Music playback state could not be saved:", error); }
+};
+const resumeMusic = async () => {
+  try {
+    await musicAudio.play();
+    musicPlayer.querySelector("#playerResume").hidden = true;
+  } catch (error) {
+    const resume = musicPlayer.querySelector("#playerResume");
+    resume.textContent = "Tap Play to resume after changing pages.";
+    resume.hidden = false;
+    console.info("Browser requires a user gesture to resume music:", error);
+  }
+};
+window.arraiMusic = {
+  play(track) {
+    if (!track?.url) throw new Error("This music track has no playable URL.");
+    const url = new URL(track.url, location.href);
+    if (!["http:", "https:"].includes(url.protocol)) throw new Error("Only web audio URLs can be played.");
+    musicState = { url: url.href, title: String(track.title || "Untitled"), artist: String(track.artist || "Unknown artist"), currentTime: 0, wasPlaying: true };
+    musicPlayer.querySelector("#playerTitle").textContent = musicState.title;
+    musicPlayer.querySelector("#playerArtist").textContent = musicState.artist;
+    musicPlayer.querySelector("#playerResume").hidden = true;
+    musicPlayer.hidden = false;
+    musicAudio.src = musicState.url;
+    musicAudio.load();
+    saveMusicState(true);
+    resumeMusic();
+  },
+  stop() {
+    musicAudio.pause();
+    musicAudio.currentTime = 0;
+    musicState = null;
+    musicPlayer.hidden = true;
+    sessionStorage.removeItem(musicStateKey);
+  },
+  get currentTrack() { return musicState ? { ...musicState } : null; },
+};
+musicAudio.addEventListener("timeupdate", () => saveMusicState(!musicAudio.paused));
+musicAudio.addEventListener("play", () => saveMusicState(true));
+musicAudio.addEventListener("pause", () => saveMusicState(musicLeavingPage && Boolean(musicState?.wasPlaying)));
+document.addEventListener("click", (event) => {
+  const link = event.target.closest("a[href]");
+  if (!link || link.target === "_blank") return;
+  try { musicLeavingPage = new URL(link.href, location.href).origin === location.origin; } catch { musicLeavingPage = false; }
+});
+window.addEventListener("pagehide", () => saveMusicState(Boolean(musicState?.wasPlaying)), { once: true });
+musicPlayer.querySelector("#closePlayer").addEventListener("click", () => window.arraiMusic.stop());
+try {
+  const saved = JSON.parse(sessionStorage.getItem(musicStateKey) || "null");
+  if (saved?.url) {
+    musicState = saved;
+    resumeAt = Number(saved.currentTime) || 0;
+    musicPlayer.querySelector("#playerTitle").textContent = saved.title || "Untitled";
+    musicPlayer.querySelector("#playerArtist").textContent = saved.artist || "Unknown artist";
+    musicPlayer.hidden = false;
+    musicAudio.src = saved.url;
+    musicAudio.addEventListener("loadedmetadata", () => {
+      if (resumeAt > 0 && resumeAt < musicAudio.duration) musicAudio.currentTime = resumeAt;
+      if (saved.wasPlaying) resumeMusic();
+    }, { once: true });
+  }
+} catch (error) { console.error("Saved music state could not be restored:", error); }
+
+const notificationSettingKey = "arrai-notifications-enabled";
+const notificationButton = document.createElement("button");
+notificationButton.type = "button";
+notificationButton.className = "notification-toggle";
+notificationButton.setAttribute("aria-label", "Manage browser notifications");
+document.body.append(notificationButton);
+const notificationsEnabled = () => localStorage.getItem(notificationSettingKey) === "true" && window.Notification?.permission === "granted";
+const updateNotificationButton = () => {
+  notificationButton.textContent = notificationsEnabled() ? "Notifications on · Turn off" : "Enable notifications";
+  notificationButton.hidden = !("Notification" in window);
+};
+const showSiteNotification = async (title, body, url, tag) => {
+  if (!notificationsEnabled()) return;
+  const registration = await navigator.serviceWorker?.ready;
+  if (!registration) throw new Error("Background notification support is unavailable in this browser.");
+  await registration.showNotification(title, { body, icon: "/assets/app-icon.svg", badge: "/assets/app-icon.svg", tag, data: { url } });
+};
+updateNotificationButton();
+notificationButton.addEventListener("click", async () => {
+  try {
+    if (notificationsEnabled()) {
+      localStorage.setItem(notificationSettingKey, "false");
+      updateNotificationButton();
+      window.cuteNotice?.("Browser notifications are turned off.");
+      return;
+    }
+    const permission = await window.Notification.requestPermission();
+    if (permission !== "granted") {
+      localStorage.setItem(notificationSettingKey, "false");
+      updateNotificationButton();
+      window.cuteNotice?.("Notifications were not enabled. You can change permission in browser settings.", "warning");
+      return;
+    }
+    const registration = await navigator.serviceWorker?.ready;
+    if (!registration) throw new Error("The notification service worker is not ready.");
+    localStorage.setItem(notificationSettingKey, "true");
+    await registration.showNotification("ARRAI.in notifications enabled", { body: "While you are on the site, you can get alerts for new messages and community posts.", icon: "/assets/app-icon.svg" });
+    updateNotificationButton();
+  } catch (error) { window.cuteNotice?.(error.message || "Notifications could not be enabled.", "warning"); }
+});
+window.arraiAuth?.then(({ isAuthenticated, user }) => {
+  if (!isAuthenticated || !user?.id || !window.arraiSupabase) return;
+  const channel = window.arraiSupabase.channel(`site-notifications:${user.id}:${crypto.randomUUID()}`)
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "direct_messages", filter: `recipient_id=eq.${user.id}` }, (event) => {
+      const message = event.new;
+      if (message.sender_id !== user.id) showSiteNotification("New ARRAI.in message", "You have a new private message.", `/dm.html?with=${encodeURIComponent(message.sender_id)}`, `message-${message.id}`).catch((error) => console.error("Message notification failed:", error));
+    })
+    .on("postgres_changes", { event: "INSERT", schema: "public", table: "posts" }, async (event) => {
+      if (event.new.author_id === user.id) return;
+      const { data: author, error } = await window.arraiSupabase.from("profiles").select("privacy").eq("id", event.new.author_id).maybeSingle();
+      if (error) { console.error("Community post visibility could not be checked:", error); return; }
+      if (author?.privacy === "private") return;
+      showSiteNotification("New community post", "A member shared a new update.", "/community.html", `post-${event.new.id}`).catch((notificationError) => console.error("Community notification failed:", notificationError));
+    })
+    .subscribe((status) => { if (status === "CHANNEL_ERROR") console.error("Site notification updates could not connect."); });
+  window.addEventListener("pagehide", () => window.arraiSupabase.removeChannel(channel), { once: true });
+}).catch((error) => console.error("Could not start site notifications:", error));
