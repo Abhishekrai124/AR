@@ -64,10 +64,11 @@ if (nav && !nav.querySelector('[href="dm.html"]')) {
 if (nav && !nav.querySelector('[href="payments.html"]')) {
   const paymentsLink = document.createElement("a");
   paymentsLink.href = "payments.html";
-  paymentsLink.textContent = "Payments";
+  paymentsLink.textContent = "Wallet";
   const authLink = nav.querySelector('[href="auth.html"]');
   nav.insertBefore(paymentsLink, authLink || null);
 }
+nav?.querySelector('[href="payments.html"]')?.replaceChildren(document.createTextNode("Wallet"));
 if (nav && !nav.querySelector('[href="music.html"]')) { const musicLink = document.createElement("a"); musicLink.href = "music.html"; musicLink.textContent = "Music"; const homeLink = nav.querySelector('[href="index.html"]'); homeLink?.after(musicLink); }
 const ownerEmail = "abhishekrai6897@gmail.com";
 const avatarFallback = (name) => `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "AR")}&background=38bdf8&color=0f172a&bold=true`;
@@ -166,6 +167,14 @@ if (button && nav)
     button.textContent = open ? "×" : "☰";
   });
 
+const arraiMakimaReady = new Promise((resolve) => {
+  const coreScript = document.createElement("script");
+  coreScript.src = "/lib/arrai-core.js";
+  coreScript.onload = () => resolve(window.arraiMakima || null);
+  coreScript.onerror = () => resolve(null);
+  document.head.append(coreScript);
+});
+
 const localAssistantReply = (question) => {
   const q = question.toLowerCase();
   if (q.includes("contact") || q.includes("email") || q.includes("hire")) return "Of course ♡ You can reach Abhishek at abhishekrai@arrai.in, or use the Contact page and I’ll help you find the right place.";
@@ -213,15 +222,52 @@ const mountAssistant = () => {
   shell.innerHTML = `
     <button class="ai-launcher" type="button" aria-label="Open AR AI support">✦</button>
     <aside class="ai-panel" aria-label="AR AI support assistant">
-      <div class="ai-head"><div><strong><span class="makima-orb">✿</span>Miss Makima</strong><small>Your soft little AR guide</small></div><button class="ai-close" type="button" aria-label="Close assistant">×</button></div>
+      <div class="ai-head"><div><strong><span class="makima-orb">✿</span>Miss Makima</strong><small>Private AR guide · local first</small></div><div class="ai-head-actions"><button class="ai-speak" type="button" aria-label="Read latest reply aloud" title="Read latest reply">Speak</button><button class="ai-memory-clear" type="button" aria-label="Clear saved conversation memory" title="Clear saved memory">Clear</button><button class="ai-close" type="button" aria-label="Close assistant">×</button></div></div>
       <div class="ai-messages"><p class="ai-message">Hello, I’m Miss Makima. I’m here whenever you need a gentle hand around AR. What would you like to know? ♡</p></div>
       <form class="ai-form"><input required maxlength="500" aria-label="Your message" placeholder="Ask anything…" /><button type="submit">Send</button></form>
     </aside>`;
   document.body.append(shell);
-  const panel = shell.querySelector(".ai-panel"), launcher = shell.querySelector(".ai-launcher"), close = shell.querySelector(".ai-close"), form = shell.querySelector("form"), input = shell.querySelector("input"), messages = shell.querySelector(".ai-messages");
-  const toggle = (open) => { panel.classList.toggle("open", open); launcher.setAttribute("aria-expanded", open); if (open) input.focus(); };
+  const panel = shell.querySelector(".ai-panel"), launcher = shell.querySelector(".ai-launcher"), close = shell.querySelector(".ai-close"), clearMemory = shell.querySelector(".ai-memory-clear"), speak = shell.querySelector(".ai-speak"), form = shell.querySelector("form"), input = shell.querySelector("input"), messages = shell.querySelector(".ai-messages");
+  const appendReply = (text) => { const reply = document.createElement("p"); reply.className = "ai-message"; reply.textContent = text; messages.append(reply); messages.scrollTop = messages.scrollHeight; };
+  const appendAction = (text, action, context, core) => {
+    const card = document.createElement("div"); card.className = "ai-message ai-action";
+    const description = document.createElement("p"); description.textContent = text;
+    const controls = document.createElement("div"); controls.className = "ai-action-controls";
+    const confirm = document.createElement("button"); confirm.type = "button"; confirm.className = "button primary"; confirm.textContent = "Confirm";
+    const cancel = document.createElement("button"); cancel.type = "button"; cancel.className = "button"; cancel.textContent = "Cancel";
+    controls.append(confirm, cancel); card.append(description, controls); messages.append(card); messages.scrollTop = messages.scrollHeight;
+    confirm.addEventListener("click", async () => {
+      confirm.disabled = true; cancel.disabled = true;
+      try { appendReply(await core.execute(action, context)); }
+      catch (error) { appendReply(error.message || "That action could not be completed."); }
+      card.remove();
+    });
+    cancel.addEventListener("click", () => { card.remove(); appendReply("No action taken."); });
+  };
+  const toggle = (open) => { panel.classList.toggle("open", open); launcher.setAttribute("aria-expanded", open); if (open) input.focus(); else window.speechSynthesis?.cancel(); };
   launcher.addEventListener("click", () => toggle(!panel.classList.contains("open")));
   close.addEventListener("click", () => toggle(false));
+  speak.addEventListener("click", () => {
+    const Speech = window.SpeechSynthesisUtterance;
+    if (!window.speechSynthesis || !Speech) return appendReply("Speech output is not available in this browser.");
+    const replies = [...messages.querySelectorAll(".ai-message:not(.user):not(.status)")];
+    const latest = replies[replies.length - 1]?.textContent.trim();
+    if (!latest) return;
+    window.speechSynthesis.cancel();
+    const utterance = new Speech(latest);
+    utterance.lang = navigator.language || "en-IN";
+    window.speechSynthesis.speak(utterance);
+  });
+  clearMemory.addEventListener("click", async () => {
+    try {
+      const auth = window.arraiAuth ? await window.arraiAuth : null;
+      if (!auth?.isAuthenticated) throw new Error("Sign in to manage saved memory.");
+      const core = await arraiMakimaReady;
+      if (!core) throw new Error("The local guide is unavailable.");
+      await core.clearMemory(window.arraiSupabase, auth.user.sub);
+      appendReply("Your saved conversation memory has been cleared.");
+    } catch (error) { appendReply(error.message || "Memory could not be cleared."); }
+  });
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const question = input.value.trim();
@@ -230,13 +276,24 @@ const mountAssistant = () => {
     messages.lastElementChild.textContent = question;
     input.value = "";
     const status = document.createElement("p"); status.className = "ai-message status"; status.textContent = "Thinking ✦"; messages.append(status); messages.scrollTop = messages.scrollHeight;
-    let answer = localAssistantReply(question);
+    const core = await arraiMakimaReady;
+    let auth = null;
     try {
-      const response = await fetch("/api/assistant", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ question }) });
-      if (response.ok) answer = (await response.json()).answer || answer;
-    } catch { /* The local assistant is intentionally available without an API key. */ }
+      auth = window.arraiAuth ? await window.arraiAuth : null;
+    } catch { auth = null; }
+    const context = { db: window.arraiSupabase, user: auth?.user || null, isOwner: auth?.user?.email?.toLowerCase() === ownerEmail };
+    let result = core ? await core.respond(question, context) : { text: localAssistantReply(question) };
+    if (result.external) {
+      try {
+        const { data: { session } = {} } = await window.arraiSupabase?.auth.getSession() || {};
+        const response = await fetch("/api/assistant", { method: "POST", headers: { "Content-Type": "application/json", ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}) }, body: JSON.stringify({ question }) });
+        const external = await response.json();
+        if (response.ok && external.answer) result = { ...result, text: external.answer };
+      } catch { /* Keep the internal answer if the optional bridge is unavailable. */ }
+    }
     status.remove();
-    const reply = document.createElement("p"); reply.className = "ai-message"; reply.textContent = answer; messages.append(reply); messages.scrollTop = messages.scrollHeight;
+    if (result.action && core) appendAction(result.text, result.action, context, core);
+    else appendReply(result.text || "I couldn't prepare a reply.");
   });
 };
 mountAssistant();

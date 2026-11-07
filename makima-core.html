@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Owner-only Miss Makima learning studio." />
+    <meta name="theme-color" content="#101513" />
+    <title>Miss Makima Brain Studio — arrai.in</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="makima-studio-page">
+    <div class="ambient one"></div><div class="ambient two"></div>
+    <header><a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a><button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button><nav><a href="index.html">Home</a><a href="owner.html">Owner studio</a><a class="active" href="makima-core.html">Brain Studio</a></nav></header>
+    <main class="makima-studio-wrap">
+      <section class="makima-studio-heading"><div><p class="eyebrow">ARRAI CORE · OWNER SPACE</p><h1>Miss Makima <em>Brain Studio</em></h1><p>Train a private concept graph with explicit examples and inspect how its links change.</p></div><div class="makima-status-chip"><span aria-hidden="true"></span><span id="makimaStatus" role="status">Verifying owner access…</span></div></section>
+      <section id="makimaDashboard" hidden>
+        <div class="makima-metrics" aria-label="Brain metrics">
+          <article><span>Semantic nodes</span><strong id="nodeMetric">0</strong><small>Owner-taught terms</small></article>
+          <article><span>Synaptic links</span><strong id="edgeMetric">0</strong><small>Co-activated term pairs</small></article>
+          <article><span>Episodic records</span><strong id="episodeMetric">0</strong><small>Training actions only</small></article>
+          <article><span>Mean link strength</span><strong id="strengthMetric">0.00</strong><small>Bounded from −1 to +1</small></article>
+        </div>
+        <div class="makima-studio-grid">
+          <section class="makima-panel makima-graph-panel">
+            <div class="makima-panel-heading"><div><p class="eyebrow">Semantic memory</p><h2>Synaptic map</h2></div><span id="graphCount">No nodes</span></div>
+            <div class="makima-graph-layout"><canvas id="brainCanvas" aria-label="Interactive concept graph"></canvas><aside class="makima-node-detail"><p class="eyebrow">Selected node</p><h3 id="selectedNodeLabel">Choose a node</h3><p id="selectedNodeInfo">Node vectors have 32 locally generated features. No user activity is ingested automatically.</p><div class="makima-node-actions"><button id="reinforceNode" class="button" type="button" disabled>Reinforce</button><button id="correctNode" class="button" type="button" disabled>Correct</button></div></aside></div>
+            <p class="makima-legend"><span class="positive"></span> Positive association <span class="negative"></span> Corrective association</p>
+          </section>
+          <section class="makima-panel makima-training-panel">
+            <div class="makima-panel-heading"><div><p class="eyebrow">Working memory</p><h2>Teach a concept</h2></div><span aria-hidden="true">＋</span></div>
+            <form id="makimaTrainingForm" class="makima-training-form">
+              <label for="trainingText">Phrase or rule</label>
+              <textarea id="trainingText" rows="4" maxlength="1000" required placeholder="Example: A travel expense is categorized as travel."></textarea>
+              <div class="makima-mode" role="group" aria-label="Learning signal"><button type="button" data-mode="teach" aria-pressed="true">Teach</button><button type="button" data-mode="reinforce" aria-pressed="false">Reinforce</button><button type="button" data-mode="correct" aria-pressed="false">Correct</button></div>
+              <div class="makima-training-actions"><button class="button" id="micButton" type="button">Use microphone</button><button class="button primary" type="submit">Save learning episode</button></div>
+            </form>
+            <p class="makima-privacy-note">Microphone capture is one-shot and user-started. Browser speech recognition may process audio outside this site; it is not a voiceprint or login method. No platform-wide telemetry is collected.</p>
+            <p id="trainingStatus" class="makima-training-status" role="status"></p>
+          </section>
+          <section class="makima-panel makima-memory-panel"><div class="makima-panel-heading"><div><p class="eyebrow">Episodic memory</p><h2>Recent training</h2></div><span id="episodeCount">0</span></div><ol id="episodeList" class="makima-episodes"><li class="makima-empty">No training records yet.</li></ol></section>
+          <section class="makima-panel makima-boundary-panel"><p class="eyebrow">System boundary</p><h2>Learning is not authority.</h2><p>This graph stores only the concepts you explicitly submit here. It cannot inspect private user data, freeze accounts, alter balances, ban users, or execute platform administration.</p><a class="text-link" href="AI_SETUP.md">Read the AI architecture notes →</a></section>
+        </div>
+      </section>
+    </main>
+    <footer><a class="brand" href="index.html">ar<span>rai</span>.in</a><p>© 2026 Abhishek Rai. All rights reserved.</p></footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase.js"></script><script src="script.js"></script><script src="makima-core.js"></script>
+  </body>
+</html>

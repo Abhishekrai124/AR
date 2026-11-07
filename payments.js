@@ -1,52 +1,244 @@
-const paymentStatus = document.querySelector("#paymentStatus");
-const paymentApp = document.querySelector("#paymentApp");
-const payButton = document.querySelector("#payButton");
-let selectedAmount = 49;
-const vipPayButton = document.querySelector("#vipPayButton");
-const notify = (text) => { if ("Notification" in window && Notification.permission === "granted") new Notification("Arrai Pay", { body: text }); };
+const status = document.querySelector("#walletStatus");
+const app = document.querySelector("#walletApp");
+const form = document.querySelector("#entryForm");
+const money = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" });
+let ledger = { balanceMinor: 0, transactions: [] };
+let assistantHistory = [];
+let cameraStream;
 
-function setStatus(message, type = "") { paymentStatus.textContent = message; paymentStatus.className = `community-status ${type}`; }
-
-document.querySelectorAll("[data-amount]").forEach((button) => button.addEventListener("click", () => {
-  selectedAmount = Number(button.dataset.amount);
-  document.querySelectorAll("[data-amount]").forEach((item) => item.classList.toggle("selected-amount", item === button));
-}));
-
-async function startCheckout(product = "payment") {
-  try {
-    payButton.disabled = true;
-    setStatus("Creating your secure test payment…");
-    const orderResponse = await fetch("/api/payments/create-order", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount: product === "vip" ? 45 : selectedAmount, product }) });
-    const order = await orderResponse.json();
-    if (!orderResponse.ok) throw new Error(order.error);
-    const checkout = new Razorpay({
-      key: order.key,
-      amount: order.amount,
-      currency: order.currency,
-      name: "arrai.in",
-      description: product === "vip" ? "Arrai Gold VIP membership" : "Arrai payment",
-      order_id: order.id,
-      handler: async (payment) => {
-        const session = (await window.arraiSupabase.auth.getSession()).data.session;
-        const verified = await fetch("/api/payments/verify", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token || ""}` }, body: JSON.stringify({ orderId: payment.razorpay_order_id, paymentId: payment.razorpay_payment_id, signature: payment.razorpay_signature, product }) });
-        const result = await verified.json();
-        const text = verified.ok && result.verified ? (product === "vip" ? "Payment verified. VIP activation is processing." : product === "recharge" ? "Payment verified. Recharge request is queued." : "Payment verified successfully.") : (result.error || "Payment is pending verification."); setStatus(text, verified.ok ? "success" : "error"); notify(text); localStorage.setItem("arraiLastPayment", JSON.stringify({ text, at: new Date().toISOString(), product }));
-      },
-      theme: { color: "#0284c7" },
-    });
-    checkout.on("payment.failed", (response) => setStatus(response.error.description || "Payment failed.", "error"));
-    checkout.open();
-  } catch (error) { setStatus(error.message || "Could not start payment.", "error"); }
-  finally { payButton.disabled = false; }
+function setStatus(message, type = "") {
+  status.textContent = message;
+  status.className = `community-status wallet-status ${type}`;
 }
-payButton.addEventListener("click", () => startCheckout());
-document.querySelector("#customAmount")?.addEventListener("input", (event) => { const value = Number(event.target.value); if (value >= 10) selectedAmount = value; });
-vipPayButton?.addEventListener("click", () => startCheckout("vip"));
-document.querySelector("#rechargeButton")?.addEventListener("click", () => { const phone = document.querySelector("#rechargePhone").value.replace(/\D/g, ""); const amount = Number(document.querySelector("#rechargeAmount").value); if (!/^\d{10}$/.test(phone)) return setStatus("Enter a valid 10-digit mobile number.", "error"); if (amount < 10 || amount > 5000) return setStatus("Recharge amount must be between ₹10 and ₹5,000.", "error"); startCheckout("recharge"); });
-document.querySelector("#generateUpi")?.addEventListener("click", () => { const amount = Number(document.querySelector("#upiAmount").value); const upi = document.querySelector("#upiId").value.trim(); if (!amount || !upi.includes("@")) return setStatus("Enter a valid amount and UPI ID.", "error"); const data = `upi://pay?pa=${encodeURIComponent(upi)}&pn=Arrai%20VIP&am=${amount.toFixed(2)}&cu=INR`; const qr = document.querySelector("#upiQr"); qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(data)}`; qr.hidden = false; setStatus("UPI QR ready. Confirm payment in your UPI app.", "success"); });
 
-window.arraiAuth.then(({ isAuthenticated }) => {
+function monthStart() {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1);
+}
+
+function renderLedger() {
+  const thisMonth = ledger.transactions.filter((entry) => new Date(entry.created_at) >= monthStart());
+  const income = thisMonth.filter((entry) => entry.type === "income").reduce((sum, entry) => sum + entry.amount_minor, 0);
+  const spending = thisMonth.filter((entry) => entry.type === "expense").reduce((sum, entry) => sum + entry.amount_minor, 0);
+  document.querySelector("#walletBalance").textContent = money.format(ledger.balanceMinor / 100);
+  document.querySelector("#walletIncome").textContent = money.format(income / 100);
+  document.querySelector("#walletSpending").textContent = money.format(spending / 100);
+  document.querySelector("#entryCount").textContent = `${ledger.transactions.length} ${ledger.transactions.length === 1 ? "entry" : "entries"}`;
+
+  const groups = thisMonth.filter((entry) => entry.type === "expense").reduce((result, entry) => {
+    result[entry.category] = (result[entry.category] || 0) + entry.amount_minor;
+    return result;
+  }, Object.create(null));
+  const categories = Object.entries(groups).sort((a, b) => b[1] - a[1]);
+  const largest = categories[0]?.[1] || 0;
+  const chart = document.querySelector("#spendingChart");
+  chart.replaceChildren();
+  if (!categories.length) {
+    const empty = document.createElement("p");
+    empty.className = "wallet-empty";
+    empty.textContent = "Add expense records to see this month's categories.";
+    chart.append(empty);
+  } else {
+    categories.slice(0, 6).forEach(([category, amount]) => {
+      const row = document.createElement("div");
+      row.className = "wallet-bar-row";
+      const label = document.createElement("span");
+      label.textContent = category;
+      const track = document.createElement("span");
+      track.className = "wallet-bar-track";
+      const bar = document.createElement("span");
+      bar.className = "wallet-bar";
+      bar.style.width = `${Math.max(4, (amount / largest) * 100)}%`;
+      track.append(bar);
+      const value = document.createElement("strong");
+      value.textContent = money.format(amount / 100);
+      row.append(label, track, value);
+      chart.append(row);
+    });
+  }
+  document.querySelector("#walletInsight").textContent = categories.length
+    ? `${categories[0][0]} is your highest recorded spending category this month.`
+    : "Your monthly insight will appear when you record an expense.";
+
+  const list = document.querySelector("#walletTransactions");
+  list.replaceChildren();
+  if (!ledger.transactions.length) {
+    const empty = document.createElement("p");
+    empty.className = "wallet-empty";
+    empty.textContent = "No entries yet. Your records will appear here.";
+    list.append(empty);
+    return;
+  }
+  ledger.transactions.forEach((entry) => {
+    const row = document.createElement("article");
+    row.className = "wallet-transaction";
+    const detail = document.createElement("div");
+    const title = document.createElement("strong");
+    title.textContent = entry.description;
+    const meta = document.createElement("small");
+    meta.textContent = `${entry.category} · ${new Date(entry.created_at).toLocaleString()}`;
+    detail.append(title, meta);
+    const amount = document.createElement("strong");
+    amount.className = entry.type === "income" ? "is-income" : "is-expense";
+    amount.textContent = `${entry.type === "income" ? "+" : "−"}${money.format(entry.amount_minor / 100)}`;
+    row.append(detail, amount);
+    list.append(row);
+  });
+}
+
+async function requestLedger(method, payload) {
+  const { data: { session } } = await window.arraiSupabase.auth.getSession();
+  if (!session?.access_token) throw new Error("Your sign-in expired. Please sign in again.");
+  const response = await fetch("/api/wallet", {
+    method,
+    headers: { Authorization: `Bearer ${session.access_token}`, ...(payload ? { "Content-Type": "application/json" } : {}) },
+    ...(payload ? { body: JSON.stringify(payload) } : {}),
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || "The wallet service is unavailable.");
+  return result;
+}
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const submit = form.querySelector("button[type=submit]");
+  const values = new FormData(form);
+  const amount = Number(values.get("amount"));
+  if (!Number.isFinite(amount) || amount <= 0 || Math.round(amount * 100) / 100 !== amount) {
+    return setStatus("Enter a positive amount with up to two decimal places.", "error");
+  }
+  submit.disabled = true;
+  setStatus("Saving your record…");
+  try {
+    const result = await requestLedger("POST", {
+      type: values.get("type"), amount, category: values.get("category"),
+      description: String(values.get("description")).trim(), idempotencyKey: crypto.randomUUID(),
+    });
+    ledger = result;
+    renderLedger();
+    form.reset();
+    setStatus("Entry saved to your private ledger.", "success");
+  } catch (error) {
+    setStatus(error.message, "error");
+  } finally {
+    submit.disabled = false;
+  }
+});
+
+const splitTotal = document.querySelector("#splitTotal");
+const splitPeople = document.querySelector("#splitPeople");
+const splitResult = document.querySelector("#splitResult");
+const useSplit = document.querySelector("#useSplit");
+function updateSplit() {
+  const total = Number(splitTotal.value);
+  const people = Number(splitPeople.value);
+  const valid = Number.isFinite(total) && total > 0 && Number.isInteger(people) && people > 0 && people <= 100;
+  useSplit.disabled = !valid;
+  splitResult.textContent = valid ? `Each share: ${money.format(Math.round(total * 100 / people) / 100)}` : "Enter a bill amount to see each share.";
+}
+splitTotal.addEventListener("input", updateSplit);
+splitPeople.addEventListener("input", updateSplit);
+useSplit.addEventListener("click", () => {
+  const share = Math.round(Number(splitTotal.value) * 100 / Number(splitPeople.value)) / 100;
+  form.elements.amount.value = share.toFixed(2);
+  form.elements.category.value = "Shared bill";
+  form.elements.description.focus();
+  setStatus("Your share is ready. Add a description, then save it as an expense.");
+});
+
+document.querySelector("#walletAgentForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const question = document.querySelector("#walletAgentQuestion").value.trim();
+  const answer = document.querySelector("#walletAgentAnswer");
+  const button = event.currentTarget.querySelector("button[type=submit]");
+  if (!question) return;
+  button.disabled = true;
+  answer.textContent = "Reviewing your recorded entries…";
+  try {
+    const { data: { session } } = await window.arraiSupabase.auth.getSession();
+    const response = await fetch("/api/wallet-assistant", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token || ""}` },
+      body: JSON.stringify({ question, history: assistantHistory.slice(-8) }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || "The wallet guide is unavailable.");
+    answer.textContent = result.answer;
+    assistantHistory = [...assistantHistory, { role: "user", text: question }, { role: "assistant", text: result.answer }].slice(-8);
+  } catch (error) {
+    answer.textContent = error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+const qrVideo = document.querySelector("#qrVideo");
+const qrStatus = document.querySelector("#qrStatus");
+const scanButton = document.querySelector("#scanButton");
+const stopScanButton = document.querySelector("#stopScanButton");
+const upiHandoff = document.querySelector("#upiHandoff");
+function stopCamera() {
+  cameraStream?.getTracks().forEach((track) => track.stop());
+  cameraStream = null;
+  qrVideo.srcObject = null;
+  qrVideo.hidden = true;
+  stopScanButton.hidden = true;
+  scanButton.disabled = false;
+}
+
+scanButton.addEventListener("click", async () => {
+  if (!("BarcodeDetector" in window) || !navigator.mediaDevices?.getUserMedia) {
+    qrStatus.textContent = "QR scanning is not supported in this browser. Open the QR with your UPI app instead.";
+    return;
+  }
+  try {
+    const detector = new BarcodeDetector({ formats: ["qr_code"] });
+    cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false });
+    qrVideo.srcObject = cameraStream;
+    qrVideo.hidden = false;
+    await qrVideo.play();
+    scanButton.disabled = true;
+    stopScanButton.hidden = false;
+    qrStatus.textContent = "Point the camera at a UPI QR code.";
+    const scan = async () => {
+      if (!cameraStream) return;
+      try {
+        const [code] = await detector.detect(qrVideo);
+        if (code) {
+          const parsed = new URL(code.rawValue);
+          if (parsed.protocol !== "upi:") throw new Error("This QR is not a UPI payment code.");
+          upiHandoff.href = parsed.href;
+          upiHandoff.hidden = false;
+          qrStatus.textContent = "QR decoded. Review the payee and amount in your UPI app; this ledger will not confirm settlement.";
+          stopCamera();
+          return;
+        }
+      } catch (error) {
+        if (error instanceof TypeError || error instanceof Error && error.message !== "No barcode detected") {
+          qrStatus.textContent = error.message || "Could not read that QR code.";
+          stopCamera();
+          return;
+        }
+      }
+      requestAnimationFrame(scan);
+    };
+    requestAnimationFrame(scan);
+  } catch {
+    qrStatus.textContent = "Camera access failed. Allow camera access and try again.";
+    stopCamera();
+  }
+});
+stopScanButton.addEventListener("click", stopCamera);
+window.addEventListener("pagehide", stopCamera);
+
+window.arraiAuth.then(async ({ isAuthenticated }) => {
   if (!isAuthenticated) return window.location.assign("auth.html");
-  paymentApp.hidden = false;
-  if ("Notification" in window && Notification.permission === "default") Notification.requestPermission().catch(() => {}); const last = JSON.parse(localStorage.getItem("arraiLastPayment") || "null"); setStatus(last ? `${last.text} · ${new Date(last.at).toLocaleString()}` : "Razorpay checkout ready. Configure live keys before accepting real money.", "success");
-}).catch(() => setStatus("Could not check your sign-in.", "error"));
+  try {
+    ledger = await requestLedger("GET");
+    renderLedger();
+    app.hidden = false;
+    setStatus("Your private ledger is ready.", "success");
+  } catch (error) {
+    setStatus(error.message, "error");
+  }
+}).catch(() => setStatus("Could not verify your sign-in. Please try again.", "error"));

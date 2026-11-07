@@ -1,22 +1,46 @@
 <!doctype html>
 <html lang="en">
-  <head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta name="description" content="Arrai payments." /><title>Payments — arrai.in</title><link rel="stylesheet" href="style.css" /></head>
-  <body class="community-page">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="A private, persistent personal finance ledger." />
+    <meta name="theme-color" content="#101a20" />
+    <title>Wallet — arrai.in</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="community-page wallet-page">
     <div class="ambient one"></div><div class="ambient two"></div>
-    <header><a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a><button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button><nav><a href="index.html">Home</a><a href="about.html">About</a><a href="projects.html">Projects</a><a href="chess.html">Chess</a><a href="community.html">Community</a><a class="active" href="payments.html">Payments</a><a href="auth.html">Login / Register</a></nav></header>
-    <main class="payments-wrap"><section class="community-hero"><div><p class="eyebrow">Arrai pay</p><h1>Simple payments,<br /><em>clearly done.</em></h1><p class="payment-hero-copy">Pay any amount securely to Abhishek Rai using the verified Razorpay merchant checkout.</p><a class="button primary pay-anywhere" href="https://razorpay.me/@AbhishekRaiji" target="_blank" rel="noopener noreferrer">Pay any amount ↗</a></div></section><p class="community-status" id="paymentStatus">Checking your sign-in…</p>
-      <section class="payment-grid" id="paymentApp" hidden>
-        <article class="social-card payment-card featured-payment"><span>✦</span><p class="eyebrow">VIP membership</p><h2>Gold membership · ₹45</h2><p>Unlock VIP profile themes and Gold tick after verified payment.</p><button class="button primary" id="vipPayButton" type="button">Buy Gold VIP <b>↗</b></button><small>Secure Razorpay checkout. Access is granted only after server verification.</small></article>
-        <article class="social-card payment-card"><span>₹</span><p class="eyebrow">Custom amount</p><h2>Make a payment</h2><p>Choose an amount to open Razorpay checkout.</p><div class="amounts"><button data-amount="49">₹49</button><button data-amount="99">₹99</button><button data-amount="299">₹299</button></div><label class="social-form">Other amount (₹)<input id="customAmount" type="number" min="10" max="10000" placeholder="Enter amount" /></label><button class="button primary" id="payButton" type="button">Continue to pay <b>↗</b></button></article>
-        <article class="social-card payment-card"><span>▣</span><p class="eyebrow">UPI QR</p><h2>Pay directly to UPI</h2><label class="social-form">Amount (₹)<input id="upiAmount" type="number" min="1" max="100000" value="45" /></label><label class="social-form">UPI ID<input id="upiId" value="kuzu@ptyes" placeholder="yourupi@bank" /></label><button class="button" id="generateUpi" type="button">Generate QR</button><img id="upiQr" class="upi-qr" alt="UPI payment QR" hidden /><small>Verify payment in your UPI app. This direct QR cannot automatically grant VIP.</small></article>
-        <article class="social-card payment-card vip-benefits"><span>♕</span><p class="eyebrow">Gold lounge</p><h2>What you unlock</h2><ul><li>Gold verification tick</li><li>All profile themes</li><li>VIP badge on posts</li><li>Priority community features</li></ul><small>One-time ₹45 membership.</small></article>
-        <article class="social-card payment-card"><span>↗</span><p class="eyebrow">Send money</p><h2>Business payouts</h2><p>Send-money requires a verified RazorpayX business account and KYC.</p><button class="button" type="button" disabled>RazorpayX required</button></article>
-        <article class="social-card payment-card"><span>⌁</span><p class="eyebrow">Recharge request</p><h2>Mobile recharge</h2><p>Pay securely, then your recharge request is queued for confirmation.</p><label class="social-form">Mobile number<input id="rechargePhone" inputmode="numeric" maxlength="10" placeholder="10-digit number" /></label><label class="social-form">Amount (₹)<input id="rechargeAmount" type="number" min="10" max="5000" value="199" /></label><button class="button primary" id="rechargeButton" type="button">Pay & request recharge <b>↗</b></button></article>
-        <article class="social-card payment-card"><span>↓</span><p class="eyebrow">Receive money</p><h2>Payment links</h2><p>Use secure checkout to collect payments. Transaction history will be added after live verification is enabled.</p><a class="text-link" href="contact.html">Request a payment link →</a></article>
-        <article class="social-card payment-card merchant-card"><span>♡</span><p class="eyebrow">Pay any amount</p><h2>Direct merchant payment</h2><p>Choose any amount and pay directly to Abhishek Rai through the verified Razorpay merchant page.</p><a class="button primary" href="https://razorpay.me/@AbhishekRaiji" target="_blank" rel="noopener noreferrer">Open merchant checkout ↗</a><small>Merchant handle: @AbhishekRaiji</small></article>
-      </section>
+    <header><a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a><button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button><nav><a href="index.html">Home</a><a href="about.html">About</a><a href="projects.html">Projects</a><a href="chess.html">Chess</a><a href="community.html">Community</a><a class="active" href="payments.html">Wallet</a><a href="auth.html">Login / Register</a></nav></header>
+    <main class="wallet-wrap">
+      <section class="wallet-heading"><div><p class="eyebrow">AR · Personal ledger</p><h1>Your money,<br /><em>in clear view.</em></h1><p>Track recorded income, spending and shared bills in one private place.</p></div><div class="wallet-trust"><span aria-hidden="true">◈</span><strong>Private by account</strong><small>Only your signed-in account can read or change these records.</small></div></section>
+      <p class="community-status wallet-status" id="walletStatus" role="status">Checking your sign-in…</p>
+      <div id="walletApp" hidden>
+        <section class="wallet-summary" aria-label="Ledger summary">
+          <article class="wallet-balance"><p class="eyebrow">Recorded balance</p><strong id="walletBalance">₹0</strong><small>Bookkeeping total · not stored or transferable funds</small></article>
+          <article><p class="eyebrow">Income this month</p><strong id="walletIncome">₹0</strong><small>Entries recorded this month</small></article>
+          <article><p class="eyebrow">Spending this month</p><strong id="walletSpending">₹0</strong><small>Entries recorded this month</small></article>
+        </section>
+        <section class="wallet-grid">
+          <article class="wallet-panel wallet-entry-panel"><div class="wallet-panel-heading"><div><p class="eyebrow">New record</p><h2>Add an entry</h2></div><span aria-hidden="true">＋</span></div>
+            <form id="entryForm" class="wallet-form">
+              <label>Entry type<select id="entryType" name="type"><option value="expense">Expense</option><option value="income">Income</option></select></label>
+              <label>Amount (₹)<input name="amount" type="number" min="0.01" max="10000000" step="0.01" inputmode="decimal" placeholder="0.00" required /></label>
+              <label>Category<select name="category"><option>General</option><option>Food</option><option>Travel</option><option>Shopping</option><option>Bills</option><option>Health</option><option>Work</option><option>Shared bill</option><option>Other</option></select></label>
+              <label>Description<input name="description" maxlength="100" placeholder="What was this for?" required /></label>
+              <button class="button primary" type="submit"><span aria-hidden="true">＋</span> Save record</button>
+            </form>
+            <p class="wallet-note">Income and expenses are records you enter yourself. This ledger does not receive deposits, send UPI, or confirm bank transactions.</p>
+          </article>
+          <article class="wallet-panel wallet-analytics"><div class="wallet-panel-heading"><div><p class="eyebrow">This month</p><h2>Spending by category</h2></div><span aria-hidden="true">↗</span></div><div id="spendingChart" class="wallet-chart" aria-live="polite"></div><p id="walletInsight" class="wallet-insight"></p></article>
+          <article class="wallet-panel wallet-agent"><div class="wallet-panel-heading"><div><p class="eyebrow">Read-only guide</p><h2>Ask about your records</h2></div><span aria-hidden="true">✦</span></div><form id="walletAgentForm" class="wallet-agent-form"><label for="walletAgentQuestion">Question</label><div><input id="walletAgentQuestion" maxlength="500" placeholder="Where did I spend the most this month?" required /><button class="button primary" type="submit">Ask</button></div></form><p id="walletAgentAnswer" class="wallet-agent-answer" role="status">The guide can summarize records you entered. It cannot move money or verify payments.</p></article>
+          <article class="wallet-panel wallet-split"><div class="wallet-panel-heading"><div><p class="eyebrow">Shared costs</p><h2>Split a bill</h2></div><span aria-hidden="true">÷</span></div><div class="wallet-split-fields"><label>Total bill (₹)<input id="splitTotal" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" /></label><label>People<input id="splitPeople" type="number" min="1" max="100" step="1" value="2" /></label></div><p class="wallet-split-result" id="splitResult">Enter a bill amount to see each share.</p><button class="button" id="useSplit" type="button" disabled>Use my share in expense</button></article>
+          <article class="wallet-panel wallet-qr"><div class="wallet-panel-heading"><div><p class="eyebrow">External payment</p><h2>Scan a UPI QR</h2></div><span aria-hidden="true">▦</span></div><p>Scan opens the payment details in a compatible UPI app. Review and authorize there; this ledger cannot verify or record settlement automatically.</p><div class="wallet-qr-actions"><button class="button" id="scanButton" type="button">Start camera</button><button class="button" id="stopScanButton" type="button" hidden>Stop camera</button></div><video id="qrVideo" class="wallet-video" playsinline hidden></video><p class="wallet-qr-status" id="qrStatus" role="status"></p><a id="upiHandoff" class="button primary" href="#" hidden>Review in UPI app ↗</a></article>
+        </section>
+        <section class="wallet-panel wallet-history"><div class="wallet-panel-heading"><div><p class="eyebrow">Your records</p><h2>Recent activity</h2></div><span id="entryCount">0 entries</span></div><div id="walletTransactions" class="wallet-transactions"><p class="wallet-empty">No entries yet.</p></div></section>
+        <p class="wallet-disclaimer">This is a personal finance tracker, not a bank account, stored-value wallet, payment aggregator, or UPI provider. No real-money transfers are initiated or settled here. Charts and AI analysis use up to 200 recent entries.</p>
+      </div>
     </main>
     <footer><a class="brand" href="index.html">ar<span>rai</span>.in</a><p>© 2026 Abhishek Rai. All rights reserved.</p><div><a href="privacy.html">Privacy</a><a href="privacy.html#terms">Terms</a></div></footer>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase.js"></script><script src="script.js"></script><script src="payments.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase.js"></script><script src="script.js"></script><script src="payments.js"></script>
   </body>
 </html>
