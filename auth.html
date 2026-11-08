@@ -49,7 +49,7 @@
         </div>
 
         <!-- Login Form -->
-        <form class="auth-form" id="loginForm">
+        <form class="auth-form" id="loginForm" style="display: grid;">
           <label>
             <span>Email Address</span>
             <div class="input-wrapper">
@@ -69,7 +69,7 @@
         </form>
 
         <!-- Signup Form -->
-        <form class="auth-form" id="signupForm" hidden>
+        <form class="auth-form" id="signupForm" hidden style="display: none;">
           <label>
             <span>Display Name</span>
             <div class="input-wrapper">
@@ -116,12 +116,11 @@
           </button>
         </div>
 
-        <div class="auth-actions">
-          <button class="button auth-alt-btn" id="passkeyButton" type="button" hidden>🔑 Sign in with Passkey</button>
-          <button class="button auth-alt-btn" id="registerPasskeyButton" type="button" hidden>⚙️ Set up a Passkey</button>
-          <button class="button auth-alt-btn" id="switchAuth" type="button" style="display:none;">Create a new account</button>
-          <div id="oauthProviders" class="auth-provider-list"></div>
-          <a class="button primary auth-submit" id="communityButton" href="community.html" hidden>Open community <b>↗</b></a>
+        <div id="oauthProviders" class="auth-provider-list"></div>
+
+        <div class="auth-footer-prompt" id="authSwitchPrompt">
+          <span id="switchPromptText">Don't have an account?</span>
+          <button type="button" class="auth-inline-link" id="switchAuth">Create Account</button>
         </div>
 
         <p class="auth-status" id="authStatus" aria-live="polite"></p>

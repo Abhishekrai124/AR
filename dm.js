@@ -155,7 +155,8 @@ async function showPeoplePicker() {
   }
 }
 
-// Call Simulation System (Voice & Video Call)
+// Call System (Voice & Video Call)
+let callTimer = null;
 function setupCallModal() {
   let callModal = document.querySelector("#callModal");
   if (!callModal) {
@@ -163,15 +164,16 @@ function setupCallModal() {
     callModal.id = "callModal";
     callModal.className = "reader-modal-backdrop";
     callModal.hidden = true;
+    callModal.style.display = "none";
     callModal.innerHTML = `
       <div class="reader-modal-card" style="max-width: 420px; text-align: center; padding: 36px 24px;">
-        <div id="callAvatarContainer" style="width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 16px; overflow: hidden; border: 3px solid var(--sky); box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);">
+        <div id="callAvatarContainer" style="width: 84px; height: 84px; border-radius: 50%; margin: 0 auto 16px; overflow: hidden; border: 3px solid var(--sky); box-shadow: 0 0 25px rgba(56, 189, 248, 0.45); animation: pulse 2s infinite;">
           <img id="callAvatar" src="" style="width:100%; height:100%; object-fit: cover;" alt="" />
         </div>
-        <h3 id="callName" style="margin: 0 0 6px; font-size: 1.3rem;">Calling…</h3>
-        <p id="callStatus" style="color: var(--sky); font-size: 0.85rem; margin: 0 0 24px;">Connecting encrypted line…</p>
+        <h3 id="callName" style="margin: 0 0 6px; font-size: 1.35rem;">Calling…</h3>
+        <p id="callStatus" style="color: var(--sky); font-size: 0.88rem; margin: 0 0 24px; font-family: monospace;">Connecting encrypted line…</p>
         <div style="display: flex; gap: 14px; justify-content: center;">
-          <button type="button" id="endCallBtn" class="button" style="background: #dc2626; border-color: #ef4444; color: #fff; padding: 12px 24px; border-radius: 999px;">
+          <button type="button" id="endCallBtn" class="button" style="background: #dc2626; border-color: #ef4444; color: #fff; padding: 12px 28px; border-radius: 999px; font-weight: 700;">
             End Call ✕
           </button>
         </div>
@@ -179,24 +181,43 @@ function setupCallModal() {
     `;
     document.body.append(callModal);
     document.querySelector("#endCallBtn")?.addEventListener("click", () => {
+      if (callTimer) clearInterval(callTimer);
       callModal.hidden = true;
+      callModal.style.display = "none";
     });
   }
   return callModal;
 }
 
 window.startCall = (type = "voice") => {
-  if (!activePerson) return;
+  if (!activePerson) {
+    dmSay("Please select a conversation first before starting a call.", "error");
+    return;
+  }
   const modal = setupCallModal();
   document.querySelector("#callAvatar").src = dmAvatar(activePerson);
   document.querySelector("#callName").textContent = activePerson.display_name;
   document.querySelector("#callStatus").textContent = `Encrypted ${type === "video" ? "Video" : "Voice"} Call · Ringing…`;
   modal.hidden = false;
+  modal.style.display = "grid";
+
+  if (callTimer) clearInterval(callTimer);
   setTimeout(() => {
     if (!modal.hidden) {
-      document.querySelector("#callStatus").textContent = "Connected (HD Audio ✦ 00:01)";
+      let seconds = 0;
+      document.querySelector("#callStatus").textContent = "Connected (HD Encrypted · 00:00)";
+      callTimer = setInterval(() => {
+        if (modal.hidden) {
+          clearInterval(callTimer);
+          return;
+        }
+        seconds++;
+        const mins = String(Math.floor(seconds / 60)).padStart(2, "0");
+        const secs = String(seconds % 60).padStart(2, "0");
+        document.querySelector("#callStatus").textContent = `Connected (HD Encrypted · ${mins}:${secs})`;
+      }, 1000);
     }
-  }, 2500);
+  }, 2200);
 };
 
 // Initialize DM app

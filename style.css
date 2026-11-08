@@ -11,6 +11,16 @@
   --lime: #bef264;
 }
 
+[hidden],
+[hidden="true"],
+.auth-form[hidden],
+.auth-card [hidden],
+.button[hidden],
+.auth-alt-btn[hidden],
+.reader-modal-backdrop[hidden] {
+  display: none !important;
+}
+
 .local-dashboard { display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:center; margin:0 auto 34px; padding:22px 26px; border:1px solid var(--line); border-radius:22px; background:linear-gradient(130deg,rgba(18,33,56,.88),rgba(50,32,70,.72)); }
 .local-dashboard h2 { margin:4px 0; font-size:1.35rem; }.local-dashboard p { margin:4px 0; }.local-dashboard small,.local-weather { color:var(--muted); font-size:.78rem; }.local-weather { display:grid; gap:10px; justify-items:start; }.local-weather .button { font-size:.75rem; }
 .analytics-consent { position:fixed; z-index:10001; left:18px; bottom:74px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; width:min(580px,calc(100vw - 36px)); padding:14px; border:1px solid var(--line); border-radius:16px; background:rgba(13,22,39,.97); box-shadow:0 12px 40px rgba(0,0,0,.4); }.analytics-consent p { flex:1 1 100%; margin:0; color:var(--ink); font-size:.78rem; line-height:1.5; }.analytics-consent a { margin-right:auto; color:var(--sky); font-size:.75rem; }.analytics-consent .button { min-height:36px; padding:8px 12px; font-size:.7rem; }
@@ -871,6 +881,10 @@ footer div {
   gap: 15px;
   margin-bottom: 18px;
 }
+.auth-form[hidden],
+.auth-form.hidden {
+  display: none !important;
+}
 .auth-form label {
   display: grid;
   gap: 6px;
@@ -1022,6 +1036,30 @@ footer div {
 .auth-alt-btn:hover {
   color: var(--ink);
   border-color: var(--sky);
+}
+.auth-footer-prompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.auth-inline-link {
+  background: transparent;
+  border: 0;
+  color: var(--sky);
+  font-weight: 700;
+  font-size: inherit;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.2s ease;
+}
+.auth-inline-link:hover {
+  color: var(--pink);
 }
 .auth-status {
   min-height: 24px;

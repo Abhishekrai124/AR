@@ -156,14 +156,14 @@ function openReader(key) {
   readerTitle.textContent = data.title;
   readerContent.innerHTML = data.html;
   readerModal.hidden = false;
-  readerModal.style.display = "grid";
+  readerModal.style.setProperty("display", "grid", "important");
   document.body.style.overflow = "hidden";
 }
 
 function closeReader() {
   if (!readerModal) return;
   readerModal.hidden = true;
-  readerModal.style.display = "none";
+  readerModal.style.setProperty("display", "none", "important");
   document.body.style.overflow = "";
 }
 
@@ -173,7 +173,7 @@ window.openReader = openReader;
 // Safety check on page load to ensure modal never auto-shows
 if (readerModal) {
   readerModal.hidden = true;
-  readerModal.style.display = "none";
+  readerModal.style.setProperty("display", "none", "important");
 }
 
 // Button bindings
