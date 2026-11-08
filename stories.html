@@ -3,13 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Explore fiction stories, anime character codex, and lore on arrai.in." />
-    <title>Chronicles & Lore — arrai.in Fandom Wiki</title>
+    <meta name="description" content="ARRAI Fandom Wiki — Character codex, fiction universes, story arcs and world lore by Abhishek Rai." />
+    <title>ARRAI Chronicles Wiki — Stories &amp; Anime Characters</title>
     <link rel="icon" type="image/svg+xml" href="assets/app-icon.svg" />
     <link rel="alternate icon" href="assets/app-icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/app-icon.svg" />
     <link rel="manifest" href="manifest.webmanifest" />
-    <meta name="theme-color" content="#0f172a" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body class="stories-page">
@@ -21,11 +20,12 @@
       <button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button>
       <nav>
         <a href="index.html">Home</a>
-        <a class="active" href="stories.html">Stories & Lore</a>
+        <a class="active" href="stories.html">Stories &amp; Lore</a>
         <a href="projects.html">Work</a>
         <a href="music.html">Music</a>
         <a href="payments.html">Wallet</a>
         <a href="community.html">Community</a>
+        <a href="dm.html">DMs</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
         <a href="auth.html">Login</a>
@@ -35,22 +35,22 @@
     <main class="wiki-wrap">
       <!-- Fandom Style Hero Banner -->
       <section class="wiki-hero">
-        <div class="wiki-badge"><span>✦ ARRAI CHRONICLES & LORE WIKI</span></div>
-        <h1>Stories, Characters &amp; <em>World Lore.</em></h1>
-        <p class="wiki-subtitle">The official fandom codex for fiction universes, anime character profiles, and ongoing chapter releases by Abhishek Rai.</p>
+        <div class="wiki-badge"><span>✦ OFFICIAL ARRAI FANDOM WIKI &amp; ARCHIVES</span></div>
+        <h1>Explore Stories, Characters<br />&amp; <em>Universe Lore.</em></h1>
+        <p class="wiki-subtitle">The definitive universe encyclopedia and reading hub for original fiction, anime-style character codexes, and cyber-fantasy arcs created by Abhishek Rai.</p>
 
         <!-- Search Bar -->
         <div class="wiki-search-box">
-          <input type="search" id="wikiSearch" placeholder="Search characters, stories, arcs, powers, or lore…" />
+          <input type="search" id="wikiSearch" placeholder="Search by character name, arc, power, weapon, or faction…" />
           <button type="button" class="button primary" id="wikiSearchBtn">Search Wiki <b>↗</b></button>
         </div>
 
         <!-- Filter Tags -->
         <div class="wiki-tags" id="wikiTags">
-          <button type="button" class="wiki-tag active" data-filter="all">All Entries</button>
-          <button type="button" class="wiki-tag" data-filter="character">Anime Characters</button>
-          <button type="button" class="wiki-tag" data-filter="story">Story Arcs</button>
-          <button type="button" class="wiki-tag" data-filter="lore">World Lore</button>
+          <button type="button" class="wiki-tag active" data-filter="all">All Codex (5)</button>
+          <button type="button" class="wiki-tag" data-filter="character">Anime Characters (3)</button>
+          <button type="button" class="wiki-tag" data-filter="story">Story Arcs (2)</button>
+          <button type="button" class="wiki-tag" data-filter="lore">World Lore &amp; Factions</button>
         </div>
       </section>
 
@@ -59,25 +59,35 @@
         <!-- Wiki Sidebar -->
         <aside class="wiki-sidebar">
           <div class="wiki-sidebar-card">
-            <h3>✦ Quick Directory</h3>
+            <h3>✦ Wiki Navigation</h3>
             <ul class="wiki-nav-list">
               <li><a href="#characters" class="wiki-nav-link active">Character Vault (3)</a></li>
-              <li><a href="#stories" class="wiki-nav-link">Active Story Arcs (2)</a></li>
-              <li><a href="#lore" class="wiki-nav-link">Worldbuilding & Factions</a></li>
-              <li><a href="#timeline" class="wiki-nav-link">Chronological Timeline</a></li>
+              <li><a href="#stories" class="wiki-nav-link">Active Fiction Arcs (2)</a></li>
+              <li><a href="#factions" class="wiki-nav-link">Factions &amp; Orders</a></li>
+              <li><a href="story-chapter.html?story=spire&chapter=1" class="wiki-nav-link">Featured Chapter 1 ↗</a></li>
             </ul>
           </div>
 
           <div class="wiki-sidebar-card">
-            <h3>✦ Featured Lore</h3>
+            <h3>✦ Faction Database</h3>
             <div class="wiki-mini-entry">
-              <strong>The Neon Spire</strong>
-              <small>Central monolith powering the digital consciousness across the AR network.</small>
+              <strong>Public Safety · Special Div</strong>
+              <small>Overseen by Miss Makima to maintain digital harmony between network layers.</small>
             </div>
             <div class="wiki-mini-entry">
-              <strong>Control Division</strong>
-              <small>Overseen by Miss Makima to maintain balance between reality and cyber-void.</small>
+              <strong>Sector 7 Wanderers</strong>
+              <small>Rogue ronin and cyber-shinobi reclaiming purged human memories.</small>
             </div>
+            <div class="wiki-mini-entry">
+              <strong>The Syntactic Citadel</strong>
+              <small>Ancient order of alchemists who speak directly with prime mathematics.</small>
+            </div>
+          </div>
+
+          <div class="wiki-sidebar-card" style="text-align: center;">
+            <p class="eyebrow">Creator Hub</p>
+            <p style="font-size: 0.8rem; color: var(--muted); margin: 6px 0 14px;">Want to write or submit a new character arc?</p>
+            <a class="button primary" style="width: 100%; justify-content: center;" href="contact.html">Submit Lore Entry ✦</a>
           </div>
         </aside>
 
@@ -86,136 +96,138 @@
           <!-- Character Codex Section -->
           <div class="wiki-section-heading" id="characters">
             <div>
-              <p class="eyebrow">Character Codex</p>
-              <h2>Characters &amp; Profiles</h2>
+              <p class="eyebrow">Canon Characters</p>
+              <h2>Character Codex</h2>
             </div>
-            <span class="wiki-count" id="charCount">3 Profiles Available</span>
+            <span class="wiki-count" id="charCount">3 Characters Documented</span>
           </div>
 
           <div class="wiki-grid" id="characterGrid">
             <!-- Character 1: Miss Makima -->
-            <article class="wiki-card" data-category="character" data-name="Miss Makima Control Demon Guide">
-              <div class="wiki-card-badge">Guide · S-Rank</div>
+            <article class="wiki-card" data-category="character" data-name="Miss Makima Control Demon Guide Public Safety">
+              <div class="wiki-card-badge">Canon Guide · Supreme Rank</div>
               <div class="wiki-card-img" style="background: linear-gradient(135deg, #be185d, #4338ca);">
                 <span>✿</span>
               </div>
               <div class="wiki-card-body">
                 <h3>Miss Makima</h3>
-                <p class="wiki-meta">Role: Digital Guide &amp; High Overseer · Public Safety</p>
-                <p class="wiki-desc">An enigmatic and graceful entity guiding travelers through the digital matrix of AR. Possesses absolute dominance over spatial communication.</p>
+                <p class="wiki-meta">Affiliation: Public Safety &amp; AR Studio · High Overseer</p>
+                <p class="wiki-desc">An elegant and commanding presence who governs spatial audio and neural communications across the AR universe. Soft-spoken, polite, and absolute.</p>
                 <div class="wiki-pills">
-                  <span>Control</span><span>Telepathy</span><span>Voice Guide</span>
+                  <span>Voice Dominance</span><span>Memory Synthesis</span><span>Spatial Telepathy</span>
                 </div>
-                <button type="button" class="button wiki-read-btn" data-character="makima">View Codex Entry <b>↗</b></button>
+                <div style="display: flex; gap: 8px;">
+                  <button type="button" class="button wiki-read-btn" data-character="makima">Quick Preview ✦</button>
+                  <a class="button primary" href="story-character.html?id=makima">Full Codex <b>↗</b></a>
+                </div>
               </div>
             </article>
 
             <!-- Character 2: Kuro - Cyber Shinobi -->
-            <article class="wiki-card" data-category="character" data-name="Kuro Phantom Shinobi Cyber Assassin">
+            <article class="wiki-card" data-category="character" data-name="Kuro Phantom Shinobi Cyber Assassin Sector 7">
               <div class="wiki-card-badge">Protagonist · A-Rank</div>
               <div class="wiki-card-img" style="background: linear-gradient(135deg, #0284c7, #0f172a);">
                 <span>⚡</span>
               </div>
               <div class="wiki-card-body">
                 <h3>Kuro</h3>
-                <p class="wiki-meta">Role: Wandering Ronin · Sector 7 Reclaimer</p>
-                <p class="wiki-desc">A rogue cyber-shinobi augmented with neural blade implants, traversing neon alleys of New Kyoto to reclaim stolen human memories.</p>
+                <p class="wiki-meta">Affiliation: Sector 7 Wanderers · Cyber Ronin</p>
+                <p class="wiki-desc">Equipped with twin plasma katanas and high-velocity phase gear. Wanders the neon labyrinth of New Kyoto seeking to unmask the corporation that erased his past.</p>
                 <div class="wiki-pills">
-                  <span>Plasma Katana</span><span>Flash Step</span><span>Memory Dive</span>
+                  <span>Plasma Muramasa</span><span>Phase Blink</span><span>Neural Siphon</span>
                 </div>
-                <button type="button" class="button wiki-read-btn" data-character="kuro">View Codex Entry <b>↗</b></button>
+                <div style="display: flex; gap: 8px;">
+                  <button type="button" class="button wiki-read-btn" data-character="kuro">Quick Preview ✦</button>
+                  <a class="button primary" href="story-character.html?id=kuro">Full Codex <b>↗</b></a>
+                </div>
               </div>
             </article>
 
             <!-- Character 3: Aether - Void Alchemist -->
-            <article class="wiki-card" data-category="character" data-name="Aether Void Alchemist Arcane Weaver">
-              <div class="wiki-card-badge">Scholar · Mystic</div>
+            <article class="wiki-card" data-category="character" data-name="Aether Void Alchemist Arcane Weaver Citadel">
+              <div class="wiki-card-badge">Grand Archivist · Mystic</div>
               <div class="wiki-card-img" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">
                 <span>✧</span>
               </div>
               <div class="wiki-card-body">
                 <h3>Aether</h3>
-                <p class="wiki-meta">Role: Keeper of Ancient Algorithms · Citadel</p>
-                <p class="wiki-desc">A master of syntactic transmutation who bends digital matter through ancient harmonic runes, uncovering the origins of the first code.</p>
+                <p class="wiki-meta">Affiliation: The Syntactic Citadel · First Scholar</p>
+                <p class="wiki-desc">Commands the lost art of Code Transmutation, weaving raw mathematical algorithms into tangible light constructs and protective barriers.</p>
                 <div class="wiki-pills">
-                  <span>Runic Code</span><span>Syntactic Shift</span><span>Stardust Core</span>
+                  <span>Syntactic Shift</span><span>Harmonic Runes</span><span>Void Barrier</span>
                 </div>
-                <button type="button" class="button wiki-read-btn" data-character="aether">View Codex Entry <b>↗</b></button>
+                <div style="display: flex; gap: 8px;">
+                  <button type="button" class="button wiki-read-btn" data-character="aether">Quick Preview ✦</button>
+                  <a class="button primary" href="story-character.html?id=aether">Full Codex <b>↗</b></a>
+                </div>
               </div>
             </article>
           </div>
 
           <!-- Stories & Chapters Section -->
-          <div class="wiki-section-heading" id="stories" style="margin-top: 48px;">
+          <div class="wiki-section-heading" id="stories" style="margin-top: 54px;">
             <div>
               <p class="eyebrow">Original Fiction</p>
               <h2>Active Story Arcs</h2>
             </div>
-            <span class="wiki-count">2 Active Series</span>
+            <span class="wiki-count">2 Series Ongoing</span>
           </div>
 
           <div class="wiki-grid story-grid" id="storyGrid">
             <!-- Story 1 -->
-            <article class="wiki-story-card" data-category="story" data-name="Echoes of the Stardust Spire Neon Cyberpunk">
+            <article class="wiki-story-card" data-category="story" data-name="Echoes of the Stardust Spire Cyberpunk Fantasy Kuro Makima">
               <div class="story-header">
-                <span class="story-arc-pill">Arc I · Ongoing</span>
+                <span class="story-arc-pill">Arc I · Chapter 1 Available</span>
                 <h3>Echoes of the Stardust Spire</h3>
-                <p class="wiki-meta">Author: Abhishek Rai · Genre: Cyberpunk Fantasy</p>
+                <p class="wiki-meta">Author: Abhishek Rai · Setting: Cyberpunk Metropolis</p>
               </div>
-              <p class="story-summary">In a sprawling megacity bathed in perpetual twilight, Kuro and Miss Makima cross paths at the threshold of the Stardust Spire to prevent a cataclysmic memory wipe.</p>
+              <p class="story-summary">In a rain-swept metropolis lit by azure neon, Kuro infiltrates the Stardust Spire, guided only by the telepathic whisper of Miss Makima, unravelling an ancient conspiracy.</p>
               <div class="story-chapters-list">
-                <div class="chapter-item" data-chapter="1">
+                <a class="chapter-item" href="story-chapter.html?story=spire&chapter=1" style="text-decoration: none; color: inherit;">
                   <div><strong>Chapter 1:</strong> The Midnight Terminal</div>
-                  <span class="chapter-time">8 min read</span>
-                </div>
-                <div class="chapter-item" data-chapter="2">
+                  <span class="chapter-time">8 min read ↗</span>
+                </a>
+                <div class="chapter-item" onclick="alert('Chapter 2: Strings of the Control Demon is coming in the next story drop!')">
                   <div><strong>Chapter 2:</strong> Strings of the Control Demon</div>
-                  <span class="chapter-time">11 min read</span>
+                  <span class="chapter-time">Coming Soon</span>
                 </div>
               </div>
-              <button type="button" class="button primary story-start-btn" data-story="spire">Read Chapter 1 <b>↗</b></button>
+              <a class="button primary story-start-btn" href="story-chapter.html?story=spire&chapter=1" style="text-align: center; justify-content: center;">Read Chapter 1 <b>↗</b></a>
             </article>
 
             <!-- Story 2 -->
-            <article class="wiki-story-card" data-category="story" data-name="Chronicles of the Void Alchemist Fantasy Magic">
+            <article class="wiki-story-card" data-category="story" data-name="Chronicles of the Void Alchemist High Fantasy Magic Aether">
               <div class="story-header">
-                <span class="story-arc-pill">Arc II · Complete</span>
+                <span class="story-arc-pill">Arc II · Universe Lore</span>
                 <h3>Chronicles of the Void Alchemist</h3>
-                <p class="wiki-meta">Author: Abhishek Rai · Genre: High Fantasy / Anime Lore</p>
+                <p class="wiki-meta">Author: Abhishek Rai · Setting: High Fantasy / Mythic</p>
               </div>
-              <p class="story-summary">Deep beneath the Citadel, Aether discovers a forbidden algorithm capable of granting sentience to inanimate clay vessels, changing the realm forever.</p>
+              <p class="story-summary">Within the crystalline spires of the Citadel, Aether deciphers the Primordial Equation, discovering that reality itself was coded into existence by an ancient architect.</p>
               <div class="story-chapters-list">
-                <div class="chapter-item" data-chapter="v1">
+                <a class="chapter-item" href="story-chapter.html?story=void&chapter=1" style="text-decoration: none; color: inherit;">
                   <div><strong>Prologue:</strong> The First Rune of Thought</div>
-                  <span class="chapter-time">6 min read</span>
-                </div>
-                <div class="chapter-item" data-chapter="v2">
-                  <div><strong>Chapter 1:</strong> The Awakening Vessel</div>
-                  <span class="chapter-time">10 min read</span>
-                </div>
+                  <span class="chapter-time">6 min read ↗</span>
+                </a>
               </div>
-              <button type="button" class="button primary story-start-btn" data-story="void">Read Chapter 1 <b>↗</b></button>
+              <a class="button primary story-start-btn" href="story-chapter.html?story=void&chapter=1" style="text-align: center; justify-content: center;">Start Reading <b>↗</b></a>
             </article>
           </div>
         </section>
       </div>
 
-      <!-- Fandom Reader Modal -->
+      <!-- Quick Reader Modal -->
       <div id="readerModal" class="reader-modal-backdrop" hidden>
         <div class="reader-modal-card">
           <div class="reader-header">
             <div>
-              <span class="reader-badge" id="readerBadge">CHAPTER READING</span>
-              <h2 id="readerTitle">Chapter Title</h2>
+              <span class="reader-badge" id="readerBadge">CHARACTER PREVIEW</span>
+              <h2 id="readerTitle">Codex Entry</h2>
             </div>
             <button type="button" class="reader-close" id="readerClose" aria-label="Close reader">×</button>
           </div>
-          <div class="reader-body" id="readerContent">
-            <!-- Reader text injects here -->
-          </div>
+          <div class="reader-body" id="readerContent"></div>
           <div class="reader-footer">
-            <button type="button" class="button" id="readerPrevBtn">← Previous</button>
-            <button type="button" class="button primary" id="readerNextBtn">Next Chapter →</button>
+            <button type="button" class="button" onclick="document.querySelector('#readerModal').hidden=true;">Close Preview</button>
           </div>
         </div>
       </div>
