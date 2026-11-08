@@ -6,7 +6,13 @@
     <meta name="description" content="A private, persistent personal finance ledger." />
     <meta name="theme-color" content="#101a20" />
     <title>Wallet — arrai.in</title>
+    <!-- Favicon / Tab Logo -->
+    <link rel="icon" type="image/svg+xml" href="assets/app-icon.svg" />
+    <link rel="alternate icon" href="assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/app-icon.svg" />
+    <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="style.css" />
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   </head>
   <body class="community-page wallet-page">
     <div class="ambient one"></div><div class="ambient two"></div>
@@ -35,6 +41,7 @@
           <article class="wallet-panel wallet-agent"><div class="wallet-panel-heading"><div><p class="eyebrow">Read-only guide</p><h2>Ask about your records</h2></div><span aria-hidden="true">✦</span></div><form id="walletAgentForm" class="wallet-agent-form"><label for="walletAgentQuestion">Question</label><div><input id="walletAgentQuestion" maxlength="500" placeholder="Where did I spend the most this month?" required /><button class="button primary" type="submit">Ask</button></div></form><p id="walletAgentAnswer" class="wallet-agent-answer" role="status">The guide can summarize records you entered. It cannot move money or verify payments.</p></article>
           <article class="wallet-panel wallet-split"><div class="wallet-panel-heading"><div><p class="eyebrow">Shared costs</p><h2>Split a bill</h2></div><span aria-hidden="true">÷</span></div><div class="wallet-split-fields"><label>Total bill (₹)<input id="splitTotal" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" /></label><label>People<input id="splitPeople" type="number" min="1" max="100" step="1" value="2" /></label></div><p class="wallet-split-result" id="splitResult">Enter a bill amount to see each share.</p><button class="button" id="useSplit" type="button" disabled>Use my share in expense</button></article>
           <article class="wallet-panel wallet-qr"><div class="wallet-panel-heading"><div><p class="eyebrow">External payment</p><h2>Scan a UPI QR</h2></div><span aria-hidden="true">▦</span></div><p>Scan opens the payment details in a compatible UPI app. Review and authorize there; this ledger cannot verify or record settlement automatically.</p><div class="wallet-qr-actions"><button class="button" id="scanButton" type="button">Start camera</button><button class="button" id="stopScanButton" type="button" hidden>Stop camera</button></div><video id="qrVideo" class="wallet-video" playsinline hidden></video><p class="wallet-qr-status" id="qrStatus" role="status"></p><a id="upiHandoff" class="button primary" href="#" hidden>Review in UPI app ↗</a></article>
+          <article class="wallet-panel wallet-razorpay"><div class="wallet-panel-heading"><div><p class="eyebrow">Online payment</p><h2>Pay with Razorpay</h2></div><span aria-hidden="true">💳</span></div><p>Make direct payments via Razorpay (UPI, Cards, NetBanking, and Wallets).</p><form id="razorpayPayForm" class="wallet-form"><label>Amount (₹)<input id="rzpAmount" name="amount" type="number" min="1" max="500000" step="1" value="500" required placeholder="500" /></label><label>Purpose<input id="rzpPurpose" name="purpose" maxlength="80" value="ARRAI Studio Support" required placeholder="Payment purpose" /></label><button class="button primary" id="rzpPayButton" type="submit"><span aria-hidden="true">⚡</span> Pay via Razorpay <b>↗</b></button></form><p id="rzpStatus" class="wallet-qr-status" role="status"></p></article>
         </section>
         <section class="wallet-panel wallet-history"><div class="wallet-panel-heading"><div><p class="eyebrow">Your records</p><h2>Recent activity</h2></div><span id="entryCount">0 entries</span></div><div id="walletTransactions" class="wallet-transactions"><p class="wallet-empty">No entries yet.</p></div></section>
         <p class="wallet-disclaimer">This is a personal finance tracker, not a bank account, stored-value wallet, payment aggregator, or UPI provider. No real-money transfers are initiated or settled here. Charts and AI analysis use up to 200 recent entries.</p>

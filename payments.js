@@ -242,3 +242,53 @@ window.arraiAuth.then(async ({ isAuthenticated }) => {
     setStatus(error.message, "error");
   }
 }).catch(() => setStatus("Could not verify your sign-in. Please try again.", "error"));
+
+// Razorpay Checkout Integration
+const rzpForm = document.querySelector("#razorpayPayForm");
+const rzpStatus = document.querySelector("#rzpStatus");
+if (rzpForm) {
+  rzpForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const amountVal = Number(document.querySelector("#rzpAmount")?.value || 500);
+    const purposeVal = document.querySelector("#rzpPurpose")?.value || "ARRAI Studio Support";
+    if (typeof Razorpay === "undefined") {
+      if (rzpStatus) {
+        rzpStatus.textContent = "Razorpay SDK could not be loaded. Please check your internet connection.";
+        rzpStatus.style.color = "#fda4af";
+      }
+      return;
+    }
+    const options = {
+      key: window.RAZORPAY_KEY_ID || "rzp_test_placeholder",
+      amount: Math.round(amountVal * 100),
+      currency: "INR",
+      name: "ARRAI Studio",
+      description: purposeVal,
+      image: "assets/app-icon.svg",
+      theme: { color: "#38bdf8" },
+      handler: function (response) {
+        if (rzpStatus) {
+          rzpStatus.textContent = `Payment captured successfully! ID: ${response.razorpay_payment_id}`;
+          rzpStatus.style.color = "#86efac";
+        }
+      },
+      modal: {
+        ondismiss: function () {
+          if (rzpStatus) {
+            rzpStatus.textContent = "Payment window closed.";
+            rzpStatus.style.color = "#c4cbe0";
+          }
+        }
+      }
+    };
+    try {
+      const rzpInstance = new Razorpay(options);
+      rzpInstance.open();
+    } catch (err) {
+      if (rzpStatus) {
+        rzpStatus.textContent = err.message || "Failed to launch Razorpay checkout.";
+        rzpStatus.style.color = "#fda4af";
+      }
+    }
+  });
+}
