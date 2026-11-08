@@ -156,13 +156,24 @@ function openReader(key) {
   readerTitle.textContent = data.title;
   readerContent.innerHTML = data.html;
   readerModal.hidden = false;
+  readerModal.style.display = "grid";
   document.body.style.overflow = "hidden";
 }
 
 function closeReader() {
   if (!readerModal) return;
   readerModal.hidden = true;
+  readerModal.style.display = "none";
   document.body.style.overflow = "";
+}
+
+window.closeReader = closeReader;
+window.openReader = openReader;
+
+// Safety check on page load to ensure modal never auto-shows
+if (readerModal) {
+  readerModal.hidden = true;
+  readerModal.style.display = "none";
 }
 
 // Button bindings

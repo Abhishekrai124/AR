@@ -1901,6 +1901,9 @@ footer div {
   place-items: center;
   padding: 20px;
 }
+.reader-modal-backdrop[hidden] {
+  display: none !important;
+}
 .reader-modal-card {
   width: min(720px, 100%);
   max-height: 85vh;

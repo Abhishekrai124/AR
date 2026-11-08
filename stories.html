@@ -216,7 +216,7 @@
       </div>
 
       <!-- Quick Reader Modal -->
-      <div id="readerModal" class="reader-modal-backdrop" hidden>
+      <div id="readerModal" class="reader-modal-backdrop" hidden style="display: none;">
         <div class="reader-modal-card">
           <div class="reader-header">
             <div>
@@ -227,7 +227,7 @@
           </div>
           <div class="reader-body" id="readerContent"></div>
           <div class="reader-footer">
-            <button type="button" class="button" onclick="document.querySelector('#readerModal').hidden=true;">Close Preview</button>
+            <button type="button" class="button" onclick="window.closeReader ? window.closeReader() : (document.querySelector('#readerModal').style.display='none', document.querySelector('#readerModal').hidden=true);">Close Preview</button>
           </div>
         </div>
       </div>
