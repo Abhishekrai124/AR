@@ -439,26 +439,73 @@ const fetchWeatherForCoords = async (latitude, longitude, cityName = "") => {
   }
 };
 
-// Automatic IP & Location Detection on Page Load
+// Automatic Dynamic IP & Location Detection for the Visiting User
 const autoDetectLocationAndWeather = async () => {
+  let userCity = "";
+  let userCoords = null;
+  let userIp = "";
+
+  // 1. Try ipwho.is (Free, fast, accurate, CORS-friendly, no rate limits)
   try {
-    // Free, reliable IP geolocation without API keys
-    const ipRes = await fetch("https://ipapi.co/json/").catch(() => null);
-    if (ipRes && ipRes.ok) {
-      const ipData = await ipRes.json();
-      if (userIpDisplay) {
-        userIpDisplay.textContent = `🌐 IP: ${ipData.ip || "Detected"} (${ipData.city || "Ludhiana"}, ${ipData.region_code || ipData.country_code || "IN"})`;
-      }
-      if (ipData.latitude && ipData.longitude) {
-        await fetchWeatherForCoords(ipData.latitude, ipData.longitude, ipData.city);
-        return;
+    const res = await fetch("https://ipwho.is/").catch(() => null);
+    if (res && res.ok) {
+      const data = await res.json();
+      if (data && data.success !== false) {
+        userCity = data.city || data.region || "";
+        userIp = data.ip || "";
+        if (data.latitude && data.longitude) {
+          userCoords = { lat: data.latitude, lon: data.longitude };
+        }
+        const country = data.country_code || data.country || "";
+        if (userIpDisplay) {
+          userIpDisplay.textContent = `🌐 Visitor IP: ${userIp} (${userCity}${country ? ", " + country : ""})`;
+        }
       }
     }
   } catch {}
 
-  // Fallback to Ludhiana / default
-  if (userIpDisplay) userIpDisplay.textContent = "🌐 IP: Connected · India";
-  await fetchWeatherForCoords(30.9010, 75.8573, "Ludhiana");
+  // 2. Fallback to freeipapi.com
+  if (!userCoords) {
+    try {
+      const res = await fetch("https://freeipapi.com/api/json").catch(() => null);
+      if (res && res.ok) {
+        const data = await res.json();
+        userCity = userCity || data.cityName || "";
+        userIp = userIp || data.ipAddress || "";
+        if (data.latitude && data.longitude) {
+          userCoords = { lat: data.latitude, lon: data.longitude };
+        }
+        if (userIpDisplay) {
+          userIpDisplay.textContent = `🌐 Visitor IP: ${userIp || "Detected"} (${userCity || "Connected"})`;
+        }
+      }
+    } catch {}
+  }
+
+  // 3. Fallback to ipapi.co
+  if (!userCoords) {
+    try {
+      const res = await fetch("https://ipapi.co/json/").catch(() => null);
+      if (res && res.ok) {
+        const data = await res.json();
+        userCity = userCity || data.city || "";
+        userIp = userIp || data.ip || "";
+        if (data.latitude && data.longitude) {
+          userCoords = { lat: data.latitude, lon: data.longitude };
+        }
+        if (userIpDisplay) {
+          userIpDisplay.textContent = `🌐 Visitor IP: ${userIp || "Detected"} (${userCity || "Connected"})`;
+        }
+      }
+    } catch {}
+  }
+
+  if (userCoords) {
+    await fetchWeatherForCoords(userCoords.lat, userCoords.lon, userCity);
+  } else {
+    if (userIpDisplay) userIpDisplay.textContent = "🌐 Visitor IP: Connected · Online";
+    if (localWeather) localWeather.textContent = "Local Skies · Pleasant ✦";
+  }
 };
 
 void autoDetectLocationAndWeather();
@@ -602,9 +649,14 @@ try {
 const notificationSettingKey = "arrai-notifications-enabled";
 const notificationButton = document.createElement("button");
 notificationButton.type = "button";
-notificationButton.className = "notification-toggle";
+notificationButton.className = "footer-notification-link";
 notificationButton.setAttribute("aria-label", "Manage browser notifications");
-document.body.append(notificationButton);
+const footerLinks = document.querySelector("footer div");
+if (footerLinks) {
+  footerLinks.append(notificationButton);
+} else {
+  document.querySelector("footer")?.append(notificationButton);
+}
 const notificationsEnabled = () => localStorage.getItem(notificationSettingKey) === "true" && window.Notification?.permission === "granted";
 const updateNotificationButton = () => {
   notificationButton.textContent = notificationsEnabled() ? "Notifications on · Turn off" : "Enable notifications";

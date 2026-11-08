@@ -93,6 +93,19 @@
 
         <!-- Main Content Area -->
         <section class="wiki-content">
+          <!-- Fandom Wiki Management Bar -->
+          <div class="wiki-manage-bar" id="wikiManageBar">
+            <div class="wiki-manage-info">
+              <span class="wiki-manage-badge">✦ Fandom Codex Manager</span>
+              <span class="wiki-manage-sub">Manage, edit, or delete any character profiles &amp; story arcs</span>
+            </div>
+            <div class="wiki-manage-actions">
+              <button type="button" class="button primary" id="addCharacterBtn">＋ New Character</button>
+              <button type="button" class="button" id="addStoryBtn">＋ New Story Arc</button>
+              <button type="button" class="button" id="resetWikiBtn" title="Restore default canon entries">↺ Reset</button>
+            </div>
+          </div>
+
           <!-- Character Codex Section -->
           <div class="wiki-section-heading" id="characters">
             <div>
@@ -103,65 +116,7 @@
           </div>
 
           <div class="wiki-grid" id="characterGrid">
-            <!-- Character 1: Miss Makima -->
-            <article class="wiki-card" data-category="character" data-name="Miss Makima Control Demon Guide Public Safety">
-              <div class="wiki-card-badge">Canon Guide · Supreme Rank</div>
-              <div class="wiki-card-img" style="background: linear-gradient(135deg, #be185d, #4338ca);">
-                <span>✿</span>
-              </div>
-              <div class="wiki-card-body">
-                <h3>Miss Makima</h3>
-                <p class="wiki-meta">Affiliation: Public Safety &amp; AR Studio · High Overseer</p>
-                <p class="wiki-desc">An elegant and commanding presence who governs spatial audio and neural communications across the AR universe. Soft-spoken, polite, and absolute.</p>
-                <div class="wiki-pills">
-                  <span>Voice Dominance</span><span>Memory Synthesis</span><span>Spatial Telepathy</span>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                  <button type="button" class="button wiki-read-btn" data-character="makima">Quick Preview ✦</button>
-                  <a class="button primary" href="story-character.html?id=makima">Full Codex <b>↗</b></a>
-                </div>
-              </div>
-            </article>
-
-            <!-- Character 2: Kuro - Cyber Shinobi -->
-            <article class="wiki-card" data-category="character" data-name="Kuro Phantom Shinobi Cyber Assassin Sector 7">
-              <div class="wiki-card-badge">Protagonist · A-Rank</div>
-              <div class="wiki-card-img" style="background: linear-gradient(135deg, #0284c7, #0f172a);">
-                <span>⚡</span>
-              </div>
-              <div class="wiki-card-body">
-                <h3>Kuro</h3>
-                <p class="wiki-meta">Affiliation: Sector 7 Wanderers · Cyber Ronin</p>
-                <p class="wiki-desc">Equipped with twin plasma katanas and high-velocity phase gear. Wanders the neon labyrinth of New Kyoto seeking to unmask the corporation that erased his past.</p>
-                <div class="wiki-pills">
-                  <span>Plasma Muramasa</span><span>Phase Blink</span><span>Neural Siphon</span>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                  <button type="button" class="button wiki-read-btn" data-character="kuro">Quick Preview ✦</button>
-                  <a class="button primary" href="story-character.html?id=kuro">Full Codex <b>↗</b></a>
-                </div>
-              </div>
-            </article>
-
-            <!-- Character 3: Aether - Void Alchemist -->
-            <article class="wiki-card" data-category="character" data-name="Aether Void Alchemist Arcane Weaver Citadel">
-              <div class="wiki-card-badge">Grand Archivist · Mystic</div>
-              <div class="wiki-card-img" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">
-                <span>✧</span>
-              </div>
-              <div class="wiki-card-body">
-                <h3>Aether</h3>
-                <p class="wiki-meta">Affiliation: The Syntactic Citadel · First Scholar</p>
-                <p class="wiki-desc">Commands the lost art of Code Transmutation, weaving raw mathematical algorithms into tangible light constructs and protective barriers.</p>
-                <div class="wiki-pills">
-                  <span>Syntactic Shift</span><span>Harmonic Runes</span><span>Void Barrier</span>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                  <button type="button" class="button wiki-read-btn" data-character="aether">Quick Preview ✦</button>
-                  <a class="button primary" href="story-character.html?id=aether">Full Codex <b>↗</b></a>
-                </div>
-              </div>
-            </article>
+            <!-- Dynamically populated by stories.js -->
           </div>
 
           <!-- Stories & Chapters Section -->
@@ -170,47 +125,11 @@
               <p class="eyebrow">Original Fiction</p>
               <h2>Active Story Arcs</h2>
             </div>
-            <span class="wiki-count">2 Series Ongoing</span>
+            <span class="wiki-count" id="storyCount">2 Series Ongoing</span>
           </div>
 
           <div class="wiki-grid story-grid" id="storyGrid">
-            <!-- Story 1 -->
-            <article class="wiki-story-card" data-category="story" data-name="Echoes of the Stardust Spire Cyberpunk Fantasy Kuro Makima">
-              <div class="story-header">
-                <span class="story-arc-pill">Arc I · Chapter 1 Available</span>
-                <h3>Echoes of the Stardust Spire</h3>
-                <p class="wiki-meta">Author: Abhishek Rai · Setting: Cyberpunk Metropolis</p>
-              </div>
-              <p class="story-summary">In a rain-swept metropolis lit by azure neon, Kuro infiltrates the Stardust Spire, guided only by the telepathic whisper of Miss Makima, unravelling an ancient conspiracy.</p>
-              <div class="story-chapters-list">
-                <a class="chapter-item" href="story-chapter.html?story=spire&chapter=1" style="text-decoration: none; color: inherit;">
-                  <div><strong>Chapter 1:</strong> The Midnight Terminal</div>
-                  <span class="chapter-time">8 min read ↗</span>
-                </a>
-                <div class="chapter-item" onclick="alert('Chapter 2: Strings of the Control Demon is coming in the next story drop!')">
-                  <div><strong>Chapter 2:</strong> Strings of the Control Demon</div>
-                  <span class="chapter-time">Coming Soon</span>
-                </div>
-              </div>
-              <a class="button primary story-start-btn" href="story-chapter.html?story=spire&chapter=1" style="text-align: center; justify-content: center;">Read Chapter 1 <b>↗</b></a>
-            </article>
-
-            <!-- Story 2 -->
-            <article class="wiki-story-card" data-category="story" data-name="Chronicles of the Void Alchemist High Fantasy Magic Aether">
-              <div class="story-header">
-                <span class="story-arc-pill">Arc II · Universe Lore</span>
-                <h3>Chronicles of the Void Alchemist</h3>
-                <p class="wiki-meta">Author: Abhishek Rai · Setting: High Fantasy / Mythic</p>
-              </div>
-              <p class="story-summary">Within the crystalline spires of the Citadel, Aether deciphers the Primordial Equation, discovering that reality itself was coded into existence by an ancient architect.</p>
-              <div class="story-chapters-list">
-                <a class="chapter-item" href="story-chapter.html?story=void&chapter=1" style="text-decoration: none; color: inherit;">
-                  <div><strong>Prologue:</strong> The First Rune of Thought</div>
-                  <span class="chapter-time">6 min read ↗</span>
-                </a>
-              </div>
-              <a class="button primary story-start-btn" href="story-chapter.html?story=void&chapter=1" style="text-align: center; justify-content: center;">Start Reading <b>↗</b></a>
-            </article>
+            <!-- Dynamically populated by stories.js -->
           </div>
         </section>
       </div>
@@ -229,6 +148,105 @@
           <div class="reader-footer">
             <button type="button" class="button" onclick="window.closeReader ? window.closeReader() : (document.querySelector('#readerModal').style.display='none', document.querySelector('#readerModal').hidden=true);">Close Preview</button>
           </div>
+        </div>
+      </div>
+
+      <!-- Character Editor Modal (Fandom Style) -->
+      <div id="charModal" class="reader-modal-backdrop" hidden style="display: none !important;">
+        <div class="wiki-editor-modal-card">
+          <div class="reader-header">
+            <div>
+              <span class="wiki-manage-badge" id="charModalBadge">✦ FANDOM STUDIO</span>
+              <h2 id="charModalTitle">Add New Character</h2>
+            </div>
+            <button type="button" class="reader-close" id="charModalClose" aria-label="Close modal">×</button>
+          </div>
+          <form id="charForm" class="wiki-editor-form">
+            <input type="hidden" id="editCharId" value="" />
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <label>Character Name
+                <input id="editCharName" required placeholder="e.g. Shadow Vanguard" />
+              </label>
+              <label>Role / Archetype
+                <input id="editCharRole" required placeholder="e.g. Rogue Netrunner" />
+              </label>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <label>Rank &amp; Badge
+                <input id="editCharBadge" required placeholder="e.g. S-Rank Assassin" />
+              </label>
+              <label>Affiliation / Faction
+                <input id="editCharAffiliation" required placeholder="e.g. Sector 7 Wanderers" />
+              </label>
+            </div>
+            <div style="display: grid; grid-template-columns: 100px 1fr; gap: 12px;">
+              <label>Avatar Icon
+                <input id="editCharAvatar" maxlength="4" required placeholder="⚡" value="⚡" style="text-align: center; font-size: 1.2rem;" />
+              </label>
+              <label>Color Theme
+                <select id="editCharTheme">
+                  <option value="linear-gradient(135deg, #be185d, #4338ca)">Sakura Cyber (Rose / Indigo)</option>
+                  <option value="linear-gradient(135deg, #0284c7, #0f172a)">Neon Kyoto (Blue / Slate)</option>
+                  <option value="linear-gradient(135deg, #8b5cf6, #ec4899)">Citadel Arcane (Purple / Pink)</option>
+                  <option value="linear-gradient(135deg, #f59e0b, #ef4444)">Solar Flame (Amber / Red)</option>
+                  <option value="linear-gradient(135deg, #10b981, #064e3b)">Emerald Matrix (Green / Dark)</option>
+                </select>
+              </label>
+            </div>
+            <label>Short Description
+              <textarea id="editCharDesc" rows="2" required placeholder="Brief introductory synopsis for the card"></textarea>
+            </label>
+            <label>Abilities (comma separated)
+              <input id="editCharPills" required placeholder="Phase Blink, Neural Siphon, Plasma Blade" />
+            </label>
+            <label>Signature Quote
+              <input id="editCharQuote" placeholder="A memorable catchphrase or philosophy" />
+            </label>
+            <label>Full Lore Biography
+              <textarea id="editCharBio" rows="4" placeholder="Detailed backstory and origins in the AR universe"></textarea>
+            </label>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+              <button type="button" class="button" id="charModalCancel">Cancel</button>
+              <button type="submit" class="button primary" id="charModalSave">Save Character ✦</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Story Arc Editor Modal -->
+      <div id="storyModal" class="reader-modal-backdrop" hidden style="display: none !important;">
+        <div class="wiki-editor-modal-card">
+          <div class="reader-header">
+            <div>
+              <span class="wiki-manage-badge">✦ ORIGINAL FICTION</span>
+              <h2 id="storyModalTitle">Add New Story Arc</h2>
+            </div>
+            <button type="button" class="reader-close" id="storyModalClose" aria-label="Close modal">×</button>
+          </div>
+          <form id="storyForm" class="wiki-editor-form">
+            <input type="hidden" id="editStoryId" value="" />
+            <label>Story Arc Title
+              <input id="editStoryTitle" required placeholder="e.g. Chronicles of the Neural Gate" />
+            </label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <label>Arc Status / Pill
+                <input id="editStoryArc" required placeholder="Arc I · Ongoing" />
+              </label>
+              <label>Setting / Author
+                <input id="editStoryMeta" required placeholder="Author: Abhishek Rai · Cyberpunk" />
+              </label>
+            </div>
+            <label>Synopsis
+              <textarea id="editStorySynopsis" rows="3" required placeholder="Plot overview and narrative premise"></textarea>
+            </label>
+            <label>Tags (comma separated)
+              <input id="editStoryTags" placeholder="Cyberpunk, Action, Kuro" />
+            </label>
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
+              <button type="button" class="button" id="storyModalCancel">Cancel</button>
+              <button type="submit" class="button primary">Save Story Arc ✦</button>
+            </div>
+          </form>
         </div>
       </div>
     </main>

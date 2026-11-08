@@ -110,6 +110,15 @@
       const params = new URLSearchParams(window.location.search);
       const charId = params.get("id") || "makima";
 
+      // Read from custom wiki storage or fallback to canon
+      let storedChars = null;
+      try {
+        const raw = localStorage.getItem("arrai_wiki_characters");
+        if (raw) storedChars = JSON.parse(raw);
+      } catch {}
+
+      const foundChar = storedChars?.find((x) => x.id === charId);
+
       const profiles = {
         makima: {
           name: "Miss Makima",
@@ -163,7 +172,22 @@
         }
       };
 
-      const c = profiles[charId] || profiles.makima;
+      const c = foundChar ? {
+        name: foundChar.name,
+        role: foundChar.role,
+        badge: foundChar.badge,
+        sub: foundChar.desc,
+        avatar: foundChar.avatar,
+        avatarBg: foundChar.gradient,
+        status: "Active",
+        rank: foundChar.badge,
+        affiliation: foundChar.affiliation,
+        signature: (foundChar.pills || []).slice(0, 2).join(", ") || "Specialized Focus",
+        quote: foundChar.quote || "The future belongs to those who dare shape the digital realm.",
+        bio: foundChar.bio || `<p>${foundChar.desc}</p>`,
+        abilities: foundChar.abilities || (foundChar.pills || []).map((p) => `<div class="ability-card"><strong>${p}:</strong> Unique technique documented in the ARRAI records.</div>`).join(" ")
+      } : (profiles[charId] || profiles.makima);
+
       document.querySelector("#charHeading").textContent = c.name;
       document.querySelector("#charBreadcrumb").textContent = c.name;
       document.querySelector("#charSub").textContent = c.sub;

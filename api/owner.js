@@ -7,8 +7,8 @@ async function ownerSession(request) {
   const response = await fetch(`${supabaseUrl}/auth/v1/user`, { headers: { apikey: anonKey, Authorization: bearer } });
   const user = await response.json();
   if (!response.ok || !user.email) throw new Error("Your session could not be verified.");
-  const ownerEmail = process.env.OWNER_EMAIL || "abhishekrai6897@gmail.com";
-  if (user.email.toLowerCase() !== ownerEmail.toLowerCase()) throw new Error("This page is reserved for the verified owner.");
+  const allowedOwnerEmails = ["abhishekrai6897@gmail.com", (process.env.OWNER_EMAIL || "").toLowerCase()].filter(Boolean);
+  if (!allowedOwnerEmails.includes(user.email.toLowerCase())) throw new Error("This page is reserved for verified owner Abhishek Rai.");
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) throw new Error("Owner studio needs its secure server configuration.");
   // The verified owner is promoted server-side on every Studio visit; no browser client can assign this role.
   await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(user.id)}`, { method: "PATCH", headers: { ...adminHeaders(), Prefer: "return=minimal" }, body: JSON.stringify({ community_role: "owner" }) }).catch(() => {});

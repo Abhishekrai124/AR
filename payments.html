@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="A private, persistent personal finance ledger." />
+    <meta name="description" content="Personal multi-gateway wallet and payment balance on arrai.in." />
     <meta name="theme-color" content="#101a20" />
     <title>Wallet — arrai.in</title>
     <!-- Favicon / Tab Logo -->
@@ -15,39 +15,230 @@
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   </head>
   <body class="community-page wallet-page">
-    <div class="ambient one"></div><div class="ambient two"></div>
-    <header><a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a><button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button><nav><a href="index.html">Home</a><a href="stories.html">Stories &amp; Lore</a><a href="projects.html">Work</a><a href="music.html">Music</a><a class="active" href="payments.html">Wallet</a><a href="community.html">Community</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="auth.html">Login</a></nav></header>
+    <div class="ambient one"></div>
+    <div class="ambient two"></div>
+
+    <header>
+      <a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a>
+      <button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="stories.html">Stories &amp; Lore</a>
+        <a href="projects.html">Work</a>
+        <a href="music.html">Music</a>
+        <a class="active" href="payments.html">Wallet</a>
+        <a href="community.html">Community</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="auth.html">Login</a>
+      </nav>
+    </header>
+
     <main class="wallet-wrap">
-      <section class="wallet-heading"><div><p class="eyebrow">AR · Personal ledger</p><h1>Your money,<br /><em>in clear view.</em></h1><p>Track recorded income, spending and shared bills in one private place.</p></div><div class="wallet-trust"><span aria-hidden="true">◈</span><strong>Private by account</strong><small>Only your signed-in account can read or change these records.</small></div></section>
-      <p class="community-status wallet-status" id="walletStatus" role="status">Checking your sign-in…</p>
-      <div id="walletApp" hidden>
+      <section class="wallet-heading">
+        <div>
+          <p class="eyebrow">✦ ARRAI Digital Wallet</p>
+          <h1>Personal Wallet &amp;<br /><em>Live Payment Balance.</em></h1>
+          <p id="walletGreeting">Top-up funds via Razorpay (UPI, Cards, NetBanking) and use your wallet balance anywhere across the ARRAI network.</p>
+        </div>
+        <div class="wallet-trust">
+          <span aria-hidden="true">◈</span>
+          <strong>Personal Account Wallet</strong>
+          <small id="walletOwnerText">Secure balance tied to your profile.</small>
+        </div>
+      </section>
+
+      <p class="community-status wallet-status" id="walletStatus" role="status">Checking your wallet balance…</p>
+
+      <div id="walletApp">
+        <!-- Summary Cards -->
         <section class="wallet-summary" aria-label="Ledger summary">
-          <article class="wallet-balance"><p class="eyebrow">Recorded balance</p><strong id="walletBalance">₹0</strong><small>Bookkeeping total · not stored or transferable funds</small></article>
-          <article><p class="eyebrow">Income this month</p><strong id="walletIncome">₹0</strong><small>Entries recorded this month</small></article>
-          <article><p class="eyebrow">Spending this month</p><strong id="walletSpending">₹0</strong><small>Entries recorded this month</small></article>
-        </section>
-        <section class="wallet-grid">
-          <article class="wallet-panel wallet-entry-panel"><div class="wallet-panel-heading"><div><p class="eyebrow">New record</p><h2>Add an entry</h2></div><span aria-hidden="true">＋</span></div>
-            <form id="entryForm" class="wallet-form">
-              <label>Entry type<select id="entryType" name="type"><option value="expense">Expense</option><option value="income">Income</option></select></label>
-              <label>Amount (₹)<input name="amount" type="number" min="0.01" max="10000000" step="0.01" inputmode="decimal" placeholder="0.00" required /></label>
-              <label>Category<select name="category"><option>General</option><option>Food</option><option>Travel</option><option>Shopping</option><option>Bills</option><option>Health</option><option>Work</option><option>Shared bill</option><option>Other</option></select></label>
-              <label>Description<input name="description" maxlength="100" placeholder="What was this for?" required /></label>
-              <button class="button primary" type="submit"><span aria-hidden="true">＋</span> Save record</button>
-            </form>
-            <p class="wallet-note">Income and expenses are records you enter yourself. This ledger does not receive deposits, send UPI, or confirm bank transactions.</p>
+          <article class="wallet-balance">
+            <p class="eyebrow">Available Wallet Balance</p>
+            <strong id="walletBalance">₹0.00</strong>
+            <small>Active funds ready to spend anywhere on arrai.in</small>
           </article>
-          <article class="wallet-panel wallet-analytics"><div class="wallet-panel-heading"><div><p class="eyebrow">This month</p><h2>Spending by category</h2></div><span aria-hidden="true">↗</span></div><div id="spendingChart" class="wallet-chart" aria-live="polite"></div><p id="walletInsight" class="wallet-insight"></p></article>
-          <article class="wallet-panel wallet-agent"><div class="wallet-panel-heading"><div><p class="eyebrow">Read-only guide</p><h2>Ask about your records</h2></div><span aria-hidden="true">✦</span></div><form id="walletAgentForm" class="wallet-agent-form"><label for="walletAgentQuestion">Question</label><div><input id="walletAgentQuestion" maxlength="500" placeholder="Where did I spend the most this month?" required /><button class="button primary" type="submit">Ask</button></div></form><p id="walletAgentAnswer" class="wallet-agent-answer" role="status">The guide can summarize records you entered. It cannot move money or verify payments.</p></article>
-          <article class="wallet-panel wallet-split"><div class="wallet-panel-heading"><div><p class="eyebrow">Shared costs</p><h2>Split a bill</h2></div><span aria-hidden="true">÷</span></div><div class="wallet-split-fields"><label>Total bill (₹)<input id="splitTotal" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0.00" /></label><label>People<input id="splitPeople" type="number" min="1" max="100" step="1" value="2" /></label></div><p class="wallet-split-result" id="splitResult">Enter a bill amount to see each share.</p><button class="button" id="useSplit" type="button" disabled>Use my share in expense</button></article>
-          <article class="wallet-panel wallet-qr"><div class="wallet-panel-heading"><div><p class="eyebrow">External payment</p><h2>Scan a UPI QR</h2></div><span aria-hidden="true">▦</span></div><p>Scan opens the payment details in a compatible UPI app. Review and authorize there; this ledger cannot verify or record settlement automatically.</p><div class="wallet-qr-actions"><button class="button" id="scanButton" type="button">Start camera</button><button class="button" id="stopScanButton" type="button" hidden>Stop camera</button></div><video id="qrVideo" class="wallet-video" playsinline hidden></video><p class="wallet-qr-status" id="qrStatus" role="status"></p><a id="upiHandoff" class="button primary" href="#" hidden>Review in UPI app ↗</a></article>
-          <article class="wallet-panel wallet-razorpay"><div class="wallet-panel-heading"><div><p class="eyebrow">Online payment</p><h2>Pay with Razorpay</h2></div><span aria-hidden="true">💳</span></div><p>Make direct payments via Razorpay (UPI, Cards, NetBanking, and Wallets).</p><form id="razorpayPayForm" class="wallet-form"><label>Amount (₹)<input id="rzpAmount" name="amount" type="number" min="1" max="500000" step="1" value="500" required placeholder="500" /></label><label>Purpose<input id="rzpPurpose" name="purpose" maxlength="80" value="ARRAI Studio Support" required placeholder="Payment purpose" /></label><button class="button primary" id="rzpPayButton" type="submit"><span aria-hidden="true">⚡</span> Pay via Razorpay <b>↗</b></button></form><p id="rzpStatus" class="wallet-qr-status" role="status"></p></article>
+          <article>
+            <p class="eyebrow">Total Added / Income</p>
+            <strong id="walletIncome">₹0.00</strong>
+            <small>Deposits &amp; credited records</small>
+          </article>
+          <article>
+            <p class="eyebrow">Total Spent</p>
+            <strong id="walletSpending">₹0.00</strong>
+            <small>Purchases, tips &amp; usages</small>
+          </article>
         </section>
-        <section class="wallet-panel wallet-history"><div class="wallet-panel-heading"><div><p class="eyebrow">Your records</p><h2>Recent activity</h2></div><span id="entryCount">0 entries</span></div><div id="walletTransactions" class="wallet-transactions"><p class="wallet-empty">No entries yet.</p></div></section>
-        <p class="wallet-disclaimer">This is a personal finance tracker, not a bank account, stored-value wallet, payment aggregator, or UPI provider. No real-money transfers are initiated or settled here. Charts and AI analysis use up to 200 recent entries.</p>
+
+        <!-- Wallet Operations Grid -->
+        <section class="wallet-grid">
+          <!-- Multi-Gateway Add Money Panel -->
+          <article class="wallet-panel wallet-razorpay">
+            <div class="wallet-panel-heading">
+              <div>
+                <p class="eyebrow">Top-up Gateway</p>
+                <h2>Add Money to Wallet</h2>
+              </div>
+              <span aria-hidden="true">💳</span>
+            </div>
+            <p>Add funds instantly via <strong>Razorpay (UPI, GPay, PhonePe, Paytm, Cards, NetBanking)</strong>.</p>
+            
+            <div class="wallet-quick-chips">
+              <button type="button" class="wallet-chip" data-quick-amount="100">+ ₹100</button>
+              <button type="button" class="wallet-chip" data-quick-amount="500">+ ₹500</button>
+              <button type="button" class="wallet-chip" data-quick-amount="1000">+ ₹1,000</button>
+              <button type="button" class="wallet-chip" data-quick-amount="2000">+ ₹2,000</button>
+              <button type="button" class="wallet-chip" data-quick-amount="5000">+ ₹5,000</button>
+            </div>
+
+            <form id="topupForm" class="wallet-form">
+              <label>Amount to Top-up (₹)
+                <input id="topupAmount" name="amount" type="number" min="1" max="500000" step="1" value="500" required placeholder="500" />
+              </label>
+              <div style="display: flex; gap: 10px; margin-top: 6px;">
+                <button class="button primary" id="rzpTopupBtn" type="submit" style="flex: 1; justify-content: center;">
+                  <span aria-hidden="true">⚡</span> Pay via Razorpay <b>↗</b>
+                </button>
+                <button class="button" id="instantTopupBtn" type="button" title="Fast simulated instant balance top-up">
+                  Instant Top-up ＋
+                </button>
+              </div>
+            </form>
+            <p id="topupStatus" class="wallet-qr-status" role="status"></p>
+          </article>
+
+          <!-- Spend Wallet Balance Anywhere Panel -->
+          <article class="wallet-panel wallet-split">
+            <div class="wallet-panel-heading">
+              <div>
+                <p class="eyebrow">Spend Anywhere</p>
+                <h2>Use Wallet Balance</h2>
+              </div>
+              <span aria-hidden="true">🛍️</span>
+            </div>
+            <p>Spend your wallet funds on services, unlocks, and digital perks across arrai.in:</p>
+
+            <div class="wallet-spend-grid">
+              <div class="wallet-spend-card">
+                <div>
+                  <span class="price">₹499</span>
+                  <h3>🌟 ARRAI VIP Pass</h3>
+                  <p>Unlock golden badge, priority in community, and exclusive chat features.</p>
+                </div>
+                <button type="button" class="button primary" data-spend="499" data-spend-name="ARRAI VIP Pass Purchase">Buy VIP Pass</button>
+              </div>
+
+              <div class="wallet-spend-card">
+                <div>
+                  <span class="price">₹99</span>
+                  <h3>📖 Story Chapter Unlock</h3>
+                  <p>Unlock early-access canon chapters in the Fandom Story Vault.</p>
+                </div>
+                <button type="button" class="button primary" data-spend="99" data-spend-name="Exclusive Story Arc Unlock">Unlock Lore Arc</button>
+              </div>
+
+              <div class="wallet-spend-card">
+                <div>
+                  <span class="price">₹250</span>
+                  <h3>☕ Studio Tip &amp; Boost</h3>
+                  <p>Support creator Abhishek Rai with an on-chain digital coffee.</p>
+                </div>
+                <button type="button" class="button primary" data-spend="250" data-spend-name="Studio Tip to Abhishek Rai">Send Tip</button>
+              </div>
+            </div>
+
+            <!-- Custom Transfer / Custom Spend -->
+            <form id="customSpendForm" class="wallet-form" style="margin-top: 20px; border-top: 1px dashed var(--line); padding-top: 16px;">
+              <p class="eyebrow">Custom Spend / Transfer</p>
+              <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px;">
+                <label>Amount (₹)
+                  <input id="customSpendAmount" type="number" min="1" max="100000" placeholder="₹ Amount" required />
+                </label>
+                <label>Purpose / Recipient
+                  <input id="customSpendNote" maxlength="80" placeholder="e.g. Member Transfer or Service Payment" required />
+                </label>
+              </div>
+              <button class="button" type="submit">Deduct &amp; Spend from Wallet ↗</button>
+            </form>
+          </article>
+
+          <!-- Manual Record Entry -->
+          <article class="wallet-panel wallet-entry-panel">
+            <div class="wallet-panel-heading">
+              <div>
+                <p class="eyebrow">Custom Ledger</p>
+                <h2>Manual Record Entry</h2>
+              </div>
+              <span aria-hidden="true">＋</span>
+            </div>
+            <form id="entryForm" class="wallet-form">
+              <label>Entry type
+                <select id="entryType" name="type">
+                  <option value="income">Credit / Income (＋)</option>
+                  <option value="expense">Debit / Expense (−)</option>
+                </select>
+              </label>
+              <label>Amount (₹)
+                <input name="amount" type="number" min="0.01" max="10000000" step="0.01" inputmode="decimal" placeholder="0.00" required />
+              </label>
+              <label>Category
+                <select name="category">
+                  <option>Top-up</option>
+                  <option>General</option>
+                  <option>Services</option>
+                  <option>Stories</option>
+                  <option>Shopping</option>
+                  <option>Food</option>
+                  <option>Travel</option>
+                  <option>Other</option>
+                </select>
+              </label>
+              <label>Description
+                <input name="description" maxlength="100" placeholder="What was this for?" required />
+              </label>
+              <button class="button primary" type="submit"><span aria-hidden="true">＋</span> Save to Wallet Ledger</button>
+            </form>
+          </article>
+
+          <!-- Spending Analytics -->
+          <article class="wallet-panel wallet-analytics">
+            <div class="wallet-panel-heading">
+              <div>
+                <p class="eyebrow">Analytics</p>
+                <h2>Spending by Category</h2>
+              </div>
+              <span aria-hidden="true">↗</span>
+            </div>
+            <div id="spendingChart" class="wallet-chart" aria-live="polite"></div>
+            <p id="walletInsight" class="wallet-insight"></p>
+          </article>
+        </section>
+
+        <!-- Transaction History -->
+        <section class="wallet-panel wallet-history" style="margin-top: 24px;">
+          <div class="wallet-panel-heading">
+            <div>
+              <p class="eyebrow">Ledger Records</p>
+              <h2>Recent Wallet Activity</h2>
+            </div>
+            <span id="entryCount">0 entries</span>
+          </div>
+          <div id="walletTransactions" class="wallet-transactions">
+            <p class="wallet-empty">No entries yet. Add money to get started.</p>
+          </div>
+        </section>
       </div>
     </main>
-    <footer><a class="brand" href="index.html">ar<span>rai</span>.in</a><p>© 2026 Abhishek Rai. All rights reserved.</p><div><a href="privacy.html">Privacy</a><a href="privacy.html#terms">Terms</a></div></footer>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase.js"></script><script src="script.js"></script><script src="payments.js"></script>
+
+    <footer>
+      <a class="brand" href="index.html">ar<span>rai</span>.in</a>
+      <p>© 2026 Abhishek Rai. All rights reserved.</p>
+      <div><a href="privacy.html">Privacy</a><a href="privacy.html#terms">Terms</a></div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="script.js"></script>
+    <script src="payments.js"></script>
   </body>
 </html>
