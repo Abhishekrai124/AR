@@ -393,10 +393,27 @@ const localTimezone = document.querySelector("#localTimezone");
 const localGreeting = document.querySelector("#localGreeting");
 if (localClock) {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "device time";
-  const updateClock = () => { localClock.textContent = new Date().toLocaleString(undefined, { dateStyle: "full", timeStyle: "medium" }); };
+  const updateClock = () => {
+    const now = new Date();
+    localClock.textContent =
+      now.toLocaleDateString(undefined, {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }) +
+      " · " +
+      now.toLocaleTimeString(undefined, {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+  };
   updateClock();
   setInterval(updateClock, 1000);
-  localTimezone.textContent = `Using your device time zone: ${timezone}`;
+  if (localTimezone) {
+    localTimezone.textContent = `Using your local time zone: ${timezone}`;
+  }
   window.arraiAuth?.then(async ({ isAuthenticated, user }) => {
     if (!isAuthenticated || !user?.id) return;
     const { data, error } = await window.arraiSupabase.from("profiles").select("display_name,username").eq("id", user.id).maybeSingle();
@@ -428,7 +445,7 @@ const fetchWeatherForCoords = async (latitude, longitude, cityName = "") => {
     }).toString();
     const response = await fetch(url);
     if (!response.ok) throw new Error("Weather temporarily unavailable");
-    const { current, timezone } = await response.json();
+    const { current } = await response.json();
     if (!current) throw new Error("No current conditions");
     if (localWeather) {
       const cityLabel = cityName ? `${cityName} · ` : "";
@@ -444,6 +461,7 @@ const autoDetectLocationAndWeather = async () => {
   let userCity = "";
   let userCoords = null;
   let userIp = "";
+  let userCountry = "";
 
   // 1. Try ipwho.is (Free, fast, accurate, CORS-friendly, no rate limits)
   try {
@@ -453,12 +471,9 @@ const autoDetectLocationAndWeather = async () => {
       if (data && data.success !== false) {
         userCity = data.city || data.region || "";
         userIp = data.ip || "";
+        userCountry = data.country_code || data.country || "";
         if (data.latitude && data.longitude) {
           userCoords = { lat: data.latitude, lon: data.longitude };
-        }
-        const country = data.country_code || data.country || "";
-        if (userIpDisplay) {
-          userIpDisplay.textContent = `🌐 Visitor IP: ${userIp} (${userCity}${country ? ", " + country : ""})`;
         }
       }
     }
@@ -472,11 +487,9 @@ const autoDetectLocationAndWeather = async () => {
         const data = await res.json();
         userCity = userCity || data.cityName || "";
         userIp = userIp || data.ipAddress || "";
+        userCountry = userCountry || data.countryCode || "";
         if (data.latitude && data.longitude) {
           userCoords = { lat: data.latitude, lon: data.longitude };
-        }
-        if (userIpDisplay) {
-          userIpDisplay.textContent = `🌐 Visitor IP: ${userIp || "Detected"} (${userCity || "Connected"})`;
         }
       }
     } catch {}
@@ -490,20 +503,27 @@ const autoDetectLocationAndWeather = async () => {
         const data = await res.json();
         userCity = userCity || data.city || "";
         userIp = userIp || data.ip || "";
+        userCountry = userCountry || data.country_name || "";
         if (data.latitude && data.longitude) {
           userCoords = { lat: data.latitude, lon: data.longitude };
-        }
-        if (userIpDisplay) {
-          userIpDisplay.textContent = `🌐 Visitor IP: ${userIp || "Detected"} (${userCity || "Connected"})`;
         }
       }
     } catch {}
   }
 
+  if (userIpDisplay) {
+    const locText = [userCity, userCountry].filter(Boolean).join(", ");
+    userIpDisplay.textContent = `🌐 Visitor IP: ${userIp || "Connected"} ${locText ? "(" + locText + ")" : ""}`;
+  }
+
+  const visitorLocLine = document.querySelector("#visitorLocLine");
+  if (visitorLocLine && (userCity || userCountry)) {
+    visitorLocLine.textContent = `Connected from ${[userCity, userCountry].filter(Boolean).join(", ")} ✓`;
+  }
+
   if (userCoords) {
     await fetchWeatherForCoords(userCoords.lat, userCoords.lon, userCity);
   } else {
-    if (userIpDisplay) userIpDisplay.textContent = "🌐 Visitor IP: Connected · Online";
     if (localWeather) localWeather.textContent = "Local Skies · Pleasant ✦";
   }
 };
@@ -520,6 +540,84 @@ weatherButton?.addEventListener("click", () => {
     autoDetectLocationAndWeather();
   }
 });
+
+// Render Universe Codex Showcase dynamically on Home Page
+function renderHomeCodexShowcase() {
+  const showcaseContainer = document.querySelector("#homeUniverseShowcase");
+  if (!showcaseContainer) return;
+
+  let chars = [];
+  let stories = [];
+  try {
+    const rawChars = localStorage.getItem("arrai_wiki_characters");
+    if (rawChars) chars = JSON.parse(rawChars);
+  } catch {}
+  try {
+    const rawStories = localStorage.getItem("arrai_wiki_stories");
+    if (rawStories) stories = JSON.parse(rawStories);
+  } catch {}
+
+  showcaseContainer.innerHTML = "";
+
+  if (!chars.length && !stories.length) {
+    showcaseContainer.innerHTML = `
+      <article class="wiki-card" style="grid-column: 1/-1; text-align: center; padding: 40px 20px; background: rgba(22, 34, 56, 0.7); border: 1px dashed var(--line); border-radius: 20px;">
+        <span style="font-size: 2.2rem; display: block; margin-bottom: 8px;">✦</span>
+        <h3 style="margin: 0 0 6px; font-size: 1.25rem;">ARRAI Universe Codex Active</h3>
+        <p style="color: var(--muted); font-size: 0.85rem; margin: 0 0 18px; max-width: 500px; margin-left: auto; margin-right: auto;">
+          No characters or stories created yet. Every original hero, sentinel, or fiction arc you design in your private studio will automatically showcase here.
+        </p>
+        <a class="button primary" href="stories.html">＋ Design Character in Codex Studio <b>↗</b></a>
+      </article>
+    `;
+    return;
+  }
+
+  chars.slice(0, 2).forEach((c) => {
+    const article = document.createElement("article");
+    article.className = "wiki-card";
+    article.style.background = "rgba(22, 34, 56, 0.9)";
+    const imgContent = c.photo
+      ? `<img src="${c.photo}" alt="${c.name}" style="width: 100%; height: 100%; object-fit: cover;" />`
+      : `<span style="font-size: 2.2rem;">${c.avatar || "✦"}</span>`;
+
+    article.innerHTML = `
+      <div class="wiki-card-img" style="background: ${c.gradient || 'linear-gradient(135deg, #0284c7, #0f172a)'}; height: 120px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+        ${imgContent}
+      </div>
+      <div class="wiki-card-body">
+        <span class="wiki-card-badge" style="position: static; display: inline-block; margin-bottom: 8px;">${c.badge || "✦ Canon Rank"}</span>
+        <h3 style="margin: 2px 0 4px;">${c.name}</h3>
+        <p class="wiki-meta" style="font-size: 0.76rem; color: var(--pink); margin-bottom: 6px;">${c.category === "real" ? "Real Entity / Creator" : "Fantasy Character"} · ${c.role}</p>
+        <p class="wiki-desc" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${c.desc}</p>
+        <a class="button primary wiki-read-btn" href="story-character.html?id=${encodeURIComponent(c.id)}">View Dedicated Page <b>↗</b></a>
+      </div>
+    `;
+    showcaseContainer.appendChild(article);
+  });
+
+  stories.slice(0, 2).forEach((s) => {
+    const article = document.createElement("article");
+    article.className = "wiki-card";
+    article.style.background = "rgba(22, 34, 56, 0.9)";
+    article.innerHTML = `
+      <div class="wiki-card-img" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); height: 120px; display: flex; align-items: center; justify-content: center; font-size: 2.2rem;">
+        📖
+      </div>
+      <div class="wiki-card-body">
+        <span class="wiki-card-badge" style="position: static; display: inline-block; margin-bottom: 8px;">${s.arc || "Original Arc"}</span>
+        <h3 style="margin: 2px 0 4px;">${s.title}</h3>
+        <p class="wiki-meta" style="font-size: 0.76rem; color: var(--sky); margin-bottom: 6px;">${s.meta || "ARRAI Universe"}</p>
+        <p class="story-summary" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${s.synopsis}</p>
+        <a class="button primary wiki-read-btn" href="${s.chapterUrl || 'stories.html'}">Read Story Episode <b>↗</b></a>
+      </div>
+    `;
+    showcaseContainer.appendChild(article);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", renderHomeCodexShowcase);
+renderHomeCodexShowcase();
 
 const pageVisitCounter = document.querySelector(".site-visit-counter") || document.createElement("small");
 pageVisitCounter.className = "site-visit-counter";

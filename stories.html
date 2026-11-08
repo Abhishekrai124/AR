@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="ARRAI Fandom Wiki — Character codex, fiction universes, story arcs and world lore by Abhishek Rai." />
-    <title>ARRAI Chronicles Wiki — Stories &amp; Anime Characters</title>
+    <meta name="description" content="ARRAI Original Chronicles — Character codex, fiction universes, story arcs and fantasy world lore by Abhishek Rai." />
+    <title>ARRAI Chronicles — Original Characters &amp; Fantasy Lore</title>
     <link rel="icon" type="image/svg+xml" href="assets/app-icon.svg" />
     <link rel="alternate icon" href="assets/app-icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="assets/app-icon.svg" />
@@ -33,23 +33,23 @@
     </header>
 
     <main class="wiki-wrap">
-      <!-- Fandom Style Hero Banner -->
+      <!-- ARRAI Universe Codex Header -->
       <section class="wiki-hero">
-        <div class="wiki-badge"><span>✦ OFFICIAL ARRAI FANDOM WIKI &amp; ARCHIVES</span></div>
+        <div class="wiki-badge"><span>✦ OFFICIAL ARRAI UNIVERSE CODEX &amp; ARCHIVES</span></div>
         <h1>Explore Stories, Characters<br />&amp; <em>Universe Lore.</em></h1>
-        <p class="wiki-subtitle">The definitive universe encyclopedia and reading hub for original fiction, anime-style character codexes, and cyber-fantasy arcs created by Abhishek Rai.</p>
+        <p class="wiki-subtitle">The official universe encyclopedia and reading hub for original fiction, anime-style character codexes, and fantasy arcs created by Abhishek Rai.</p>
 
         <!-- Search Bar -->
         <div class="wiki-search-box">
           <input type="search" id="wikiSearch" placeholder="Search by character name, arc, power, weapon, or faction…" />
-          <button type="button" class="button primary" id="wikiSearchBtn">Search Wiki <b>↗</b></button>
+          <button type="button" class="button primary" id="wikiSearchBtn">Search Codex <b>↗</b></button>
         </div>
 
         <!-- Filter Tags -->
         <div class="wiki-tags" id="wikiTags">
-          <button type="button" class="wiki-tag active" data-filter="all">All Codex (5)</button>
-          <button type="button" class="wiki-tag" data-filter="character">Anime Characters (3)</button>
-          <button type="button" class="wiki-tag" data-filter="story">Story Arcs (2)</button>
+          <button type="button" class="wiki-tag active" data-filter="all">All Codex (<span id="tagCountAll">0</span>)</button>
+          <button type="button" class="wiki-tag" data-filter="character">Characters (<span id="tagCountChar">0</span>)</button>
+          <button type="button" class="wiki-tag" data-filter="story">Story Arcs (<span id="tagCountStory">0</span>)</button>
           <button type="button" class="wiki-tag" data-filter="lore">World Lore &amp; Factions</button>
         </div>
       </section>
@@ -59,24 +59,23 @@
         <!-- Wiki Sidebar -->
         <aside class="wiki-sidebar">
           <div class="wiki-sidebar-card">
-            <h3>✦ Wiki Navigation</h3>
+            <h3>✦ Codex Navigation</h3>
             <ul class="wiki-nav-list">
-              <li><a href="#characters" class="wiki-nav-link active">Character Vault (3)</a></li>
-              <li><a href="#stories" class="wiki-nav-link">Active Fiction Arcs (2)</a></li>
+              <li><a href="#characters" class="wiki-nav-link active">Character Vault (<span id="sideCharCount">0</span>)</a></li>
+              <li><a href="#stories" class="wiki-nav-link">Active Fiction Arcs (<span id="sideStoryCount">0</span>)</a></li>
               <li><a href="#factions" class="wiki-nav-link">Factions &amp; Orders</a></li>
-              <li><a href="story-chapter.html?story=spire&chapter=1" class="wiki-nav-link">Featured Chapter 1 ↗</a></li>
             </ul>
           </div>
 
-          <div class="wiki-sidebar-card">
+          <div class="wiki-sidebar-card" id="factions">
             <h3>✦ Faction Database</h3>
             <div class="wiki-mini-entry">
-              <strong>Public Safety · Special Div</strong>
-              <small>Overseen by Miss Makima to maintain digital harmony between network layers.</small>
+              <strong>ARRAI Prime Nexus</strong>
+              <small>The foundational generative matrix sustaining all digital chronicles and world states.</small>
             </div>
             <div class="wiki-mini-entry">
               <strong>Sector 7 Wanderers</strong>
-              <small>Rogue ronin and cyber-shinobi reclaiming purged human memories.</small>
+              <small>Rogue ronin and cyber-shinobi discovering forgotten timelines.</small>
             </div>
             <div class="wiki-mini-entry">
               <strong>The Syntactic Citadel</strong>
@@ -93,26 +92,25 @@
 
         <!-- Main Content Area -->
         <section class="wiki-content">
-          <!-- Fandom Wiki Management Bar -->
+          <!-- ARRAI Codex Management Bar -->
           <div class="wiki-manage-bar" id="wikiManageBar">
             <div class="wiki-manage-info">
-              <span class="wiki-manage-badge">✦ Fandom Codex Manager</span>
-              <span class="wiki-manage-sub">Manage, edit, or delete any character profiles &amp; story arcs</span>
+              <span class="wiki-manage-badge">✦ ARRAI Universe Codex Studio</span>
+              <span class="wiki-manage-sub">Design new characters &amp; fantasy story arcs — dedicated pages are auto-generated</span>
             </div>
             <div class="wiki-manage-actions">
-              <button type="button" class="button primary" id="addCharacterBtn">＋ New Character</button>
+              <button type="button" class="button primary" id="addCharacterBtn">＋ Design New Character</button>
               <button type="button" class="button" id="addStoryBtn">＋ New Story Arc</button>
-              <button type="button" class="button" id="resetWikiBtn" title="Restore default canon entries">↺ Reset</button>
             </div>
           </div>
 
           <!-- Character Codex Section -->
           <div class="wiki-section-heading" id="characters">
             <div>
-              <p class="eyebrow">Canon Characters</p>
+              <p class="eyebrow">Universe Characters</p>
               <h2>Character Codex</h2>
             </div>
-            <span class="wiki-count" id="charCount">3 Characters Documented</span>
+            <span class="wiki-count" id="charCount">0 Characters Documented</span>
           </div>
 
           <div class="wiki-grid" id="characterGrid">
@@ -125,7 +123,7 @@
               <p class="eyebrow">Original Fiction</p>
               <h2>Active Story Arcs</h2>
             </div>
-            <span class="wiki-count" id="storyCount">2 Series Ongoing</span>
+            <span class="wiki-count" id="storyCount">0 Series Ongoing</span>
           </div>
 
           <div class="wiki-grid story-grid" id="storyGrid">
@@ -151,39 +149,47 @@
         </div>
       </div>
 
-      <!-- Character Editor Modal (Fandom Style) -->
+      <!-- Character Creator & Editor Modal (ARRAI Wikipedia Style) -->
       <div id="charModal" class="reader-modal-backdrop" hidden style="display: none !important;">
         <div class="wiki-editor-modal-card">
           <div class="reader-header">
             <div>
-              <span class="wiki-manage-badge" id="charModalBadge">✦ FANDOM STUDIO</span>
-              <h2 id="charModalTitle">Add New Character</h2>
+              <span class="wiki-manage-badge" id="charModalBadge">✦ ARRAI UNIVERSE CODEX</span>
+              <h2 id="charModalTitle">Design New Character</h2>
             </div>
             <button type="button" class="reader-close" id="charModalClose" aria-label="Close modal">×</button>
           </div>
           <form id="charForm" class="wiki-editor-form">
             <input type="hidden" id="editCharId" value="" />
+            <input type="hidden" id="editCharPhotoBase64" value="" />
+
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
               <label>Character Name
-                <input id="editCharName" required placeholder="e.g. Shadow Vanguard" />
+                <input id="editCharName" required placeholder="e.g. Kuro / Zenith / Original Hero" />
               </label>
-              <label>Role / Archetype
-                <input id="editCharRole" required placeholder="e.g. Rogue Netrunner" />
+              <label>Character Type
+                <select id="editCharType">
+                  <option value="fictional">Fantasy / Fictional Character</option>
+                  <option value="real">Real / Creator Entity</option>
+                  <option value="sentinel">Canon Sentinel / Cyber Guide</option>
+                </select>
               </label>
             </div>
+
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-              <label>Rank &amp; Badge
-                <input id="editCharBadge" required placeholder="e.g. S-Rank Assassin" />
+              <label>Role / Archetype
+                <input id="editCharRole" required placeholder="e.g. Rogue Netrunner / High Overseer" />
               </label>
-              <label>Affiliation / Faction
-                <input id="editCharAffiliation" required placeholder="e.g. Sector 7 Wanderers" />
+              <label>Rank &amp; Power Tier
+                <input id="editCharBadge" required placeholder="e.g. S-Rank / Supreme Tier" />
               </label>
             </div>
-            <div style="display: grid; grid-template-columns: 100px 1fr; gap: 12px;">
-              <label>Avatar Icon
-                <input id="editCharAvatar" maxlength="4" required placeholder="⚡" value="⚡" style="text-align: center; font-size: 1.2rem;" />
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <label>Affiliation / Faction
+                <input id="editCharAffiliation" required placeholder="e.g. Public Safety / Sector 7 Wanderers" />
               </label>
-              <label>Color Theme
+              <label>Color Aura Theme
                 <select id="editCharTheme">
                   <option value="linear-gradient(135deg, #be185d, #4338ca)">Sakura Cyber (Rose / Indigo)</option>
                   <option value="linear-gradient(135deg, #0284c7, #0f172a)">Neon Kyoto (Blue / Slate)</option>
@@ -193,21 +199,44 @@
                 </select>
               </label>
             </div>
-            <label>Short Description
-              <textarea id="editCharDesc" rows="2" required placeholder="Brief introductory synopsis for the card"></textarea>
+
+            <!-- Upload Photo from Gallery -->
+            <label>Upload Character Photo / Portrait (from Device Gallery)
+              <input type="file" id="editCharPhotoFile" accept="image/png, image/jpeg, image/webp, image/gif" />
+              <small style="color: var(--muted); font-size: 0.74rem;">Choose a portrait from your phone or PC gallery</small>
             </label>
-            <label>Abilities (comma separated)
-              <input id="editCharPills" required placeholder="Phase Blink, Neural Siphon, Plasma Blade" />
+            <div id="charPhotoPreviewContainer" style="display: none; align-items: center; gap: 12px; margin: 4px 0 10px;">
+              <div style="width: 60px; height: 60px; border-radius: 14px; overflow: hidden; border: 2px solid var(--sky);">
+                <img id="charPhotoPreviewImg" src="" style="width: 100%; height: 100%; object-fit: cover;" alt="preview" />
+              </div>
+              <small style="color: #86efac;">Photo loaded from gallery ✓</small>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 80px 1fr; gap: 12px;">
+              <label>Emoji Avatar
+                <input id="editCharAvatar" maxlength="4" placeholder="✿" value="✿" style="text-align: center; font-size: 1.2rem;" />
+              </label>
+              <label>Short Notes &amp; Traits
+                <input id="editCharShortNote" placeholder="e.g. Soft-spoken, telepathic, master of spatial sound" />
+              </label>
+            </div>
+
+            <label>Overview &amp; Short Description
+              <textarea id="editCharDesc" rows="2" required placeholder="Brief introductory summary for the character card"></textarea>
+            </label>
+            <label>Abilities &amp; Powers (comma separated)
+              <input id="editCharPills" required placeholder="Phase Blink, Voice Dominance, Thermal Muramasa" />
             </label>
             <label>Signature Quote
-              <input id="editCharQuote" placeholder="A memorable catchphrase or philosophy" />
+              <input id="editCharQuote" placeholder="A famous quote or motto spoken by this character" />
             </label>
             <label>Full Lore Biography
-              <textarea id="editCharBio" rows="4" placeholder="Detailed backstory and origins in the AR universe"></textarea>
+              <textarea id="editCharBio" rows="4" placeholder="Detailed origin story and background in the ARRAI universe"></textarea>
             </label>
+
             <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 10px;">
               <button type="button" class="button" id="charModalCancel">Cancel</button>
-              <button type="submit" class="button primary" id="charModalSave">Save Character ✦</button>
+              <button type="submit" class="button primary" id="charModalSave">Create Dedicated Character Page ✦</button>
             </div>
           </form>
         </div>

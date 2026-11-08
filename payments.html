@@ -51,6 +51,62 @@
       <p class="community-status wallet-status" id="walletStatus" role="status">Checking your wallet balance…</p>
 
       <div id="walletApp">
+        <!-- Wallet Mode Selector -->
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
+          <div class="wallet-type-tabs" id="walletTabs">
+            <button type="button" class="wallet-type-tab active" data-wallet-tab="hybrid">⚡ Combined Web3-ARRAI</button>
+            <button type="button" class="wallet-type-tab" data-wallet-tab="arrai">💳 ARRAI Cash</button>
+            <button type="button" class="wallet-type-tab" data-wallet-tab="web3">🦊 Web3 On-Chain</button>
+          </div>
+          <div style="font-size: 0.76rem; color: var(--muted);">
+            Razorpay API: <span id="rzpKeyStatus" style="color: var(--sky); cursor: pointer; text-decoration: underline; font-weight: 700;">Live Key (Click to edit)</span>
+          </div>
+        </div>
+
+        <!-- Cyber Virtual Card Hub -->
+        <section class="wallet-card-hub">
+          <div class="wallet-virtual-card">
+            <div class="wallet-virtual-card-header">
+              <div class="wallet-card-brand">
+                <span>✦</span>
+                <span id="cardBrandText">ARRAI HYBRID PROTOCOL</span>
+              </div>
+              <span class="wallet-card-type-badge" id="cardTypeBadge">⚡ Web3-ARRAI Combined</span>
+            </div>
+
+            <div class="wallet-card-balances">
+              <div class="wallet-balance-box">
+                <p>ARRAI Fiat Balance</p>
+                <strong id="cardFiatBalance">₹2,500.00</strong>
+                <small>Ready to spend on all ARRAI services</small>
+              </div>
+              <div class="wallet-balance-box" id="cardCryptoBox">
+                <p>Web3 On-Chain Assets</p>
+                <strong id="cardCryptoBalance">0.1500 ETH</strong>
+                <small id="cardCryptoNetwork">Ethereum / Polygon Active</small>
+              </div>
+            </div>
+
+            <div class="wallet-card-footer">
+              <div class="wallet-address-chip" id="cardWalletIdChip" title="Click to copy Wallet ID">
+                <span>🆔</span>
+                <span id="cardWalletId">AR-9482-W3</span>
+              </div>
+              <div class="wallet-address-chip" id="cardWeb3Chip" title="Click to copy Web3 Address">
+                <span>🦊</span>
+                <span id="cardWeb3Addr">0x71C...b829</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Wallet Creation & Link Actions -->
+          <div class="wallet-actions-row">
+            <button type="button" class="button" id="btnCreateArraiWallet">＋ Generate New ARRAI Wallet</button>
+            <button type="button" class="button" id="btnConnectWeb3">🦊 Connect Web3 Wallet</button>
+            <button type="button" class="button primary" id="btnCreateHybrid">⚡ Create / Sync Web3-ARRAI Hybrid</button>
+          </div>
+        </section>
+
         <!-- Summary Cards -->
         <section class="wallet-summary" aria-label="Ledger summary">
           <article class="wallet-balance">
@@ -132,7 +188,7 @@
                 <div>
                   <span class="price">₹99</span>
                   <h3>📖 Story Chapter Unlock</h3>
-                  <p>Unlock early-access canon chapters in the Fandom Story Vault.</p>
+                  <p>Unlock early-access canon chapters in the ARRAI Story Vault.</p>
                 </div>
                 <button type="button" class="button primary" data-spend="99" data-spend-name="Exclusive Story Arc Unlock">Unlock Lore Arc</button>
               </div>

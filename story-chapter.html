@@ -36,7 +36,7 @@
         <nav class="wiki-breadcrumbs">
           <a href="index.html">Home</a> <span>/</span>
           <a href="stories.html">Chronicles</a> <span>/</span>
-          <span id="storyBreadcrumb">Echoes of the Stardust Spire</span>
+          <span id="storyBreadcrumb">Story Reader</span>
         </nav>
         <div class="reader-controls">
           <button type="button" class="reader-ctrl-btn" id="fontDec" title="Smaller font">A-</button>
@@ -47,25 +47,18 @@
       <!-- Main Prose Reader -->
       <article class="reader-sheet">
         <header class="reader-sheet-header">
-          <span class="auth-brand-badge" id="chapterArcBadge">ARC I · CYBERPUNK FANTASY</span>
-          <h1 id="chapterTitle">Chapter 1: The Midnight Terminal</h1>
-          <p class="reader-author">Written by <strong>Abhishek Rai</strong> · 8 min read</p>
+          <span class="auth-brand-badge" id="chapterArcBadge">ARC I · ORIGINAL FICTION</span>
+          <h1 id="chapterTitle">Chapter 1</h1>
+          <p class="reader-author" id="readerAuthor">Written by <strong>Abhishek Rai</strong></p>
         </header>
 
         <div class="reader-text" id="chapterBody">
-          <p>Rain sliced across the neon skyscrapers of Ludhiana 2099 like shards of sapphire glass. Below the towering holographic billboards of the ARRAI network, water pooled into mirrored reflections of violet and azure.</p>
-          <p>Kuro pulled the synthetic silk hood of his trenchcoat lower over his brow. His cybernetic eye whirred softly, cycling through thermal, optical, and electromagnetic spectrums. The street below was quiet, save for the rhythmic humming of automated delivery drones coasting along the magnetic rail line.</p>
-          <p><em>"Target approaching the central node,"</em> a soft, measured voice murmured directly inside his auditory cortex. It wasn't through a radio or an open channel. It felt gentle, absolute, and impossibly close.</p>
-          <p>"Miss Makima," Kuro muttered under his breath, his breath pluming in the cool midnight air. "I told you to stay out of my neural feed."</p>
-          <p><em>"You wouldn't have survived the gatekeepers without me, Kuro,"</em> she replied without hesitation. A faint warmth lingered behind the digital voice, accompanied by the subtle chime of wind chimes. <em>"Step inside. The Stardust Spire awaits your arrival."</em></p>
-          <p>Kuro reached down to the hilt of his twin plasma katanas. The metal sang under his touch, pulsing with a faint turquoise glow. With a single fluid step, he slipped past the perimeter laser grid, his silhouette melting into the neon shadows.</p>
-          <p>Inside the atrium, massive glass pillars housed cascading algorithms—billions of lines of living code pulsing like bioluminescent jellyfish in a midnight ocean. At the heart of the hall stood Miss Makima, hands resting calmly behind her back, her golden eyes reflecting the swirling lights of the network.</p>
-          <p>"Welcome home, Kuro," she whispered. "Now let us see what memories they tried to hide from you."</p>
+          <!-- Dynamically populated from stored stories -->
         </div>
 
         <nav class="reader-nav-bottom">
           <a class="button" href="stories.html">← Back to Chronicles</a>
-          <button class="button primary" id="nextChapterBtn" type="button">Next: Chapter 2 <b>↗</b></button>
+          <button class="button primary" id="nextChapterBtn" type="button">Next Chapter <b>↗</b></button>
         </nav>
       </article>
     </main>
@@ -91,8 +84,54 @@
           chapterBody.style.fontSize = `${currentFontSize}px`;
         }
       });
+
+      // Dynamic Story Loader
+      const params = new URLSearchParams(window.location.search);
+      const storyId = params.get("story");
+      const chapterNum = params.get("chapter") || "1";
+
+      let storedStories = [];
+      try {
+        const raw = localStorage.getItem("arrai_wiki_stories");
+        if (raw) storedStories = JSON.parse(raw);
+      } catch {}
+
+      const foundStory = storyId ? storedStories.find((s) => s.id === storyId) : (storedStories[0] || null);
+
+      if (foundStory) {
+        document.title = `${foundStory.title} — Chapter ${chapterNum}`;
+        document.querySelector("#storyBreadcrumb").textContent = foundStory.title;
+        document.querySelector("#chapterArcBadge").textContent = foundStory.arc || "ARC I · ONGOING";
+        document.querySelector("#chapterTitle").textContent = `${foundStory.title} — Chapter ${chapterNum}`;
+        document.querySelector("#readerAuthor").innerHTML = `Setting &amp; Universe: <strong>${foundStory.meta || "Abhishek Rai"}</strong>`;
+        
+        chapterBody.innerHTML = `
+          <p class="story-synopsis-lead" style="font-size: 1.15rem; color: var(--sky); margin-bottom: 24px; line-height: 1.7;">
+            ${foundStory.synopsis}
+          </p>
+          <div style="padding: 24px; border-radius: 16px; background: rgba(22, 34, 56, 0.6); border: 1px solid var(--line); line-height: 1.8;">
+            <p>This original fiction chapter is registered under the <strong>${foundStory.title}</strong> saga in the ARRAI universe.</p>
+            ${foundStory.tags?.length ? `<p style="margin-top: 8px;">Tags: ${foundStory.tags.map((t) => `<span class="wiki-tag" style="display:inline-block; margin:2px 4px 2px 0;">${t}</span>`).join(" ")}</p>` : ""}
+            <p style="margin-top: 14px; font-size: 0.9rem; color: var(--muted);">New chapters can be added and edited anytime in the Universe Codex Studio.</p>
+          </div>
+        `;
+      } else {
+        document.title = "Story Reader — ARRAI Chronicles";
+        document.querySelector("#storyBreadcrumb").textContent = "Story Reader";
+        document.querySelector("#chapterArcBadge").textContent = "✦ ARRAI CHRONICLES";
+        document.querySelector("#chapterTitle").textContent = "No Story Arc Selected";
+        chapterBody.innerHTML = `
+          <div style="padding: 36px 20px; text-align: center; border: 1px dashed var(--line); border-radius: 18px; background: rgba(22, 34, 56, 0.4);">
+            <p style="color: var(--muted); margin-bottom: 20px;">No published story arc was found for this link. You can add original fiction and chapters anytime in your Universe Codex.</p>
+            <a class="button primary" href="stories.html#stories">Go to Story Arcs ↗</a>
+          </div>
+        `;
+        const nextBtn = document.querySelector("#nextChapterBtn");
+        if (nextBtn) nextBtn.style.display = "none";
+      }
+
       document.querySelector("#nextChapterBtn")?.addEventListener("click", () => {
-        window.alert("Chapter 2: 'Strings of the Control Demon' is releasing in the next update! Stay tuned.");
+        window.alert("Subsequent chapters are releasing in upcoming universe chronicles! Stay tuned.");
       });
     </script>
     <script src="script.js"></script>

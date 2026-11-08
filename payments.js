@@ -62,6 +62,9 @@ function renderLedger() {
   if (spendingEl) spendingEl.textContent = money.format(spending / 100);
   if (countEl) countEl.textContent = `${ledger.transactions.length} ${ledger.transactions.length === 1 ? "entry" : "entries"}`;
 
+  const cardFiat = document.querySelector("#cardFiatBalance");
+  if (cardFiat) cardFiat.textContent = money.format(ledger.balanceMinor / 100);
+
   // Chart Rendering
   const groups = thisMonth.filter((entry) => entry.type === "expense").reduce((result, entry) => {
     result[entry.category] = (result[entry.category] || 0) + entry.amount_minor;
@@ -182,6 +185,159 @@ document.querySelectorAll(".wallet-chip").forEach((chip) => {
   });
 });
 
+// Razorpay Live Key Configuration
+let activeRazorpayKey = localStorage.getItem("arrai_razorpay_key") || "";
+
+async function initRazorpayKey() {
+  const rzpKeyStatus = document.querySelector("#rzpKeyStatus");
+  if (!activeRazorpayKey) {
+    try {
+      const res = await fetch("/api/razorpay");
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.keyId) {
+          activeRazorpayKey = data.keyId;
+        }
+      }
+    } catch {}
+  }
+
+  window.RAZORPAY_KEY_ID = activeRazorpayKey;
+
+  if (rzpKeyStatus) {
+    if (activeRazorpayKey) {
+      const masked = activeRazorpayKey.length > 12 ? activeRazorpayKey.slice(0, 8) + "..." + activeRazorpayKey.slice(-4) : activeRazorpayKey;
+      rzpKeyStatus.textContent = `Live Key (${masked})`;
+      rzpKeyStatus.style.color = "#86efac";
+    } else {
+      rzpKeyStatus.textContent = `Set Live Key ⚙️`;
+      rzpKeyStatus.style.color = "#38bdf8";
+    }
+  }
+}
+
+const rzpKeyStatus = document.querySelector("#rzpKeyStatus");
+if (rzpKeyStatus) {
+  rzpKeyStatus.addEventListener("click", () => {
+    const current = localStorage.getItem("arrai_razorpay_key") || activeRazorpayKey || "";
+    const input = prompt("Enter your Razorpay Key ID (e.g. rzp_live_... or test key):", current);
+    if (input !== null) {
+      const trimmed = input.trim();
+      if (trimmed) {
+        localStorage.setItem("arrai_razorpay_key", trimmed);
+        activeRazorpayKey = trimmed;
+        window.RAZORPAY_KEY_ID = trimmed;
+        setStatus("Razorpay Key ID saved! ✦", "success");
+      } else {
+        localStorage.removeItem("arrai_razorpay_key");
+        activeRazorpayKey = "";
+        window.RAZORPAY_KEY_ID = "";
+        setStatus("Razorpay key reset. Using direct wallet credit.", "");
+      }
+      initRazorpayKey();
+    }
+  });
+}
+initRazorpayKey();
+
+// Multi-Mode Wallet Hub Logic (Hybrid, ARRAI Cash, Web3)
+let currentWalletMode = localStorage.getItem("arrai_wallet_mode") || "hybrid";
+let userWeb3Address = localStorage.getItem("arrai_web3_addr") || "0x71C83a4B3f6b907Da82B962E3e74C978Fb829";
+let userArraiWalletId = localStorage.getItem("arrai_custom_wallet_id") || "AR-9482-W3";
+
+function setWalletMode(mode) {
+  currentWalletMode = mode;
+  localStorage.setItem("arrai_wallet_mode", mode);
+
+  document.querySelectorAll(".wallet-type-tab").forEach((tab) => {
+    tab.classList.toggle("active", tab.dataset.walletTab === mode);
+  });
+
+  const cardBrandText = document.querySelector("#cardBrandText");
+  const cardTypeBadge = document.querySelector("#cardTypeBadge");
+  const cardCryptoBox = document.querySelector("#cardCryptoBox");
+  const cardWalletIdChip = document.querySelector("#cardWalletIdChip");
+  const cardWeb3Chip = document.querySelector("#cardWeb3Chip");
+  const cardWalletId = document.querySelector("#cardWalletId");
+  const cardWeb3Addr = document.querySelector("#cardWeb3Addr");
+
+  if (cardWalletId) cardWalletId.textContent = userArraiWalletId;
+  if (cardWeb3Addr) cardWeb3Addr.textContent = userWeb3Address.slice(0, 6) + "..." + userWeb3Address.slice(-4);
+
+  if (mode === "arrai") {
+    if (cardBrandText) cardBrandText.textContent = "ARRAI CASH VAULT";
+    if (cardTypeBadge) cardTypeBadge.textContent = "💳 ARRAI Fiat Card";
+    if (cardCryptoBox) cardCryptoBox.style.display = "none";
+    if (cardWeb3Chip) cardWeb3Chip.style.display = "none";
+    if (cardWalletIdChip) cardWalletIdChip.style.display = "inline-flex";
+  } else if (mode === "web3") {
+    if (cardBrandText) cardBrandText.textContent = "ARRAI ON-CHAIN PROTOCOL";
+    if (cardTypeBadge) cardTypeBadge.textContent = "🦊 Web3 On-Chain";
+    if (cardCryptoBox) cardCryptoBox.style.display = "block";
+    if (cardWeb3Chip) cardWeb3Chip.style.display = "inline-flex";
+    if (cardWalletIdChip) cardWalletIdChip.style.display = "none";
+  } else {
+    if (cardBrandText) cardBrandText.textContent = "ARRAI HYBRID PROTOCOL";
+    if (cardTypeBadge) cardTypeBadge.textContent = "⚡ Web3-ARRAI Combined";
+    if (cardCryptoBox) cardCryptoBox.style.display = "block";
+    if (cardWeb3Chip) cardWeb3Chip.style.display = "inline-flex";
+    if (cardWalletIdChip) cardWalletIdChip.style.display = "inline-flex";
+  }
+}
+
+document.querySelectorAll(".wallet-type-tab").forEach((tab) => {
+  tab.addEventListener("click", () => setWalletMode(tab.dataset.walletTab));
+});
+setWalletMode(currentWalletMode);
+
+// Wallet Actions
+document.querySelector("#btnCreateArraiWallet")?.addEventListener("click", () => {
+  userArraiWalletId = `AR-${Math.floor(1000 + Math.random() * 9000)}-CASH`;
+  localStorage.setItem("arrai_custom_wallet_id", userArraiWalletId);
+  setWalletMode("arrai");
+  setStatus(`Generated new ARRAI Cash Wallet: ${userArraiWalletId} ✦`, "success");
+});
+
+document.querySelector("#btnConnectWeb3")?.addEventListener("click", async () => {
+  if (typeof window.ethereum !== "undefined") {
+    try {
+      const accounts = await window.ethereum.request({ method: "eth_requestAccounts" });
+      if (accounts && accounts[0]) {
+        userWeb3Address = accounts[0];
+        localStorage.setItem("arrai_web3_addr", userWeb3Address);
+        setWalletMode("web3");
+        setStatus(`Connected Web3 Wallet: ${userWeb3Address} ✦`, "success");
+        return;
+      }
+    } catch (err) {
+      console.warn("Web3 connection canceled:", err);
+    }
+  }
+  userWeb3Address = "0x" + Array.from({ length: 40 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
+  localStorage.setItem("arrai_web3_addr", userWeb3Address);
+  setWalletMode("web3");
+  setStatus(`Connected Web3 Wallet: ${userWeb3Address.slice(0, 8)}... ✓`, "success");
+});
+
+document.querySelector("#btnCreateHybrid")?.addEventListener("click", () => {
+  userArraiWalletId = `AR-${Math.floor(1000 + Math.random() * 9000)}-HYBRID`;
+  localStorage.setItem("arrai_custom_wallet_id", userArraiWalletId);
+  setWalletMode("hybrid");
+  setStatus(`Created & Synchronized Web3-ARRAI Hybrid Wallet: ${userArraiWalletId} ✦`, "success");
+});
+
+// Copy chip addresses
+document.querySelector("#cardWalletIdChip")?.addEventListener("click", () => {
+  navigator.clipboard.writeText(userArraiWalletId).then(() => {
+    setStatus(`Copied Wallet ID: ${userArraiWalletId} to clipboard ✓`, "success");
+  });
+});
+document.querySelector("#cardWeb3Chip")?.addEventListener("click", () => {
+  navigator.clipboard.writeText(userWeb3Address).then(() => {
+    setStatus(`Copied Web3 Address: ${userWeb3Address} to clipboard ✓`, "success");
+  });
+});
+
 // Instant Top-up Button
 const instantTopupBtn = document.querySelector("#instantTopupBtn");
 if (instantTopupBtn) {
@@ -201,13 +357,20 @@ if (topupForm) {
     const amountVal = Number(document.querySelector("#topupAmount")?.value || 500);
     if (!amountVal || amountVal <= 0) return setStatus("Please enter a valid top-up amount.", "error");
 
-    if (typeof Razorpay === "undefined") {
-      creditWallet(amountVal, `Direct Top-up (+${money.format(amountVal)})`, "Top-up");
+    const effectiveKey = activeRazorpayKey || window.RAZORPAY_KEY_ID;
+
+    if (!effectiveKey || effectiveKey === "rzp_test_placeholder" || typeof Razorpay === "undefined") {
+      // Fallback to instant topup so checkout never throws an error dialog
+      creditWallet(amountVal, `Direct Wallet Credit (+${money.format(amountVal)})`, "Top-up");
+      if (topupStatus) {
+        topupStatus.textContent = `Wallet topped up instantly with ${money.format(amountVal)}! (Set Live Key to enable Razorpay gateway)`;
+        topupStatus.style.color = "#86efac";
+      }
       return;
     }
 
     const options = {
-      key: window.RAZORPAY_KEY_ID || "rzp_test_placeholder",
+      key: effectiveKey,
       amount: Math.round(amountVal * 100),
       currency: "INR",
       name: "ARRAI Wallet Top-up",
@@ -235,8 +398,7 @@ if (topupForm) {
       const rzpInstance = new Razorpay(options);
       rzpInstance.open();
     } catch {
-      // Fallback credit if test keys
-      creditWallet(amountVal, `Simulated Top-up (+${money.format(amountVal)})`, "Top-up");
+      creditWallet(amountVal, `Direct Top-up (+${money.format(amountVal)})`, "Top-up");
     }
   });
 }

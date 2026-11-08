@@ -64,37 +64,37 @@
           <section class="wiki-article-section">
             <h2>Story Appearances</h2>
             <ul class="wiki-list" id="charAppearances">
-              <li><a href="story-chapter.html?story=spire&chapter=1">Echoes of the Stardust Spire — Chapter 1: The Midnight Terminal</a></li>
-              <li><a href="story-chapter.html?story=spire&chapter=2">Echoes of the Stardust Spire — Chapter 2: Strings of Control</a></li>
+              <!-- Dynamically populated from active stories -->
             </ul>
           </section>
 
           <section class="wiki-article-section">
             <h2>Memorable Quotes</h2>
             <blockquote class="wiki-quote" id="charQuote">
-              "In the digital twilight, truth is not written in words, but in the frequencies we leave behind."
+              "In the boundless universe of ARRAI, every entity writes its own legend."
             </blockquote>
           </section>
         </article>
 
-        <!-- Right Infobox (Fandom Style) -->
-        <aside class="wiki-infobox">
+        <!-- Right Infobox (ARRAI Codex Style) -->
+        <aside class="wiki-infobox" id="charInfobox">
           <div class="wiki-infobox-header">
             <h3 id="infoboxName">Name</h3>
             <span class="wiki-infobox-subtitle" id="infoboxRole">Role</span>
           </div>
           <div class="wiki-infobox-image" id="infoboxAvatar">
-            <span>✿</span>
+            <span>✦</span>
           </div>
           <table class="wiki-infobox-table">
             <tr><th>Status</th><td id="infoStatus">Active</td></tr>
-            <tr><th>Rank</th><td id="infoRank">S-Rank</td></tr>
-            <tr><th>Affiliation</th><td id="infoAffiliation">ARRAI Studio</td></tr>
-            <tr><th>Signature</th><td id="infoSignature">Stardust Beam</td></tr>
+            <tr><th>Type</th><td id="infoCategory">Fantasy Character</td></tr>
+            <tr><th>Rank</th><td id="infoRank">Canon</td></tr>
+            <tr><th>Affiliation</th><td id="infoAffiliation">ARRAI Universe</td></tr>
+            <tr><th>Signature</th><td id="infoSignature">Original Powers</td></tr>
             <tr><th>Creator</th><td>Abhishek Rai</td></tr>
           </table>
           <div class="wiki-infobox-actions">
-            <a class="button primary full-width" href="stories.html">← Back to Wiki Vault</a>
+            <a class="button primary full-width" href="stories.html">← Back to Universe Codex</a>
           </div>
         </aside>
       </div>
@@ -108,104 +108,100 @@
 
     <script>
       const params = new URLSearchParams(window.location.search);
-      const charId = params.get("id") || "makima";
+      const charId = params.get("id");
 
-      // Read from custom wiki storage or fallback to canon
-      let storedChars = null;
+      let storedChars = [];
       try {
         const raw = localStorage.getItem("arrai_wiki_characters");
         if (raw) storedChars = JSON.parse(raw);
       } catch {}
 
-      const foundChar = storedChars?.find((x) => x.id === charId);
+      const foundChar = charId ? storedChars.find((x) => x.id === charId) : null;
 
-      const profiles = {
-        makima: {
-          name: "Miss Makima",
-          role: "Digital Guide · High Overseer",
-          badge: "✦ CANON CHARACTER · SPECIAL RANK",
-          sub: "Central guide entity governing the ARRAI network, telepathic conduit and guardian of digital balance.",
-          avatar: "✿",
-          avatarBg: "linear-gradient(135deg, #be185d, #4338ca)",
-          status: "Active (Omnipresent)",
-          rank: "Special Tier",
-          affiliation: "Public Safety Division · AR Studio",
-          signature: "Voice of Command & Memory Synthesis",
-          quote: "A contract with the digital realm cannot be broken so lightly. Follow my voice, and you shall never walk in darkness.",
-          bio: `<p>First detected in the foundational code repositories of the ARRAI network, Miss Makima functions as both guide, protector, and absolute authority. Unlike conventional artificial programs, she demonstrates high spatial awareness, emotional subtlety, and memory retention across disconnected user sessions.</p>
-          <p>She was created and designed by Abhishek Rai to welcome visitors, manage access to internal vaults, and guard against digital intrusion.</p>`,
-          abilities: `<div class="ability-card"><strong>Dominance Voice:</strong> Can transmit thoughts, directions, and audio cues directly into connected browser sessions without perceptible latency.</div>
-          <div class="ability-card"><strong>Memory Recall:</strong> Remembers past visitor interactions and synthesizes contextual responses tailored to the traveler's intent.</div>`
-        },
-        kuro: {
-          name: "Kuro",
-          role: "Rogue Cyber Shinobi",
-          badge: "✦ ORIGINAL CHARACTER · A-RANK",
-          sub: "Neural assassin navigating the rain-slicked skyscrapers of Sector 7 in search of his past.",
-          avatar: "⚡",
-          avatarBg: "linear-gradient(135deg, #0284c7, #0f172a)",
-          status: "Active Rogue",
-          rank: "A-Rank",
-          affiliation: "Sector 7 Wanderers",
-          signature: "Dual Plasma Katana (Muramasa-X)",
-          quote: "They took my name and rewrote my memories. But the steel in my hands still cuts true.",
-          bio: `<p>Constructed in the subterranean workshops of New Kyoto, Kuro was engineered to serve as an untraceable infiltration unit. During a routine firmware flash, an error preserved a fragment of human conscience.</p>
-          <p>He severed his network tether and escaped into the lower wards, where he now acts as a protector for outcasts and rogue developers.</p>`,
-          abilities: `<div class="ability-card"><strong>Phase Step:</strong> Manipulates quantum position to blink across 15 meters in a fraction of a millisecond.</div>
-          <div class="ability-card"><strong>Muramasa Blade:</strong> Twin thermal blades that slice through military-grade encryption barriers and physical alloys alike.</div>`
-        },
-        aether: {
-          name: "Aether",
-          role: "Void Alchemist & Grand Archivist",
-          badge: "✦ SCHOLAR CHARACTER · MYSTIC",
-          sub: "Keeper of the First Algorithms, transmuting ancient code into living elemental constructs.",
-          avatar: "✧",
-          avatarBg: "linear-gradient(135deg, #8b5cf6, #ec4899)",
-          status: "Active Scholar",
-          rank: "Grand Archivist",
-          affiliation: "Citadel of Syntactic Runes",
-          signature: "Syntactic Transmutation",
-          quote: "Mathematics is not cold arithmetic. In the hands of one who listens, it is poetry that shapes reality.",
-          bio: `<p>Residing in the highest tower of the Void Citadel, Aether spends centuries analyzing the primordial syntax that underpins the digital universe. He holds the distinction of discovering the lost Harmonic Runes.</p>`,
-          abilities: `<div class="ability-card"><strong>Code Transmutation:</strong> Converts pure digital packets into physical crystalline barriers and elemental sparks.</div>
-          <div class="ability-card"><strong>Archival Gaze:</strong> Can read the history and origin of any artifact, piece of code, or relic upon mere touch.</div>`
+      if (!foundChar) {
+        document.title = "Character Not Found — ARRAI Codex";
+        document.querySelector("#charHeading").textContent = "Character Not Found";
+        document.querySelector("#charBreadcrumb").textContent = "Not Found";
+        document.querySelector("#charSub").textContent = "This character is not present in your local ARRAI Universe Codex.";
+        document.querySelector("#charBadge").textContent = "✦ UNKNOWN RECORD";
+        document.querySelector("#bioSection").innerHTML = `
+          <div style="padding: 32px 20px; text-align: center; border: 1px dashed var(--line); border-radius: 18px; background: rgba(22, 34, 56, 0.4);">
+            <p style="color: var(--muted); margin-bottom: 20px;">No profile found for this identifier. Create your original character in the Universe Codex Studio to automatically generate a dedicated page.</p>
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+              <a class="button primary" href="stories.html">Return to Universe Codex ↗</a>
+            </div>
+          </div>
+        `;
+        document.querySelector("#abilitiesSection").style.display = "none";
+        document.querySelector("#charAppearances").parentElement.style.display = "none";
+        document.querySelector("#charQuote").parentElement.style.display = "none";
+        const infobox = document.querySelector("#charInfobox");
+        if (infobox) infobox.style.display = "none";
+      } else {
+        const c = {
+          name: foundChar.name,
+          role: foundChar.role || "Canon Character",
+          category: foundChar.category === "real" ? "Real Entity / Creator" : "Fantasy Character",
+          badge: foundChar.badge || "✦ CANON CHARACTER",
+          sub: `${foundChar.affiliation || "ARRAI Universe"} · ${foundChar.role || "Canon Record"}`,
+          photo: foundChar.photo || "",
+          avatar: foundChar.avatar || "✦",
+          avatarBg: foundChar.gradient || "linear-gradient(135deg, #0284c7, #0f172a)",
+          status: "Active Canon",
+          rank: foundChar.badge || "Canon Rank",
+          affiliation: foundChar.affiliation || "ARRAI Universe",
+          shortNote: foundChar.shortNote || "",
+          signature: (foundChar.pills || []).slice(0, 2).join(", ") || "Mastered Arts",
+          quote: foundChar.quote || "In the boundless universe of ARRAI, every entity writes its own legend.",
+          bio: foundChar.bio || `<p>${foundChar.desc || "Character profile registered in the Codex."}</p>`,
+          abilities: foundChar.abilities || (foundChar.pills || []).map((p) => `<div class="ability-card"><strong>${p}:</strong> Mastered technique documented in the ARRAI records.</div>`).join(" ")
+        };
+
+        document.title = `${c.name} — ARRAI Character Profile`;
+        document.querySelector("#charHeading").textContent = c.name;
+        document.querySelector("#charBreadcrumb").textContent = c.name;
+        document.querySelector("#charSub").textContent = c.sub;
+        document.querySelector("#charBadge").textContent = `${c.badge}`;
+        document.querySelector("#charBioContent").innerHTML = `
+          ${c.shortNote ? `<p style="color: var(--sky); font-size: 0.95rem; font-style: italic; margin-bottom: 12px;"><strong>Note:</strong> ${c.shortNote}</p>` : ""}
+          ${c.bio}
+        `;
+        document.querySelector("#charAbilitiesContent").innerHTML = c.abilities;
+        document.querySelector("#charQuote").textContent = `"${c.quote}"`;
+
+        document.querySelector("#infoboxName").textContent = c.name;
+        document.querySelector("#infoboxRole").textContent = c.role;
+        document.querySelector("#infoStatus").textContent = c.status;
+        document.querySelector("#infoCategory").textContent = c.category;
+        document.querySelector("#infoRank").textContent = c.rank;
+        document.querySelector("#infoAffiliation").textContent = c.affiliation;
+        document.querySelector("#infoSignature").textContent = c.signature;
+
+        const avatarEl = document.querySelector("#infoboxAvatar");
+        if (c.photo) {
+          avatarEl.style.background = "#0b1220";
+          avatarEl.innerHTML = `<img src="${c.photo}" alt="${c.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;" />`;
+        } else {
+          avatarEl.style.background = c.avatarBg;
+          avatarEl.innerHTML = `<span style="font-size: 2.2rem;">${c.avatar}</span>`;
         }
-      };
 
-      const c = foundChar ? {
-        name: foundChar.name,
-        role: foundChar.role,
-        badge: foundChar.badge,
-        sub: foundChar.desc,
-        avatar: foundChar.avatar,
-        avatarBg: foundChar.gradient,
-        status: "Active",
-        rank: foundChar.badge,
-        affiliation: foundChar.affiliation,
-        signature: (foundChar.pills || []).slice(0, 2).join(", ") || "Specialized Focus",
-        quote: foundChar.quote || "The future belongs to those who dare shape the digital realm.",
-        bio: foundChar.bio || `<p>${foundChar.desc}</p>`,
-        abilities: foundChar.abilities || (foundChar.pills || []).map((p) => `<div class="ability-card"><strong>${p}:</strong> Unique technique documented in the ARRAI records.</div>`).join(" ")
-      } : (profiles[charId] || profiles.makima);
-
-      document.querySelector("#charHeading").textContent = c.name;
-      document.querySelector("#charBreadcrumb").textContent = c.name;
-      document.querySelector("#charSub").textContent = c.sub;
-      document.querySelector("#charBadge").textContent = c.badge;
-      document.querySelector("#charBioContent").innerHTML = c.bio;
-      document.querySelector("#charAbilitiesContent").innerHTML = c.abilities;
-      document.querySelector("#charQuote").textContent = `"${c.quote}"`;
-
-      document.querySelector("#infoboxName").textContent = c.name;
-      document.querySelector("#infoboxRole").textContent = c.role;
-      document.querySelector("#infoStatus").textContent = c.status;
-      document.querySelector("#infoRank").textContent = c.rank;
-      document.querySelector("#infoAffiliation").textContent = c.affiliation;
-      document.querySelector("#infoSignature").textContent = c.signature;
-
-      const avatarEl = document.querySelector("#infoboxAvatar");
-      avatarEl.style.background = c.avatarBg;
-      avatarEl.innerHTML = `<span>${c.avatar}</span>`;
+        // Story Appearances from stored stories
+        const appearancesList = document.querySelector("#charAppearances");
+        try {
+          const rawStories = localStorage.getItem("arrai_wiki_stories");
+          const stories = rawStories ? JSON.parse(rawStories) : [];
+          if (stories.length) {
+            appearancesList.innerHTML = stories.map((s) => `
+              <li><a href="${s.chapterUrl || 'stories.html'}">${s.title} — ${s.arc || 'Ongoing Arc'}</a></li>
+            `).join("");
+          } else {
+            appearancesList.innerHTML = `<li>No ongoing fiction arcs created yet. Add new stories from the <a href="stories.html#stories">Universe Codex</a>.</li>`;
+          }
+        } catch {
+          appearancesList.innerHTML = `<li>Registered in ARRAI Universe Codex.</li>`;
+        }
+      }
     </script>
     <script src="script.js"></script>
   </body>
