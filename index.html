@@ -35,9 +35,15 @@
         ☰
       </button>
       <nav>
-        <a class="active" href="index.html">Home</a
-        ><a href="music.html">Music</a><a href="about.html">About</a><a href="services.html">Services</a
-        ><a href="projects.html">Projects</a><a href="contact.html">Contact</a>
+        <a class="active" href="index.html">Home</a>
+        <a href="stories.html">Stories &amp; Lore</a>
+        <a href="projects.html">Work</a>
+        <a href="music.html">Music</a>
+        <a href="payments.html">Wallet</a>
+        <a href="community.html">Community</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="auth.html">Login</a>
       </nav>
     </header>
     <main>
@@ -51,16 +57,58 @@
         <div class="actions">
           <a class="button primary" href="projects.html"
             >Peek at the work <b>↗</b></a
-          ><a class="button" href="contact.html">Let’s make a little magic ♡</a><a class="button music-cta" href="music.html">♫ Enter the music room</a>
+          ><a class="button" href="stories.html">✦ Stories &amp; Lore Wiki</a><a class="button music-cta" href="music.html">♫ Enter the music room</a>
         </div>
         <div class="hero-foot">
           <span><i></i> Open for lovely collaborations</span
           ><span>Scroll gently ↓</span>
         </div>
       </section>
-      <section class="local-dashboard wrap" aria-label="Your local time and weather">
-        <div class="local-dashboard-copy"><p class="eyebrow">YOUR LITTLE CORNER</p><h2 id="localGreeting">Hello there ✦</h2><p id="localClock" aria-live="off">Checking your local time…</p><small id="localTimezone"></small></div>
-        <div class="local-weather"><p id="localWeather" role="status">Weather is private until you choose to share your location.</p><button class="button" id="weatherButton" type="button">Show my local weather</button></div>
+      <section class="local-dashboard wrap" aria-label="Your local time, IP and weather">
+        <div class="local-dashboard-copy">
+          <p class="eyebrow">YOUR LITTLE CORNER</p>
+          <h2 id="localGreeting">Hello there ✦</h2>
+          <p id="localClock" aria-live="off">Checking your local time…</p>
+          <div class="user-ip-row" style="margin-top:6px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <span id="userIpDisplay" style="font-size:0.75rem; color:var(--sky); font-weight:700;">🌐 IP: Detecting…</span>
+            <small id="localTimezone"></small>
+          </div>
+        </div>
+        <div class="local-weather">
+          <p id="localWeather" role="status">Detecting local weather conditions…</p>
+          <button class="button" id="weatherButton" type="button" style="display:none;">Refresh my local weather</button>
+        </div>
+      </section>
+
+      <!-- Fandom & Story Section on Home Page -->
+      <section class="wrap fandom-showcase-section" style="margin: 48px auto;">
+        <div class="wiki-section-heading">
+          <div>
+            <p class="eyebrow">ARRAI Fandom Wiki</p>
+            <h2>Stories &amp; Anime Characters</h2>
+          </div>
+          <a class="button primary" href="stories.html">Open Full Wiki Vault <b>↗</b></a>
+        </div>
+        <div class="wiki-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+          <article class="wiki-card" style="background: rgba(22, 34, 56, 0.9);">
+            <div class="wiki-card-img" style="background: linear-gradient(135deg, #be185d, #4338ca); height: 120px; font-size: 2.4rem;">✿</div>
+            <div class="wiki-card-body">
+              <span class="wiki-card-badge" style="position:static; display:inline-block; margin-bottom:8px;">Canon Guide</span>
+              <h3>Miss Makima</h3>
+              <p class="wiki-desc">High overseer and voice guide of the ARRAI realm. Explore her full codex, dialogue lore, and abilities.</p>
+              <a class="button wiki-read-btn" href="story-character.html?id=makima">View Character Profile <b>↗</b></a>
+            </div>
+          </article>
+          <article class="wiki-card" style="background: rgba(22, 34, 56, 0.9);">
+            <div class="wiki-card-img" style="background: linear-gradient(135deg, #0284c7, #0f172a); height: 120px; font-size: 2.4rem;">⚡</div>
+            <div class="wiki-card-body">
+              <span class="wiki-card-badge" style="position:static; display:inline-block; margin-bottom:8px;">Original Story Arc</span>
+              <h3>Echoes of the Stardust Spire</h3>
+              <p class="wiki-desc">Cyberpunk fiction set in futuristic Ludhiana 2099 following Kuro's quest for forbidden memories.</p>
+              <a class="button primary wiki-read-btn" href="story-chapter.html?story=spire&chapter=1">Read Chapter 1 <b>↗</b></a>
+            </div>
+          </article>
+        </div>
       </section>
       <section class="founder wrap" aria-labelledby="founder-title">
         <div class="founder-cards-container" id="founderCards">

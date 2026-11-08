@@ -1,1 +1,69 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Music — arrai.in</title><link rel="stylesheet" href="style.css"></head><body class="music-page"><header><a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a><button class="menu-button">☰</button><nav><a href="index.html">Home</a><a href="community.html">Community</a><a class="active" href="music.html">Music</a><a href="chess.html">Chess</a><a href="payments.html">Payments</a></nav></header><main class="music-wrap"><section class="page-hero"><p class="eyebrow">Arrai music room</p><h1>Listen to something<br><em>beautiful.</em></h1><p>Search songs, music videos and creator sounds. Upload your own work with complete credits.</p></section><section class="music-toolbar"><input id="musicSearch" class="social-input" type="search" placeholder="Search song, artist, team or uploader…"><button class="button" id="stopMusic" type="button">Stop listening</button><a class="button primary" href="#musicUpload">＋ Upload</a></section><section id="musicStatus" class="community-status">Loading music…</section><section id="musicGrid" class="music-grid"></section><section class="social-card music-upload" id="musicUpload"><p class="eyebrow">Share your sound</p><h2>Upload music or video</h2><form id="musicForm" class="social-form music-form"><label>Song / video title<input name="title" required maxlength="120"></label><label>Artist name<input name="artist" required maxlength="100"></label><label>Team / label<input name="team" maxlength="100"></label><label>Description<textarea name="description" maxlength="400"></textarea></label><label>Phone / computer file (optional)<input name="file" type="file" accept="audio/*,video/mp4,video/webm"></label><label>Internet media URL (optional)<input name="mediaUrl" type="url" placeholder="https://…"></label><small class="full-width">File ya URL mein se ek zaroor dein. Copyrighted content sirf permission ke saath upload karein.</small><button class="button primary" type="submit">Upload to music room ↗</button></form></section></main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase.js"></script><script src="script.js"></script><script src="music.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Music Room — arrai.in</title>
+    <link rel="icon" type="image/svg+xml" href="assets/app-icon.svg" />
+    <link rel="alternate icon" href="assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/app-icon.svg" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="music-page">
+    <div class="ambient one"></div>
+    <div class="ambient two"></div>
+    <header>
+      <a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a>
+      <button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="stories.html">Stories &amp; Lore</a>
+        <a href="projects.html">Work</a>
+        <a class="active" href="music.html">Music</a>
+        <a href="payments.html">Wallet</a>
+        <a href="community.html">Community</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="auth.html">Login</a>
+      </nav>
+    </header>
+    <main class="music-wrap">
+      <section class="page-hero">
+        <p class="eyebrow">✦ Arrai Audio Lounge</p>
+        <h1>Listen to something<br /><em>atmospheric.</em></h1>
+        <p>Curated soundscapes, lo-fi anime beats, original creator tracks, and community sounds. Upload and share your audio art.</p>
+      </section>
+      <section class="music-toolbar">
+        <input id="musicSearch" class="social-input" type="search" placeholder="Search track, artist, team or creator…" />
+        <button class="button" id="stopMusic" type="button">Stop playback</button>
+        <a class="button primary" href="#musicUpload">＋ Upload track</a>
+      </section>
+      <section id="musicStatus" class="community-status">Loading music room…</section>
+      <section id="musicGrid" class="music-grid"></section>
+      <section class="social-card music-upload" id="musicUpload">
+        <p class="eyebrow">Share your sound</p>
+        <h2>Upload audio or music video</h2>
+        <form id="musicForm" class="social-form music-form">
+          <label>Song / Video Title<input name="title" required maxlength="120" placeholder="Track title" /></label>
+          <label>Artist Name<input name="artist" required maxlength="100" placeholder="Artist or producer" /></label>
+          <label>Label / Faction<input name="team" maxlength="100" placeholder="Optional label" /></label>
+          <label class="full-width">Description<textarea name="description" maxlength="400" placeholder="Story or notes behind this track"></textarea></label>
+          <label>Audio / Video File (Max 75MB)<input name="file" type="file" accept="audio/*,video/mp4,video/webm" /></label>
+          <label>External Stream URL (optional)<input name="mediaUrl" type="url" placeholder="https://cdn… or stream URL" /></label>
+          <small class="full-width">Upload original or royalty-free audio. Tracks appear instantly in the room for all listeners.</small>
+          <button class="button primary" type="submit">Upload to Music Room <b>↗</b></button>
+        </form>
+      </section>
+    </main>
+    <footer>
+      <a class="brand" href="index.html">ar<span>rai</span>.in</a>
+      <p>© 2026 Abhishek Rai. All rights reserved.</p>
+      <div><a href="privacy.html">Privacy</a><a href="privacy.html#terms">Terms</a></div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="script.js"></script>
+    <script src="music.js"></script>
+  </body>
+</html>

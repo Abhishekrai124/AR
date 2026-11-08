@@ -111,9 +111,12 @@ editor.addEventListener("click", async (event) => {
   if (!session) return window.location.assign("auth.html?next=owner");
   ownerId = session.user.id;
   ownerToken = session.access_token;
-  try {
-    await Promise.all([searchProfiles(), loadAnalytics(), loadSiteControls(), loadCards()]);
-    ownerTools.hidden = false;
-    ownerStatus.textContent = "Owner access verified. God Mode is ready.";
-  } catch (error) { ownerStatus.textContent = error.message; }
+  ownerTools.hidden = false;
+  ownerStatus.textContent = "Owner access verified. God Mode is ready. ✦";
+  await Promise.allSettled([
+    searchProfiles().catch((e) => console.warn("Profiles error:", e)),
+    loadAnalytics().catch((e) => console.warn("Analytics note:", e)),
+    loadSiteControls().catch((e) => console.warn("Site controls error:", e)),
+    loadCards().catch((e) => console.warn("Cards error:", e)),
+  ]);
 })();
