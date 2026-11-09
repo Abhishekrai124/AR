@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="ARRAI Internet Banking Portal — Corporate and Retail Net Banking, RTGS, NEFT, Fixed Deposits, and Statement Management." />
+    <title>ARRAI Net Banking Portal — Enterprise &amp; Retail Banking</title>
+    <link rel="icon" type="image/svg+xml" href="assets/app-icon.svg" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      .bank-hero {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.95), rgba(15, 29, 49, 0.98));
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        border-radius: 24px;
+        padding: 40px;
+        margin: 30px auto;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
+        backdrop-filter: blur(20px);
+      }
+      .bank-selector-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 12px;
+        margin: 20px 0;
+      }
+      .bank-chip {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 16px 12px;
+        border-radius: 14px;
+        background: rgba(12, 22, 40, 0.7);
+        border: 1px solid var(--line);
+        color: var(--ink);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        gap: 8px;
+      }
+      .bank-chip:hover, .bank-chip.active {
+        border-color: var(--sky);
+        background: rgba(56, 189, 248, 0.15);
+        color: #fff;
+        transform: translateY(-2px);
+      }
+      .bank-chip span.logo {
+        font-size: 1.8rem;
+      }
+      .bank-chip strong {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+      }
+      .bank-dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+        margin: 32px auto;
+      }
+      .bank-card {
+        background: rgba(22, 34, 56, 0.85);
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        padding: 28px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+      }
+      .bank-badge {
+        font-family: "DM Mono", monospace;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--sky);
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(56, 189, 248, 0.12);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        display: inline-block;
+        margin-bottom: 12px;
+      }
+      .security-shield-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 20px;
+        border-radius: 12px;
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+        color: #86efac;
+        font-size: 0.82rem;
+        margin: 20px 0;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+    </style>
+  </head>
+  <body class="wallet-page">
+    <div class="ambient one"></div>
+    <div class="ambient two"></div>
+
+    <header>
+      <a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a>
+      <button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <nav aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="detective.html">Detective Agency</a>
+        <a href="stories.html">Stories &amp; Lore</a>
+        <a href="projects.html">Work</a>
+        <a href="payments.html">Wallet</a>
+        <a class="active" href="netbanking.html">Net Banking</a>
+        <a href="community.html">Community</a>
+        <a href="contact.html">Contact</a>
+        <a href="auth.html">Login</a>
+      </nav>
+    </header>
+
+    <main class="wrap">
+      <!-- Net Banking Hero -->
+      <section class="bank-hero">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px;">
+          <div>
+            <span class="eyebrow">ARRAI FINANCIAL NETWORK</span>
+            <h1 style="font-size: clamp(2.4rem, 5vw, 3.8rem); margin: 8px 0 12px;">Corporate &amp; Retail<br /><em>Internet Banking.</em></h1>
+            <p style="color: var(--muted); max-width: 620px; line-height: 1.7; font-size: 1rem;">
+              Dedicated enterprise banking gateway. Schedule RTGS / NEFT / IMPS transfers, lock fixed deposits with up to 7.8% APY returns, download official tax e-statements, and manage corporate accounts.
+            </p>
+          </div>
+          <div style="text-align: right;">
+            <a class="button" href="payments.html" style="margin-bottom: 8px;">← Go to ARRAI Public Wallet</a>
+            <p style="color: var(--muted); font-size: 0.75rem;">Razorpay Live Gateway &amp; UPI</p>
+          </div>
+        </div>
+
+        <div class="security-shield-bar">
+          <span>🔒 256-Bit SSL Enterprise Banking Encryption Active</span>
+          <span>RBI Licensed Inter-Bank IMPS / RTGS Clearing Node</span>
+          <span>Lead Signatory: Abhishek Rai</span>
+        </div>
+
+        <!-- Select Institution -->
+        <p class="eyebrow" style="margin-top: 24px;">Supported Core Banking Nodes</p>
+        <div class="bank-selector-grid" id="bankSelectorGrid">
+          <div class="bank-chip active" data-bank="sbi"><span class="logo">🏛️</span><strong>State Bank of India</strong></div>
+          <div class="bank-chip" data-bank="hdfc"><span class="logo">🏦</span><strong>HDFC Bank</strong></div>
+          <div class="bank-chip" data-bank="icici"><span class="logo">🏢</span><strong>ICICI Bank</strong></div>
+          <div class="bank-chip" data-bank="axis"><span class="logo">🏧</span><strong>Axis Bank</strong></div>
+          <div class="bank-chip" data-bank="pnb"><span class="logo">🪙</span><strong>Punjab National Bank</strong></div>
+          <div class="bank-chip" data-bank="kotak"><span class="logo">💼</span><strong>Kotak Mahindra</strong></div>
+          <div class="bank-chip" data-bank="bob"><span class="logo">🌐</span><strong>Bank of Baroda</strong></div>
+        </div>
+      </section>
+
+      <!-- Banking Panels Grid -->
+      <section class="bank-dashboard-grid">
+        <!-- 1. Inter-Bank Wire Transfer (NEFT / RTGS / IMPS) -->
+        <article class="bank-card">
+          <span class="bank-badge">INTER-BANK CLEARING HOUSE</span>
+          <h2>Instant Bank Transfer</h2>
+          <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 20px;">
+            Initiate direct wire transfers to any Indian bank account via IMPS (Instant 24x7) or RTGS/NEFT.
+          </p>
+
+          <form id="bankTransferForm" class="wallet-form">
+            <label>Transfer Method
+              <select id="transferMethod">
+                <option value="IMPS">IMPS (Immediate Payment · 24x7 Instant)</option>
+                <option value="NEFT">NEFT (National Electronic Funds Transfer)</option>
+                <option value="RTGS">RTGS (Real-Time Gross Settlement · ₹2 Lakh+)</option>
+              </select>
+            </label>
+
+            <label>Beneficiary Account Number
+              <input id="benAccount" required placeholder="e.g. 501004928172" pattern="[0-9]{9,18}" />
+            </label>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <label>Re-confirm Account Number
+                <input id="benAccountConfirm" required placeholder="Re-enter number" pattern="[0-9]{9,18}" />
+              </label>
+              <label>IFSC Code
+                <input id="benIfsc" required placeholder="e.g. HDFC0000123" style="text-transform: uppercase;" />
+              </label>
+            </div>
+
+            <label>Beneficiary Full Legal Name
+              <input id="benName" required placeholder="Name on bank passbook" />
+            </label>
+
+            <div style="display: grid; grid-template-columns: 140px 1fr; gap: 12px;">
+              <label>Transfer Amount (₹)
+                <input id="transferAmount" type="number" min="1" max="10000000" required placeholder="₹ 10,000" />
+              </label>
+              <label>Transfer Purpose / Remark
+                <input id="transferRemark" placeholder="e.g. Consultant Fee / Advance" />
+              </label>
+            </div>
+
+            <button class="button primary" type="submit" style="width: 100%; justify-content: center; margin-top: 8px;">
+              Authorize Secure Bank Wire <b>↗</b>
+            </button>
+            <p id="transferStatus" class="wallet-qr-status" role="status"></p>
+          </form>
+        </article>
+
+        <!-- 2. High-Yield Fixed Deposit & Savings Vault -->
+        <article class="bank-card">
+          <span class="bank-badge">ARRAI CAPITAL VAULT</span>
+          <h2>Fixed Deposit &amp; Wealth Vault</h2>
+          <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 20px;">
+            Grow capital with compound returns up to 7.8% APY backed by the ARRAI Treasury and partner bank nodes.
+          </p>
+
+          <form id="fdCalculatorForm" class="wallet-form">
+            <label>Deposit Principal Amount (₹)
+              <input id="fdAmount" type="number" min="5000" max="50000000" step="1000" value="50000" required />
+            </label>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <label>Tenure / Duration
+                <select id="fdTenure">
+                  <option value="1">1 Year (6.8% APY)</option>
+                  <option value="2">2 Years (7.2% APY)</option>
+                  <option value="3" selected>3 Years (7.6% APY)</option>
+                  <option value="5">5 Years (7.8% APY + Tax Saver)</option>
+                </select>
+              </label>
+              <label>Compounding
+                <select id="fdFrequency">
+                  <option value="quarterly">Quarterly Reinvest</option>
+                  <option value="monthly">Monthly Payout</option>
+                  <option value="maturity">On Maturity</option>
+                </select>
+              </label>
+            </div>
+
+            <div style="padding: 16px; border-radius: 14px; background: rgba(12, 22, 40, 0.8); border: 1px solid var(--line); margin: 12px 0;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
+                <span style="color: var(--muted);">Est. Maturity Value:</span>
+                <strong id="fdMaturityResult" style="color: #86efac; font-size: 1.15rem;">₹62,714.00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted);">
+                <span>Total Interest Accrued:</span>
+                <span id="fdInterestResult" style="color: var(--sky); font-weight: 700;">+ ₹12,714.00</span>
+              </div>
+            </div>
+
+            <button class="button" id="fdBookBtn" type="button" style="width: 100%; justify-content: center;">
+              Lock Fixed Deposit Contract ✦
+            </button>
+            <p id="fdStatus" class="wallet-qr-status" role="status"></p>
+          </form>
+        </article>
+
+        <!-- 3. Corporate & Retail Login Simulation -->
+        <article class="bank-card">
+          <span class="bank-badge">NET BANKING AUTHENTICATION</span>
+          <h2>Online Banking Sign-In</h2>
+          <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 20px;">
+            Securely authenticate into your partner bank portal with Customer ID or User ID.
+          </p>
+
+          <form id="netBankingLoginForm" class="wallet-form">
+            <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+              <button type="button" class="wallet-type-tab active" id="btnRetailAuth" style="flex: 1;">Retail User</button>
+              <button type="button" class="wallet-type-tab" id="btnCorporateAuth" style="flex: 1;">Corporate User</button>
+            </div>
+
+            <label>Selected Core Bank
+              <input id="selectedBankDisplay" readonly value="State Bank of India (SBI Core Node)" style="color: var(--sky); font-weight: 700;" />
+            </label>
+
+            <label id="lblCorpId" style="display: none;">Corporate ID
+              <input id="corpIdInput" placeholder="e.g. ARRAI-ENTERPRISE-01" />
+            </label>
+
+            <label>Customer ID / Username
+              <input id="netBankingUser" required placeholder="e.g. 94821039" />
+            </label>
+
+            <label>Net Banking Password
+              <input id="netBankingPass" type="password" required placeholder="••••••••••••" />
+            </label>
+
+            <button class="button primary" type="submit" style="width: 100%; justify-content: center;">
+              Sign In to Net Banking 🔒
+            </button>
+            <p id="netBankingStatus" class="wallet-qr-status" role="status"></p>
+          </form>
+        </article>
+
+        <!-- 4. e-Statement & Tax Ledger -->
+        <article class="bank-card">
+          <span class="bank-badge">TRANSACTION LEDGER &amp; TAX</span>
+          <h2>Official e-Statements</h2>
+          <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 16px;">
+            Download verified account statements for tax filing, audits, or expense verification.
+          </p>
+
+          <div style="display: grid; gap: 10px;">
+            <div style="padding: 14px; border-radius: 12px; background: rgba(12, 22, 40, 0.7); border: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: #fff; display: block; font-size: 0.88rem;">Current Financial Year (FY 2026-27)</strong>
+                <small style="color: var(--muted);">Full statement with stamped hash</small>
+              </div>
+              <button type="button" class="button" onclick="downloadStatement('FY 2026-27')">PDF ⬇</button>
+            </div>
+
+            <div style="padding: 14px; border-radius: 12px; background: rgba(12, 22, 40, 0.7); border: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: #fff; display: block; font-size: 0.88rem;">Last 30 Days Activity</strong>
+                <small style="color: var(--muted);">Cleared transactions and wire records</small>
+              </div>
+              <button type="button" class="button" onclick="downloadStatement('Last 30 Days')">PDF ⬇</button>
+            </div>
+
+            <div style="padding: 14px; border-radius: 12px; background: rgba(12, 22, 40, 0.7); border: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <strong style="color: #fff; display: block; font-size: 0.88rem;">Annual Interest Certificate (Form 16A)</strong>
+                <small style="color: var(--muted);">Tax deduction at source statement</small>
+              </div>
+              <button type="button" class="button" onclick="downloadStatement('Interest Certificate 16A')">PDF ⬇</button>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <a class="brand" href="index.html">ar<span>rai</span>.in</a>
+      <p>© 2026 Abhishek Rai. All rights reserved.</p>
+      <div>
+        <a href="mailto:abhishekrai6897@gmail.com">abhishekrai6897@gmail.com</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="privacy.html#terms">Terms</a>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@3.0.2/dist/jspdf.umd.min.js"></script>
+    <script src="netbanking.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>

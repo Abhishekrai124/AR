@@ -2304,3 +2304,161 @@ footer div {
     position: static;
   }
 }
+
+/* ==========================================================================
+   CINEMATIC & LUXURY DESIGN SYSTEM ENHANCEMENTS
+   ========================================================================== */
+
+/* Cinematic Navigation Bar */
+header nav {
+  background: rgba(11, 18, 32, 0.85) !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  border: 1px solid rgba(125, 211, 252, 0.22) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+  border-radius: 999px !important;
+  padding: 6px 14px !important;
+  gap: 6px !important;
+}
+header nav a {
+  font-size: 0.8rem !important;
+  letter-spacing: 0.03em !important;
+  font-weight: 700 !important;
+  color: #94a3b8 !important;
+  padding: 7px 14px !important;
+  border-radius: 999px !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative !important;
+}
+header nav a:hover {
+  color: #fff !important;
+  background: rgba(56, 189, 248, 0.15) !important;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.25) !important;
+  transform: translateY(-1px) !important;
+}
+header nav a.active {
+  color: #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.18) !important;
+  box-shadow: inset 0 0 12px rgba(56, 189, 248, 0.2), 0 2px 10px rgba(56, 189, 248, 0.25) !important;
+}
+
+/* Cinematic Titles & Subtitles */
+h1 {
+  letter-spacing: -0.02em !important;
+  text-shadow: 0 4px 24px rgba(0, 0, 0, 0.4) !important;
+}
+h1 em, h2 em {
+  background: linear-gradient(135deg, #38bdf8 0%, #c084fc 50%, #f472b6 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  font-style: normal !important;
+  font-weight: 800 !important;
+}
+.eyebrow {
+  letter-spacing: 0.16em !important;
+  font-family: "DM Mono", monospace !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  color: var(--sky) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+.eyebrow::before {
+  content: "✦";
+  font-size: 0.65rem;
+  color: #38bdf8;
+  text-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+}
+
+/* Cinematic Owner Dashboard */
+.owner-dashboard {
+  max-width: 1240px;
+  margin: 40px auto 80px;
+  padding: 0 24px;
+}
+.owner-hero-panel {
+  background: linear-gradient(135deg, rgba(22, 34, 56, 0.95), rgba(30, 27, 75, 0.85), rgba(15, 23, 42, 0.98));
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 24px;
+  padding: 36px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  margin-bottom: 32px;
+  backdrop-filter: blur(20px);
+}
+.owner-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.owner-metric-card {
+  background: rgba(12, 22, 40, 0.75);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+.owner-metric-card:hover {
+  border-color: var(--sky);
+  transform: translateY(-2px);
+}
+.owner-metric-card strong {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #fff;
+  display: block;
+  margin-bottom: 4px;
+}
+.owner-metric-card small {
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.owner-studio-hub {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.owner-hub-tile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(15, 23, 42, 0.75);
+  text-decoration: none;
+  color: var(--ink);
+  transition: all 0.2s ease;
+}
+.owner-hub-tile:hover {
+  border-color: var(--sky);
+  background: rgba(56, 189, 248, 0.12);
+  transform: translateY(-2px);
+}
+.owner-hub-tile span.icon {
+  font-size: 1.8rem;
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-content: center;
+  border-radius: 12px;
+  background: rgba(56, 189, 248, 0.15);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+.owner-hub-tile strong {
+  display: block;
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.owner-hub-tile small {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+

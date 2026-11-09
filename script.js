@@ -177,7 +177,7 @@ const arraiMakimaReady = new Promise((resolve) => {
 
 const localAssistantReply = (question) => {
   const q = question.toLowerCase();
-  if (q.includes("contact") || q.includes("email") || q.includes("hire")) return "Of course ♡ You can reach Abhishek at abhishekrai@arrai.in, or use the Contact page and I’ll help you find the right place.";
+  if (q.includes("contact") || q.includes("email") || q.includes("hire")) return "Of course ♡ You can reach Abhishek directly at abhishekrai6897@gmail.com, or use the Contact page and I’ll help you find the right place.";
   if (q.includes("service") || q.includes("work") || q.includes("website")) return "AR gently brings together web design, visual direction and practical digital strategy. The Services page has the lovely details. ✿";
   if (q.includes("founder") || q.includes("abhishek") || q.includes("ceo")) return "Abhishek Rai is AR’s Founder & CEO, connected with RaiGenZ Foundation and AR Tech Solutions. He is building thoughtful digital work with care. ✦";
   if (q.includes("project") || q.includes("portfolio")) return "The Projects page is the best place to see what is in motion. If you have an idea of your own, I can also guide you to Abhishek’s contact page. ♡";
@@ -384,7 +384,7 @@ document.querySelectorAll(".contact-form").forEach((form) =>
       b = encodeURIComponent(
         `Name: ${d.get("name")}\nEmail: ${d.get("email")}\n\n${d.get("message")}`,
       );
-    location.href = `mailto:abhishekrai@arrai.in?subject=${s}&body=${b}`;
+    location.href = `mailto:abhishekrai6897@gmail.com?subject=${s}&body=${b}`;
   }),
 );
 

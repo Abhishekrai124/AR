@@ -1,67 +1,307 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Private AR owner controls." /><title>Owner studio — arrai.in</title><link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="ARRAI Executive Command Studio and God Mode Management." />
+    <title>Owner Executive Studio — arrai.in</title>
+    <link rel="icon" type="image/svg+xml" href="assets/app-icon.svg" />
+    <link rel="stylesheet" href="style.css" />
   </head>
-  <body class="auth-page"><div class="ambient one"></div><div class="ambient two"></div>
-    <header><a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a><button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button><nav><a href="index.html">Home</a><a href="community.html">Community</a><a class="active" href="owner.html">Owner studio</a></nav></header>
-    <main class="auth-main"><section class="auth-card owner-card"><p class="eyebrow">Private owner studio</p><h1>Care for your <em>community.</em></h1><p class="auth-copy" id="ownerStatus">Checking secure owner access…</p><div id="ownerTools" hidden>
-    <div id="ownerAnalytics" class="owner-analytics"></div><details class="owner-visitor-details"><summary>Recent signed-in visitors <span id="visitorListToggle">Show</span></summary><p class="owner-privacy-note">Owner-only usernames and last-seen times. IP addresses are not collected or shown.</p><ol id="recentVisitors"><li>Loading…</li></ol></details><p><a class="button" href="makima-core.html">Open Miss Makima Brain Studio</a></p>
-    
-    <section class="owner-section owner-panel">
-      <div class="owner-section-heading"><div><p class="eyebrow">1 · Home appearance</p><h2>Global look & founder card</h2><p>These changes appear on the public home page.</p></div><span class="owner-save-state" id="siteSaveState">Loading…</span></div>
-      <form id="siteSettingsForm" class="social-form owner-form-grid">
-      <label>Global Site Theme
-        <select id="globalThemeSelect">
-          <option value="midnight">Midnight</option>
-          <option value="sakura">Sakura</option>
-          <option value="ocean">Ocean</option>
-          <option value="emerald">Emerald</option>
-          <option value="ruby">Ruby</option>
-          <option value="gold">Gold</option>
-          <option value="nebula">Nebula</option>
-          <option value="lava">Lava</option>
-          <option value="cyber">Cyber</option>
-          <option value="retro">Retro</option>
-          <!-- (Themes match style.css) -->
-        </select>
-      </label>
-      <label>Founder photo URL
-        <input id="siteHeroPic" placeholder="URL to founder image" />
-      </label>
-      <label>Founder photo upload<input id="founderPicUpload" type="file" accept="image/png,image/jpeg,image/webp" /><small>Upload directly to the avatars bucket.</small></label>
-      <label>Founder community username<input id="founderUsername" placeholder="username to link this founder" /><small id="founderLinkHint">Optional: links the public founder card to this profile.</small></label>
-      <label>Founder name<input id="founderName" placeholder="Abhishek Rai" /></label>
-      <label>Founder label / role<input id="founderRole" placeholder="Founder & CEO" /></label>
-      <label class="full-width">Founder note<textarea id="founderNote" maxlength="240" placeholder="A short line below the role"></textarea></label>
-      <label class="full-width">Tags (one per line)<textarea id="founderTags" maxlength="500" placeholder="AR · Parent Company"></textarea></label>
-      <label class="full-width">Links (one per line: Label | https://…)<textarea id="founderLinks" maxlength="1500" placeholder="Email | mailto:hello@example.com"></textarea></label>
-      <button class="button primary" type="submit">Save home appearance <b>↗</b></button></form>
-    </section>
+  <body class="community-page owner-page">
+    <div class="ambient one"></div>
+    <div class="ambient two"></div>
 
-    <section class="owner-section owner-panel">
-      <div class="owner-section-heading"><div><p class="eyebrow">2 · Public spotlight cards</p><h2>Add a community member or a new person</h2><p>Search a username to prefill their public profile, or enter a complete custom card.</p></div></div>
-      <form id="publicCardForm" class="social-form owner-form-grid">
-        <label class="full-width">Community username (optional)<input id="cardUsername" placeholder="e.g. arrai" autocomplete="off" /><small id="cardUserHint">Type a username, then choose a result to fill the card.</small></label>
-        <div id="cardUserResults" class="people-results full-width"></div>
-        <label>Display name<input name="title" required maxlength="80" placeholder="Person's name" /></label>
-        <label>Label / business<input name="subtitle" maxlength="120" placeholder="Founder · AR Studio" /></label>
-        <label>Photo URL<input name="imageUrl" maxlength="1000" placeholder="https://…" /></label>
-        <label>Date of birth (optional)<input name="dateOfBirth" type="date" /></label>
-        <label class="full-width">Bio / description<textarea name="description" maxlength="400" placeholder="Their short public introduction"></textarea></label>
-        <label class="full-width">Tags (one per line)<textarea name="tags" maxlength="500" placeholder="Creator\nMumbai"></textarea></label>
-        <label class="full-width">Links (one per line: Label | URL)<textarea name="links" maxlength="1500" placeholder="Instagram | https://instagram.com/…"></textarea></label>
-        <button class="button primary" type="submit">Add public card <b>↗</b></button>
-      </form>
-      <div id="publicCardList" class="owner-card-list"></div>
-    </section>
+    <header>
+      <a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a>
+      <button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="detective.html">Detective Agency</a>
+        <a href="payments.html">Wallet</a>
+        <a href="netbanking.html">Net Banking</a>
+        <a href="community.html">Community</a>
+        <a class="active" href="owner.html">Owner Studio</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </header>
 
-    <hr style="margin:20px 0; border:0; border-top:1px solid var(--line);" />
+    <main class="wrap owner-dashboard">
+      <!-- Executive Top Command Hero -->
+      <section class="owner-hero-panel">
+        <div class="owner-hero-header">
+          <div class="owner-badge">
+            <span class="owner-badge-dot"></span>
+            <span>EXECUTIVE COMMAND · ROOT PRIVILEGES</span>
+          </div>
+          <h1>Founder &amp; Executive <em>Studio.</em></h1>
+          <p id="ownerStatus" class="auth-copy">Checking secure founder credentials…</p>
+        </div>
 
-    <button id="ownerSelf" class="button" type="button">Edit my unrestricted profile</button>
-<label class="social-form">God Mode search<input id="ownerSearch" placeholder="Username or exact user ID" /></label><div id="ownerResults" class="people-results"></div><form id="ownerEditor" class="social-form owner-editor" hidden><p class="eyebrow">Selected member</p><p id="ownerRecord" class="owner-record"></p><input name="id" type="hidden" /><label>Name <input name="displayName" required /></label><label>Bio <textarea name="bio"></textarea></label><label>DOB <input name="dateOfBirth" type="date" /></label><label>Gender <select name="gender"><option value="">Not set</option><option value="woman">Woman</option><option value="man">Man</option><option value="non_binary">Non-binary</option><option value="prefer_not_to_say">Prefer not to say</option></select></label><label>Privacy <select name="privacy"><option value="public">Public</option><option value="private">Private</option></select></label><label>Rare custom username <input name="customUsername" disabled /><small id="vipUsernameHelp">Grant VIP to unlock this field.</small></label><button class="button primary" type="submit">Force save <b>↗</b></button><div class="owner-actions"><button class="follow-button" type="button" data-vip-type="owner_granted">Give VIP</button><button class="follow-button" type="button" data-vip-remove>Remove VIP</button><button class="follow-button" type="button" data-badge="blue">Toggle blue tick</button><button class="follow-button" type="button" data-badge="gold">Toggle gold tick</button><span class="owner-moderation"><button class="follow-button" type="button" data-status="active">Active</button><button class="follow-button" type="button" data-status="suspended">Suspend</button><button class="follow-button" type="button" data-status="banned">Ban</button><button class="follow-button" type="button" data-status="dismissed">Dismiss</button><button class="follow-button" type="button" data-delete-account>Delete account</button></span></div></form></div></section></main>
-    <footer><a class="brand" href="index.html">ar<span>rai</span>.in</a><p>© 2026 Abhishek Rai. All rights reserved.</p></footer>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase.js"></script><script src="script.js"></script><script src="owner.js"></script>
+        <div class="owner-hub-row">
+          <a class="owner-hub-tile" href="detective.html">
+            <span class="icon">🕵️</span>
+            <div>
+              <strong>Detective Agency</strong>
+              <small>Manage field cases &amp; dossiers</small>
+            </div>
+          </a>
+          <a class="owner-hub-tile" href="payments.html">
+            <span class="icon">💳</span>
+            <div>
+              <strong>ARRAI Vault &amp; Wallet</strong>
+              <small>Live ledger &amp; transactions</small>
+            </div>
+          </a>
+          <a class="owner-hub-tile" href="netbanking.html">
+            <span class="icon">🏦</span>
+            <div>
+              <strong>Net Banking Portal</strong>
+              <small>Core banking &amp; deposits</small>
+            </div>
+          </a>
+          <a class="owner-hub-tile" href="makima-core.html">
+            <span class="icon">🧠</span>
+            <div>
+              <strong>Miss Makima Studio</strong>
+              <small>AI Core &amp; Neural Engine</small>
+            </div>
+          </a>
+          <a class="owner-hub-tile" href="community.html">
+            <span class="icon">🌐</span>
+            <div>
+              <strong>Community Desk</strong>
+              <small>Explore member profiles</small>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- Executive Tools Container (Activated on verified owner session) -->
+      <div id="ownerTools" hidden>
+        <!-- Metrics / Analytics Grid -->
+        <div id="ownerAnalytics" class="owner-analytics"></div>
+
+        <!-- Recent Visitors Drawer -->
+        <details class="owner-visitor-details">
+          <summary>Recent Signed-in Visitors <span id="visitorListToggle">Show</span></summary>
+          <p class="owner-privacy-note">Owner-only usernames and last-seen telemetry. Private data is never disclosed.</p>
+          <ol id="recentVisitors"><li>Loading…</li></ol>
+        </details>
+
+        <!-- Studio Control Sections Grid -->
+        <div class="owner-grid-layout">
+          
+          <!-- Section 1: Home Appearance & Founder Card -->
+          <section class="owner-section owner-panel">
+            <div class="owner-section-heading">
+              <div>
+                <p class="eyebrow">01 · Global Appearance</p>
+                <h2>Site Theme &amp; Founder Profile</h2>
+                <p>Configures the global aesthetic and public founder card on arrai.in.</p>
+              </div>
+              <span class="owner-save-state" id="siteSaveState">Checking…</span>
+            </div>
+
+            <form id="siteSettingsForm" class="social-form owner-form-grid">
+              <label>Global Site Theme
+                <select id="globalThemeSelect">
+                  <option value="midnight">Midnight (Deep Slate / Obsidian)</option>
+                  <option value="sakura">Sakura (Pink Neon)</option>
+                  <option value="ocean">Ocean (Deep Cyan)</option>
+                  <option value="emerald">Emerald (Bioluminescent Green)</option>
+                  <option value="ruby">Ruby (Crimson Red)</option>
+                  <option value="gold">Gold (Luxury Champagne)</option>
+                  <option value="nebula">Nebula (Cosmic Violet)</option>
+                  <option value="lava">Lava (Volcanic Amber)</option>
+                  <option value="cyber">Cyber (High-Contrast Neon)</option>
+                  <option value="retro">Retro (Vintage Amber CRT)</option>
+                </select>
+              </label>
+
+              <label>Founder Photo URL
+                <input id="siteHeroPic" placeholder="https://… or upload below" />
+              </label>
+
+              <label>Upload Photo Direct
+                <input id="founderPicUpload" type="file" accept="image/png,image/jpeg,image/webp" />
+                <small>Auto-syncs directly to the Supabase avatars storage bucket.</small>
+              </label>
+
+              <label>Founder Community Handle
+                <input id="founderUsername" placeholder="e.g. abhi" />
+                <small id="founderLinkHint">Links the home card to your community profile.</small>
+              </label>
+
+              <label>Founder Display Name
+                <input id="founderName" placeholder="Abhishek Rai" />
+              </label>
+
+              <label>Founder Title / Role
+                <input id="founderRole" placeholder="Founder &amp; Chief Architect" />
+              </label>
+
+              <label class="full-width">Executive Founder Note
+                <textarea id="founderNote" maxlength="240" placeholder="A defining personal note displayed beneath your title..."></textarea>
+              </label>
+
+              <label class="full-width">Tags (one per line)
+                <textarea id="founderTags" maxlength="500" placeholder="Parent Company\nDetective Agency\nDeep Tech"></textarea>
+              </label>
+
+              <label class="full-width">Contact &amp; Social Links (Label | mailto:abhishekrai6897@gmail.com)
+                <textarea id="founderLinks" maxlength="1500" placeholder="Direct Email | mailto:abhishekrai6897@gmail.com\nGitHub | https://github.com/Abhishekrai124"></textarea>
+              </label>
+
+              <button class="button primary" type="submit">Save Global Appearance <b>↗</b></button>
+            </form>
+          </section>
+
+          <!-- Section 2: Public Spotlight Cards -->
+          <section class="owner-section owner-panel">
+            <div class="owner-section-heading">
+              <div>
+                <p class="eyebrow">02 · Spotlight Roster</p>
+                <h2>Featured Public Spotlight Cards</h2>
+                <p>Pin verified creators, team leads, or partners to the front page.</p>
+              </div>
+            </div>
+
+            <form id="publicCardForm" class="social-form owner-form-grid">
+              <label class="full-width">Search Existing Member (Optional)
+                <input id="cardUsername" placeholder="Search by handle..." autocomplete="off" />
+                <small id="cardUserHint">Type a username to auto-populate existing profile details.</small>
+              </label>
+
+              <div id="cardUserResults" class="people-results full-width"></div>
+
+              <label>Full Name
+                <input name="title" required maxlength="80" placeholder="Display name" />
+              </label>
+
+              <label>Business / Designation
+                <input name="subtitle" maxlength="120" placeholder="e.g. Lead OSINT Investigator" />
+              </label>
+
+              <label>Avatar Photo URL
+                <input name="imageUrl" maxlength="1000" placeholder="https://…" />
+              </label>
+
+              <label>Birth Date (Optional)
+                <input name="dateOfBirth" type="date" />
+              </label>
+
+              <label class="full-width">Biography / Brief
+                <textarea name="description" maxlength="400" placeholder="Public introduction and achievements..."></textarea>
+              </label>
+
+              <label class="full-width">Tags (one per line)
+                <textarea name="tags" maxlength="500" placeholder="Cyber Intel\nForensics"></textarea>
+              </label>
+
+              <label class="full-width">Links (Label | URL)
+                <textarea name="links" maxlength="1500" placeholder="Profile | https://arrai.in/community.html"></textarea>
+              </label>
+
+              <button class="button primary" type="submit">Add to Spotlight Cards <b>↗</b></button>
+            </form>
+
+            <div id="publicCardList" class="owner-card-list"></div>
+          </section>
+
+        </div>
+
+        <!-- Section 3: God Mode User Management & Moderator Console -->
+        <section class="owner-section owner-panel" style="margin-top: 32px;">
+          <div class="owner-section-heading">
+            <div>
+              <p class="eyebrow">03 · God Mode Console</p>
+              <h2>Unrestricted User Administration</h2>
+              <p>Search any community member by username or UUID to manage badges, VIP status, or account state.</p>
+            </div>
+            <button id="ownerSelf" class="button" type="button">Quick-Edit My Own Profile ✦</button>
+          </div>
+
+          <div style="margin: 20px 0;">
+            <label class="social-form">Search Any Member (Handle or UUID)
+              <input id="ownerSearch" placeholder="Enter username or exact user ID..." />
+            </label>
+            <div id="ownerResults" class="people-results"></div>
+          </div>
+
+          <!-- Dynamic User Editor Drawer -->
+          <form id="ownerEditor" class="social-form owner-editor" hidden>
+            <p class="eyebrow">Selected User File</p>
+            <p id="ownerRecord" class="owner-record"></p>
+            <input name="id" type="hidden" />
+
+            <div class="owner-form-grid">
+              <label>Display Name
+                <input name="displayName" required />
+              </label>
+
+              <label>Rare Handle
+                <input name="customUsername" disabled />
+                <small id="vipUsernameHelp">Grant VIP status below to unlock custom handle changes.</small>
+              </label>
+
+              <label>Gender
+                <select name="gender">
+                  <option value="">Not set</option>
+                  <option value="woman">Woman</option>
+                  <option value="man">Man</option>
+                  <option value="non_binary">Non-binary</option>
+                  <option value="prefer_not_to_say">Prefer not to say</option>
+                </select>
+              </label>
+
+              <label>Privacy Setting
+                <select name="privacy">
+                  <option value="public">Public Profile</option>
+                  <option value="private">Private Profile</option>
+                </select>
+              </label>
+
+              <label>Birth Date
+                <input name="dateOfBirth" type="date" />
+              </label>
+
+              <label class="full-width">Biography
+                <textarea name="bio" placeholder="User bio..."></textarea>
+              </label>
+            </div>
+
+            <div style="margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+              <button class="button primary" type="submit">Force Save Profile <b>↗</b></button>
+            </div>
+
+            <div class="owner-actions" style="margin-top: 18px;">
+              <button class="follow-button" type="button" data-vip-type="owner_granted">Grant VIP 🌟</button>
+              <button class="follow-button" type="button" data-vip-remove>Revoke VIP</button>
+              <button class="follow-button" type="button" data-badge="blue">Toggle Blue Tick ✓</button>
+              <button class="follow-button" type="button" data-badge="gold">Toggle Gold Tick ✦</button>
+              <span class="owner-moderation">
+                <button class="follow-button" type="button" data-status="active">Set Active</button>
+                <button class="follow-button" type="button" data-status="suspended">Suspend</button>
+                <button class="follow-button" type="button" data-status="banned">Ban User</button>
+                <button class="follow-button" type="button" data-status="dismissed">Dismiss</button>
+                <button class="follow-button" type="button" data-delete-account style="color:#f87171; border-color:#f87171;">Delete Account</button>
+              </span>
+            </div>
+          </form>
+        </section>
+
+      </div>
+    </main>
+
+    <footer>
+      <a class="brand" href="index.html">ar<span>rai</span>.in</a>
+      <p>© 2026 Abhishek Rai · ARRAI Executive Studio · <a href="mailto:abhishekrai6897@gmail.com" style="color:var(--sky);">abhishekrai6897@gmail.com</a></p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script src="script.js"></script>
+    <script src="owner.js"></script>
   </body>
 </html>

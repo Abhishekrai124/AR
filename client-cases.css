@@ -1,0 +1,73 @@
+.client-case-shell { padding-top: 65px; padding-bottom: 100px; }
+.client-case-intro { max-width: 850px; padding-bottom: 44px; }
+.client-case-intro h1 { font: 600 4.2rem/0.98 "Barlow Condensed", sans-serif; }
+.client-case-intro > p:not(.case-kicker) { max-width: 660px; margin-top: 20px; color: var(--muted); font-size: 0.8rem; line-height: 1.8; }
+.client-login-panel { display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 26px 54px; padding: 30px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.client-login-copy h2,.client-dashboard-head h2 { margin: 0; font: 600 2rem/1.04 "Barlow Condensed", sans-serif; }
+.client-login-copy > p:last-child,.client-muted { color: var(--muted); font-size: 0.73rem; line-height: 1.7; }
+.client-otp-form { display: grid; align-content: start; gap: 14px; }
+.client-otp-form[hidden] { display: none; }
+.client-otp-form label { display: grid; gap: 6px; color: var(--muted); font-size: 0.68rem; }
+.client-otp-form input { min-height: 44px; width: 100%; border: 1px solid var(--line); border-radius: 3px; padding: 10px; background: #202722; color: var(--ink); font: inherit; }
+.client-otp-form input:focus { outline: 2px solid var(--sky); outline-offset: 2px; }
+.client-text-button { justify-self: start; border: 0; padding: 5px 0; color: var(--sky); background: transparent; font: inherit; font-size: .7rem; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.client-portal-status { grid-column: 1 / -1; margin: 0; color: var(--lime); font-size: .73rem; line-height: 1.7; }
+.client-case-dashboard { padding-top: 38px; }
+.client-case-dashboard[hidden] { display: none; }
+.client-dashboard-head { display: flex; justify-content: space-between; align-items: start; gap: 20px; margin-bottom: 20px; }
+.client-dashboard-head .case-kicker { margin-bottom: 8px; }
+.client-dashboard-head .client-muted { margin: 7px 0 0; }
+.client-cases-list { display: grid; gap: 20px; }
+.client-case-card { padding: 23px 0; border-top: 1px solid var(--line); }
+.client-case-heading { display: flex; justify-content: space-between; align-items: start; gap: 15px; }
+.client-case-heading h3 { margin: 0; font: 600 1.6rem/1.05 "Barlow Condensed", sans-serif; }
+.client-case-heading small { color: var(--muted); font: .58rem "DM Mono", monospace; }
+.client-case-meta { margin: 10px 0; color: var(--muted); font-size: .7rem; line-height: 1.7; }
+.case-progress { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 21px 0; }
+.case-progress-step { position: relative; min-height: 40px; padding-top: 13px; border-top: 2px solid rgba(205, 173, 112, .22); color: var(--muted); font-size: .58rem; line-height: 1.45; }
+.case-progress-step.is-complete { border-color: var(--sky); color: var(--ink); }
+.case-progress-step.is-current { border-color: var(--lime); color: var(--lime); }
+.case-detail-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px 28px; padding: 16px 0; border-top: 1px solid var(--line); }
+.case-detail-grid div { min-width: 0; }
+.case-detail-grid dt { color: var(--sky); font: .57rem "DM Mono", monospace; text-transform: uppercase; }
+.case-detail-grid dd { margin: 5px 0 0; color: var(--ink); font-size: .7rem; line-height: 1.7; overflow-wrap: anywhere; }
+.case-readonly-summary { white-space: pre-wrap; }
+.case-readonly-badge { color: var(--muted); font: .56rem "DM Mono", monospace; }
+.client-case-links { display: flex; flex-wrap: wrap; gap: 13px; margin: 13px 0; }
+.client-case-links a { color: var(--sky); font-size: .7rem; }
+.case-timeline { display: grid; gap: 0; padding: 0; list-style: none; }
+.case-timeline li { display: grid; grid-template-columns: 145px 1fr; gap: 16px; padding: 12px 0; border-top: 1px solid var(--line); }
+.case-timeline time { color: var(--sky); font: .58rem "DM Mono", monospace; }
+.case-timeline b { font-size: .68rem; }
+.case-timeline p { margin: 4px 0 0; color: var(--muted); font-size: .65rem; line-height: 1.6; }
+.case-evidence-form { display: flex; flex-wrap: wrap; align-items: end; gap: 12px; margin: 14px 0; padding: 15px; border: 1px solid var(--line); background: rgba(32, 39, 34, .6); }
+.case-evidence-form label { display: grid; flex: 1 1 220px; gap: 6px; color: var(--muted); font-size: .65rem; }
+.case-evidence-form input[type="file"] { color: var(--ink); font: inherit; font-size: .65rem; }
+.client-evidence-list { display: grid; gap: 7px; }
+.client-evidence-list a { color: var(--sky); font-size: .67rem; }
+.client-invoices { display: grid; gap: 10px; padding: 12px 0; }
+.client-invoice { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--line); }
+.client-invoice b { font-size: .73rem; }
+.client-invoice small { display: block; margin-top: 4px; color: var(--muted); font-size: .62rem; }
+.client-invoice button { border: 1px solid var(--sky); padding: 9px 12px; color: var(--ink); background: transparent; font: inherit; font-size: .66rem; cursor: pointer; }
+.client-invoice-action { display: grid; gap: 9px; }
+.usdt-instructions { display: grid; gap: 8px; max-width: 420px; }
+.usdt-instructions > small { color: var(--muted); font-size: .62rem; line-height: 1.55; overflow-wrap: anywhere; }
+.usdt-reference-form { display: flex; flex-wrap: wrap; align-items: end; gap: 7px; }
+.usdt-reference-form label { display: grid; flex: 1 1 180px; gap: 4px; color: var(--muted); font-size: .58rem; }
+.usdt-reference-form input { min-height: 34px; border: 1px solid var(--line); padding: 7px; color: var(--ink); background: #202722; font: inherit; }
+.usdt-reference-form button { border: 1px solid var(--sky); padding: 8px 10px; color: var(--ink); background: transparent; font: inherit; font-size: .61rem; cursor: pointer; }
+.purged-case-notice { padding: 21px 0; border-top: 1px solid var(--line); color: var(--lime); font-size: .9rem; line-height: 1.7; }
+@media (max-width: 760px) {
+  .client-case-shell { padding-top: 45px; }
+  .client-case-intro h1 { font-size: 3.4rem; }
+  .client-login-panel { grid-template-columns: 1fr; gap: 22px; }
+  .case-detail-grid { grid-template-columns: 1fr; }
+  .case-timeline li { grid-template-columns: 1fr; gap: 5px; }
+  .client-dashboard-head,.client-case-heading { flex-direction: column; }
+}
+@media (max-width: 420px) {
+  .client-case-intro h1 { font-size: 2.9rem; }
+  .case-progress { gap: 5px; }
+  .case-progress-step { font-size: .52rem; }
+}

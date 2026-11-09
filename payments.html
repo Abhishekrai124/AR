@@ -23,10 +23,11 @@
       <button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button>
       <nav>
         <a href="index.html">Home</a>
+        <a href="detective.html">Detective Agency</a>
+        <a class="active" href="payments.html">Wallet</a>
+        <a href="netbanking.html">Net Banking</a>
         <a href="stories.html">Stories &amp; Lore</a>
         <a href="projects.html">Work</a>
-        <a href="music.html">Music</a>
-        <a class="active" href="payments.html">Wallet</a>
         <a href="community.html">Community</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
@@ -55,11 +56,11 @@
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px;">
           <div class="wallet-type-tabs" id="walletTabs">
             <button type="button" class="wallet-type-tab active" data-wallet-tab="hybrid">⚡ Combined Web3-ARRAI</button>
-            <button type="button" class="wallet-type-tab" data-wallet-tab="arrai">💳 ARRAI Cash</button>
-            <button type="button" class="wallet-type-tab" data-wallet-tab="web3">🦊 Web3 On-Chain</button>
+            <button type="button" class="wallet-type-tab" data-wallet-tab="arrai">💳 ARRAI Cash Vault</button>
+            <button type="button" class="wallet-type-tab" data-wallet-tab="web3">🦊 Web3 &amp; Coinbase</button>
           </div>
-          <div style="font-size: 0.76rem; color: var(--muted);">
-            Razorpay API: <span id="rzpKeyStatus" style="color: var(--sky); cursor: pointer; text-decoration: underline; font-weight: 700;">Live Key (Click to edit)</span>
+          <div style="font-size: 0.76rem; color: #86efac; font-weight: 700; display: flex; align-items: center; gap: 6px;">
+            <span>🔒</span> 256-Bit Encrypted ARRAI Vault
           </div>
         </div>
 
@@ -102,8 +103,9 @@
           <!-- Dynamic Wallet Creation & Link Actions -->
           <div class="wallet-actions-row">
             <button type="button" class="button" id="btnCreateArraiWallet">＋ Generate New ARRAI Wallet</button>
-            <button type="button" class="button" id="btnConnectWeb3">🦊 Connect Web3 Wallet</button>
-            <button type="button" class="button primary" id="btnCreateHybrid">⚡ Create / Sync Web3-ARRAI Hybrid</button>
+            <button type="button" class="button" id="btnConnectWeb3">🦊 Connect Web3 / Coinbase</button>
+            <button type="button" class="button" id="btnDisconnectWeb3" style="display:none; border-color:#f87171; color:#f87171;">Disconnect Web3</button>
+            <button type="button" class="button primary" id="btnCreateHybrid">⚡ Sync Web3-ARRAI Hybrid</button>
           </div>
         </section>
 
@@ -137,7 +139,7 @@
               </div>
               <span aria-hidden="true">💳</span>
             </div>
-            <p>Add funds instantly via <strong>Razorpay (UPI, GPay, PhonePe, Paytm, Cards, NetBanking)</strong>.</p>
+            <p>Add funds instantly via <strong>UPI (Google Pay, PhonePe, Paytm), Net Banking, or Cards</strong>.</p>
             
             <div class="wallet-quick-chips">
               <button type="button" class="wallet-chip" data-quick-amount="100">+ ₹100</button>
@@ -148,22 +150,213 @@
             </div>
 
             <form id="topupForm" class="wallet-form">
-              <label>Amount to Top-up (₹)
+              <label>Amount to Add (₹)
                 <input id="topupAmount" name="amount" type="number" min="1" max="500000" step="1" value="500" required placeholder="500" />
               </label>
               <div style="display: flex; gap: 10px; margin-top: 6px;">
                 <button class="button primary" id="rzpTopupBtn" type="submit" style="flex: 1; justify-content: center;">
-                  <span aria-hidden="true">⚡</span> Pay via Razorpay <b>↗</b>
+                  <span aria-hidden="true">⚡</span> Add Funds Online <b>↗</b>
                 </button>
-                <button class="button" id="instantTopupBtn" type="button" title="Fast simulated instant balance top-up">
-                  Instant Top-up ＋
+                <button class="button" id="instantTopupBtn" type="button" title="Direct wallet balance credit">
+                  Direct Credit ＋
                 </button>
               </div>
             </form>
             <p id="topupStatus" class="wallet-qr-status" role="status"></p>
           </article>
 
-          <!-- Spend Wallet Balance Anywhere Panel -->
+        <!-- PhonePe & Google Pay Utility Suite -->
+        <section class="wallet-grid" style="margin-top: 24px;">
+          <!-- 1. Dynamic UPI QR Code Generator -->
+          <article class="wallet-panel">
+            <div class="wallet-panel-heading">
+              <div>
+                <p class="eyebrow">Instant UPI QR</p>
+                <h2>Generate Custom Payment QR</h2>
+              </div>
+              <span aria-hidden="true">📱</span>
+            </div>
+            <p>Generate a dynamic UPI QR code compatible with PhonePe, Google Pay, Paytm, and BHIM.</p>
+
+            <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap; margin-top: 14px;">
+              <div id="qrPreviewWrapper" style="width: 170px; height: 170px; background: #fff; padding: 10px; border-radius: 16px; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                <img id="upiQrImage" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi%3A%2F%2Fpay%3Fpa%3Dabhishekrai6897%40okaxis%26pn%3DARRAI%2520Wallet%26cu%3DINR" alt="UPI QR" style="width: 100%; height: 100%; object-fit: contain;" />
+              </div>
+              <div style="flex: 1 1 200px;">
+                <label>Amount (₹)
+                  <input id="qrAmountInput" type="number" min="1" max="100000" placeholder="e.g. 500" value="500" />
+                </label>
+                <label style="margin-top: 8px;">Note / Remark
+                  <input id="qrNoteInput" placeholder="Payment to ARRAI" value="ARRAI Wallet Pay" />
+                </label>
+                <div style="display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap;">
+                  <button type="button" class="button" id="btnRefreshQr">Update QR 🔄</button>
+                  <button type="button" class="button primary" id="btnCopyUpiId">Copy UPI ID 📋</button>
+                </div>
+              </div>
+            </div>
+            <p id="qrStatus" class="wallet-qr-status" style="margin-top: 10px; color: var(--sky); font-size: 0.78rem;">UPI ID: abhishekrai6897@okaxis (Verified)</p>
+          </article>
+
+          <!-- 2. Bank & P2P Fund Transfer -->
+          <article class="wallet-panel">
+            <div class="wallet-panel-heading">
+              <div>
+                <p class="eyebrow">Money Movement</p>
+                <h2>Bank &amp; Fund Transfer</h2>
+              </div>
+              <span aria-hidden="true">🏦</span>
+            </div>
+            <p>Send funds from your ARRAI Wallet balance to any bank account, UPI ID, or another user's wallet.</p>
+
+            <form id="p2pTransferForm" class="wallet-form">
+              <label>Transfer Destination
+                <select id="transferDestType">
+                  <option value="wallet">Another ARRAI Wallet ID (Instant P2P)</option>
+                  <option value="bank">IMPS / NEFT Bank Transfer (Account + IFSC)</option>
+                  <option value="upi">UPI ID (Google Pay / PhonePe / Paytm)</option>
+                </select>
+              </label>
+
+              <div id="transferTargetWallet">
+                <label>Recipient Wallet ID
+                  <input id="targetWalletId" placeholder="e.g. AR-9482-W3" />
+                </label>
+              </div>
+
+              <div id="transferTargetBank" style="display: none;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                  <label>Account Number
+                    <input id="targetBankAcc" placeholder="e.g. 919876543210" />
+                  </label>
+                  <label>IFSC Code
+                    <input id="targetBankIfsc" placeholder="e.g. SBIN0001234" style="text-transform: uppercase;" />
+                  </label>
+                </div>
+                <label>Beneficiary Name
+                  <input id="targetBankName" placeholder="Account holder name" />
+                </label>
+              </div>
+
+              <div id="transferTargetUpi" style="display: none;">
+                <label>Recipient UPI ID
+                  <input id="targetUpiId" placeholder="e.g. user@okhdfcbank" />
+                </label>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 130px 1fr; gap: 10px;">
+                <label>Amount (₹)
+                  <input id="p2pAmount" type="number" min="1" max="100000" placeholder="500" required />
+                </label>
+                <label>Remark / Note
+                  <input id="p2pRemark" placeholder="Transfer description" />
+                </label>
+              </div>
+
+              <button class="button primary" type="submit" style="margin-top: 8px;">Transfer from Wallet ↗</button>
+              <p id="p2pStatus" class="wallet-qr-status" role="status"></p>
+            </form>
+          </article>
+
+          <!-- 3. Recharges & Utility Bill Payments -->
+          <article class="wallet-panel">
+            <div class="wallet-panel-heading">
+              <div>
+                <p class="eyebrow">PhonePe / GPay Style</p>
+                <h2>Recharge &amp; Bill Payments</h2>
+              </div>
+              <span aria-hidden="true">⚡</span>
+            </div>
+            <p>Pay utility bills and recharge mobile networks directly from your wallet balance.</p>
+
+            <form id="utilityBillForm" class="wallet-form">
+              <label>Service Category
+                <select id="billCategory">
+                  <option value="mobile">Mobile Prepaid / Postpaid Recharge</option>
+                  <option value="electricity">Electricity Bill</option>
+                  <option value="dth">DTH / Cable TV</option>
+                  <option value="fastag">FASTag Recharge</option>
+                  <option value="broadband">Broadband &amp; Wi-Fi</option>
+                </select>
+              </label>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <label>Operator / Board
+                  <select id="billOperator">
+                    <option value="jio">Jio Prepaid</option>
+                    <option value="airtel">Airtel Telecom</option>
+                    <option value="vi">Vodafone Idea (Vi)</option>
+                    <option value="bsnl">BSNL Mobile</option>
+                    <option value="electricity_board">State Electricity Board</option>
+                  </select>
+                </label>
+                <label>Consumer / Mobile No.
+                  <input id="billConsumerNo" placeholder="e.g. 9876543210" required />
+                </label>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 130px 1fr; gap: 10px;">
+                <label>Amount (₹)
+                  <input id="billAmount" type="number" min="10" max="50000" placeholder="₹ 299" required />
+                </label>
+                <label>Plan Details
+                  <input id="billPlanNote" placeholder="e.g. 1.5 GB/day (28 Days) + Unlimited Voice" />
+                </label>
+              </div>
+
+              <button class="button primary" type="submit" style="margin-top: 8px;">Pay Bill / Recharge ⚡</button>
+              <p id="billStatus" class="wallet-qr-status" role="status"></p>
+            </form>
+          </article>
+
+          <!-- 4. Instant Digital Loan & Micro-Credit Sandbox -->
+          <article class="wallet-panel">
+            <div class="wallet-panel-heading">
+              <div>
+                <p class="eyebrow">ARRAI Credit</p>
+                <h2>Micro-Loan &amp; Credit Line</h2>
+              </div>
+              <span aria-hidden="true">💳</span>
+            </div>
+            <p>Instant credit line up to <strong>₹50,000</strong> with 0% interest for 30 days. Disbursed directly to wallet.</p>
+
+            <div style="padding: 16px; border-radius: 14px; background: rgba(12, 22, 40, 0.8); border: 1px solid var(--line); margin: 12px 0;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 0.8rem; color: var(--muted);">Pre-Approved Credit Limit:</span>
+                <strong style="color: #86efac; font-size: 1.2rem;">₹50,000.00</strong>
+              </div>
+              <label>Select Loan Amount (₹)
+                <input id="loanSlider" type="range" min="1000" max="50000" step="1000" value="10000" style="width: 100%; accent-color: var(--sky);" />
+                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); margin-top: 4px;">
+                  <span>₹1,000</span>
+                  <span id="loanAmountDisplay" style="color: #fff; font-weight: 700;">₹10,000</span>
+                  <span>₹50,000</span>
+                </div>
+              </label>
+              <div style="display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); margin-top: 10px;">
+                <span>Tenure: <strong>30 Days (Interest-Free)</strong></span>
+                <span>Processing Fee: <strong>₹0 (Waived)</strong></span>
+              </div>
+            </div>
+
+            <button class="button primary" id="btnDisburseLoan" type="button" style="width: 100%; justify-content: center;">
+              Disburse Credit to Wallet Balance ✦
+            </button>
+            <p id="loanStatus" class="wallet-qr-status" role="status"></p>
+          </article>
+        </section>
+
+        <!-- Dedicated Net Banking Portal Shortcut -->
+        <section style="margin: 28px 0; padding: 24px; border-radius: 18px; background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95)); border: 1px solid rgba(56, 189, 248, 0.35); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+          <div>
+            <span class="eyebrow">Enterprise Inter-Bank Gateway</span>
+            <h3 style="margin: 4px 0 2px; color: #fff;">Need Traditional Internet Banking?</h3>
+            <p style="color: var(--muted); font-size: 0.85rem; margin: 0;">Access dedicated Net Banking with SBI, HDFC, ICICI, RTGS/NEFT transfers, and Fixed Deposit Vaults.</p>
+          </div>
+          <a class="button primary" href="netbanking.html" style="font-weight: 800;">Open Net Banking Portal 🏦 ↗</a>
+        </section>
+
+        <!-- Spend Wallet Balance Anywhere Panel -->
           <article class="wallet-panel wallet-split">
             <div class="wallet-panel-heading">
               <div>
