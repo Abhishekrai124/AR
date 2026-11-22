@@ -434,43 +434,45 @@
                 <small style="color:#38bdf8;">(राज्य अनुसार सरकारी पोर्टल शुल्क स्वतः अपडेट होगा)</small>
               </label>
               <select class="form-select" id="applicantState" required onchange="updatePricingDisplay()">
-                <option value="Uttar Pradesh" selected>Uttar Pradesh (उत्तर प्रदेश)</option>
+                <!-- 28 भारतीय राज्य (28 Indian States - Alphabetical Order) -->
+                <option value="Andhra Pradesh">Andhra Pradesh (आंध्र प्रदेश)</option>
+                <option value="Arunachal Pradesh">Arunachal Pradesh (अरुणाचल प्रदेश)</option>
+                <option value="Assam">Assam (असम)</option>
                 <option value="Bihar">Bihar (बिहार)</option>
-                <option value="Punjab">Punjab (पंजाब - Sewa Kendra +₹50)</option>
-                <option value="Delhi">Delhi NCT (दिल्ली e-District +₹40)</option>
-                <option value="Maharashtra">Maharashtra (महाराष्ट्र Aaple Sarkar +₹40)</option>
-                <option value="Karnataka">Karnataka (कर्नाटक Seva Sindhu +₹40)</option>
-                <option value="Goa">Goa (गोवा Online +₹40)</option>
-                <option value="Chandigarh">Chandigarh (चंडीगढ़ Sampark +₹40)</option>
-                <option value="Haryana">Haryana (हरियाणा Saral +₹30)</option>
-                <option value="Gujarat">Gujarat (गुजरात Digital Gujarat +₹30)</option>
-                <option value="Rajasthan">Rajasthan (राजस्थान Emitra +₹30)</option>
-                <option value="Kerala">Kerala (केरल e-District +₹30)</option>
-                <option value="Tamil Nadu">Tamil Nadu (तमिलनाडु TNeGA +₹30)</option>
-                <option value="Telangana">Telangana (तेलंगाना MeeSeva +₹30)</option>
-                <option value="Andhra Pradesh">Andhra Pradesh (आंध्र प्रदेश MeeSeva +₹30)</option>
-                <option value="Assam">Assam (असम Sewa Setu +₹30)</option>
-                <option value="Jammu and Kashmir">Jammu and Kashmir (जम्मू व कश्मीर +₹30)</option>
-                <option value="Ladakh">Ladakh (लद्दाख +₹30)</option>
-                <option value="Puducherry">Puducherry (पुदुचेरी +₹30)</option>
-                <option value="West Bengal">West Bengal (पश्चिम बंगाल Duare Sarkar +₹20)</option>
-                <option value="Madhya Pradesh">Madhya Pradesh (मध्य प्रदेश Samagra +₹20)</option>
-                <option value="Uttarakhand">Uttarakhand (उत्तराखंड e-Services +₹20)</option>
-                <option value="Himachal Pradesh">Himachal Pradesh (हिमाचल प्रदेश +₹20)</option>
-                <option value="Odisha">Odisha (ओडिशा e-District +₹20)</option>
-                <option value="Arunachal Pradesh">Arunachal Pradesh (+₹20)</option>
-                <option value="Manipur">Manipur (+₹20)</option>
-                <option value="Meghalaya">Meghalaya (+₹20)</option>
-                <option value="Mizoram">Mizoram (+₹20)</option>
-                <option value="Nagaland">Nagaland (+₹20)</option>
-                <option value="Sikkim">Sikkim (+₹20)</option>
-                <option value="Tripura">Tripura (+₹20)</option>
-                <option value="Andaman and Nicobar">Andaman and Nicobar (+₹20)</option>
-                <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra &amp; Nagar Haveli and Daman &amp; Diu (+₹20)</option>
-                <option value="Lakshadweep">Lakshadweep (+₹20)</option>
-                <option value="Jharkhand">Jharkhand (झारखंड Jharsewa +₹10)</option>
-                <option value="Chhattisgarh">Chhattisgarh (छत्तीसगढ़ e-District +₹10)</option>
-                <option value="other">अन्य राज्य / Other (+₹20)</option>
+                <option value="Chhattisgarh">Chhattisgarh (छत्तीसगढ़)</option>
+                <option value="Goa">Goa (गोवा)</option>
+                <option value="Gujarat">Gujarat (गुजरात)</option>
+                <option value="Haryana">Haryana (हरियाणा)</option>
+                <option value="Himachal Pradesh">Himachal Pradesh (हिमाचल प्रदेश)</option>
+                <option value="Jharkhand">Jharkhand (झारखंड)</option>
+                <option value="Karnataka">Karnataka (कर्नाटक)</option>
+                <option value="Kerala">Kerala (केरल)</option>
+                <option value="Madhya Pradesh">Madhya Pradesh (मध्य प्रदेश)</option>
+                <option value="Maharashtra">Maharashtra (महाराष्ट्र)</option>
+                <option value="Manipur">Manipur (मणिपुर)</option>
+                <option value="Meghalaya">Meghalaya (मेघालय)</option>
+                <option value="Mizoram">Mizoram (मिज़ोरम)</option>
+                <option value="Nagaland">Nagaland (नागालैंड)</option>
+                <option value="Odisha">Odisha (ओडिशा)</option>
+                <option value="Punjab">Punjab (पंजाब)</option>
+                <option value="Rajasthan">Rajasthan (राजस्थान)</option>
+                <option value="Sikkim">Sikkim (सिक्किम)</option>
+                <option value="Tamil Nadu">Tamil Nadu (तमिलनाडु)</option>
+                <option value="Telangana">Telangana (तेलंगाना)</option>
+                <option value="Tripura">Tripura (त्रिपुरा)</option>
+                <option value="Uttar Pradesh" selected>Uttar Pradesh (उत्तर प्रदेश)</option>
+                <option value="Uttarakhand">Uttarakhand (उत्तराखंड)</option>
+                <option value="West Bengal">West Bengal (पश्चिम बंगाल)</option>
+                <!-- 8 केंद्र शासित प्रदेश (8 Union Territories - Alphabetical Order) -->
+                <option value="Andaman and Nicobar">Andaman and Nicobar Islands (अंडमान व निकोबार)</option>
+                <option value="Chandigarh">Chandigarh (चंडीगढ़)</option>
+                <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra &amp; Nagar Haveli and Daman &amp; Diu</option>
+                <option value="Delhi">Delhi NCT (दिल्ली)</option>
+                <option value="Jammu and Kashmir">Jammu and Kashmir (जम्मू व कश्मीर)</option>
+                <option value="Ladakh">Ladakh (लद्दाख)</option>
+                <option value="Lakshadweep">Lakshadweep (लक्षद्वीप)</option>
+                <option value="Puducherry">Puducherry (पुदुचेरी)</option>
+                <option value="other">अन्य राज्य / Other</option>
               </select>
             </div>
 
@@ -982,13 +984,13 @@
         },
 
         legal: {
-          title: "कोर्ट शपथ पत्र व कानूनी सहायता (Affidavits)",
+          title: "कोर्ट शपथ पत्र व कानूनी सहायता (Court Affidavits & Legal)",
           subServices: [
             {
               id: "affidavit-name",
-              name: "नाम व स्पेलिंग सुधार शपथ पत्र (Name Correction)",
-              fee: 150,
-              desc: "मार्कशीट, आधार या पैन में नाम की गलती सुधारने हेतु नोटरीकृत शपथ पत्र",
+              name: "नाम व वर्तनी सुधार शपथ पत्र (Name Correction Affidavit)",
+              fee: 550,
+              desc: "मार्कशीट, आधार या पैन में नाम की गलती सुधारने हेतु नोटरीकृत कानूनी शपथ पत्र",
               docs: ["आधार कार्ड", "10वीं मार्कशीट / वैध रिकॉर्ड"],
               fields: [
                 { id: "affWrongName", label: "गलत नाम जो दस्तावेजों में है *", type: "text", placeholder: "Incorrect spelling as printed", required: true },
@@ -997,24 +999,57 @@
             },
             {
               id: "affidavit-marriage",
-              name: "विवाह पंजीकरण व संयुक्त शपथ पत्र (Marriage Affidavit)",
-              fee: 250,
-              desc: "विवाह पंजीकरण, सरकारी रिकॉर्ड व पासपोर्ट हेतु संयुक्त शपथ पत्र",
-              docs: ["पति-पत्नी का आधार", "विवाह निमंत्रण कार्ड / फोटो", "2 गवाह आधार"],
+              name: "विवाह पंजीकरण व संयुक्त शपथ पत्र (Marriage Joint Affidavit)",
+              fee: 650,
+              desc: "विवाह पंजीकरण, सरकारी रिकॉर्ड व पासपोर्ट हेतु संयुक्त कोर्ट शपथ पत्र",
+              docs: ["पति-पत्नी का आधार", "विवाह निमंत्रण कार्ड / शादी फोटो", "2 गवाह आधार"],
               fields: [
                 { id: "spouseName", label: "पति / पत्नी का पूरा नाम *", type: "text", placeholder: "Spouse Full Name", required: true },
                 { id: "marriageDate", label: "विवाह की तारीख *", type: "date", required: true }
               ]
             },
             {
+              id: "affidavit-address",
+              name: "निवास व पता परिवर्तन शपथ पत्र (Address Change Affidavit)",
+              fee: 550,
+              desc: "बैंक, पासपोर्ट व सरकारी पहचान पत्रों में स्थायी/अस्थायी पता बदलाव हेतु शपथ पत्र",
+              docs: ["आधार कार्ड", "नवीनतम बिजली बिल / किरायानामा"],
+              fields: [
+                { id: "oldAddressText", label: "पुराना पता जो अभिलेखों में है *", type: "text", placeholder: "Old Address", required: true },
+                { id: "newAddressText", label: "नया स्थायी पता *", type: "text", placeholder: "New Permanent Address", required: true }
+              ]
+            },
+            {
               id: "affidavit-gap",
               name: "गैप ईयर छात्र शपथ पत्र (Student Gap Year Affidavit)",
-              fee: 150,
-              desc: "कॉलेज दाखिले या प्रतियोगी परीक्षा हेतु पढ़ाई के अंतराल का शपथ पत्र",
-              docs: ["अंतिम परीक्षा की मार्कशीट", "आधार कार्ड"],
+              fee: 550,
+              desc: "कॉलेज दाखिले या प्रतियोगी परीक्षा हेतु पढ़ाई के अंतराल का नोटरी शपथ पत्र",
+              docs: ["अंतिम परीक्षा की अंकतालिका", "आधार कार्ड"],
               fields: [
                 { id: "gapPeriod", label: "गैप की अवधि (वर्ष) *", type: "text", placeholder: "e.g. 2022 to 2024 (2 Years)", required: true },
                 { id: "gapReason", label: "गैप का कारण *", type: "text", placeholder: "e.g. Preparation for Competitive Exams", required: true }
+              ]
+            },
+            {
+              id: "affidavit-income",
+              name: "आय स्व-घोषणा शपथ पत्र (Income Self Declaration Affidavit)",
+              fee: 550,
+              desc: "छात्रवृत्ति, सरकारी सब्सिडी व प्रमाण पत्र हेतु स्व-घोषित वार्षिक आय शपथ पत्र",
+              docs: ["आधार कार्ड", "वार्षिक आय विवरण"],
+              fields: [
+                { id: "annualIncomeDeclared", label: "घोषित वार्षिक आय (रुपये में) *", type: "number", placeholder: "e.g. 120000", required: true },
+                { id: "incomeSource", label: "आय का मुख्य स्रोत *", type: "text", placeholder: "e.g. कृषि / व्यवसाय / मजदूरी", required: true }
+              ]
+            },
+            {
+              id: "legal-drafting",
+              name: "नोटरी व कानूनी ड्राफ्टिंग सहायता (Notary & Legal Agreement Drafting)",
+              fee: 750,
+              desc: "रेंट एग्रीमेंट, पॉवर ऑफ अटॉर्नी, वसीयत व विशिष्ट कानूनी ड्राफ्टिंग व ई-स्टाम्प",
+              docs: ["दोनों पक्षों के आधार कार्ड", "विषय संबंधित साक्ष्य / अनुबंध प्रारूप"],
+              fields: [
+                { id: "agreementType", label: "ड्राफ्टिंग का प्रकार (Agreement / Deed Type) *", type: "text", placeholder: "e.g. Rent Agreement / Partnership Deed", required: true },
+                { id: "secondPartyName", label: "द्वितीय पक्ष का नाम व विवरण *", type: "text", placeholder: "Second Party Name & Details", required: true }
               ]
             }
           ]
@@ -1395,10 +1430,24 @@
         "all": 50
       };
 
+      let activeRazorpayKey = null;
+      async function initRazorpayKey() {
+        try {
+          const res = await fetch("/api/razorpay");
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.keyId) activeRazorpayKey = data.keyId;
+          }
+        } catch (e) {}
+      }
+      initRazorpayKey();
+
       function updatePricingDisplay() {
         if (!activeSubService) return;
         let baseFee = Number(activeSubService.fee);
-        if (baseFee < 150 && activeSubService.id !== 'exam-admit') {
+        if (activeCategory === 'legal' && baseFee < 550) {
+          baseFee = 550;
+        } else if (baseFee < 150 && activeSubService.id !== 'exam-admit') {
           baseFee = 150;
         }
 
@@ -1461,7 +1510,12 @@
 
       function openRazorpayCheckout() {
         if (!activeSubService) return;
-        const baseFee = Number(activeSubService.fee);
+        let baseFee = Number(activeSubService.fee);
+        if (activeCategory === 'legal' && baseFee < 550) {
+          baseFee = 550;
+        } else if (baseFee < 150 && activeSubService.id !== 'exam-admit') {
+          baseFee = 150;
+        }
         const stateEl = document.getElementById('applicantState');
         const chosenState = stateEl ? stateEl.value : 'Uttar Pradesh';
         const stateOffset = stateFeeOffsets[chosenState] || 0;
@@ -1473,7 +1527,12 @@
         const applicantEmail = document.getElementById('email').value || 'abhishekrai6897@gmail.com';
         const applicantPhone = document.getElementById('phone').value || '7009446821';
 
-        const rzpKey = window.RAZORPAY_KEY_ID || 'rzp_test_placeholder';
+        const rzpKey = activeRazorpayKey || window.RAZORPAY_KEY_ID;
+        if (!rzpKey || rzpKey === 'rzp_test_placeholder') {
+          alert('Razorpay लाइव गेटवे वर्तमान में एक्टिवेट हो रहा है। कृपया बिना किसी अतिरिक्त शुल्क के तुरंत "UPI QR Code" या अपने UPI ऐप से भुगतान करें।');
+          switchPay('upi');
+          return;
+        }
 
         if (typeof Razorpay === 'undefined') {
           alert('Razorpay लोड हो रहा है, कृपया UPI QR का उपयोग करें।');

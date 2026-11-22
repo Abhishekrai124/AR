@@ -633,12 +633,12 @@
                 </optgroup>
 
                 <optgroup label="⚖️ Court Affidavits &amp; Legal Documentation (कोर्ट शपथ पत्र व नोटरी)">
-                  <option value="Name &amp; Spelling Correction Court Affidavit" data-price="150" data-cat="legal" data-service-id="affidavit-name">Name / Spelling Mistake Affidavit (नाम व स्पेलिंग सुधार शपथ पत्र) - ₹150</option>
-                  <option value="Marriage Registration &amp; Joint Affidavit" data-price="250" data-cat="legal" data-service-id="affidavit-marriage">Marriage Registration &amp; Joint Affidavit (विवाह पंजीकरण शपथ पत्र) - ₹250</option>
-                  <option value="Address Change Notarized Affidavit" data-price="150" data-cat="legal" data-service-id="affidavit-address">Address Change Affidavit (पता परिवर्तन शपथ पत्र) - ₹150</option>
-                  <option value="Student Gap Year Education Affidavit" data-price="150" data-cat="legal" data-service-id="affidavit-gap">Student Gap Year Affidavit (गैप ईयर छात्र शपथ पत्र) - ₹150</option>
-                  <option value="Income Self-Declaration Affidavit" data-price="150" data-cat="legal" data-service-id="affidavit-income">Income Self-Declaration Affidavit (आय स्व-घोषणा शपथ पत्र) - ₹150</option>
-                  <option value="Notary &amp; Legal Agreement Drafting Assistance" data-price="250" data-cat="legal" data-service-id="legal-drafting">Notary &amp; Legal Drafting Assistance (कोर्ट नोटरी ड्राफ्टिंग) - ₹250</option>
+                  <option value="Name &amp; Spelling Correction Court Affidavit" data-price="550" data-cat="legal" data-service-id="affidavit-name">Name / Spelling Mistake Affidavit (नाम व स्पेलिंग सुधार शपथ पत्र) - ₹550</option>
+                  <option value="Marriage Registration &amp; Joint Affidavit" data-price="650" data-cat="legal" data-service-id="affidavit-marriage">Marriage Registration &amp; Joint Affidavit (विवाह पंजीकरण शपथ पत्र) - ₹650</option>
+                  <option value="Address Change Notarized Affidavit" data-price="550" data-cat="legal" data-service-id="affidavit-address">Address Change Affidavit (पता परिवर्तन शपथ पत्र) - ₹550</option>
+                  <option value="Student Gap Year Education Affidavit" data-price="550" data-cat="legal" data-service-id="affidavit-gap">Student Gap Year Affidavit (गैप ईयर छात्र शपथ पत्र) - ₹550</option>
+                  <option value="Income Self-Declaration Affidavit" data-price="550" data-cat="legal" data-service-id="affidavit-income">Income Self-Declaration Affidavit (आय स्व-घोषणा शपथ पत्र) - ₹550</option>
+                  <option value="Notary &amp; Legal Agreement Drafting Assistance" data-price="750" data-cat="legal" data-service-id="legal-drafting">Notary &amp; Legal Drafting Assistance (कोर्ट नोटरी ड्राफ्टिंग) - ₹750</option>
                 </optgroup>
 
                 <optgroup label="🆔 Aadhaar, PAN &amp; Voter ID (पहचान पत्र सेवाएँ)">
@@ -783,11 +783,11 @@
                 <span id="lblApplicantState">राज्य / केंद्र शासित प्रदेश (State / Union Territory)</span> *
               </label>
               <select class="form-select" id="applicantState" required onchange="recalculateFees()">
-                <option value="Uttar Pradesh" selected>Uttar Pradesh (उत्तर प्रदेश)</option>
-                <option value="Bihar">Bihar (बिहार)</option>
+                <!-- 28 भारतीय राज्य (28 Indian States - Alphabetical Order) -->
                 <option value="Andhra Pradesh">Andhra Pradesh (आंध्र प्रदेश)</option>
                 <option value="Arunachal Pradesh">Arunachal Pradesh (अरुणाचल प्रदेश)</option>
                 <option value="Assam">Assam (असम)</option>
+                <option value="Bihar">Bihar (बिहार)</option>
                 <option value="Chhattisgarh">Chhattisgarh (छत्तीसगढ़)</option>
                 <option value="Goa">Goa (गोवा)</option>
                 <option value="Gujarat">Gujarat (गुजरात)</option>
@@ -809,9 +809,11 @@
                 <option value="Tamil Nadu">Tamil Nadu (तमिलनाडु)</option>
                 <option value="Telangana">Telangana (तेलंगाना)</option>
                 <option value="Tripura">Tripura (त्रिपुरा)</option>
+                <option value="Uttar Pradesh" selected>Uttar Pradesh (उत्तर प्रदेश)</option>
                 <option value="Uttarakhand">Uttarakhand (उत्तराखंड)</option>
                 <option value="West Bengal">West Bengal (पश्चिम बंगाल)</option>
-                <option value="Andaman and Nicobar">Andaman and Nicobar Islands</option>
+                <!-- 8 केंद्र शासित प्रदेश (8 Union Territories - Alphabetical Order) -->
+                <option value="Andaman and Nicobar">Andaman and Nicobar Islands (अंडमान व निकोबार)</option>
                 <option value="Chandigarh">Chandigarh (चंडीगढ़)</option>
                 <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra &amp; Nagar Haveli and Daman &amp; Diu</option>
                 <option value="Delhi">Delhi NCT (दिल्ली)</option>
@@ -819,6 +821,7 @@
                 <option value="Ladakh">Ladakh UT (लद्दाख)</option>
                 <option value="Lakshadweep">Lakshadweep UT</option>
                 <option value="Puducherry">Puducherry UT (पुदुचेरी)</option>
+                <option value="other">अन्य राज्य / Other</option>
               </select>
             </div>
 
@@ -1156,12 +1159,12 @@
         { id: "land-khatauni", title: "भूलेख खतौनी व खसरा नकल", titleEn: "Land Khatauni & Bhulekh Record Copy", category: "certificate", fee: 150, icon: "🌾", desc: "राजस्व परिषद से अधिकृत डिजिटल प्रमाणित खतौनी व भू-अभिलेख पर्चा।", descEn: "Official verified land revenue record Khatauni and Khasra certified copy." },
 
         // Court Affidavits & Legal
-        { id: "affidavit-name", title: "नाम व वर्तनी सुधार शपथ पत्र (Name Correction Affidavit)", titleEn: "Name / Spelling Mistake Correction Court Affidavit", category: "legal", fee: 150, icon: "⚖️", desc: "मार्कशीट, आधार या पैन में नाम की स्पेलिंग गलती सुधारने हेतु नोटरीकृत शपथ पत्र।", descEn: "Notarized affidavit for correcting spelling mistakes across marksheets, PAN, or Aadhaar." },
-        { id: "affidavit-marriage", title: "विवाह पंजीकरण व कोर्ट शपथ पत्र (Marriage Affidavit)", titleEn: "Marriage Registration Joint Affidavit & Certificate", category: "legal", fee: 250, icon: "💍", desc: "विवाह प्रमाण पत्र, संयुक्त घोषणा एवं नोटरी सत्यापन हेतु आधिकारिक शपथ पत्र।", descEn: "Joint sworn marriage affidavit and registration assistance with notary attestation." },
-        { id: "affidavit-address", title: "पता परिवर्तन शपथ पत्र (Address Change Affidavit)", titleEn: "Address Proof & Change Notarized Affidavit", category: "legal", fee: 150, icon: "🏠", desc: "किरायानामा या निवास प्रमाण न होने पर अधिकृत निवास शपथ पत्र।", descEn: "Sworn residence declaration affidavit accepted for bank, DL and government updates." },
-        { id: "affidavit-gap", title: "गैप ईयर छात्र शपथ पत्र (Student Gap Year Affidavit)", titleEn: "Student Education Gap Year Affidavit", category: "legal", fee: 150, icon: "🎓", desc: "कॉलेज दाखिले या सरकारी नौकरी में पढ़ाई के अंतराल (Gap Year) हेतु शपथ पत्र।", descEn: "Gap year affidavit required for college admission or competitive exams." },
-        { id: "affidavit-income", title: "आय स्व-घोषणा शपथ पत्र (Income Declaration Affidavit)", titleEn: "Income Self-Declaration Sworn Affidavit", category: "legal", fee: 150, icon: "📄", desc: "छात्रवृत्ति व राशन कार्ड हेतु स्वप्रमाणित वार्षिक आय घोषणा पत्र।", descEn: "Self-attested legal income declaration affidavit for scholarships and welfare." },
-        { id: "legal-drafting", title: "नोटरी व कानूनी ड्राफ्टिंग सहायता (Legal Drafting)", titleEn: "Notary & Legal Agreement Drafting Assistance", category: "legal", fee: 250, icon: "⚖️", desc: "रेंट एग्रीमेंट, पावर ऑफ अटॉर्नी, वसीयत व कानूनी समझौतों की ऑनलाइन ड्राफ्टिंग।", descEn: "Professional drafting of rent agreements, general power of attorney, and legal affidavits." },
+        { id: "affidavit-name", title: "नाम व वर्तनी सुधार शपथ पत्र (Name Correction Affidavit)", titleEn: "Name / Spelling Mistake Correction Court Affidavit", category: "legal", fee: 550, icon: "⚖️", desc: "मार्कशीट, आधार या पैन में नाम की स्पेलिंग गलती सुधारने हेतु नोटरीकृत शपथ पत्र।", descEn: "Notarized affidavit for correcting spelling mistakes across marksheets, PAN, or Aadhaar." },
+        { id: "affidavit-marriage", title: "विवाह पंजीकरण व कोर्ट शपथ पत्र (Marriage Affidavit)", titleEn: "Marriage Registration Joint Affidavit & Certificate", category: "legal", fee: 650, icon: "💍", desc: "विवाह प्रमाण पत्र, संयुक्त घोषणा एवं नोटरी सत्यापन हेतु आधिकारिक शपथ पत्र।", descEn: "Joint sworn marriage affidavit and registration assistance with notary attestation." },
+        { id: "affidavit-address", title: "पता परिवर्तन शपथ पत्र (Address Change Affidavit)", titleEn: "Address Proof & Change Notarized Affidavit", category: "legal", fee: 550, icon: "🏠", desc: "किरायानामा या निवास प्रमाण न होने पर अधिकृत निवास शपथ पत्र।", descEn: "Sworn residence declaration affidavit accepted for bank, DL and government updates." },
+        { id: "affidavit-gap", title: "गैप ईयर छात्र शपथ पत्र (Student Gap Year Affidavit)", titleEn: "Student Education Gap Year Affidavit", category: "legal", fee: 550, icon: "🎓", desc: "कॉलेज दाखिले या सरकारी नौकरी में पढ़ाई के अंतराल (Gap Year) हेतु शपथ पत्र।", descEn: "Gap year affidavit required for college admission or competitive exams." },
+        { id: "affidavit-income", title: "आय स्व-घोषणा शपथ पत्र (Income Declaration Affidavit)", titleEn: "Income Self-Declaration Sworn Affidavit", category: "legal", fee: 550, icon: "📄", desc: "छात्रवृत्ति व राशन कार्ड हेतु स्वप्रमाणित वार्षिक आय घोषणा पत्र।", descEn: "Self-attested legal income declaration affidavit for scholarships and welfare." },
+        { id: "legal-drafting", title: "नोटरी व कानूनी ड्राफ्टिंग सहायता (Legal Drafting)", titleEn: "Notary & Legal Agreement Drafting Assistance", category: "legal", fee: 750, icon: "⚖️", desc: "रेंट एग्रीमेंट, पावर ऑफ अटॉर्नी, वसीयत व कानूनी समझौतों की ऑनलाइन ड्राफ्टिंग।", descEn: "Professional drafting of rent agreements, general power of attorney, and legal affidavits." },
 
         // Transport
         { id: "learning-licence", title: "लर्निंग ड्राइविंग लाइसेंस (LL Online)", titleEn: "Learner Driving License (LL Online)", category: "transport", fee: 450, icon: "🚗", desc: "सारथी परिवहन पोर्टल पर बिना आरटीओ गए ऑनलाइन लर्निंग टेस्ट व अप्रूवल।", descEn: "Parivahan online learning driving license application and computer test booking." },
@@ -1372,12 +1375,12 @@
           title: "कोर्ट शपथ पत्र व नोटरी (Court Affidavits & Legal)",
           icon: "⚖️",
           options: [
-            { id: "affidavit-name", name: "नाम व वर्तनी सुधार शपथ पत्र (Name Correction)", fee: 150, docs: ["आधार कार्ड", "10वीं मार्कशीट या सही नाम प्रमाण"] },
-            { id: "affidavit-marriage", name: "विवाह पंजीकरण व संयुक्त शपथ पत्र (Marriage)", fee: 250, docs: ["पति-पत्नी आधार", "विवाह फोटो / कार्ड", "2 गवाह आधार"] },
-            { id: "affidavit-address", name: "पता परिवर्तन शपथ पत्र (Address Change)", fee: 150, docs: ["आधार कार्ड", "नवीनतम बिजली बिल / किरायानामा"] },
-            { id: "affidavit-gap", name: "गैप ईयर छात्र शपथ पत्र (Student Gap Year)", fee: 150, docs: ["पिछली मार्कशीट", "आधार कार्ड", "कारण विवरण"] },
-            { id: "affidavit-income", name: "आय स्व-घोषणा शपथ पत्र (Self Declaration)", fee: 150, docs: ["आधार कार्ड", "वार्षिक आय विवरण"] },
-            { id: "legal-drafting", name: "नोटरी व कानूनी ड्राफ्टिंग सहायता", fee: 250, docs: ["संबंधित विषय के साक्ष्य व आईडी"] }
+            { id: "affidavit-name", name: "नाम व वर्तनी सुधार शपथ पत्र (Name Correction)", fee: 550, docs: ["आधार कार्ड", "10वीं मार्कशीट या सही नाम प्रमाण"] },
+            { id: "affidavit-marriage", name: "विवाह पंजीकरण व संयुक्त शपथ पत्र (Marriage)", fee: 650, docs: ["पति-पत्नी आधार", "विवाह फोटो / कार्ड", "2 गवाह आधार"] },
+            { id: "affidavit-address", name: "पता परिवर्तन शपथ पत्र (Address Change)", fee: 550, docs: ["आधार कार्ड", "नवीनतम बिजली बिल / किरायानामा"] },
+            { id: "affidavit-gap", name: "गैप ईयर छात्र शपथ पत्र (Student Gap Year)", fee: 550, docs: ["पिछली मार्कशीट", "आधार कार्ड", "कारण विवरण"] },
+            { id: "affidavit-income", name: "आय स्व-घोषणा शपथ पत्र (Self Declaration)", fee: 550, docs: ["आधार कार्ड", "वार्षिक आय विवरण"] },
+            { id: "legal-drafting", name: "नोटरी व कानूनी ड्राफ्टिंग सहायता", fee: 750, docs: ["संबंधित विषय के साक्ष्य व आईडी"] }
           ]
         },
         "aadhaar": {
@@ -1747,12 +1750,12 @@
             <div>
               <label class="form-label">शपथ पत्र प्रयोजन व प्रारूप *</label>
               <select class="form-select dynamic-field" id="affidavitTypeSelect" data-label="Affidavit Action Type" required onchange="onDynamicSubtypePriceChange(this)">
-                <option value="Name & Spelling Correction Affidavit" data-base-price="150" selected>नाम व स्पेलिंग सुधार शपथ पत्र - Base: ₹150</option>
-                <option value="Marriage Joint Sworn Affidavit" data-base-price="250">विवाह पंजीकरण व संयुक्त कोर्ट शपथ पत्र - Base: ₹250</option>
-                <option value="Address Proof Affidavit" data-base-price="150">निवास व पता परिवर्तन शपथ पत्र - Base: ₹150</option>
-                <option value="Education Gap Year Affidavit" data-base-price="150">छात्र गैप ईयर शपथ पत्र - Base: ₹150</option>
-                <option value="Income Self Declaration Affidavit" data-base-price="150">आय स्व-घोषणा शपथ पत्र - Base: ₹150</option>
-                <option value="Notary Legal Drafting Agreement" data-base-price="250">रेंट एग्रीमेंट व नोटरी ड्राफ्टिंग सहायता - Base: ₹250</option>
+                <option value="Name & Spelling Correction Affidavit" data-base-price="550" selected>नाम व वर्तनी सुधार शपथ पत्र - Base: ₹550</option>
+                <option value="Marriage Joint Sworn Affidavit" data-base-price="650">विवाह पंजीकरण व संयुक्त कोर्ट शपथ पत्र - Base: ₹650</option>
+                <option value="Address Proof Affidavit" data-base-price="550">निवास व पता परिवर्तन शपथ पत्र - Base: ₹550</option>
+                <option value="Education Gap Year Affidavit" data-base-price="550">छात्र गैप ईयर शपथ पत्र - Base: ₹550</option>
+                <option value="Income Self Declaration Affidavit" data-base-price="550">आय स्व-घोषणा शपथ पत्र - Base: ₹550</option>
+                <option value="Notary Legal Drafting Agreement" data-base-price="750">रेंट एग्रीमेंट व नोटरी ड्राफ्टिंग सहायता - Base: ₹750</option>
               </select>
             </div>
             <div>
@@ -2010,10 +2013,14 @@
           basePrice = currentSelectedSubtypeBasePrice;
         }
 
-        // Enforce minimum base price of 150 for all certificates/state documents (except resume at 20)
+        // Enforce minimum base price: ₹550 for legal affidavits, ₹150 for certificates/state documents (except resume at 20)
         const sId = selectedOpt ? (selectedOpt.getAttribute('data-service-id') || '') : '';
         const sCat = selectedOpt ? (selectedOpt.getAttribute('data-cat') || '') : '';
-        if (sId !== 'resume-cv-builder' && (sCat === 'certificate' || sCat === 'legal' || sCat === 'welfare' || sCat === 'identity')) {
+        if (sCat === 'legal') {
+          if (basePrice > 0 && basePrice < 550) {
+            basePrice = 550;
+          }
+        } else if (sId !== 'resume-cv-builder' && (sCat === 'certificate' || sCat === 'welfare' || sCat === 'identity')) {
           if (basePrice > 0 && basePrice < 150) {
             basePrice = 150;
           }
@@ -2092,7 +2099,12 @@
         const applicantEmail = document.getElementById('email').value || 'abhishekrai6897@gmail.com';
         const applicantPhone = document.getElementById('phone').value || '7009446821';
 
-        const effectiveKey = activeRazorpayKey || window.RAZORPAY_KEY_ID || 'rzp_test_placeholder';
+        const effectiveKey = activeRazorpayKey || window.RAZORPAY_KEY_ID;
+        if (!effectiveKey || effectiveKey === 'rzp_test_placeholder') {
+          alert('Razorpay लाइव गेटवे वर्तमान में एक्टिवेट हो रहा है। कृपया बिना किसी अतिरिक्त शुल्क के तुरंत "UPI QR Code" या अपने UPI ऐप से भुगतान करें।');
+          switchPaymentMethod('upi');
+          return;
+        }
 
         if (typeof Razorpay === 'undefined') {
           alert('Razorpay गेटवे लोड हो रहा है, कृपया UPI QR कोड का उपयोग करें।');
