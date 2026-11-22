@@ -885,6 +885,19 @@
                 { id: "vehicleRegNo", label: "गाड़ी का नंबर (Vehicle Reg No.) *", type: "text", placeholder: "e.g. UP50-AB-1234", required: true },
                 { id: "vehicleModel", label: "वाहन का मॉडल व वर्ष *", type: "text", placeholder: "e.g. Hero Splendor 2021", required: true }
               ]
+            },
+            {
+              id: "traffic-challan",
+              name: "ट्रैफिक ई-चालान भुगतान व रसीद (Traffic e-Challan Settlement)",
+              fee: 150,
+              desc: "गाड़ी नंबर या चालान नंबर से ट्रैफिक ई-चालान जांच, ऑनलाइन निपटान व कोर्ट/ट्रैफिक रसीद",
+              docs: ["वाहन आरसी / चालान कॉपी", "चालान नोटिस एसएमएस / फोटो"],
+              fields: [
+                { id: "challanSearchBy", label: "सर्च का आधार (Search By) *", type: "select", options: ["Vehicle Number (वाहन नंबर)", "Challan Number (चालान नंबर)", "Driving License (ड्राइविंग लाइसेंस)"], required: true },
+                { id: "challanVehicleNum", label: "वाहन या चालान नंबर (Vehicle / Challan No.) *", type: "text", placeholder: "e.g. UP50AB1234 or UP1234567890", required: true },
+                { id: "chassisLast5", label: "चेसिस नंबर के अंतिम 5 अंक (Chassis Last 5 Digits)", type: "text", placeholder: "e.g. 12345 (वाहन नंबर से जांच हेतु)" },
+                { id: "challanPenaltyAmt", label: "चालान जुर्माना राशि यदि ज्ञात हो (Fine Amount)", type: "number", placeholder: "₹ में जुर्माना राशि (यदि पता हो)" }
+              ]
             }
           ]
         },
@@ -1217,6 +1230,9 @@
         } else if (sParam.includes('senior') || sParam.includes('old age') || sParam.includes('elder')) {
           foundCat = 'certificate';
           foundSubId = 'senior-citizen-card';
+        } else if (sParam.includes('challan') || sParam.includes('traffic')) {
+          foundCat = 'transport';
+          foundSubId = 'traffic-challan';
         } else if (sParam.includes('dl') || sParam.includes('licence') || sParam.includes('transport') || sParam.includes('rc')) {
           foundCat = 'transport';
           foundSubId = 'dl-ll';

@@ -660,6 +660,7 @@
                   <option value="Vehicle RC Ownership Transfer" data-price="550" data-cat="transport" data-service-id="rc-transfer">Vehicle RC Transfer / Re-registration (वाहन आरसी ट्रांसफर) - ₹550</option>
                   <option value="RC Hypothecation Loan Removal (HPA/HPT)" data-price="450" data-cat="transport" data-service-id="rc-hypo">RC Hypothecation Removal (आरसी बैंक लोन हटाना) - ₹450</option>
                   <option value="Vehicle Insurance Quotation &amp; Policy Renewal" data-price="250" data-cat="transport" data-service-id="vehicle-insurance">Vehicle Insurance Renewal (वाहन बीमा रिन्युअल) - ₹250</option>
+                  <option value="Traffic e-Challan Payment &amp; Verification" data-price="150" data-cat="transport" data-service-id="traffic-challan">Traffic e-Challan Payment &amp; Disposal (ट्रैफिक ई-चालान भुगतान व रसीद) - ₹150</option>
                 </optgroup>
 
                 <optgroup label="🌾 Government Welfare &amp; Ration (सरकारी योजनाएँ)">
@@ -1173,6 +1174,7 @@
         { id: "rc-transfer", title: "वाहन आरसी ट्रांसफर व रिन्युअल", titleEn: "Vehicle RC Ownership Transfer", category: "transport", fee: 550, icon: "🚙", desc: "गाड़ी की आरसी का नाम ट्रांसफर, एनओसी, फिटनेस व हाइपोथिकेशन हटाना।", descEn: "Vehicle registration certificate ownership transfer, NOC, and re-registration." },
         { id: "rc-hypo", title: "आरसी लोन हटाना (HPA / HPT Removal)", titleEn: "Vehicle Hypothecation Loan Removal", category: "transport", fee: 450, icon: "🏦", desc: "बैंक लोन पूरा होने पर वाहन आरसी से हाइपोथिकेशन ऑनलाइन कैंसिलेशन।", descEn: "Online removal of bank hypothecation after vehicle loan closure." },
         { id: "vehicle-insurance", title: "वाहन बीमा रिन्युअल व नई पॉलिसी (Vehicle Insurance)", titleEn: "Vehicle Insurance Quotation & Policy Renewal", category: "transport", fee: 250, icon: "🛡️", desc: "बाइक, कार व कमर्शियल वाहन का थर्ड-पार्टी व कॉम्प्रिहेंसिव इंश्योरेंस तुरंत पाएं।", descEn: "Instant third-party and comprehensive vehicle insurance quote, renewal and policy issue." },
+        { id: "traffic-challan", title: "ट्रैफिक ई-चालान भुगतान व निपटान (Traffic e-Challan)", titleEn: "Traffic e-Challan Verification & Instant Settlement", category: "transport", fee: 150, icon: "🚦", desc: "गाड़ी नंबर या चालान नंबर से ट्रैफिक ई-चालान की जांच, ऑनलाइन भुगतान व सरकारी रसीद।", descEn: "Online traffic police and court e-challan verification, settlement, and official receipt generation." },
 
         // Welfare
         { id: "ayushman-card", title: "आयुष्मान भारत गोल्डन कार्ड", titleEn: "Ayushman Bharat PMJAY Health Card", category: "welfare", fee: 150, icon: "🏥", desc: "₹5 लाख तक के मुफ्त इलाज के लिए अधिकृत आयुष्मान कार्ड डाउनलोड व पंजीकरण।", descEn: "PMJAY Ayushman Bharat card offering up to ₹5 lakh free annual medical treatment." },
@@ -1402,7 +1404,8 @@
             { id: "dl-renewal", name: "डीएल नवीनीकरण / पता सुधार", fee: 550, docs: ["पुराना ड्राइविंग लाइसेंस", "आधार कार्ड"] },
             { id: "rc-transfer", name: "वाहन आरसी ट्रांसफर", fee: 550, docs: ["आरसी कॉपी", "क्रेता-विक्रेता आधार"] },
             { id: "rc-hypo", name: "आरसी बैंक लोन हटाना (HPA/HPT)", fee: 450, docs: ["बैंक एनओसी फॉर्म 35", "आरसी कॉपी"] },
-            { id: "vehicle-insurance", name: "वाहन बीमा कोटेशन व रिन्युअल", fee: 250, docs: ["वाहन आरसी", "पुरानी पॉलिसी प्रति"] }
+            { id: "vehicle-insurance", name: "वाहन बीमा कोटेशन व रिन्युअल", fee: 250, docs: ["वाहन आरसी", "पुरानी पॉलिसी प्रति"] },
+            { id: "traffic-challan", name: "ट्रैफिक ई-चालान भुगतान व रसीद (Traffic e-Challan)", fee: 150, docs: ["वाहन आरसी / चालान नंबर", "मोबाइल नंबर"] }
           ]
         },
         "udyam": {
@@ -1956,6 +1959,54 @@
             <div>
               <label class="form-label">पॉलिसी / UAN / वाहन नंबर *</label>
               <input class="form-input dynamic-field" data-label="Policy / UAN / Vehicle No" type="text" placeholder="Policy / UAN / Vehicle No." required />
+            </div>
+          `;
+        } else if (serviceVal.includes('challan') || serviceVal.includes('चालान')) {
+          html = `
+            <div>
+              <label class="form-label">सर्च का आधार (Search Challan By) *</label>
+              <select class="form-select dynamic-field" id="challanSearchType" data-label="Challan Search By" required>
+                <option value="Vehicle Number (वाहन नंबर)">वाहन नंबर (Vehicle / RC Number)</option>
+                <option value="Challan Number (चालान नंबर)">चालान नंबर (Challan Number)</option>
+                <option value="Driving License (ड्राइविंग लाइसेंस)">ड्राइविंग लाइसेंस (DL Number)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">वाहन या चालान नंबर (Vehicle / Challan No.) *</label>
+              <input class="form-input dynamic-field" data-label="Vehicle or Challan No" type="text" placeholder="e.g. UP50AB1234 or UP1234567890" required />
+            </div>
+            <div>
+              <label class="form-label">चेसिस नंबर के अंतिम 5 अंक (Chassis Last 5 Digits)</label>
+              <input class="form-input dynamic-field" data-label="Chassis Last 5 Digits" type="text" maxlength="5" placeholder="e.g. 12345 (वाहन नंबर से जांच हेतु)" />
+            </div>
+            <div>
+              <label class="form-label">अनुमानित जुर्माना राशि (Challan Amount if Known)</label>
+              <input class="form-input dynamic-field" data-label="Challan Amount" type="number" placeholder="₹ में जुर्माना राशि (यदि पता हो)" />
+            </div>
+            <div style="grid-column: 1 / -1; background:rgba(56, 189, 248, 0.08); border:1px solid rgba(56, 189, 248, 0.3); border-radius:8px; padding:10px 14px; font-size:0.83rem; color:#bae6fd; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+              <span>ℹ️ खुद परिवहन पोर्टल पर चालान देखना चाहते हैं?</span>
+              <a href="https://echallan.parivahan.gov.in/index/accused-challan" target="_blank" rel="noopener noreferrer" style="color:#f59e0b; font-weight:700; text-decoration:underline;">
+                🔗 Parivahan e-Challan Portal खोलें ↗
+              </a>
+            </div>
+          `;
+        } else if (cat === 'transport' || serviceVal.includes('licence') || serviceVal.includes('rc') || serviceVal.includes('वाहन')) {
+          html = `
+            <div>
+              <label class="form-label">वाहन / लाइसेंस नंबर (Vehicle Reg / DL No.) *</label>
+              <input class="form-input dynamic-field" data-label="Vehicle or DL Number" type="text" placeholder="e.g. UP50-AB-1234 or DL No." required />
+            </div>
+            <div>
+              <label class="form-label">आरटीओ कार्यालय या जिला (RTO Office / District) *</label>
+              <input class="form-input dynamic-field" data-label="RTO Office" type="text" placeholder="e.g. RTO Azamgarh / Lucknow" required />
+            </div>
+            <div>
+              <label class="form-label">वाहन श्रेणी (Vehicle Class / Type)</label>
+              <select class="form-select dynamic-field" data-label="Vehicle Class">
+                <option value="2-Wheeler (Motorcycle / Scooter)">दोपहिया (2-Wheeler Motorcycle/Scooter)</option>
+                <option value="4-Wheeler Car / SUV (LMV)">चौपहिया कार / जीप (LMV)</option>
+                <option value="Commercial / Transport (HMV/Transport)">कमर्शियल / भारी वाहन (Commercial / HMV)</option>
+              </select>
             </div>
           `;
         } else {
