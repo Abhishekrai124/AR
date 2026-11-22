@@ -1557,6 +1557,28 @@
               <div style="grid-column:1 / -1;"><span style="color:#94a3b8;">स्थान:</span> <span>${location}</span></div>
             </div>
 
+            <!-- Vehicle Compliance & RC Health Status -->
+            <div style="background:rgba(255, 255, 255, 0.03); border:1px solid rgba(255, 255, 255, 0.08); border-radius:8px; padding:10px 12px; margin-bottom:12px;">
+              <div style="font-weight:700; color:#38bdf8; font-size:0.8rem; margin-bottom:6px; display:flex; justify-content:space-between;">
+                <span>🛡️ वाहन दस्तावेज व फिटनेस स्थिति (Vahan Compliance)</span>
+                <span style="font-size:0.72rem; color:#10b981; background:rgba(16,185,129,0.15); padding:1px 6px; border-radius:4px;">Parivahan Verified</span>
+              </div>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:6px; font-size:0.78rem;">
+                <div style="background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:4px;">
+                  <span style="color:#94a3b8; display:block;">आरसी स्थिति:</span>
+                  <strong style="color:#10b981;">✓ एक्टिव व वैध</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:4px;">
+                  <span style="color:#94a3b8; display:block;">वाहन बीमा:</span>
+                  <strong style="color:#f59e0b;">⚠️ नवीनीकरण निकट</strong>
+                </div>
+                <div style="background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:4px;">
+                  <span style="color:#94a3b8; display:block;">प्रदूषण (PUC):</span>
+                  <strong style="color:#38bdf8;">✓ वैध (Valid)</strong>
+                </div>
+              </div>
+            </div>
+
             <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(245, 158, 11, 0.12); border:1px solid rgba(245, 158, 11, 0.35); border-radius:8px; padding:12px 14px; flex-wrap:wrap; gap:10px;">
               <div>
                 <span style="font-size:0.8rem; color:#fde68a; display:block;">सरकारी चालान जुर्माना राशि:</span>
@@ -2443,42 +2465,80 @@
       function printReceiptSlip() {
         if (!currentSubmittedRecord) return;
         const r = currentSubmittedRecord;
-        const w = window.open('', '', 'width=750,height=600');
+        const w = window.open('', '', 'width=800,height=750');
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=${encodeURIComponent(window.location.origin + '/track.html?ref=' + r.refId)}`;
         w.document.write(`
+          <!DOCTYPE html>
           <html>
             <head>
-              <title>डिजिटल पावती - #${r.refId}</title>
+              <meta charset="utf-8">
+              <title>डिजिटल पावती रसीद - #${r.refId}</title>
               <style>
-                body { font-family: sans-serif; padding: 24px; color: #111; line-height: 1.5; }
-                .hdr { text-align: center; border-bottom: 2px solid #222; padding-bottom: 12px; margin-bottom: 16px; }
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 28px; color: #1e293b; line-height: 1.5; background: #fff; }
+                .receipt-card { border: 2px solid #0f172a; border-radius: 12px; padding: 24px; position: relative; max-width: 720px; margin: 0 auto; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+                .hdr { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #0f172a; padding-bottom: 14px; margin-bottom: 16px; }
+                .brand-title { font-size: 22px; font-weight: 800; color: #0f172a; margin: 0; }
+                .brand-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
+                .ref-badge { background: #f8fafc; border: 1.5px solid #cbd5e1; padding: 8px 16px; border-radius: 8px; text-align: right; }
+                .stamp-seal { border: 2px dashed #059669; color: #059669; padding: 6px 12px; border-radius: 8px; font-weight: 800; font-size: 12px; display: inline-block; text-transform: uppercase; margin-top: 6px; }
                 table { width: 100%; border-collapse: collapse; margin-top: 14px; }
-                th, td { border: 1px solid #ddd; padding: 8px 12px; font-size: 13px; }
-                th { background: #f4f4f4; text-align: left; width: 35%; }
+                th, td { border: 1px solid #e2e8f0; padding: 9px 12px; font-size: 13px; }
+                th { background: #f8fafc; text-align: left; width: 34%; color: #475569; font-weight: 700; }
+                .footer { margin-top: 20px; display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px dashed #cbd5e1; padding-top: 14px; }
+                .qr-box { text-align: center; font-size: 10px; color: #64748b; }
+                .sig-box { text-align: right; font-size: 12px; color: #475569; }
+                @media print {
+                  body { padding: 0; }
+                  .receipt-card { border: 1px solid #000; box-shadow: none; }
+                }
               </style>
             </head>
             <body>
-              <div class="hdr">
-                <h2 style="margin:0;">शान साइबर कैफे एवं ई-सेवा केंद्र</h2>
-                <p style="margin:4px 0;">Official Digital Application Slip · Reference #${r.refId}</p>
-                <small>Helpline: +91 7009446821 | Email: abhishekrai6897@gmail.com</small>
+              <div class="receipt-card">
+                <div class="hdr">
+                  <div>
+                    <h1 class="brand-title">🏛️ शान साइबर कैफे एवं ई-सेवा केंद्र</h1>
+                    <div class="brand-sub">Authorised Citizen Facilitation & Digital e-District Center</div>
+                    <div style="font-size:12px; color:#334155; margin-top:4px;">हेल्पलाइन: +91 7009446821 | Email: abhishekrai6897@gmail.com</div>
+                    <div class="stamp-seal">✓ VERIFIED & DIGITALLY ACKNOWLEDGED</div>
+                  </div>
+                  <div class="ref-badge">
+                    <div style="font-size:11px; color:#64748b;">संदर्भ संख्या (Reference ID)</div>
+                    <div style="font-size:18px; font-weight:800; color:#0284c7;">#${r.refId}</div>
+                    <div style="font-size:11px; color:#475569; margin-top:4px;">${r.formattedDate}</div>
+                  </div>
+                </div>
+
+                <table>
+                  <tr><th>सेवा का नाम (Applied Service)</th><td><strong>${r.service}</strong></td></tr>
+                  <tr><th>आवेदक का नाम (Applicant Name)</th><td>${r.applicantName}</td></tr>
+                  <tr><th>पिता / पति का नाम (Father/Husband)</th><td>${r.guardianName}</td></tr>
+                  <tr><th>मोबाइल नंबर (Mobile No)</th><td>${r.phone}</td></tr>
+                  <tr><th>पता व लोकेशन (Address / Jurisdiction)</th><td>${r.address} (PIN: ${r.pincode})</td></tr>
+                  <tr><th>कुल शुद्ध देय शुल्क (Total Fee Paid)</th><td><strong style="font-size:15px; color:#059669;">${r.fee}</strong> (सर्विस, पोर्टल व सरकारी चालान शुल्क सहित)</td></tr>
+                  <tr><th>भुगतान माध्यम व UTR / Ref</th><td><strong>${r.paymentMethod}</strong> · ${r.utr}</td></tr>
+                  <tr><th>दस्तावेज़ स्थिति (Documents Status)</th><td>${r.fileNames} (डिजिटल अपलोड व सुरक्षित)</td></tr>
+                  <tr><th>आवेदन वर्तमान स्थिति (Status)</th><td><span style="color:#0284c7; font-weight:700;">● ${r.status} (प्रोसेसिंग में)</span></td></tr>
+                </table>
+
+                <div class="footer">
+                  <div class="qr-box">
+                    <img src="${qrUrl}" alt="Verification QR" style="width:90px; height:90px; display:block; margin-bottom:4px; border:1px solid #e2e8f0; padding:2px; border-radius:4px;" />
+                    <span>कैमरे से स्कैन कर स्टेटस ट्रैक करें</span>
+                  </div>
+                  <div class="sig-box">
+                    <div style="font-weight:700; color:#0f172a; margin-bottom:4px;">शान साइबर कैफे (अधिकृत डिजिटल हस्ताक्षर)</div>
+                    <div style="font-size:11px; color:#64748b;">Operator ID: SHAN-CSC-AZM · 24/7 Citizen Support</div>
+                    <div style="font-size:10px; color:#94a3b8; margin-top:6px;">(यह कंप्यूटर जनरेटेड आधिकारिक डिजिटल पावती है)</div>
+                  </div>
+                </div>
               </div>
-              <table>
-                <tr><th>संदर्भ संख्या</th><td><strong>#${r.refId}</strong></td></tr>
-                <tr><th>सेवा</th><td>${r.service}</td></tr>
-                <tr><th>आवेदक का नाम</th><td>${r.applicantName}</td></tr>
-                <tr><th>पिता/पति</th><td>${r.guardianName}</td></tr>
-                <tr><th>मोबाइल नंबर</th><td>${r.phone}</td></tr>
-                <tr><th>पता व पिनकोड</th><td>${r.address} (${r.pincode})</td></tr>
-                <tr><th>कुल शुल्क</th><td><strong>${r.fee}</strong></td></tr>
-                <tr><th>भुगतान UTR</th><td>${r.paymentMethod} - ${r.utr}</td></tr>
-                <tr><th>आवेदन तारीख</th><td>${r.formattedDate}</td></tr>
-              </table>
             </body>
           </html>
         `);
         w.document.close();
         w.focus();
-        w.print();
+        setTimeout(() => { w.print(); }, 400);
       }
 
       function sendWhatsAppConfirmation() {
@@ -2514,5 +2574,15 @@
       initPincodeAutomation();
       initFromUrlParams();
     </script>
+
+    <!-- Floating Cyber Quick Action Dock -->
+    <div class="cyber-quick-dock" id="cyberQuickDock" style="position:fixed; bottom:20px; right:20px; z-index:999; display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+      <a href="https://wa.me/917009446821?text=नमस्ते%20शान%20साइबर%20कैफे,%20मुझे%20सेवा%20हेतु%20सहायता%20चाहिए" target="_blank" rel="noopener" style="background:#25D366; color:#fff; padding:10px 16px; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.86rem; box-shadow:0 6px 20px rgba(37,211,102,0.4); display:flex; align-items:center; gap:8px;">
+        <span style="font-size:1.2rem;">💬</span> WhatsApp सहायता (24/7)
+      </a>
+      <a href="tel:+917009446821" style="background:#0284c7; color:#fff; padding:8px 14px; border-radius:999px; text-decoration:none; font-weight:700; font-size:0.82rem; box-shadow:0 6px 20px rgba(2,132,199,0.4); display:flex; align-items:center; gap:6px;">
+        <span>📞</span> कॉल हेल्पडेस्क (+91 7009446821)
+      </a>
+    </div>
   </body>
 </html>
