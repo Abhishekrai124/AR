@@ -491,7 +491,7 @@
       <section class="eseva-hero wrap">
         <div class="eseva-top-bar">
           <div class="location-badge" id="detectedLocationBadge" onclick="detectVisitorRegion(true)" title="Click to refresh or prompt browser location" style="cursor:pointer; display:flex; align-items:center; gap:6px; background:rgba(16,185,129,0.15); border:1px solid #10b981; padding:6px 14px; border-radius:999px; font-size:0.82rem; color:#6ee7b7; font-weight:700;">
-            <span id="detectedLocationText">📍 Detecting Location…</span>
+            <span id="detectedLocationText">📍 Auto-Detect Location [Click to Enable]</span>
             <span style="font-size:0.75rem; opacity:0.8; text-decoration:underline;">[Auto-Detect]</span>
           </div>
           <button type="button" class="lang-toggle-btn" id="langToggleBtn" onclick="toggleLanguage()">
@@ -499,10 +499,8 @@
           </button>
         </div>
 
-        <h1 class="eseva-title" id="pageTitleText">शान साइबर कैफे एवं ई-सेवा केंद्र</h1>
-        <p class="eseva-subtitle" id="pageSubtitleText">
-          Shan Cyber Cafe &amp; Global E-Seva — भारत सरकार, राज्य सरकार व वैश्विक नागरिकों के सभी आधिकारिक दस्तावेज़, पासपोर्ट, पैन कार्ड, प्रमाण पत्र एवं ऑनलाइन आवेदन।
-        </p>
+        <h1 class="eseva-title" id="pageTitleText">Shan Cyber Cafe &amp; Citizen E-Seva Portal</h1>
+        <p class="eseva-subtitle" id="pageSubtitleText">Shan Cyber Cafe &amp; Global E-Seva — Official Indian Government &amp; 28 States citizen documentation, Passport, PAN, Affidavits, Certificates &amp; Online registrations.</p>
 
         <div class="eseva-quick-contact">
           <a class="contact-chip" href="tel:+917009446821">
@@ -1172,26 +1170,240 @@
         nav?.classList.toggle("open");
       });
 
-      // Language Switcher State (Default English as primary)
-      let currentLang = "en"; // Primary English
+      // State-Adaptive Multilingual Configuration & State Mapping
+      const stateConfigMap = {
+        "Punjab": {
+          langCode: "pa",
+          langName: "ਪੰਜਾਬੀ (Punjabi)",
+          tagline: "ਪੰਜਾਬ ਸੇਵਾ ਕੇਂਦਰ, ਪੰਜਾਬ ਪੁਲਿਸ ਸਾਂਝ ਕੇਂਦਰ ਤੇ ਈ-ਚਲਾਨ ਪੋਰਟਲ",
+          rtoPrefix: "PB",
+          samplePlate: "PB65AB1234",
+          sampleRTO: "PB-65 SAS Nagar / Mohali",
+          primaryServices: ["punjab-saanjh-pcc", "punjab-fard-jamabandi", "punjab-sewa-kendra", "pspcl-bill", "traffic-challan"]
+        },
+        "Uttar Pradesh": {
+          langCode: "hi",
+          langName: "हिंदी (Hindi)",
+          tagline: "उत्तर प्रदेश ई-डिस्ट्रिक्ट, यूपी पुलिस व सारथी परिवहन सेवाएँ",
+          rtoPrefix: "UP",
+          samplePlate: "UP32AB1234",
+          sampleRTO: "UP-32 Lucknow RTO",
+          primaryServices: ["character-cert", "income-cert", "domicile-cert", "caste-obc", "traffic-challan"]
+        },
+        "Bihar": {
+          langCode: "hi",
+          langName: "हिंदी (Hindi)",
+          tagline: "बिहार आरटीपीएस (ServicePlus), बिहार पुलिस व लोक सेवाएँ",
+          rtoPrefix: "BR",
+          samplePlate: "BR01AB1234",
+          sampleRTO: "BR-01 Patna RTO",
+          primaryServices: ["income-cert", "caste-obc", "domicile-cert", "traffic-challan"]
+        },
+        "Delhi": {
+          langCode: "hi",
+          langName: "हिंदी (Hindi)",
+          tagline: "Delhi e-District & Citizen Services",
+          rtoPrefix: "DL",
+          samplePlate: "DL01AB1234",
+          sampleRTO: "DL-01 Delhi North RTO",
+          primaryServices: ["traffic-challan", "character-cert", "income-cert", "passport-fresh"]
+        },
+        "Haryana": {
+          langCode: "hi",
+          langName: "हिंदी (Hindi)",
+          tagline: "हरियाणा अंत्योदय सरल पोर्टल व परिवार पहचान पत्र",
+          rtoPrefix: "HR",
+          samplePlate: "HR26AB1234",
+          sampleRTO: "HR-26 Gurugram RTO",
+          primaryServices: ["income-cert", "caste-obc", "domicile-cert", "traffic-challan"]
+        },
+        "Maharashtra": {
+          langCode: "mr",
+          langName: "मराठी (Marathi)",
+          tagline: "महाराष्ट्र आपले सरकार, महसूल व वाहतूक ई-सेवा",
+          rtoPrefix: "MH",
+          samplePlate: "MH01AB1234",
+          sampleRTO: "MH-01 Mumbai Central RTO",
+          primaryServices: ["income-cert", "domicile-cert", "traffic-challan", "passport-fresh"]
+        },
+        "Gujarat": {
+          langCode: "gu",
+          langName: "ગુજરાતી (Gujarati)",
+          tagline: "ડિજિટલ ગુજરાત પોર્ટલ અને મહેસૂલ સેવાઓ",
+          rtoPrefix: "GJ",
+          samplePlate: "GJ01AB1234",
+          sampleRTO: "GJ-01 Ahmedabad RTO",
+          primaryServices: ["income-cert", "domicile-cert", "traffic-challan", "udyam-msme"]
+        },
+        "Rajasthan": {
+          langCode: "hi",
+          langName: "हिंदी (Hindi)",
+          tagline: "राजस्थान ई-मित्र व जन आधार सेवाएँ",
+          rtoPrefix: "RJ",
+          samplePlate: "RJ14AB1234",
+          sampleRTO: "RJ-14 Jaipur RTO",
+          primaryServices: ["income-cert", "caste-obc", "domicile-cert", "traffic-challan"]
+        },
+        "West Bengal": {
+          langCode: "bn",
+          langName: "বাংলা (Bengali)",
+          tagline: "পশ্চিমবঙ্গ ই-ডিস্ট্রিক্ট ও নাগরিক পরিষেবা",
+          rtoPrefix: "WB",
+          samplePlate: "WB01AB1234",
+          sampleRTO: "WB-01 Kolkata RTO",
+          primaryServices: ["income-cert", "caste-sc", "domicile-cert", "traffic-challan"]
+        },
+        "Madhya Pradesh": {
+          langCode: "hi",
+          langName: "हिंदी (Hindi)",
+          tagline: "मध्य प्रदेश ई-डिस्ट्रिक्ट व समग्र सामाजिक सुरक्षा",
+          rtoPrefix: "MP",
+          samplePlate: "MP04AB1234",
+          sampleRTO: "MP-04 Bhopal RTO",
+          primaryServices: ["income-cert", "caste-obc", "domicile-cert", "traffic-challan"]
+        }
+      };
+
+      const regionalI18n = {
+        en: {
+          heroTitle: "Shan Cyber Cafe & Global Citizen E-Seva Portal",
+          heroSubtitle: "Official Indian Government, 28 States & UTs documentation — Passport Seva, PAN Card, Police Verification, Certificates, Driving License & Online Form Filing.",
+          availableHeading: "Available E-Seva & Citizen Services",
+          quickApply: "Apply Online ➔",
+          formTitle: "Online Service Registration Form",
+          formSubtitle: "Click 'Apply' on any service card to auto-select and proceed without leaving this page.",
+          btnSubmit: "Submit Application to Portal",
+          submitNote: "Your application is directly saved to our portal & Owner Studio Dashboard.",
+          challanHeading: "Traffic e-Challan Verification & Instant Settlement",
+          challanDesc: "Enter Vehicle RC Number or Challan Number to check penalty & settle directly",
+          challanCheckBtn: "🔍 Check Challan",
+          applyBtnCard: "Apply Now ➔",
+          feeLabel: "Total Inclusive Fee"
+        },
+        pa: {
+          heroTitle: "ਸ਼ਾਨ ਸਾਈਬਰ ਕੈਫੇ ਅਤੇ ਈ-ਸੇਵਾ ਪੋਰਟਲ",
+          heroSubtitle: "ਭਾਰਤ ਸਰਕਾਰ ਤੇ ਪੰਜਾਬ ਰਾਜ ਨਾਗਰਿਕ ਸੇਵਾਵਾਂ — ਪਾਸਪੋਰਟ, ਪੈਨ ਕਾਰਡ, ਪੰਜਾਬ ਪੁਲਿਸ ਸਾਂਝ ਕੇਂਦਰ, ਫ਼ਰਦ ਜਮ੍ਹਾਬੰਦੀ, ਆਮਦਨ ਤੇ ਰਿਹਾਇਸ਼ੀ ਪ੍ਰਮਾਣ ਪੱਤਰ।",
+          availableHeading: "ਉਪਲਬਧ ਈ-ਸੇਵਾਵਾਂ ਤੇ ਸਰਕਾਰੀ ਦਸਤਾਵੇਜ਼",
+          quickApply: "ਆਨਲਾਈਨ ਅਪਲਾਈ ਕਰੋ ➔",
+          formTitle: "ਆਨਲਾਈਨ ਸੇਵਾ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਫ਼ਾਰਮ",
+          formSubtitle: "ਕਿਸੇ ਵੀ ਕਾਰਡ ਤੋਂ 'ਅਪਲਾਈ' ਦਬਾਉਣ 'ਤੇ ਸੇਵਾ ਆਪਣੇ-ਆਪ ਚੁਣੀ ਜਾਵੇਗੀ।",
+          btnSubmit: "ਅਰਜ਼ੀ ਪੋਰਟਲ 'ਤੇ ਜਮ੍ਹਾਂ ਕਰੋ",
+          submitNote: "ਤੁਹਾਡੀ ਅਰਜ਼ੀ ਪੋਰਟਲ ਅਤੇ ਸਟੂਡੀਓ ਡੈਸ਼ਬੋਰਡ 'ਤੇ ਸੁਰੱਖਿਅਤ ਦਰਜ ਹੋ ਜਾਵੇਗੀ।",
+          challanHeading: "ਪੰਜਾਬ ਟ੍ਰੈਫਿਕ ਪੁਲਿਸ ਈ-ਚਲਾਨ ਜਾਂਚ ਤੇ ਆਨਲਾਈਨ ਭੁਗਤਾਨ",
+          challanDesc: "ਗੱਡੀ ਨੰਬਰ (RC) ਜਾਂ ਚਲਾਨ ਨੰਬਰ ਦਰਜ ਕਰੋ — ਜੁਰਮਾਨਾ ਦੇਖੋ ਅਤੇ ਤੁਰੰਤ ਨਿਪਟਾਰਾ ਕਰੋ",
+          challanCheckBtn: "🔍 ਚਲਾਨ ਚੈੱਕ ਕਰੋ",
+          applyBtnCard: "ਅਪਲਾਈ ਕਰੋ ➔",
+          feeLabel: "ਕੁੱਲ ਫੀਸ"
+        },
+        hi: {
+          heroTitle: "शान साइबर कैफे एवं ई-सेवा केंद्र",
+          heroSubtitle: "भारत सरकार एवं राज्य स्तरीय आधिकारिक नागरिक दस्तावेज़ — पासपोर्ट, पैन कार्ड, पुलिस चरित्र प्रमाण पत्र, निवास व ऑनलाइन आवेदन।",
+          availableHeading: "उपलब्ध ई-सेवाएँ व दस्तावेज़",
+          quickApply: "नया आवेदन भरें ➔",
+          formTitle: "ऑनलाइन सेवा पंजीकरण फ़ॉर्म",
+          formSubtitle: "कार्ड से 'आवेदन करें' दबाने पर सेवा अपने-आप सिलेक्ट हो जाती है।",
+          btnSubmit: "आवेदन सबमिट करें (Submit Application)",
+          submitNote: "सबमिट करते ही आवेदन सुरक्षित रूप से हमारे पोर्टल और ओनर स्टूडियो डैशबोर्ड पर दर्ज हो जाएगा।",
+          challanHeading: "ट्रैफिक ई-चालान त्वरित जांच व ऑनलाइन भुगतान",
+          challanDesc: "गाड़ी नंबर (RC) या चालान नंबर डालें — कितना चालान पड़ा है तुरंत देखें और ऑनलाइन निपटान करें",
+          challanCheckBtn: "🔍 चालान चेक करें",
+          applyBtnCard: "आवेदन करें ➔",
+          feeLabel: "कुल देय शुल्क"
+        },
+        mr: {
+          heroTitle: "शान सायबर कॅफे आणि ई-सेवा केंद्र",
+          heroSubtitle: "शासकीय नागरिक सेवा, पासपोर्ट, पॅन कार्ड, पोलीस चारित्र्य पडताळणी, दाखले व ऑनलाईन अर्ज.",
+          availableHeading: "उपलब्ध ई-सेवा आणि कागदपत्रे",
+          quickApply: "अर्ज करा ➔",
+          formTitle: "ऑनलाईन सेवा नोंदणी अर्ज",
+          formSubtitle: "कोणत्याही सेवेवर 'अर्ज करा' वर क्लिक करून सेवा निवडा.",
+          btnSubmit: "अर्ज सादर करा",
+          submitNote: "आपला अर्ज सुरक्षितपणे नोंदवला जाईल.",
+          challanHeading: "ट्रॅफिक ई-चलन तपासणी व ऑनलाईन भरणा",
+          challanDesc: "वाहन क्रमांक किंवा चलन क्रमांक टाका व दंड भरा",
+          challanCheckBtn: "🔍 चलन तपासा",
+          applyBtnCard: "अर्ज करा ➔",
+          feeLabel: "एकूण शुल्क"
+        },
+        gu: {
+          heroTitle: "શાન સાયબર કેફે અને ઇ-સેવા પોર્ટલ",
+          heroSubtitle: "ભારત સરકાર અને રાજ્ય નાગરિક સેવાઓ — પાસપોર્ટ, પાન કાર્ડ, પોલીસ વેરિફિકેશન, આવક/જાતિ પ્રમાણપત્ર અને ઓનલાઇન અરજી.",
+          availableHeading: "ઉપલબ્ધ ઇ-સેવાઓ અને દસ્તાવેજો",
+          quickApply: "ઓનલાઇન અરજી કરો ➔",
+          formTitle: "ઓનલાઇન સેવા નોંધણી ફોર્મ",
+          formSubtitle: "કોઈપણ સેવા પર 'અરજી કરો' દબાવી આગળ વધો.",
+          btnSubmit: "અરજી સબમિટ કરો",
+          submitNote: "તમારી અરજી સુરક્ષિત રીતે પોર્ટલ પર સેવ થશે.",
+          challanHeading: "ટ્રાફિક ઇ-ચલાન ચકાસણી અને ઓનલાઇન ચુકવણી",
+          challanDesc: "વાહન નંબર અથવા ચલાન નંબર દાખલ કરો અને દંડ ભરો",
+          challanCheckBtn: "🔍 ચલાન તપાસો",
+          applyBtnCard: "અરજી કરો ➔",
+          feeLabel: "કુલ ફી"
+        },
+        bn: {
+          heroTitle: "শান সাইবার ক্যাফে ও নাগরিক ই-সেবা পোর্টাল",
+          heroSubtitle: "সরকারি নথি ও অনলাইন পরিষেবা — পাসপোর্ট, প্যান কার্ড, পুলিশ ক্লিয়ারেন্স ও রাজ্য ই-ডিস্ট্রিক্ট সেবা।",
+          availableHeading: "উপলব্ধ ই-সেবা ও আবেদন",
+          quickApply: "অনলাইন আবেদন করুন ➔",
+          formTitle: "অনলাইন সেবা রেজিস্ট্রেশন ফর্ম",
+          formSubtitle: "যেকোনো পরিষেবা থেকে সরাসরি আবেদন করুন।",
+          btnSubmit: "আবেদন জমা দিন",
+          submitNote: "আপনার আবেদন নিরাপদে সংরক্ষিত হবে।",
+          challanHeading: "ট্রাফিক ই-চালান যাচাই ও অনলাইন নিষ্পত্তি",
+          challanDesc: "গাড়ির নম্বর বা চালান নম্বর দিয়ে জরিমানা চেক ও পেমেন্ট করুন",
+          challanCheckBtn: "🔍 চালান চেক করুন",
+          applyBtnCard: "আবেদন করুন ➔",
+          feeLabel: "মোট ফি"
+        }
+      };
+
+      // Language Switcher State (Default English as primary, adapts to detected state)
+      let currentLang = "en"; // Default primary English
+      let activeRegionalLang = "pa"; // Regional language for detected state
+      let activeRegionalName = "ਪੰਜਾਬੀ (Punjabi)";
+      let activeStateConfig = stateConfigMap["Punjab"];
+
       function toggleLanguage() {
-        currentLang = currentLang === "en" ? "hi" : "en";
+        // Toggle between English and active regional language
+        currentLang = (currentLang === "en") ? activeRegionalLang : "en";
         applyLanguageStrings();
       }
 
       function applyLanguageStrings() {
-        const isHi = currentLang === "hi";
-        document.getElementById("langToggleBtn").textContent = isHi ? "🌐 Language: हिंदी (Switch to English)" : "🌐 Language: English (हिंदी में बदलें)";
-        document.getElementById("pageTitleText").textContent = isHi ? "शान साइबर कैफे एवं ई-सेवा केंद्र" : "Shan Cyber Cafe & Global E-Seva Portal";
-        document.getElementById("pageSubtitleText").textContent = isHi
-          ? "Shan Cyber Cafe & Global E-Seva — भारत सरकार, राज्य सरकार व वैश्विक नागरिकों के सभी आधिकारिक दस्तावेज़, पासपोर्ट, पैन कार्ड, प्रमाण पत्र एवं ऑनलाइन आवेदन।"
-          : "Shan Cyber Cafe & Global E-Seva — Official Indian Government, 28 States & 8 UTs citizen documentation, Passport, PAN, Affidavits, Certificates & Online registrations.";
-        document.getElementById("availableServicesHeading").textContent = isHi ? "उपलब्ध ई-सेवाएँ व दस्तावेज़ (Available Services)" : "Available E-Seva & Citizen Services";
-        document.getElementById("quickApplyText").textContent = isHi ? "नया आवेदन भरें ➔" : "Apply Online ➔";
-        document.getElementById("formHeaderTitle").textContent = isHi ? "ऑनलाइन सेवा पंजीकरण फ़ॉर्म (Registration Form)" : "Online Service Registration Form";
-        document.getElementById("formHeaderDesc").textContent = isHi ? "कार्ड से 'आवेदन करें' दबाने पर सेवा अपने-आप सिलेक्ट हो जाती है।" : "Click 'Apply' on any service card to auto-select and proceed without leaving this page.";
-        document.getElementById("btnSubmitText").textContent = isHi ? "आवेदन सबमिट करें (Submit Application to Portal)" : "Submit Application to Portal";
-        document.getElementById("submitSubnote").textContent = isHi ? "सबमिट करते ही आवेदन सुरक्षित रूप से हमारे पोर्टल और ओनर स्टूडियो डैशबोर्ड पर दर्ज हो जाएगा।" : "Your application is directly saved to our portal & Owner Studio Dashboard.";
+        const lang = currentLang;
+        const cfg = regionalI18n[lang] || regionalI18n.en;
+
+        const langBtn = document.getElementById("langToggleBtn");
+        if (langBtn) {
+          langBtn.textContent = (lang === "en")
+            ? `🌐 Language: English (Switch to ${activeRegionalName})`
+            : `🌐 Language: ${activeRegionalName} (Switch to English)`;
+        }
+
+        const pageTitle = document.getElementById("pageTitleText");
+        if (pageTitle) pageTitle.textContent = cfg.heroTitle;
+
+        const pageSub = document.getElementById("pageSubtitleText");
+        if (pageSub) pageSub.textContent = cfg.heroSubtitle;
+
+        const availHeading = document.getElementById("availableServicesHeading");
+        if (availHeading) availHeading.textContent = cfg.availableHeading;
+
+        const quickApply = document.getElementById("quickApplyText");
+        if (quickApply) quickApply.textContent = cfg.quickApply;
+
+        const formTitle = document.getElementById("formHeaderTitle");
+        if (formTitle) formTitle.textContent = cfg.formTitle;
+
+        const formDesc = document.getElementById("formHeaderDesc");
+        if (formDesc) formDesc.textContent = cfg.formSubtitle;
+
+        const btnSubmit = document.getElementById("btnSubmitText");
+        if (btnSubmit) btnSubmit.textContent = cfg.btnSubmit;
+
+        const subNote = document.getElementById("submitSubnote");
+        if (subNote) subNote.textContent = cfg.submitNote;
+
         renderServicesGrid(currentActiveCategory);
       }
 
@@ -1305,19 +1517,31 @@
           );
         }
 
-        const isHi = currentLang === "hi";
+        const lang = currentLang;
+        const i18n = regionalI18n[lang] || regionalI18n.en;
         const stateOffset = stateFeeOffsets[currentSelectedState] || 0;
 
+        // Dynamic State-Based Prioritization: Bring visitor's state-specific services to the top!
+        if (activeStateConfig && activeStateConfig.primaryServices) {
+          filtered.sort((a, b) => {
+            const aIsPrimary = activeStateConfig.primaryServices.includes(a.id);
+            const bIsPrimary = activeStateConfig.primaryServices.includes(b.id);
+            if (aIsPrimary && !bIsPrimary) return -1;
+            if (!aIsPrimary && bIsPrimary) return 1;
+            return 0;
+          });
+        }
+
         if (filtered.length === 0) {
-          grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px; color:#94a3b8;">${isHi ? 'कोई सेवा या दस्तावेज़ नहीं मिला। कृपया अन्य शब्द खोजें।' : 'No matching documents or services found. Please try another search term.'}</div>`;
+          grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px; color:#94a3b8;">No matching documents or services found.</div>`;
           return;
         }
 
         filtered.forEach(item => {
           const card = document.createElement('div');
           card.className = 'service-card';
-          const title = isHi ? item.title : item.titleEn;
-          const desc = isHi ? item.desc : item.descEn;
+          const title = (lang === 'en') ? item.titleEn : item.title;
+          const desc = (lang === 'en') ? item.descEn : item.desc;
           const isStateApplicable = (item.id !== 'resume-cv-builder' && item.category !== 'global');
           const adjustedFee = isStateApplicable ? (item.fee + stateOffset) : item.fee;
 
@@ -1333,10 +1557,10 @@
             <div class="service-footer">
               <div class="service-fee">
                 ₹${adjustedFee}
-                <small>${isHi ? "कुल देय शुल्क" : "Total Inclusive Fee"}</small>
+                <small>${i18n.feeLabel || "Total Fee"}</small>
               </div>
               <button class="btn-apply-card" onclick="handleServiceApplyClick('${item.id}')">
-                ${isHi ? "आवेदन करें ➔" : "Apply Now ➔"}
+                ${i18n.applyBtnCard || "Apply Now ➔"}
               </button>
             </div>
           `;
@@ -2983,8 +3207,8 @@
         const finalPayable = currentBaseTotal + rzpSurcharge;
 
         const applicantName = document.getElementById('applicantName').value || 'Customer';
-        const applicantEmail = document.getElementById('email').value || 'abhishekrai6897@gmail.com';
-        const applicantPhone = document.getElementById('phone').value || '7009446821';
+        const applicantEmail = document.getElementById('email')?.value.trim() || 'customer@arrai.in';
+        const applicantPhone = document.getElementById('phone')?.value.trim() || '';
 
         const effectiveKey = activeRazorpayKey || window.RAZORPAY_KEY_ID;
         if (!effectiveKey || effectiveKey === 'rzp_test_placeholder') {
@@ -3165,7 +3389,7 @@
           `आवेदन समय: ${applicationRecord.formattedDate}\n` +
           `संचालक: शान साइबर कैफे (+91 7009446821)`
         );
-        document.getElementById('optionalEmailBtn').href = `mailto:abhishekrai6897@gmail.com?subject=${subject}&body=${body}`;
+        document.getElementById('optionalEmailBtn').href = `mailto:support@arrai.in?subject=${subject}&body=${body}`;
 
         // 4. Show Instant Confirmation in Modal
         const isEn = (typeof currentLang !== 'undefined' ? currentLang : 'en') !== 'hi';
@@ -3262,7 +3486,7 @@
                   <div>
                     <h1 class="brand-title">${isEn ? '🏛️ SHAN CYBER CAFE & CITIZEN E-SEVA CENTER' : '🏛️ शान साइबर कैफे एवं ई-सेवा केंद्र'}</h1>
                     <div class="brand-sub">Authorised Citizen Facilitation & Digital e-District Center</div>
-                    <div style="font-size:12px; color:#334155; margin-top:4px;">${isEn ? 'Helpline' : 'हेल्पलाइन'}: +91 7009446821 | Email: abhishekrai6897@gmail.com</div>
+                    <div style="font-size:12px; color:#334155; margin-top:4px;">${isEn ? 'Helpline' : 'हेल्पलाइन'}: +91 7009446821 | Email: support@arrai.in</div>
                     <div class="stamp-seal">✓ VERIFIED & DIGITALLY ACKNOWLEDGED</div>
                   </div>
                   <div class="ref-badge">
@@ -3312,17 +3536,20 @@
         selectedFilesList = [];
       }
 
-      // High-Accuracy Browser Geolocation with Interactive Permission Prompt & IP Fallback
+      // Privacy-First Browser Geolocation & Regional Adaptation (Zero IP / Personal Data Leaks)
       async function detectVisitorRegion(promptUser = true) {
         const badgeText = document.getElementById('detectedLocationText');
         const badgeEl = document.getElementById('detectedLocationBadge');
         if (badgeText) {
-          badgeText.innerHTML = '🔄 <span style="color:#fde68a;">Detecting location…</span>';
+          badgeText.innerHTML = '🔄 <span style="color:#fde68a;">Checking Location Permission…</span>';
         }
 
         function applyStateToPortal(stateName, cityName, source = 'GPS') {
-          if (!stateName) stateName = 'Punjab';
-          
+          if (!stateName || stateName === 'all') {
+            if (badgeText) badgeText.innerHTML = '📍 <strong>All India &amp; Global Portal</strong> <small style="text-decoration:underline; font-size:0.75rem;">[Detect]</small>';
+            return;
+          }
+
           let matchedState = 'Punjab';
           const sLower = stateName.toLowerCase();
           if (sLower.includes('punjab') || sLower === 'pb') matchedState = 'Punjab';
@@ -3338,19 +3565,26 @@
           else if (sLower.includes('karnataka') || sLower === 'ka') matchedState = 'Karnataka';
           else if (sLower.includes('gujarat') || sLower === 'gj') matchedState = 'Gujarat';
           else if (sLower.includes('west bengal') || sLower === 'wb') matchedState = 'West Bengal';
+          else if (sLower.includes('madhya pradesh') || sLower === 'mp') matchedState = 'Madhya Pradesh';
           else matchedState = stateName;
 
-          localStorage.setItem('userDetectedState', matchedState);
-          if (cityName) localStorage.setItem('userDetectedCity', cityName);
+          // Configure state language and data prioritization
+          activeStateConfig = stateConfigMap[matchedState] || stateConfigMap['Punjab'];
+          activeRegionalLang = activeStateConfig.langCode;
+          activeRegionalName = activeStateConfig.langName;
 
+          sessionStorage.setItem('visitorDetectedState', matchedState);
+
+          // Render clean location badge WITHOUT leaking IP address
           const displayLoc = cityName ? `${cityName}, ${matchedState}` : matchedState;
           if (badgeText) {
             badgeText.innerHTML = `<strong>📍 ${displayLoc}</strong> <small style="opacity:0.85; font-size:0.75rem;">(${source})</small>`;
           }
           if (badgeEl) {
-            badgeEl.title = `Detected: ${displayLoc} (${source}). Click to refresh or change.`;
+            badgeEl.title = `Your Location: ${displayLoc}. Click to refresh.`;
           }
 
+          // Sync dropdowns to visitor's detected state
           const stateSelects = ['applicantState', 'stateFilterSelect', 'custModalStateSelect'];
           stateSelects.forEach(selId => {
             const el = document.getElementById(selId);
@@ -3364,20 +3598,20 @@
             }
           });
 
-          currentSelectedState = matchedState;
-          if (typeof renderServicesGrid === 'function') {
-            renderServicesGrid(currentActiveCategory);
+          // Adapt challan placeholder to visitor's state RTO series
+          const quickChallan = document.getElementById('quickChallanInput');
+          if (quickChallan && activeStateConfig.samplePlate) {
+            quickChallan.placeholder = `e.g. ${activeStateConfig.samplePlate} or Challan No...`;
           }
+
+          currentSelectedState = matchedState;
+          applyLanguageStrings();
           if (typeof recalculateFees === 'function') {
             recalculateFees();
           }
-
-          if (matchedState === 'Punjab') {
-            const quickChallan = document.getElementById('quickChallanInput');
-            if (quickChallan) quickChallan.placeholder = 'e.g. PB65AB1234 ਜਾਂ PB10AB1234 ਜਾਂ ਚਲਾਨ ਨੰਬਰ...';
-          }
         }
 
+        // Trigger browser native location prompt if user wants to detect
         if (navigator.geolocation && promptUser) {
           navigator.geolocation.getCurrentPosition(
             async (position) => {
@@ -3395,12 +3629,12 @@
                   }
                 }
               } catch (e) {
-                console.warn("Reverse geocode error:", e);
+                console.warn("Reverse geocode note:", e);
               }
               await fallbackToIP();
             },
             async (error) => {
-              console.log("Geolocation error or permission denied:", error.message);
+              console.log("Browser location notice:", error.message);
               await fallbackToIP();
             },
             { timeout: 7000, maximumAge: 60000, enableHighAccuracy: false }
@@ -3418,15 +3652,16 @@
                 const region = data.region || data.region_code || "";
                 const city = data.city || "";
                 if (region) {
-                  applyStateToPortal(region, city, 'IP');
+                  // Only show visitor's region, NEVER expose data.ip
+                  applyStateToPortal(region, city, 'Auto');
                   return;
                 }
               }
             }
           } catch {}
 
-          // Default fallback is Punjab
-          applyStateToPortal('Punjab', 'Mohali / SAS Nagar', 'Default');
+          // Default fallback - clean generic All India (zero private info leaked)
+          applyStateToPortal('all', '', 'All India');
         }
       }
 

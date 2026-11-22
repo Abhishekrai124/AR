@@ -308,7 +308,7 @@
         </div>
         <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
           <div class="location-badge" id="detectedLocationBadge" onclick="detectVisitorRegion(true)" title="Click to refresh or prompt browser location" style="cursor:pointer; display:flex; align-items:center; gap:6px; background:rgba(16,185,129,0.15); border:1px solid #10b981; padding:5px 12px; border-radius:999px; font-size:0.8rem; color:#6ee7b7; font-weight:700;">
-            <span id="detectedLocationText">📍 Detecting Location…</span>
+            <span id="detectedLocationText">📍 Auto-Detect Location [Click to Enable]</span>
             <span style="font-size:0.75rem; opacity:0.8; text-decoration:underline;">[Refresh]</span>
           </div>
           <span class="portal-badge">⚡ Authorised Citizen Portal</span>
@@ -2521,8 +2521,8 @@
         const finalPayable = totalBaseFee + surcharge;
 
         const applicantName = document.getElementById('applicantName').value || 'Customer';
-        const applicantEmail = document.getElementById('email').value || 'abhishekrai6897@gmail.com';
-        const applicantPhone = document.getElementById('phone').value || '7009446821';
+        const applicantEmail = document.getElementById('email')?.value.trim() || 'customer@arrai.in';
+        const applicantPhone = document.getElementById('phone')?.value.trim() || '';
 
         const rzpKey = activeRazorpayKey || window.RAZORPAY_KEY_ID || 'rzp_test_placeholder';
 
@@ -2832,7 +2832,7 @@
                   <div>
                     <h1 class="brand-title">${isEn ? '🏛️ SHAN CYBER CAFE & CITIZEN E-SEVA CENTER' : '🏛️ शान साइबर कैफे एवं ई-सेवा केंद्र'}</h1>
                     <div class="brand-sub">Authorised Citizen Facilitation & Digital e-District Center</div>
-                    <div style="font-size:12px; color:#334155; margin-top:4px;">${isEn ? 'Helpline' : 'हेल्पलाइन'}: +91 7009446821 | Email: abhishekrai6897@gmail.com</div>
+                    <div style="font-size:12px; color:#334155; margin-top:4px;">${isEn ? 'Helpline' : 'हेल्पलाइन'}: +91 7009446821 | Email: support@arrai.in</div>
                     <div class="stamp-seal">✓ VERIFIED & DIGITALLY ACKNOWLEDGED</div>
                   </div>
                   <div class="ref-badge">
@@ -2896,30 +2896,56 @@
         window.location.href = 'eseva.html';
       }
 
+      const stateConfigMap = {
+        "Punjab": { langCode: "pa", langName: "ਪੰਜਾਬੀ (Punjabi)", rtoPrefix: "PB", samplePlate: "PB65AB1234 (Mohali) or PB10AB1234 (Ludhiana)" },
+        "Uttar Pradesh": { langCode: "hi", langName: "हिंदी (Hindi)", rtoPrefix: "UP", samplePlate: "UP32AB1234 (Lucknow) or UP50AB1234" },
+        "Bihar": { langCode: "hi", langName: "हिंदी (Hindi)", rtoPrefix: "BR", samplePlate: "BR01AB1234 (Patna)" },
+        "Delhi": { langCode: "hi", langName: "हिंदी (Hindi)", rtoPrefix: "DL", samplePlate: "DL01AB1234 (Delhi)" },
+        "Haryana": { langCode: "hi", langName: "हिंदी (Hindi)", rtoPrefix: "HR", samplePlate: "HR26AB1234 (Gurugram)" },
+        "Maharashtra": { langCode: "mr", langName: "मराठी (Marathi)", rtoPrefix: "MH", samplePlate: "MH01AB1234 (Mumbai)" },
+        "Gujarat": { langCode: "gu", langName: "ગુજરાતી (Gujarati)", rtoPrefix: "GJ", samplePlate: "GJ01AB1234 (Ahmedabad)" },
+        "Rajasthan": { langCode: "hi", langName: "हिंदी (Hindi)", rtoPrefix: "RJ", samplePlate: "RJ14AB1234 (Jaipur)" },
+        "West Bengal": { langCode: "bn", langName: "বাংলা (Bengali)", rtoPrefix: "WB", samplePlate: "WB01AB1234 (Kolkata)" },
+        "Madhya Pradesh": { langCode: "hi", langName: "हिंदी (Hindi)", rtoPrefix: "MP", samplePlate: "MP04AB1234 (Bhopal)" }
+      };
+
+      let activeRegionalLang = "pa";
+      let activeRegionalName = "ਪੰਜਾਬੀ (Punjabi)";
+      let activeStateConfig = stateConfigMap["Punjab"];
+
       function toggleLang() {
         const btn = document.getElementById('langBtn');
-        const isHi = receiptLanguage === 'hi';
-        receiptLanguage = isHi ? 'en' : 'hi';
+        receiptLanguage = receiptLanguage === 'en' ? activeRegionalLang : 'en';
         if (btn) {
-          btn.textContent = receiptLanguage === 'en' ? '🌐 Language: English (हिंदी)' : '🌐 Language: हिंदी (Switch to English)';
+          btn.textContent = (receiptLanguage === 'en')
+            ? `🌐 Language: English (Switch to ${activeRegionalName})`
+            : `🌐 Language: ${activeRegionalName} (Switch to English)`;
         }
         const heading = document.getElementById('pageMainHeading');
         if (heading) {
-          heading.textContent = receiptLanguage === 'en' ? 'Online Public & Citizen Services Application' : 'ऑनलाइन सेवा पंजीकरण (Dedicated Application)';
+          heading.textContent = (receiptLanguage === 'en')
+            ? 'Online Public & Citizen Services Application'
+            : (receiptLanguage === 'pa' ? 'ਆਨਲਾਈਨ ਨਾਗਰਿਕ ਸੇਵਾ ਰਜਿਸਟ੍ਰੇਸ਼ਨ (Dedicated Application)' : 'ऑनलाइन सेवा पंजीकरण (Dedicated Application)');
+        }
+        if (currentSubmittedRecord) {
+          renderReceiptModal(currentSubmittedRecord);
         }
       }
 
-      // High-Accuracy Browser Geolocation with Interactive Permission Prompt & IP Fallback
+      // Privacy-First Browser Geolocation & Regional Adaptation (Zero IP / Personal Data Leaks)
       async function detectVisitorRegion(promptUser = true) {
         const badgeText = document.getElementById('detectedLocationText');
         const badgeEl = document.getElementById('detectedLocationBadge');
         if (badgeText) {
-          badgeText.innerHTML = '🔄 <span style="color:#fde68a;">Detecting location…</span>';
+          badgeText.innerHTML = '🔄 <span style="color:#fde68a;">Checking Location Permission…</span>';
         }
 
         function applyStateToPortal(stateName, cityName, source = 'GPS') {
-          if (!stateName) stateName = 'Punjab';
-          
+          if (!stateName || stateName === 'all') {
+            if (badgeText) badgeText.innerHTML = '📍 <strong>All India Portal</strong> <small style="text-decoration:underline; font-size:0.75rem;">[Detect]</small>';
+            return;
+          }
+
           let matchedState = 'Punjab';
           const sLower = stateName.toLowerCase();
           if (sLower.includes('punjab') || sLower === 'pb') matchedState = 'Punjab';
@@ -2935,17 +2961,21 @@
           else if (sLower.includes('karnataka') || sLower === 'ka') matchedState = 'Karnataka';
           else if (sLower.includes('gujarat') || sLower === 'gj') matchedState = 'Gujarat';
           else if (sLower.includes('west bengal') || sLower === 'wb') matchedState = 'West Bengal';
+          else if (sLower.includes('madhya pradesh') || sLower === 'mp') matchedState = 'Madhya Pradesh';
           else matchedState = stateName;
 
-          localStorage.setItem('userDetectedState', matchedState);
-          if (cityName) localStorage.setItem('userDetectedCity', cityName);
+          activeStateConfig = stateConfigMap[matchedState] || stateConfigMap['Punjab'];
+          activeRegionalLang = activeStateConfig.langCode;
+          activeRegionalName = activeStateConfig.langName;
+
+          sessionStorage.setItem('visitorDetectedState', matchedState);
 
           const displayLoc = cityName ? `${cityName}, ${matchedState}` : matchedState;
           if (badgeText) {
             badgeText.innerHTML = `<strong>📍 ${displayLoc}</strong> <small style="opacity:0.85; font-size:0.75rem;">(${source})</small>`;
           }
           if (badgeEl) {
-            badgeEl.title = `Detected: ${displayLoc} (${source}). Click to refresh or change.`;
+            badgeEl.title = `Your Location: ${displayLoc}. Click to refresh.`;
           }
 
           const stateEl = document.getElementById('applicantState');
@@ -2958,15 +2988,20 @@
             }
           }
 
+          const btn = document.getElementById('langBtn');
+          if (btn) {
+            btn.textContent = (receiptLanguage === 'en')
+              ? `🌐 Language: English (Switch to ${activeRegionalName})`
+              : `🌐 Language: ${activeRegionalName} (Switch to English)`;
+          }
+
           if (typeof updatePricingDisplay === 'function') {
             updatePricingDisplay();
           }
 
-          if (matchedState === 'Punjab') {
-            const challanVeh = document.getElementById('challanVehicleNum');
-            if (challanVeh) challanVeh.placeholder = 'e.g. PB65AB1234 (Mohali) ਜਾਂ PB10AB1234 (Ludhiana) ਜਾਂ ਚਲਾਨ ਨੰਬਰ';
-            const rcVeh = document.getElementById('vehicleRegNo') || document.getElementById('rcTransferVehicleNo');
-            if (rcVeh) rcVeh.placeholder = 'e.g. PB65-AB-1234';
+          const challanVeh = document.getElementById('challanVehicleNum');
+          if (challanVeh && activeStateConfig.samplePlate) {
+            challanVeh.placeholder = `e.g. ${activeStateConfig.samplePlate} or Challan No`;
           }
         }
 
@@ -2987,12 +3022,12 @@
                   }
                 }
               } catch (e) {
-                console.warn("Reverse geocode error:", e);
+                console.warn("Reverse geocode note:", e);
               }
               await fallbackToIP();
             },
             async (error) => {
-              console.log("Geolocation permission status or error:", error.message);
+              console.log("Browser location notice:", error.message);
               await fallbackToIP();
             },
             { timeout: 7000, maximumAge: 60000, enableHighAccuracy: false }
@@ -3010,14 +3045,14 @@
                 const region = data.region || data.region_code || "";
                 const city = data.city || "";
                 if (region) {
-                  applyStateToPortal(region, city, 'IP');
+                  applyStateToPortal(region, city, 'Auto');
                   return;
                 }
               }
             }
           } catch {}
 
-          applyStateToPortal('Punjab', 'Mohali / SAS Nagar', 'Default');
+          applyStateToPortal('all', '', 'All India');
         }
       }
 
