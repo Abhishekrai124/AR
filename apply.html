@@ -325,6 +325,16 @@
           </div>
         </div>
 
+        <!-- Quick Service Mode Switcher -->
+        <div style="display:flex; gap:10px; margin-bottom:18px; background:rgba(255,255,255,0.03); padding:6px; border-radius:12px; border:1px solid var(--eseva-border);">
+          <button type="button" id="tabModeChallan" onclick="switchFormMode('challan')" style="flex:1; padding:12px 14px; border-radius:8px; border:1.5px solid var(--eseva-gold); background:rgba(245, 158, 11, 0.2); color:#fde68a; font-weight:800; font-size:0.92rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+            <span style="font-size:1.2rem;">🚦</span> ट्रैफिक ई-चालान जांच व भुगतान (e-Challan)
+          </button>
+          <button type="button" id="tabModeGeneral" onclick="switchFormMode('general')" style="flex:1; padding:12px 14px; border-radius:8px; border:1px solid var(--eseva-border); background:rgba(255,255,255,0.04); color:#cbd5e1; font-weight:700; font-size:0.92rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+            <span style="font-size:1.2rem;">📜</span> सरकारी प्रमाण पत्र व अन्य सेवाएँ
+          </button>
+        </div>
+
         <form id="applyMainForm" onsubmit="handleApplicationSubmit(event)">
           <!-- 1. Category & Major Service Selector -->
           <div class="form-grid" style="margin-bottom:18px;">
@@ -333,9 +343,10 @@
                 <span>सेवा वर्ग (Service Category)</span> *
               </label>
               <select class="form-select" id="categorySelect" onchange="onCategorySelectChange()">
+                <option value="challan" selected>🚦 ट्रैफिक ई-चालान भुगतान व रसीद (Traffic e-Challan)</option>
                 <option value="certificate">📜 सरकारी प्रमाण पत्र (Certificates &amp; Revenue)</option>
                 <option value="legal">⚖️ कोर्ट शपथ पत्र व नोटरी (Court Affidavits)</option>
-                <option value="transport">🚗 ड्राइविंग लाइसेंस, वाहन व चालान (Transport &amp; e-Challan)</option>
+                <option value="transport">🚗 ड्राइविंग लाइसेंस व वाहन (Transport Sarathi)</option>
                 <option value="welfare">🌾 सरकारी योजनाएँ, राशन व पेंशन (Welfare Schemes)</option>
                 <option value="finance">💼 बीमा, पेंशन व पीएफ क्लेम (Insurance &amp; EPFO)</option>
                 <option value="passport">✈️ पासपोर्ट सेवा (Passport Seva ₹4500 / ₹6000)</option>
@@ -650,6 +661,22 @@
     <script>
       // 1. DATA CATALOG WITH SUB-SERVICES, TAILORED FIELDS, & ACCURATE PRICING
       const serviceCatalog = {
+        challan: {
+          title: "ट्रैफिक ई-चालान भुगतान व निपटान (Traffic e-Challan)",
+          subServices: [
+            {
+              id: "traffic-challan",
+              name: "ट्रैफिक ई-चालान भुगतान व रसीद (Traffic e-Challan)",
+              fee: 150,
+              desc: "गाड़ी नंबर या चालान नंबर से ट्रैफिक ई-चालान की जांच, ऑनलाइन भुगतान व सरकारी रसीद",
+              docs: ["वाहन नंबर या चालान नंबर", "मोबाइल नंबर"],
+              fields: [
+                { id: "challanVehicleNum", label: "वाहन नंबर / चालान नंबर / DL नंबर *", type: "text", placeholder: "e.g. UP50AB1234 या UP1234567890", required: true },
+                { id: "chassisLast5", label: "चेसिस नंबर अंतिम 5 अंक (वैकल्पिक)", type: "text", placeholder: "e.g. 12345" }
+              ]
+            }
+          ]
+        },
         aadhaar: {
           title: "आधार कार्ड सेवाएँ (Aadhaar Services)",
           subServices: [
@@ -1562,6 +1589,35 @@
         }
       }
 
+      function switchFormMode(mode) {
+        const isChallan = mode === 'challan';
+        const tabChallan = document.getElementById('tabModeChallan');
+        const tabGeneral = document.getElementById('tabModeGeneral');
+        const catSelect = document.getElementById('categorySelect');
+
+        if (tabChallan) {
+          tabChallan.style.background = isChallan ? 'rgba(245, 158, 11, 0.2)' : 'rgba(255,255,255,0.04)';
+          tabChallan.style.borderColor = isChallan ? 'var(--eseva-gold)' : 'var(--eseva-border)';
+          tabChallan.style.color = isChallan ? '#fde68a' : '#cbd5e1';
+        }
+        if (tabGeneral) {
+          tabGeneral.style.background = !isChallan ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255,255,255,0.04)';
+          tabGeneral.style.borderColor = !isChallan ? '#38bdf8' : 'var(--eseva-border)';
+          tabGeneral.style.color = !isChallan ? '#bae6fd' : '#cbd5e1';
+        }
+
+        if (catSelect) {
+          catSelect.value = isChallan ? 'challan' : 'certificate';
+          onCategorySelectChange();
+          if (isChallan) {
+            setTimeout(() => {
+              const vInp = document.getElementById('challanVehicleNum');
+              if (vInp) vInp.focus();
+            }, 200);
+          }
+        }
+      }
+
       // Parse Query Params to automatically select category or service
       function initFromUrlParams() {
         const params = new URLSearchParams(window.location.search);
@@ -1572,15 +1628,15 @@
 
         if (!sParam) {
           const catSelect = document.getElementById('categorySelect');
-          foundCat = (catSelect && catSelect.value) ? catSelect.value : 'certificate';
-          foundSubId = serviceCatalog[foundCat]?.subServices[0]?.id || '';
+          foundCat = (catSelect && catSelect.value) ? catSelect.value : 'challan';
+          foundSubId = serviceCatalog[foundCat]?.subServices[0]?.id || 'traffic-challan';
           if (catSelect) catSelect.value = foundCat;
           onCategorySelectChange(foundSubId);
           return;
         }
 
         if (sParam.includes('challan') || sParam.includes('traffic')) {
-          foundCat = 'transport';
+          foundCat = 'challan';
           foundSubId = 'traffic-challan';
         } else if (sParam.includes('ration') || sParam.includes('ayushman') || sParam.includes('kisan') || sParam.includes('eshram') || sParam.includes('welfare') || sParam.includes('pension')) {
           foundCat = 'welfare';
