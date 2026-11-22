@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="शान साइबर कैफे एवं ई-सेवा केंद्र — सभी भारतीय सरकारी दस्तावेज़, प्रमाण पत्र, ऑनलाइन फॉर्म एवं डिजिटल सेवाएँ।" />
+    <meta name="theme-color" content="#0f172a" />
+    <title>शान साइबर कैफे एवं ई-सेवा — Shan Cyber Cafe &amp; E-Seva | arrai.in</title>
+    <link rel="icon" type="image/svg+xml" href="assets/app-icon.svg" />
+    <link rel="alternate icon" href="assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="assets/app-icon.svg" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      :root {
+        --eseva-gold: #f59e0b;
+        --eseva-emerald: #10b981;
+        --eseva-blue: #38bdf8;
+        --eseva-card-bg: rgba(15, 23, 42, 0.75);
+        --eseva-border: rgba(255, 255, 255, 0.12);
+      }
+      .eseva-hero {
+        text-align: center;
+        padding: 48px 16px 28px;
+        position: relative;
+      }
+      .eseva-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 16px;
+        border-radius: 999px;
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid rgba(245, 158, 11, 0.4);
+        color: #fde68a;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 16px;
+      }
+      .eseva-title {
+        font-size: clamp(2rem, 5vw, 3.2rem);
+        font-weight: 800;
+        line-height: 1.2;
+        background: linear-gradient(135deg, #ffffff 30%, #fde68a 70%, #f59e0b 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 14px;
+      }
+      .eseva-subtitle {
+        max-width: 680px;
+        margin: 0 auto 24px;
+        color: #94a3b8;
+        font-size: 1.05rem;
+        line-height: 1.6;
+      }
+      .eseva-quick-contact {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 32px;
+      }
+      .contact-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--eseva-border);
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: 0.9rem;
+        color: #e2e8f0;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+      .contact-chip:hover {
+        background: rgba(56, 189, 248, 0.15);
+        border-color: var(--eseva-blue);
+        color: #fff;
+      }
+
+      /* Categories Grid */
+      .eseva-grid-section {
+        max-width: 1200px;
+        margin: 0 auto 48px;
+        padding: 0 16px;
+      }
+      .section-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--eseva-border);
+        padding-bottom: 12px;
+      }
+      .section-label h2 {
+        font-size: 1.4rem;
+        color: #f8fafc;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .services-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+        margin-bottom: 36px;
+      }
+      .service-card {
+        background: var(--eseva-card-bg);
+        border: 1px solid var(--eseva-border);
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+        backdrop-filter: blur(10px);
+      }
+      .service-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--eseva-gold);
+        box-shadow: 0 12px 24px rgba(245, 158, 11, 0.12);
+      }
+      .service-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+      }
+      .service-icon {
+        font-size: 2rem;
+      }
+      .service-tag {
+        font-size: 0.72rem;
+        padding: 3px 8px;
+        border-radius: 4px;
+        background: rgba(56, 189, 248, 0.15);
+        color: var(--eseva-blue);
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .service-title {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 6px;
+      }
+      .service-desc {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        line-height: 1.45;
+        margin-bottom: 16px;
+        flex-grow: 1;
+      }
+      .service-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px dashed var(--eseva-border);
+        padding-top: 12px;
+        margin-top: 8px;
+      }
+      .service-fee {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #fde68a;
+      }
+      .service-fee small {
+        font-size: 0.75rem;
+        font-weight: 400;
+        color: #94a3b8;
+        display: block;
+      }
+      .btn-apply-card {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #0f172a;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        text-decoration: none;
+      }
+      .btn-apply-card:hover {
+        opacity: 0.92;
+      }
+
+      /* Application Form Section */
+      .form-section-container {
+        max-width: 900px;
+        margin: 0 auto 60px;
+        padding: 32px 24px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        border-radius: 16px;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+      }
+      .form-title-wrap {
+        text-align: center;
+        margin-bottom: 28px;
+      }
+      .form-title-wrap h2 {
+        font-size: 1.8rem;
+        color: #fff;
+        margin-bottom: 8px;
+      }
+      .form-title-wrap p {
+        color: #94a3b8;
+        font-size: 0.95rem;
+      }
+      .app-form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+      @media (max-width: 640px) {
+        .app-form-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .form-group-full {
+        grid-column: 1 / -1;
+      }
+      .form-label {
+        display: block;
+        font-size: 0.88rem;
+        font-weight: 600;
+        color: #e2e8f0;
+        margin-bottom: 6px;
+      }
+      .form-input, .form-select, .form-textarea {
+        width: 100%;
+        padding: 12px 14px;
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 8px;
+        color: #fff;
+        font-size: 0.95rem;
+        box-sizing: border-box;
+        transition: border-color 0.2s;
+      }
+      .form-input:focus, .form-select:focus, .form-textarea:focus {
+        border-color: var(--eseva-gold);
+        outline: none;
+        background: rgba(30, 41, 59, 1);
+      }
+      .file-upload-box {
+        border: 2px dashed rgba(245, 158, 11, 0.4);
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        background: rgba(245, 158, 11, 0.03);
+        cursor: pointer;
+      }
+      .file-upload-box:hover {
+        border-color: var(--eseva-gold);
+        background: rgba(245, 158, 11, 0.07);
+      }
+
+      /* Payment Box */
+      .payment-card-box {
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid var(--eseva-border);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+      .qr-flex-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+      .qr-image-wrapper {
+        text-align: center;
+        background: #fff;
+        padding: 12px;
+        border-radius: 12px;
+        width: 170px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      }
+      .qr-image-wrapper img {
+        width: 100%;
+        display: block;
+      }
+      .qr-image-wrapper span {
+        color: #0f172a;
+        font-weight: 700;
+        font-size: 0.78rem;
+        display: block;
+        margin-top: 6px;
+      }
+      .payment-info-list {
+        color: #cbd5e1;
+        font-size: 0.9rem;
+        line-height: 1.8;
+      }
+      .payment-info-list strong {
+        color: #fff;
+      }
+      .btn-submit-main {
+        width: 100%;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #fff;
+        font-size: 1.15rem;
+        font-weight: 700;
+        padding: 15px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        transition: transform 0.2s, opacity 0.2s;
+      }
+      .btn-submit-main:hover {
+        transform: translateY(-2px);
+        opacity: 0.95;
+      }
+      .success-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(8px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .modal-box {
+        background: #0f172a;
+        border: 1px solid var(--eseva-gold);
+        border-radius: 16px;
+        max-width: 500px;
+        width: 100%;
+        padding: 28px;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      }
+      .modal-box h3 {
+        font-size: 1.6rem;
+        color: #10b981;
+        margin-bottom: 10px;
+      }
+      .modal-box p {
+        color: #cbd5e1;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 20px;
+      }
+      .filter-tabs-bar {
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+        padding-bottom: 12px;
+        margin-bottom: 24px;
+        scrollbar-width: thin;
+      }
+      .filter-tab-btn {
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--eseva-border);
+        color: #cbd5e1;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .filter-tab-btn.active, .filter-tab-btn:hover {
+        background: var(--eseva-gold);
+        color: #0f172a;
+        font-weight: 700;
+        border-color: var(--eseva-gold);
+      }
+    </style>
+  </head>
+  <body class="community-page">
+    <div class="sparkles">✦　♡　✧　⋆　✦</div>
+    <div class="ambient one"></div>
+    <div class="ambient two"></div>
+
+    <nav class="floating-community-nav">
+      <a href="index.html" class="floating-nav-item"><i>⌂</i><span>Home</span></a>
+      <a href="eseva.html" class="floating-nav-item active"><i>🏛</i><span>ई-सेवा</span></a>
+      <a href="community.html" class="floating-nav-item"><i>☷</i><span>Community</span></a>
+      <a href="projects.html" class="floating-nav-item"><i>✦</i><span>Work</span></a>
+      <a href="contact.html" class="floating-nav-item"><i>✉</i><span>Contact</span></a>
+    </nav>
+
+    <header>
+      <a class="brand" href="index.html">ar<span>rai</span>.in <b>✦</b></a>
+      <button class="menu-button" aria-label="Open navigation" aria-expanded="false">☰</button>
+      <nav>
+        <a href="index.html">Home</a>
+        <a class="active" href="eseva.html" style="color:var(--eseva-gold); font-weight:700;">शान ई-सेवा</a>
+        <a href="detective.html">Detective Agency</a>
+        <a href="payments.html">Wallet</a>
+        <a href="netbanking.html">Net Banking</a>
+        <a href="stories.html">Stories &amp; Lore</a>
+        <a href="projects.html">Work</a>
+        <a href="music.html">Music</a>
+        <a href="community.html">Community</a>
+        <a href="contact.html">Contact</a>
+        <a href="auth.html">Login</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Hero Section -->
+      <section class="eseva-hero wrap">
+        <div class="eseva-badge">
+          <span>🇮🇳</span> डिजिटल इंडिया &amp; ई-गवर्नेंस सेवा केंद्र
+        </div>
+        <h1 class="eseva-title">शान साइबर कैफे एवं ई-सेवा केंद्र</h1>
+        <p class="eseva-subtitle">
+          Shan Cyber Cafe &amp; E-Seva — भारत सरकार व राज्य सरकार के सभी ऑनलाइन आवेदन, पहचान पत्र, प्रमाण पत्र, परीक्षा फॉर्म और बिल भुगतान की विश्वसनीय एवं त्वरित सेवा।
+        </p>
+
+        <div class="eseva-quick-contact">
+          <a class="contact-chip" href="tel:+917009446821">
+            <span>📞</span> <strong>हेल्पलाइन:</strong> +91 7009446821
+          </a>
+          <a class="contact-chip" href="mailto:abhishekrai6897@gmail.com">
+            <span>✉️</span> <strong>ईमेल:</strong> abhishekrai6897@gmail.com
+          </a>
+          <a class="contact-chip" href="#apply-section" style="background: rgba(245, 158, 11, 0.2); border-color: var(--eseva-gold); color:#fde68a; font-weight:700;">
+            <span>⚡</span> नया आवेदन करें (Apply Online)
+          </a>
+        </div>
+      </section>
+
+      <!-- Services List Section -->
+      <section class="eseva-grid-section">
+        <div class="section-label">
+          <h2><span>📑</span> उपलब्ध ई-सेवाएँ व सरकारी दस्तावेज़ (Available Services)</h2>
+          <span style="font-size:0.85rem; color:#94a3b8;">सभी शुल्क पूर्णतः समावेशी हैं</span>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs-bar" id="categoryTabs">
+          <button class="filter-tab-btn active" data-cat="all">सभी सेवाएँ (All)</button>
+          <button class="filter-tab-btn" data-cat="identity">🆔 पहचान पत्र (Identity)</button>
+          <button class="filter-tab-btn" data-cat="certificate">📜 प्रमाण पत्र (Certificates)</button>
+          <button class="filter-tab-btn" data-cat="transport">🚗 वाहन व सारथी (Transport)</button>
+          <button class="filter-tab-btn" data-cat="welfare">🌾 सरकारी योजनाएँ (Welfare)</button>
+          <button class="filter-tab-btn" data-cat="finance">💼 PF व वित्तीय (EPFO &amp; Banking)</button>
+          <button class="filter-tab-btn" data-cat="exam">🎓 ऑनलाइन फॉर्म व प्रवेश पत्र (Exams)</button>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="services-card-grid" id="servicesGrid">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- Online Application Form Section -->
+      <section class="form-section-container" id="apply-section">
+        <div class="form-title-wrap">
+          <div class="eseva-badge" style="background:rgba(16, 185, 129, 0.15); border-color:rgba(16, 185, 129, 0.4); color:#6ee7b7;">
+            ⚡ त्वरित ऑनलाइन आवेदन
+          </div>
+          <h2>ऑनलाइन सेवा पंजीकरण फ़ॉर्म (Registration Form)</h2>
+          <p>अपनी सेवा चुनें, आवश्यक जानकारी भरें और सहायक दस्तावेज़ अपलोड करें। आवेदन तुरंत प्रक्रिया में ले लिया जाएगा।</p>
+        </div>
+
+        <form id="esevaApplicationForm" onsubmit="handleEsevaSubmit(event)">
+          <div class="app-form-grid">
+            <!-- Service Selection -->
+            <div class="form-group-full">
+              <label class="form-label" for="selectedService">चयनित सेवा (Select Desired Service) *</label>
+              <select class="form-select" id="selectedService" required onchange="updateServicePrice()">
+                <option value="" disabled selected>-- सेवा का चयन करें --</option>
+                <optgroup label="🆔 पहचान पत्र सेवाएँ (Identity Documents)">
+                  <option value="PVC Aadhaar Card Order" data-price="100">आधार कार्ड PVC ऑर्डर व प्रिन्ट - ₹100</option>
+                  <option value="Aadhaar Update Assistance" data-price="120">आधार कार्ड सुधार / पता अपडेट - ₹120</option>
+                  <option value="New PAN Card" data-price="250">नया पैन कार्ड (New PAN Application) - ₹250</option>
+                  <option value="PAN Card Correction/Reprint" data-price="200">पैन कार्ड संशोधन / पुनः प्राप्ति - ₹200</option>
+                  <option value="Voter ID Card Form 6" data-price="120">नया वोटर आईडी कार्ड आवेदन (Form 6) - ₹120</option>
+                  <option value="Voter ID Correction" data-price="100">वोटर कार्ड संशोधन (Form 8) - ₹100</option>
+                  <option value="Passport Seva Application" data-price="2100">पासपोर्ट नया आवेदन (Passport Seva) - ₹2,100</option>
+                </optgroup>
+                <optgroup label="📜 प्रमाण पत्र सेवाएँ (Certificates &amp; Revenue)">
+                  <option value="Income Certificate (आय प्रमाण पत्र)" data-price="150">आय प्रमाण पत्र (Income Certificate) - ₹150</option>
+                  <option value="Caste Certificate (जाति प्रमाण पत्र)" data-price="150">जाति प्रमाण पत्र (Caste Certificate) - ₹150</option>
+                  <option value="Domicile Certificate (निवास प्रमाण पत्र)" data-price="150">निवास प्रमाण पत्र (Domicile Certificate) - ₹150</option>
+                  <option value="Birth / Death Certificate" data-price="200">जन्म / मृत्यु प्रमाण पत्र - ₹200</option>
+                  <option value="Police Character Certificate" data-price="250">चरित्र प्रमाण पत्र (Police Verification) - ₹250</option>
+                </optgroup>
+                <optgroup label="🚗 वाहन व सारथी (Transport &amp; Driving)">
+                  <option value="Learning Licence Application" data-price="450">लर्निंग ड्राइविंग लाइसेंस (LL Online) - ₹450</option>
+                  <option value="Permanent DL Appointment & Slot" data-price="650">पक्का ड्राइविंग लाइसेंस स्लॉट बुकिंग - ₹650</option>
+                  <option value="Vehicle RC Renewal / Transfer" data-price="550">वाहन आरसी ट्रांसफर / नवीनीकरण - ₹550</option>
+                </optgroup>
+                <optgroup label="🌾 सरकारी योजनाएँ व कल्याण (Government Schemes)">
+                  <option value="Ayushman Bharat Golden Card" data-price="100">आयुष्मान भारत हेल्थ कार्ड (₹5 लाख बीमा) - ₹100</option>
+                  <option value="PM-Kisan Registration & e-KYC" data-price="90">पीएम किसान सम्मान निधि ई-केवाईसी / पंजीकरण - ₹90</option>
+                  <option value="E-Shram Card Registration" data-price="80">ई-श्रम कार्ड (E-Shram Card) - ₹80</option>
+                  <option value="Ration Card Addition / Modification" data-price="180">राशन कार्ड में नाम जोड़ना / नया राशन कार्ड - ₹180</option>
+                  <option value="Pension Scheme Online Apply" data-price="150">वृद्धा / विधवा / दिव्यांग पेंशन आवेदन - ₹150</option>
+                </optgroup>
+                <optgroup label="💼 EPFO, PF व बैंकिंग">
+                  <option value="PF Full Withdrawal (Form 19 & 10C)" data-price="350">पीएफ पूरा पैसा निकालें (Full Withdrawal) - ₹350</option>
+                  <option value="PF Advance Claim (Form 31)" data-price="250">पीएफ एडवांस क्लेम (Advance Form 31) - ₹250</option>
+                  <option value="UAN Activation & KYC Link" data-price="80">UAN एक्टिवेशन व पैन-आधार केवाईसी - ₹80</option>
+                </optgroup>
+                <optgroup label="🎓 सरकारी नौकरी व परीक्षा फॉर्म (Exam &amp; Jobs)">
+                  <option value="Government Job Online Form" data-price="150">सरकारी नौकरी ऑनलाइन फॉर्म फिलिंग (SSC/Railway/Police आदि) - ₹150</option>
+                  <option value="Admit Card & Center Details" data-price="50">एडमिट कार्ड / हॉल टिकट डाउनलोड व प्रिन्ट - ₹50</option>
+                  <option value="Scholarship Application" data-price="150">छात्रवृत्ति आवेदन (UP/National Scholarship) - ₹150</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <!-- Applicant Personal Details -->
+            <div>
+              <label class="form-label" for="applicantName">आवेदक का पूरा नाम (Full Name) *</label>
+              <input class="form-input" id="applicantName" type="text" placeholder="आधार कार्ड के अनुसार नाम" required />
+            </div>
+
+            <div>
+              <label class="form-label" for="guardianName">पिता / पति का नाम (Father / Husband Name) *</label>
+              <input class="form-input" id="guardianName" type="text" placeholder="पिता या पति का नाम" required />
+            </div>
+
+            <div>
+              <label class="form-label" for="dob">जन्म तिथि (Date of Birth) *</label>
+              <input class="form-input" id="dob" type="date" required />
+            </div>
+
+            <div>
+              <label class="form-label" for="gender">लिंग (Gender) *</label>
+              <select class="form-select" id="gender" required>
+                <option value="Male">पुरुष (Male)</option>
+                <option value="Female">महिला (Female)</option>
+                <option value="Other">अन्य (Other)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="form-label" for="phone">मोबाइल नंबर (WhatsApp Number) *</label>
+              <input class="form-input" id="phone" type="tel" pattern="[0-9]{10}" placeholder="10 अंकों का मोबाइल नंबर" required />
+            </div>
+
+            <div>
+              <label class="form-label" for="email">ईमेल आईडी (Email Address)</label>
+              <input class="form-input" id="email" type="email" placeholder="example@mail.com" />
+            </div>
+
+            <!-- Full Address -->
+            <div class="form-group-full">
+              <label class="form-label" for="address">स्थाई पता (Complete Address with Village/Ward/City) *</label>
+              <textarea class="form-textarea" id="address" rows="2" placeholder="मकान नंबर, गली/मोहल्ला, गाँव/शहर, जिला, राज्य" required></textarea>
+            </div>
+
+            <div>
+              <label class="form-label" for="pincode">पिन कोड (Pincode) *</label>
+              <input class="form-input" id="pincode" type="text" pattern="[0-9]{6}" placeholder="6 अंकों का पिन कोड" required />
+            </div>
+
+            <div>
+              <label class="form-label" for="existingIdNum">संबंधित आईडी / पुराना नंबर (यदि कोई हो)</label>
+              <input class="form-input" id="existingIdNum" type="text" placeholder="आधार / पैन / आवेदन नंबर (वैकल्पिक)" />
+            </div>
+
+            <!-- Supporting Documents Upload -->
+            <div class="form-group-full">
+              <label class="form-label">सपोर्टिंग दस्तावेज़ (Upload Supporting Documents: आधार, फोटो, या पूर्व रसीद)</label>
+              <div class="file-upload-box" onclick="document.getElementById('docFiles').click()">
+                <div style="font-size:2rem; margin-bottom:8px;">📁</div>
+                <strong style="color:#fff; display:block; margin-bottom:4px;">क्लिक करके फ़ाइल चुनें या यहाँ ड्रैग करें</strong>
+                <span style="font-size:0.8rem; color:#94a3b8;">(PDF, JPG, PNG - अधिकतम 10MB)</span>
+                <input type="file" id="docFiles" multiple accept=".pdf,image/*" style="display:none;" onchange="handleFileSelect(event)" />
+              </div>
+              <div id="fileListNotice" style="margin-top:8px; font-size:0.85rem; color:#38bdf8;"></div>
+            </div>
+
+            <!-- Notes -->
+            <div class="form-group-full">
+              <label class="form-label" for="extraInstructions">कोई विशेष निर्देश / टिप्पणी (Additional Instructions)</label>
+              <textarea class="form-textarea" id="extraInstructions" rows="2" placeholder="यदि कोई विशेष बदलाव या अनुरोध हो तो यहाँ लिखें..."></textarea>
+            </div>
+          </div>
+
+          <!-- Payment Box -->
+          <div class="payment-card-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+              <div>
+                <span class="eseva-badge" style="background:rgba(56, 189, 248, 0.15); border-color:rgba(56, 189, 248, 0.4); color:#7dd3fc; margin-bottom:4px;">
+                  💳 सुरक्षित भुगतान गेटवे
+                </span>
+                <h3 style="color:#fff; font-size:1.3rem; margin:0;">कुल सेवा शुल्क (Total Inclusive Fee)</h3>
+              </div>
+              <div style="text-align:right;">
+                <span style="font-size:2rem; font-weight:900; color:#fde68a;" id="displayTotalFee">₹0</span>
+                <small style="display:block; color:#94a3b8; font-size:0.75rem;">(सभी टैक्स व पोर्टल शुल्क सम्मिलित)</small>
+              </div>
+            </div>
+
+            <div class="qr-flex-box">
+              <div class="qr-image-wrapper">
+                <!-- Direct UPI QR Code generated dynamically -->
+                <img id="dynamicUpiQr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=7009446821@upi&pn=Shan%20Cyber%20Cafe&cu=INR" alt="UPI QR Code" />
+                <span>SCAN &amp; PAY (GPay/PhonePe/Paytm)</span>
+              </div>
+              <div class="payment-info-list">
+                <p><strong>UPI ID:</strong> <code style="background:rgba(0,0,0,0.4); padding:3px 8px; border-radius:4px; color:#38bdf8;">7009446821@upi</code></p>
+                <p><strong>दुकान का नाम:</strong> शान साइबर कैफे एवं ई-सेवा (Shan Cyber Cafe)</p>
+                <p><strong>सम्पर्क:</strong> +91 7009446821</p>
+                <div style="margin-top:10px;">
+                  <label class="form-label" for="utrNumber">भुगतान के बाद UPI Transaction ID / UTR भरें *</label>
+                  <input class="form-input" id="utrNumber" type="text" placeholder="12 अंकों का UTR / Transaction No." required style="max-width:320px;" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn-submit-main" id="submitBtn">
+            <span>🚀</span> आवेदन सबमिट करें और रसीद ईमेल पर भेजें
+          </button>
+        </form>
+      </section>
+    </main>
+
+    <!-- Success Modal -->
+    <div class="success-modal" id="successModal">
+      <div class="modal-box">
+        <div style="font-size:3rem; margin-bottom:12px;">✅</div>
+        <h3>आवेदन सफलतापूर्वक दर्ज हुआ!</h3>
+        <p id="successMessageDetail">
+          शान साइबर कैफे में आपका अनुरोध प्राप्त हो गया है। सभी विवरण व दस्तावेज़ की प्रति हमारे मुख्य ईमेल <strong>abhishekrai6897@gmail.com</strong> पर भेज दी गई है।
+        </p>
+        <p style="font-size:0.85rem; color:#94a3b8;">
+          आपका ट्रैकिंग रेफरेंस: <strong id="trackingRefCode" style="color:#fde68a;"></strong>
+        </p>
+        <div style="display:flex; gap:12px; justify-content:center; margin-top:20px;">
+          <a class="button primary" id="openEmailClientBtn" href="#" style="background:var(--eseva-gold); color:#0f172a; font-weight:700;">ईमेल रसीद देखें / भेजें</a>
+          <button class="button" onclick="closeSuccessModal()">बंद करें</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Catalog of all Indian Citizen Services
+      const servicesList = [
+        // Identity
+        { id: "pvc-aadhaar", title: "पीवीसी आधार कार्ड (PVC Aadhaar)", category: "identity", fee: 100, icon: "🪪", desc: "ओरिजिनल वाटरप्रूफ पीवीसी स्मार्ट आधार कार्ड ऑनलाइन आर्डर व घर तक डिलीवरी।" },
+        { id: "aadhaar-update", title: "आधार कार्ड सुधार व पता अपडेट", category: "identity", fee: 120, icon: "📝", desc: "आधार में नाम, जन्मतिथि, पता या मोबाइल नंबर सुधार की ऑनलाइन सुविधा।" },
+        { id: "new-pan", title: "नया पैन कार्ड (New PAN Card)", category: "identity", fee: 250, icon: "💳", desc: "NSDL/UTIITSL से नया पैन कार्ड, 48 घंटे में ई-पैन और 10 दिन में भौतिक कार्ड।" },
+        { id: "pan-correction", title: "पैन कार्ड संशोधन (PAN Correction)", category: "identity", fee: 200, icon: "🔄", desc: "पैन कार्ड में पिता का नाम, फोटो, हस्ताक्षर या जन्मतिथि में बदलाव।" },
+        { id: "voter-new", title: "नया वोटर कार्ड (Voter ID Form 6)", category: "identity", fee: 120, icon: "🗳️", desc: "18 वर्ष पूर्ण होने पर भारतीय निर्वाचन आयोग में नया मतदाता पंजीकरण।" },
+        { id: "voter-correction", title: "वोटर कार्ड संशोधन (Form 8)", category: "identity", fee: 100, icon: "✏️", desc: "मतदाता पहचान पत्र में नाम, फोटो या बूथ शिफ्टिंग सुधार।" },
+        { id: "passport", title: "पासपोर्ट सेवा (Passport Online)", category: "identity", fee: 2100, icon: "✈️", desc: "नया सामान्य पासपोर्ट पंजीकरण, अपॉइंटमेंट और दस्तावेज सत्यापन।" },
+
+        // Certificates
+        { id: "income-cert", title: "आय प्रमाण पत्र (Income Certificate)", category: "certificate", fee: 150, icon: "📄", desc: "तहसील / ई-डिस्ट्रिक्ट द्वारा सत्यापित अधिकृत आय प्रमाण पत्र।" },
+        { id: "caste-cert", title: "जाति प्रमाण पत्र (Caste Certificate)", category: "certificate", fee: 150, icon: "📜", desc: "ओबीसी, एससी, एसटी या ईडब्ल्यूएस (EWS) जाति प्रमाण पत्र ऑनलाइन आवेदन।" },
+        { id: "domicile-cert", title: "निवास प्रमाण पत्र (Domicile/Niwas)", category: "certificate", fee: 150, icon: "🏡", desc: "मूल निवास व स्थायी निवासी प्रमाण पत्र (सभी सरकारी नौकरियों के लिए मान्य)।" },
+        { id: "birth-cert", title: "जन्म / मृत्यु प्रमाण पत्र", category: "certificate", fee: 200, icon: "👶", desc: "नगर निगम व पंचायत द्वारा जारी जन्म एवं मृत्यु प्रमाण पत्र ऑनलाइन।" },
+        { id: "character-cert", title: "चरित्र प्रमाण पत्र (Police Verification)", category: "certificate", fee: 250, icon: "🛡️", desc: "सरकारी व निजी नौकरियों के लिए पुलिस चरित्र सत्यापन प्रमाण पत्र।" },
+
+        // Transport
+        { id: "learning-licence", title: "लर्निंग ड्राइविंग लाइसेंस (LL Online)", category: "transport", fee: 450, icon: "🚗", desc: "सारथी परिवहन पोर्टल पर बिना आरटीओ गए ऑनलाइन लर्निंग लाइसेंस टेस्ट व अप्रूवल।" },
+        { id: "permanent-dl", title: "पक्का ड्राइविंग लाइसेंस स्लॉट बुकिंग", category: "transport", fee: 650, icon: "🏍️", desc: "स्थायी डीएल के लिए स्लॉट बुकिंग, आरटीओ फीस व दस्तावेज सबमिशन।" },
+        { id: "rc-transfer", title: "वाहन आरसी ट्रांसफर व रिन्युअल", category: "transport", fee: 550, icon: "🚙", desc: "गाड़ी की आरसी का नाम ट्रांसफर, एनओसी, फिटनेस व हाइपोथिकेशन हटाना।" },
+
+        // Welfare
+        { id: "ayushman-card", title: "आयुष्मान भारत गोल्डन कार्ड", category: "welfare", fee: 100, icon: "🏥", desc: "₹5 लाख तक के मुफ्त इलाज के लिए अधिकृत आयुष्मान कार्ड डाउनलोड व पंजीकरण।" },
+        { id: "pm-kisan", title: "पीएम किसान ई-केवाईसी व आवेदन", category: "welfare", fee: 90, icon: "🌾", desc: "सालाना ₹6000 की किस्त हेतु नया पंजीकरण व फिंगरप्रिंट/ओटीपी ई-केवाईसी।" },
+        { id: "eshram-card", title: "ई-श्रम कार्ड (E-Shram Card)", category: "welfare", fee: 80, icon: "👷", desc: "असंगठित क्षेत्र के कामगारों के लिए सरकारी बीमा व ई-श्रम पंजीकरण।" },
+        { id: "ration-card", title: "राशन कार्ड में नाम जोड़ना / नया", category: "welfare", fee: 180, icon: "🌾", desc: "राशन कार्ड में नए बच्चे/सदस्य का नाम जोड़ना, यूनिट ट्रांसफर या नया कार्ड।" },
+        { id: "pension-apply", title: "पेंशन योजना (वृद्धा/विधवा/दिव्यांग)", category: "welfare", fee: 150, icon: "👵", desc: "समाज कल्याण विभाग की पेंशन योजनाओं का ऑनलाइन सत्यापन व फॉर्म भरना।" },
+
+        // Finance & EPFO
+        { id: "pf-full-withdrawal", title: "पीएफ पूरा निकासी (Form 19 & 10C)", category: "finance", fee: 350, icon: "💰", desc: "नौकरी छोड़ने के बाद पीएफ और पेंशन का पूरा पैसा बैंक खाते में पाएं।" },
+        { id: "pf-advance", title: "पीएफ एडवांस निकासी (Form 31)", category: "finance", fee: 250, icon: "💼", desc: "इमरजेंसी, बीमारी या मकान के लिए पीएफ एडवांस तुरंत क्लेम करें।" },
+        { id: "uan-kyc", title: "UAN एक्टिवेशन व बैंक केवाईसी लिंक", category: "finance", fee: 80, icon: "🔗", desc: "यूनिवर्सल अकाउंट नंबर को चालू करना और पैन/बैंक खाता जोड़ना।" },
+
+        // Exam & Jobs
+        { id: "job-form", title: "सरकारी नौकरी ऑनलाइन फॉर्म (SSC/Railway)", category: "exam", fee: 150, icon: "🎓", desc: "सभी केंद्रीय व राज्य स्तरीय सरकारी भर्तियों के फॉर्म बिना गलती के भरवाएं।" },
+        { id: "admit-card", title: "एडमिट कार्ड व परीक्षा सेंटर स्लिप", category: "exam", fee: 50, icon: "🖨️", desc: "रंगीन प्रिंटआउट, रोल नंबर ढूंढना और परीक्षा दिशा-निर्देश।" },
+        { id: "scholarship", title: "छात्रवृत्ति (Scholarship Form)", category: "exam", fee: 150, icon: "📚", desc: "प्री-मैट्रिक, पोस्ट-मैट्रिक व दशमोत्तर छात्रवृत्ति ऑनलाइन आवेदन।" }
+      ];
+
+      function renderServicesGrid(filterCat = 'all') {
+        const grid = document.getElementById('servicesGrid');
+        grid.innerHTML = '';
+        const filtered = filterCat === 'all' ? servicesList : servicesList.filter(s => s.category === filterCat);
+
+        filtered.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'service-card';
+          card.innerHTML = `
+            <div>
+              <div class="service-header">
+                <span class="service-icon">${item.icon}</span>
+                <span class="service-tag">${item.category}</span>
+              </div>
+              <h3 class="service-title">${item.title}</h3>
+              <p class="service-desc">${item.desc}</p>
+            </div>
+            <div class="service-footer">
+              <div class="service-fee">
+                ₹${item.fee}
+                <small>कुल देय शुल्क</small>
+              </div>
+              <button class="btn-apply-card" onclick="selectServiceForApply('${item.title}', ${item.fee})">
+                आवेदन करें ➔
+              </button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+
+      // Filter Tabs Handling
+      document.getElementById('categoryTabs').addEventListener('click', (e) => {
+        if (e.target.classList.contains('filter-tab-btn')) {
+          document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          renderServicesGrid(e.target.getAttribute('data-cat'));
+        }
+      });
+
+      function selectServiceForApply(serviceTitle, price) {
+        const select = document.getElementById('selectedService');
+        for (let i = 0; i < select.options.length; i++) {
+          if (select.options[i].text.includes(serviceTitle) || select.options[i].value.includes(serviceTitle)) {
+            select.selectedIndex = i;
+            break;
+          }
+        }
+        updateServicePrice();
+        document.getElementById('apply-section').scrollIntoView({ behavior: 'smooth' });
+      }
+
+      function updateServicePrice() {
+        const select = document.getElementById('selectedService');
+        const selectedOpt = select.options[select.selectedIndex];
+        const price = selectedOpt ? selectedOpt.getAttribute('data-price') : 0;
+        document.getElementById('displayTotalFee').innerText = price ? `₹${price}` : '₹0';
+        
+        // Update QR code amount
+        if (price) {
+          const upiUrl = `upi://pay?pa=7009446821@upi&pn=Shan%20Cyber%20Cafe&am=${price}&cu=INR&tn=${encodeURIComponent(select.value)}`;
+          document.getElementById('dynamicUpiQr').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUrl)}`;
+        }
+      }
+
+      let selectedFilesList = [];
+      function handleFileSelect(e) {
+        selectedFilesList = Array.from(e.target.files);
+        const notice = document.getElementById('fileListNotice');
+        if (selectedFilesList.length > 0) {
+          notice.innerText = `✓ चयनित फ़ाइलें: ${selectedFilesList.map(f => f.name).join(', ')}`;
+        } else {
+          notice.innerText = '';
+        }
+      }
+
+      function handleEsevaSubmit(e) {
+        e.preventDefault();
+        const refId = 'SHAN-' + Math.floor(100000 + Math.random() * 900000);
+        const service = document.getElementById('selectedService').value;
+        const name = document.getElementById('applicantName').value;
+        const guardian = document.getElementById('guardianName').value;
+        const dob = document.getElementById('dob').value;
+        const gender = document.getElementById('gender').value;
+        const phone = document.getElementById('phone').value;
+        const email = document.getElementById('email').value || 'Not provided';
+        const address = document.getElementById('address').value;
+        const pincode = document.getElementById('pincode').value;
+        const existingId = document.getElementById('existingIdNum').value || 'N/A';
+        const utr = document.getElementById('utrNumber').value;
+        const fee = document.getElementById('displayTotalFee').innerText;
+        const notes = document.getElementById('extraInstructions').value || 'None';
+        const fileNames = selectedFilesList.map(f => f.name).join(', ') || 'No files attached';
+
+        const subject = encodeURIComponent(`[ई-सेवा नया आवेदन #${refId}] ${service} - ${name}`);
+        const body = encodeURIComponent(
+          `शान साइबर कैफे एवं ई-सेवा केंद्र (Shan Cyber Cafe & E-Seva)\n` +
+          `============================================================\n` +
+          `नया सेवा आवेदन रसीद (Reference: ${refId})\n` +
+          `============================================================\n\n` +
+          `• चयनित सेवा: ${service}\n` +
+          `• कुल भुगतान शुल्क: ${fee}\n` +
+          `• UPI UTR / Transaction No: ${utr}\n\n` +
+          `--- आवेदक विवरण (Applicant Info) ---\n` +
+          `• पूरा नाम: ${name}\n` +
+          `• पिता/पति का नाम: ${guardian}\n` +
+          `• जन्म तिथि: ${dob}\n` +
+          `• लिंग: ${gender}\n` +
+          `• मोबाइल नंबर: ${phone}\n` +
+          `• ईमेल: ${email}\n` +
+          `• पता: ${address}\n` +
+          `• पिन कोड: ${pincode}\n` +
+          `• पूर्व आईडी/रजिस्ट्रेशन नंबर: ${existingId}\n\n` +
+          `--- दस्तावेज व निर्देश ---\n` +
+          `• संलग्न दस्तावेज: ${fileNames}\n` +
+          `• विशेष निर्देश: ${notes}\n\n` +
+          `---\n` +
+          `आवेदन समय: ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}\n` +
+          `हेल्पलाइन: +91 7009446821 | संचालक: शान साइबर कैफे`
+        );
+
+        const mailtoLink = `mailto:abhishekrai6897@gmail.com?subject=${subject}&body=${body}`;
+
+        // Show Modal
+        document.getElementById('trackingRefCode').innerText = refId;
+        document.getElementById('openEmailClientBtn').href = mailtoLink;
+        document.getElementById('successModal').style.display = 'flex';
+
+        // Also trigger mailto directly
+        window.open(mailtoLink, '_blank');
+      }
+
+      function closeSuccessModal() {
+        document.getElementById('successModal').style.display = 'none';
+        document.getElementById('esevaApplicationForm').reset();
+        document.getElementById('displayTotalFee').innerText = '₹0';
+        document.getElementById('fileListNotice').innerText = '';
+        selectedFilesList = [];
+      }
+
+      // Initialize
+      renderServicesGrid();
+    </script>
+  </body>
+</html>
