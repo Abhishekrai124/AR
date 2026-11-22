@@ -623,6 +623,17 @@
               </select>
             </div>
 
+            <!-- Dynamic Customized Service Specific Fields -->
+            <div id="dynamicServiceFieldsContainer" class="form-group-full" style="display:none; background:rgba(14, 165, 233, 0.06); border:1px dashed #0284c7; border-radius:12px; padding:16px; margin: 4px 0 10px 0;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                <span style="font-size:1.1rem;">⚙️</span>
+                <strong style="color:#38bdf8; font-size:0.92rem;" id="dynamicFieldsTitle">सेवा विशिष्ट अतिरिक्त जानकारी (Service Specific Details)</strong>
+              </div>
+              <div class="app-form-grid" id="dynamicFieldsGrid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px;">
+                <!-- Injected via JavaScript -->
+              </div>
+            </div>
+
             <!-- Applicant Personal Details -->
             <div>
               <label class="form-label" for="applicantName">
@@ -682,7 +693,8 @@
               <label class="form-label" for="pincode">
                 <span id="lblPincode">पिन कोड / Zip Code</span> *
               </label>
-              <input class="form-input" id="pincode" type="text" placeholder="Pincode or Postal Code" required />
+              <input class="form-input" id="pincode" type="text" placeholder="6-digit Pincode" required autocomplete="postal-code" />
+              <div id="pincodeStatus" style="font-size:0.8rem; margin-top:4px;"></div>
             </div>
 
             <div>
@@ -974,6 +986,7 @@
           select.add(opt);
         }
 
+        renderDynamicServiceFields();
         recalculateFees();
 
         // Smooth scroll right to the form and focus on applicant name
@@ -984,7 +997,135 @@
       }
 
       function onServiceDropdownChange() {
+        renderDynamicServiceFields();
         recalculateFees();
+      }
+
+      function renderDynamicServiceFields() {
+        const select = document.getElementById('selectedService');
+        const selectedOpt = select.options[select.selectedIndex];
+        const cat = selectedOpt ? selectedOpt.getAttribute('data-cat') : '';
+        const serviceVal = (select.value || '').toLowerCase();
+        const container = document.getElementById('dynamicServiceFieldsContainer');
+        const grid = document.getElementById('dynamicFieldsGrid');
+
+        if (!select.value) {
+          if (container) container.style.display = 'none';
+          return;
+        }
+
+        let html = '';
+        if (serviceVal.includes('passport')) {
+          html = `
+            <div>
+              <label class="form-label">आवेदन प्रकार (Passport Application Type) *</label>
+              <select class="form-select dynamic-field" data-label="Passport Type" required>
+                <option value="Fresh (नया सामान्य)">Fresh (नया सामान्य)</option>
+                <option value="Re-issue / Renewal (नवीनीकरण)">Re-issue / Renewal (नवीनीकरण)</option>
+                <option value="Tatkaal Fast-Track (तत्काल)">Tatkaal Fast-Track (तत्काल)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">नजदीकी पुलिस थाना (Police Station) *</label>
+              <input class="form-input dynamic-field" data-label="Police Station" type="text" placeholder="e.g. Kotwali / Cantt PS" required />
+            </div>
+            <div>
+              <label class="form-label">पुराना पासपोर्ट नंबर (यदि हो)</label>
+              <input class="form-input dynamic-field" data-label="Previous Passport No" type="text" placeholder="Old Passport No (If renewal)" />
+            </div>
+          `;
+        } else if (cat === 'exam' || serviceVal.includes('job') || serviceVal.includes('upsc') || serviceVal.includes('railway') || serviceVal.includes('ssc')) {
+          html = `
+            <div>
+              <label class="form-label">उच्चतम योग्यता (Highest Qualification) *</label>
+              <select class="form-select dynamic-field" data-label="Highest Qualification" required>
+                <option value="10th High School">10वीं (10th High School)</option>
+                <option value="12th Intermediate">12वीं (12th Intermediate)</option>
+                <option value="Diploma / ITI">डिप्लोमा / ITI</option>
+                <option value="Graduation (BA/BSc/BCom/BTech)">स्नातक (Graduation)</option>
+                <option value="Post Graduation (MA/MSc/MTech)">परास्नातक (Post Graduation)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">श्रेणी / आरक्षण वर्ग (Category) *</label>
+              <select class="form-select dynamic-field" data-label="Reservation Category" required>
+                <option value="General / UR">सामान्य (General / UR)</option>
+                <option value="OBC (Non-Creamy Layer)">ओबीसी (OBC Non-Creamy)</option>
+                <option value="EWS (Economically Weaker)">EWS (ईडब्ल्यूएस)</option>
+                <option value="SC (Scheduled Caste)">अनुसूचित जाति (SC)</option>
+                <option value="ST (Scheduled Tribe)">अनुसूचित जनजाति (ST)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">रोल नंबर / OTR ID (यदि उपलब्ध हो)</label>
+              <input class="form-input dynamic-field" data-label="OTR / Registration No" type="text" placeholder="OTR / Registration ID (Optional)" />
+            </div>
+          `;
+        } else if (cat === 'transport' || serviceVal.includes('licence') || serviceVal.includes('rc')) {
+          html = `
+            <div>
+              <label class="form-label">लाइसेंस प्रकार (Licence Stage) *</label>
+              <select class="form-select dynamic-field" data-label="Licence Stage" required>
+                <option value="Learning Licence (LL नया)">लर्निंग लाइसेंस (LL नया)</option>
+                <option value="Permanent DL (पक्का लाइसेंस)">स्थाई ड्राइविंग लाइसेंस (Permanent DL)</option>
+                <option value="Renewal / Address Change">लाइसेंस नवीनीकरण / पता परिवर्तन</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">वाहन श्रेणी (Vehicle Class) *</label>
+              <select class="form-select dynamic-field" data-label="Vehicle Class" required>
+                <option value="MCWG (Bike / Scooter Only)">MCWG (मोटरसाइकिल / स्कूटर)</option>
+                <option value="LMV (Car / 4-Wheeler Only)">LMV (कार / चौपहिया)</option>
+                <option value="MCWG + LMV (Bike + Car Both)">MCWG + LMV (बाइक + कार दोनों)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">मौजूदा LL या DL नंबर (यदि हो)</label>
+              <input class="form-input dynamic-field" data-label="Existing LL/DL No" type="text" placeholder="Existing Licence No." />
+            </div>
+          `;
+        } else if (cat === 'certificate' || serviceVal.includes('certificate') || serviceVal.includes('प्रमाण पत्र')) {
+          html = `
+            <div>
+              <label class="form-label">वार्षिक पारिवारिक आय (Annual Income) *</label>
+              <input class="form-input dynamic-field" data-label="Family Annual Income" type="number" placeholder="₹ में अनुमानित वार्षिक आय" required />
+            </div>
+            <div>
+              <label class="form-label">जाति / उप-जाति (Caste / Sub-caste)</label>
+              <input class="form-input dynamic-field" data-label="Sub-Caste" type="text" placeholder="जैसे: राजपूत, मौर्य, यादव, आदि" />
+            </div>
+            <div>
+              <label class="form-label">राशन कार्ड या परिवार आईडी</label>
+              <input class="form-input dynamic-field" data-label="Ration / Family ID" type="text" placeholder="Ration Card No (Optional)" />
+            </div>
+          `;
+        } else if (serviceVal.includes('aadhaar') || serviceVal.includes('pan')) {
+          html = `
+            <div>
+              <label class="form-label">अपडेट या सेवा का प्रकार *</label>
+              <select class="form-select dynamic-field" data-label="Update Type" required>
+                <option value="Address Update (पता सुधार)">पता सुधार (Address Update)</option>
+                <option value="Mobile / Email Linkage">मोबाइल / ईमेल लिंकेज सहायता</option>
+                <option value="Name / DOB Correction">नाम या जन्मतिथि संशोधन</option>
+                <option value="PVC Reprint / Delivery">पीवीसी स्मार्ट कार्ड प्रिंट</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">मौजूदा कार्ड नंबर (अंतिम 4 अंक)</label>
+              <input class="form-input dynamic-field" data-label="Last 4 Digits" type="text" maxlength="4" placeholder="XXXX" />
+            </div>
+          `;
+        } else {
+          html = `
+            <div>
+              <label class="form-label">आवश्यक सेवा विवरण (Specific Requirement)</label>
+              <input class="form-input dynamic-field" data-label="Requirement Details" type="text" placeholder="सेवा से जुड़ा कोई खास विवरण" />
+            </div>
+          `;
+        }
+
+        if (grid) grid.innerHTML = html;
+        if (container) container.style.display = 'block';
       }
 
       // Payment Method State: 'upi' (free) or 'razorpay' (+2%)
@@ -1116,6 +1257,15 @@
         const notes = document.getElementById('extraInstructions').value || 'None';
         const fileNames = selectedFilesList.map(f => f.name).join(', ') || 'None';
 
+        // Collect Service Specific Dynamic Fields
+        const customDetails = {};
+        document.querySelectorAll('.dynamic-field').forEach(el => {
+          const lbl = el.getAttribute('data-label') || el.name || 'field';
+          if (el.value) {
+            customDetails[lbl] = el.value.trim();
+          }
+        });
+
         const applicationRecord = {
           refId,
           service,
@@ -1128,6 +1278,7 @@
           address,
           pincode,
           existingId,
+          customDetails,
           utr,
           fee,
           paymentMethod: currentPaymentMethod.toUpperCase(),
@@ -1278,7 +1429,49 @@
         renderServicesGrid('all');
       }
 
+      // PINCODE AUTO-LOOKUP (City, District & State Automation)
+      function setupPincodeLookup() {
+        const pincodeInput = document.getElementById('pincode');
+        const statusEl = document.getElementById('pincodeStatus');
+        if (!pincodeInput) return;
+
+        pincodeInput.addEventListener('input', async function() {
+          const pin = this.value.trim();
+          if (/^[1-9][0-9]{5}$/.test(pin)) {
+            if (statusEl) statusEl.innerHTML = '<span style="color:#38bdf8;">🔄 डाकघर व लोकेशन पहचानी जा रही है...</span>';
+            try {
+              const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+              const data = await res.json();
+              if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice && data[0].PostOffice.length > 0) {
+                const po = data[0].PostOffice[0];
+                const dist = po.District;
+                const state = po.State;
+                const office = po.Name;
+                if (statusEl) {
+                  statusEl.innerHTML = `<span style="color:#10b981;">✓ ${office}, ${dist}, ${state}</span>`;
+                }
+                const addressField = document.getElementById('address');
+                if (addressField && !addressField.value.includes(dist)) {
+                  if (addressField.value.trim() === '') {
+                    addressField.value = `${office}, ${dist}, ${state} - ${pin}`;
+                  } else {
+                    addressField.value += `, ${office}, ${dist}, ${state} - ${pin}`;
+                  }
+                }
+              } else {
+                if (statusEl) statusEl.innerHTML = '<span style="color:#f59e0b;">(पिनकोड विवरण स्वतः नहीं मिला, मैन्युअल भरें)</span>';
+              }
+            } catch (err) {
+              if (statusEl) statusEl.innerHTML = '';
+            }
+          } else {
+            if (statusEl) statusEl.innerHTML = '';
+          }
+        });
+      }
+
       // Initialize
+      setupPincodeLookup();
       detectVisitorRegion();
     </script>
   </body>
