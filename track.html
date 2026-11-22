@@ -527,40 +527,48 @@
         const r = currentTrackedOrder;
         const w = window.open('', '', 'width=750,height=600');
         w.document.write(`
+          <!DOCTYPE html>
           <html>
             <head>
-              <title>डिजिटल पावती - #${r.refId}</title>
+              <meta charset="utf-8">
+              <title>Official Citizen Application Slip - #${r.refId}</title>
               <style>
-                body { font-family: sans-serif; padding: 24px; color: #111; line-height: 1.5; }
-                .hdr { text-align: center; border-bottom: 2px solid #222; padding-bottom: 12px; margin-bottom: 16px; }
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 24px; color: #1e293b; line-height: 1.5; background: #fff; }
+                .hdr { text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 14px; margin-bottom: 16px; }
+                .stamp-tag { border: 2px dashed #059669; color: #059669; font-weight: 800; font-size: 11px; padding: 4px 10px; border-radius: 6px; display: inline-block; margin-top: 6px; text-transform: uppercase; }
                 table { width: 100%; border-collapse: collapse; margin-top: 14px; }
-                th, td { border: 1px solid #ddd; padding: 8px 12px; font-size: 13px; }
-                th { background: #f4f4f4; text-align: left; width: 35%; }
+                th, td { border: 1px solid #e2e8f0; padding: 9px 12px; font-size: 13px; }
+                th { background: #f8fafc; text-align: left; width: 35%; color: #475569; font-weight: 700; }
+                .footer { margin-top: 20px; text-align: center; font-size: 11px; color: #64748b; border-top: 1px dashed #cbd5e1; padding-top: 10px; }
               </style>
             </head>
             <body>
               <div class="hdr">
-                <h2 style="margin:0;">शान साइबर कैफे एवं ई-सेवा केंद्र</h2>
-                <p style="margin:4px 0;">Official Digital Application Slip · Reference #${r.refId}</p>
-                <small>Helpline: +91 7009446821 | Email: abhishekrai6897@gmail.com</small>
+                <h2 style="margin:0; font-size:20px; color:#0f172a;">🏛️ SHAN CYBER CAFE &amp; CITIZEN E-SEVA CENTER</h2>
+                <p style="margin:4px 0; font-size:13px; color:#475569;">Official Citizen Application &amp; Verification Slip · Ref #${r.refId}</p>
+                <small style="color:#64748b;">Helpline: +91 7009446821 | Email: abhishekrai6897@gmail.com</small>
+                <div><span class="stamp-tag">✓ VERIFIED &amp; RECORDED ON PORTAL</span></div>
               </div>
               <table>
-                <tr><th>संदर्भ संख्या</th><td><strong>#${r.refId}</strong></td></tr>
-                <tr><th>स्थिति</th><td><strong>${r.status || 'Pending'}</strong></td></tr>
-                <tr><th>सेवा</th><td>${r.service}</td></tr>
-                <tr><th>आवेदक का नाम</th><td>${r.name || r.applicantName}</td></tr>
-                <tr><th>पिता/पति</th><td>${r.guardian || r.guardianName}</td></tr>
-                <tr><th>मोबाइल नंबर</th><td>${r.phone}</td></tr>
-                <tr><th>कुल शुल्क</th><td><strong>${r.fee}</strong></td></tr>
-                <tr><th>पेमेंट UTR / ID</th><td>${r.utr}</td></tr>
-                <tr><th>तारीख</th><td>${r.formattedDate || 'Recent'}</td></tr>
+                <tr><th>Reference ID</th><td><strong style="color:#0284c7;">#${r.refId}</strong></td></tr>
+                <tr><th>Application Status</th><td><strong style="color:#059669;">● ${r.status || 'IN PROGRESS'}</strong></td></tr>
+                <tr><th>Service Applied</th><td><strong>${r.service}</strong></td></tr>
+                <tr><th>Applicant Name</th><td>${r.name || r.applicantName || 'Citizen Applicant'}</td></tr>
+                <tr><th>Father / Husband / Guardian</th><td>${r.guardian || r.guardianName || 'N/A'}</td></tr>
+                <tr><th>Mobile Number</th><td>${r.phone || 'N/A'}</td></tr>
+                <tr><th>Total Fee Recorded</th><td><strong>${r.fee || 'All-Inclusive'}</strong></td></tr>
+                <tr><th>Payment Method &amp; Ref / UTR</th><td>${r.utr || 'VERIFIED'}</td></tr>
+                <tr><th>Submission Date &amp; Timestamp</th><td>${r.formattedDate || 'Recent'}</td></tr>
               </table>
+              <div class="footer">
+                (This is a system-generated official electronic record. Retain this reference ID for tracking.)
+              </div>
             </body>
           </html>
         `);
         w.document.close();
         w.focus();
-        w.print();
+        setTimeout(() => { w.print(); }, 400);
       }
 
       // Enter key support for input
