@@ -482,7 +482,7 @@
     <div style="background:rgba(245, 158, 11, 0.12); border-bottom:1px solid rgba(245, 158, 11, 0.3); padding:8px 16px; font-size:0.85rem; color:#fde68a; display:flex; align-items:center; overflow:hidden;">
       <span style="background:var(--eseva-gold); color:#0f172a; font-weight:800; padding:2px 8px; border-radius:4px; margin-right:12px; font-size:0.75rem; white-space:nowrap;">🔥 ताज़ा सूचना</span>
       <marquee behavior="scroll" direction="left" scrollamount="6" style="color:#fde68a; font-weight:600;">
-        📢 यूपी पुलिस कांस्टेबल व एसआई री-एग्जाम फॉर्म अपडेट चालू | 🌾 पीएम-किसान सम्मान निधि 17वीं किस्त e-KYC तुरंत कराएं | 🚦 ट्रैफिक ई-चालान 10 सेकंड में चेक व ऑनलाइन निपटान शुरू | 🆔 नए डिजिटल राशन कार्ड में यूनिट जोड़ना व नाम सुधार सेवा उपलब्ध | ✈️ तत्काल पासपोर्ट प्राथमिकता स्लॉट बुकिंग खुली है
+        📢 ਪੰਜਾਬ ਪੁਲਿਸ ਭਰਤੀ ਤੇ ਸਾਂਝ ਕੇਂਦਰ ਵੈਰੀਫਿਕੇਸ਼ਨ ਸਰਵਿਸ ਲਾਈਵ | 🚦 ਪੰਜਾਬ ਟ੍ਰੈਫਿਕ ਪੁਲਿਸ ਈ-ਚਲਾਨ 10 ਸਕਿੰਟਾਂ ਵਿੱਚ ਚੈੱਕ ਤੇ ਆਨਲਾਈਨ ਨਿਪਟਾਰਾ | 🌾 ਪੰਜਾਬ ਸੇਵਾ ਕੇਂਦਰ ਫ਼ਰਦ ਜਮ੍ਹਾਬੰਦੀ ਤੇ ਸਰਟੀਫਿਕੇਟ ਉਪਲਬਧ | ✈️ ਤਤਕਾਲ ਪਾਸਪੋਰਟ ਸਲਾਟ ਬੁਕਿੰਗ | 🇮🇳 All India &amp; 28 States Portals Active
       </marquee>
     </div>
 
@@ -490,8 +490,9 @@
       <!-- Hero Section with Auto-Location & Language Toggle -->
       <section class="eseva-hero wrap">
         <div class="eseva-top-bar">
-          <div class="location-badge" id="detectedLocationBadge">
-            <span>📍</span> <span id="detectedLocationText">Detecting Location…</span>
+          <div class="location-badge" id="detectedLocationBadge" onclick="detectVisitorRegion(true)" title="Click to refresh or prompt browser location" style="cursor:pointer; display:flex; align-items:center; gap:6px; background:rgba(16,185,129,0.15); border:1px solid #10b981; padding:6px 14px; border-radius:999px; font-size:0.82rem; color:#6ee7b7; font-weight:700;">
+            <span id="detectedLocationText">📍 Detecting Location…</span>
+            <span style="font-size:0.75rem; opacity:0.8; text-decoration:underline;">[Auto-Detect]</span>
           </div>
           <button type="button" class="lang-toggle-btn" id="langToggleBtn" onclick="toggleLanguage()">
             🌐 Language: हिंदी (Switch to English)
@@ -549,7 +550,7 @@
           <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
             <div style="flex:1; min-width:260px;">
               <label style="display:block; font-size:0.78rem; color:#fde68a; font-weight:700; margin-bottom:4px;">वाहन रजिस्ट्रेशन नंबर / चालान नंबर *</label>
-              <input type="text" id="quickChallanInput" class="form-input" placeholder="e.g. UP50AB1234 या चालान नंबर..." style="padding:12px 16px; font-weight:800; text-transform:uppercase; letter-spacing:1px; font-size:1rem; border-color:var(--eseva-gold); background:rgba(0,0,0,0.5); color:#fff;" onkeydown="if(event.key==='Enter') lookupQuickChallan()" />
+              <input type="text" id="quickChallanInput" class="form-input" placeholder="e.g. PB65AB1234 ਜਾਂ PB10AB1234 ਜਾਂ ਚਲਾਨ ਨੰਬਰ..." style="padding:12px 16px; font-weight:800; text-transform:uppercase; letter-spacing:1px; font-size:1rem; border-color:var(--eseva-gold); background:rgba(0,0,0,0.5); color:#fff;" onkeydown="if(event.key==='Enter') lookupQuickChallan()" />
             </div>
             <div style="width:160px;">
               <label style="display:block; font-size:0.78rem; color:#94a3b8; margin-bottom:4px;">चेसिस अंतिम 5 अंक</label>
@@ -583,7 +584,11 @@
           </div>
           <div style="min-width:240px;">
             <select id="stateFilterSelect" class="form-select" style="padding:10px 14px; border-radius:999px; background:#0f172a; border-color:var(--eseva-gold); color:#fde68a; font-weight:700; font-size:0.88rem;" onchange="onStateFilterChange()">
+              <option value="Punjab" selected>Punjab (ਪੰਜਾਬ - Sewa Kendra &amp; Saanjh)</option>
               <option value="all">🇮🇳 All India / Central Services</option>
+              <option value="Chandigarh">Chandigarh (e-Jan Sampark)</option>
+              <option value="Haryana">Haryana (Antyodaya Saral)</option>
+              <option value="Delhi">Delhi NCT (e-District Delhi)</option>
               <!-- 28 States -->
               <option value="Andhra Pradesh">Andhra Pradesh (MeeSeva)</option>
               <option value="Arunachal Pradesh">Arunachal Pradesh (ServicePlus)</option>
@@ -604,13 +609,12 @@
               <option value="Mizoram">Mizoram (Citizen Portal)</option>
               <option value="Nagaland">Nagaland (e-District)</option>
               <option value="Odisha">Odisha (Odisha e-District)</option>
-              <option value="Punjab">Punjab (Sewa Kendra)</option>
               <option value="Rajasthan">Rajasthan (Emitra Portal)</option>
               <option value="Sikkim">Sikkim (e-District)</option>
               <option value="Tamil Nadu">Tamil Nadu (TNeGA e-Sevai)</option>
               <option value="Telangana">Telangana (MeeSeva TS)</option>
               <option value="Tripura">Tripura (e-District)</option>
-              <option value="Uttar Pradesh" selected>Uttar Pradesh (e-District UP)</option>
+              <option value="Uttar Pradesh">Uttar Pradesh (e-District UP)</option>
               <option value="Uttarakhand">Uttarakhand (e-Services UK)</option>
               <option value="West Bengal">West Bengal (WB e-District)</option>
               <!-- 8 Union Territories -->
@@ -837,6 +841,11 @@
                 <span id="lblApplicantState">राज्य / केंद्र शासित प्रदेश (State / Union Territory)</span> *
               </label>
               <select class="form-select" id="applicantState" required onchange="recalculateFees()">
+                <option value="Punjab" selected>Punjab (ਪੰਜਾਬ - Sewa Kendra / Police)</option>
+                <option value="Chandigarh">Chandigarh (ਚੰਡੀਗੜ੍ਹ)</option>
+                <option value="Haryana">Haryana (हरियाणा)</option>
+                <option value="Delhi">Delhi NCT (दिल्ली)</option>
+                <option value="Uttar Pradesh">Uttar Pradesh (उत्तर प्रदेश)</option>
                 <!-- 28 भारतीय राज्य (28 Indian States - Alphabetical Order) -->
                 <option value="Andhra Pradesh">Andhra Pradesh (आंध्र प्रदेश)</option>
                 <option value="Arunachal Pradesh">Arunachal Pradesh (अरुणाचल प्रदेश)</option>
@@ -857,13 +866,12 @@
                 <option value="Mizoram">Mizoram (मिज़ोरम)</option>
                 <option value="Nagaland">Nagaland (नागालैंड)</option>
                 <option value="Odisha">Odisha (ओडिशा)</option>
-                <option value="Punjab">Punjab (पंजाब)</option>
                 <option value="Rajasthan">Rajasthan (राजस्थान)</option>
                 <option value="Sikkim">Sikkim (सिक्किम)</option>
                 <option value="Tamil Nadu">Tamil Nadu (तमिलनाडु)</option>
                 <option value="Telangana">Telangana (तेलंगाना)</option>
                 <option value="Tripura">Tripura (त्रिपुरा)</option>
-                <option value="Uttar Pradesh" selected>Uttar Pradesh (उत्तर प्रदेश)</option>
+                <option value="Uttar Pradesh">Uttar Pradesh (उत्तर प्रदेश)</option>
                 <option value="Uttarakhand">Uttarakhand (उत्तराखंड)</option>
                 <option value="West Bengal">West Bengal (पश्चिम बंगाल)</option>
                 <!-- 8 केंद्र शासित प्रदेश (8 Union Territories - Alphabetical Order) -->
@@ -1054,8 +1062,12 @@
         <div id="custModalStateWrap" style="margin-bottom:14px;">
           <label class="form-label" style="color:#94a3b8;">राज्य चुनें (Select State for Portal &amp; Fee):</label>
           <select id="custModalStateSelect" class="form-select" onchange="onCustModalStateChange()">
+            <option value="Punjab" selected>Punjab (ਪੰਜਾਬ - Sewa Kendra / Police)</option>
             <option value="all">All India / Central Portal</option>
-            <option value="Uttar Pradesh" selected>Uttar Pradesh (e-District UP)</option>
+            <option value="Chandigarh">Chandigarh (Jan Sampark)</option>
+            <option value="Haryana">Haryana (Antyodaya Saral)</option>
+            <option value="Delhi">Delhi NCT (e-District Delhi)</option>
+            <option value="Uttar Pradesh">Uttar Pradesh (e-District UP)</option>
             <option value="Bihar">Bihar (RTPS ServicePlus)</option>
             <option value="Andhra Pradesh">Andhra Pradesh (MeeSeva)</option>
             <option value="Arunachal Pradesh">Arunachal Pradesh (ServicePlus)</option>
@@ -1075,7 +1087,6 @@
             <option value="Mizoram">Mizoram (Citizen Portal)</option>
             <option value="Nagaland">Nagaland (e-District)</option>
             <option value="Odisha">Odisha (Odisha e-District)</option>
-            <option value="Punjab">Punjab (Sewa Kendra)</option>
             <option value="Rajasthan">Rajasthan (Emitra)</option>
             <option value="Sikkim">Sikkim (e-District)</option>
             <option value="Tamil Nadu">Tamil Nadu (TNeGA e-Sevai)</option>
@@ -1199,6 +1210,12 @@
         { id: "voter-new", title: "नया वोटर कार्ड (Voter ID Form 6)", titleEn: "New Voter ID Card (Form 6)", category: "identity", fee: 150, icon: "🗳️", desc: "18 वर्ष पूर्ण होने पर भारतीय निर्वाचन आयोग में नया मतदाता पंजीकरण।", descEn: "New voter registration for Indian citizens turning 18 via Election Commission." },
         { id: "voter-correction", title: "वोटर कार्ड संशोधन (Form 8)", titleEn: "Voter ID Correction (Form 8)", category: "identity", fee: 150, icon: "✏️", desc: "मतदाता पहचान पत्र में नाम, फोटो, पता या बूथ शिफ्टिंग सुधार।", descEn: "Correction of personal details or assembly constituency shifting on voter card." },
         { id: "voter-epic", title: "डिजिटल वोटर कार्ड (e-EPIC Download)", titleEn: "Digital Voter Card e-EPIC Download", category: "identity", fee: 150, icon: "📥", desc: "ओरिजिनल डिजिटल वोटर कार्ड डाउनलोड व हाई-क्वालिटी प्रिंट।", descEn: "Instant download of verified digital e-EPIC card with QR code." },
+
+        // Punjab Citizen & Police Services (ਪੰਜਾਬ ਸੇਵਾਵਾਂ)
+        { id: "punjab-saanjh-pcc", title: "ਪੰਜਾਬ ਪੁਲਿਸ ਸਾਂਝ ਕੇਂਦਰ ਵੈਰੀਫਿਕੇਸ਼ਨ (Punjab Police Saanjh)", titleEn: "Punjab Police Saanjh Kendra Character & Police Clearance", category: "certificate", fee: 250, icon: "🛡️", desc: "ਪੰਜਾਬ ਪੁਲਿਸ ਸਾਂਝ ਕੇਂਦਰ ਚਰਿੱਤਰ ਪ੍ਰਮਾਣ ਪੱਤਰ (Character Verification), ਕਿਰਾਏਦਾਰ ਵੈਰੀਫਿਕੇਸ਼ਨ ਅਤੇ ਪਾਸਪੋਰਟ PCC।", descEn: "Official Punjab Police Saanjh Kendra verified Character Certificate, Tenant Verification, and PCC clearance via ppsaanjh.in." },
+        { id: "punjab-fard-jamabandi", title: "ਪੰਜਾਬ ਫ਼ਰਦ ਜਮ੍ਹਾਬੰਦੀ ਨਕਲ (PLRS Punjab Land Records)", titleEn: "Punjab Fard Jamabandi Nakal & Inteqal Copy", category: "certificate", fee: 150, icon: "🌾", desc: "ਪੰਜਾਬ ਲੈਂਡ ਰਿਕਾਰਡਜ਼ ਸੁਸਾਇਟੀ (PLRS) ਅਧਿਕਾਰਤ ਡਿਜੀਟਲ ਫ਼ਰਦ ਜਮ੍ਹਾਬੰਦੀ ਨਕਲ, ਇੰਤਕਾਲ ਅਤੇ ਖਸਰਾ ਗਿਰਦਾਵਰੀ।", descEn: "Official verified digital Fard Jamabandi Nakal, Mutation (Inteqal), and Khasra Girdawari certified copy via jamabandi.punjab.gov.in." },
+        { id: "punjab-sewa-kendra", title: "ਪੰਜਾਬ ਸੇਵਾ ਕੇਂਦਰ ਸਰਟੀਫਿਕੇਟ (Sewa Kendra Citizen Services)", titleEn: "Punjab Sewa Kendra Residence, Caste & Income Certificate", category: "certificate", fee: 180, icon: "📜", desc: "ਸੇਵਾ ਕੇਂਦਰ ਪੰਜਾਬ: ਰਿਹਾਇਸ਼ੀ (Residence/Domicile), ਆਮਦਨ (Income), ਜਾਤੀ (SC/BC/OBC) ਅਤੇ ਬਾਰਡਰ ਏਰੀਆ ਸਰਟੀਫਿਕੇਟ।", descEn: "Punjab Sewa Kendra verified Resident/Domicile, Income, Caste (SC/BC/OBC), Rural Area, and Border Area Certificates via esewa.punjab.gov.in." },
+        { id: "pspcl-bill", title: "ਪਾਵਰਕੌਮ ਬਿਜਲੀ ਬਿੱਲ ਤੇ ਕੁਨੈਕਸ਼ਨ (PSPCL Punjab Power)", titleEn: "PSPCL Punjab Electricity Bill Payment & Verification", category: "utility", fee: 50, icon: "⚡", desc: "ਪੰਜਾਬ ਸਟੇਟ ਪਾਵਰ ਕਾਰਪੋਰੇਸ਼ਨ ਲਿਮਟਿਡ (PSPCL) ਬਿਜਲੀ ਬਿੱਲ ਚੈੱਕ, ਤੁਰੰਤ ਭੁਗਤਾਨ, ਰਸੀਦ ਅਤੇ ਨਾਮ ਬਦਲਾਵ।", descEn: "Punjab State Power Corporation Limited (PSPCL) instant electricity bill view, payment, and receipt generation via pspcl.in." },
 
         // Certificates & Verification
         { id: "character-cert", title: "पुलिस चरित्र प्रमाण पत्र (Police Character Verification)", titleEn: "Police Character & Background Verification Certificate", category: "certificate", fee: 250, icon: "🛡️", desc: "सरकारी व निजी नौकरियों, टेंडर व पासपोर्ट हेतु पुलिस चरित्र सत्यापन प्रमाण पत्र।", descEn: "Official state police verified character and criminal background clearance certificate." },
@@ -1409,10 +1426,23 @@
             { id: "passport-pcc", name: "पुलिस क्लीयरेंस सर्टिफिकेट (PCC Slot)", fee: 800, docs: ["पासपोर्ट की प्रति", "जॉब ऑफर / वीज़ा विवरण"] }
           ]
         },
+        "punjab": {
+          title: "ਪੰਜਾਬ ਸੇਵਾਵਾਂ (Punjab Portals & Police Saanjh)",
+          icon: "🦁",
+          options: [
+            { id: "punjab-saanjh-pcc", name: "ਪੰਜਾਬ ਪੁਲਿਸ ਸਾਂਝ ਕੇਂਦਰ ਚਰਿੱਤਰ ਵੈਰੀਫਿਕੇਸ਼ਨ (Punjab Police Saanjh)", fee: 250, docs: ["ਆਧਾਰ ਕਾਰਡ", "ਪਾਸਪੋਰਟ ਫ਼ੋਟੋ", "ਸਥਾਨਕ 2 ਗਵਾਹ ਸੰਪਰਕ"] },
+            { id: "punjab-fard-jamabandi", name: "ਪੰਜਾਬ ਫ਼ਰਦ ਜਮ੍ਹਾਬੰਦੀ ਨਕਲ (PLRS Fard Jamabandi)", fee: 150, docs: ["ਖੇਵਟ / ਖਸਰਾ ਨੰਬਰ ਜਾਂ ਮਾਲਕ ਦਾ ਨਾਮ"] },
+            { id: "punjab-sewa-kendra", name: "ਪੰਜਾਬ ਸੇਵਾ ਕੇਂਦਰ ਸਰਟੀਫਿਕੇਟ (Sewa Kendra PB)", fee: 180, docs: ["ਆਧਾਰ ਕਾਰਡ", "ਵੋਟਰ ਕਾਰਡ / ਬਿਜਲੀ ਬਿੱਲ", "ਪਾਸਪੋਰਟ ਫ਼ੋਟੋ"] },
+            { id: "pspcl-bill", name: "ਪਾਵਰਕੌਮ ਬਿਜਲੀ ਬਿੱਲ ਤੇ ਕੁਨੈਕਸ਼ਨ (PSPCL Power)", fee: 50, docs: ["ਬਿਜਲੀ ਖਾਤਾ ਨੰਬਰ (Account No)"] }
+          ]
+        },
         "certificate": {
           title: "सरकारी प्रमाण पत्र व सत्यापन (Official Certificates)",
           icon: "📜",
           options: [
+            { id: "punjab-saanjh-pcc", name: "ਪੰਜਾਬ ਪੁਲਿਸ ਸਾਂਝ ਕੇਂਦਰ ਵੈਰੀਫਿਕੇਸ਼ਨ (Punjab Police Saanjh)", fee: 250, docs: ["ਆਧਾਰ ਕਾਰਡ", "ਪਾਸਪੋਰਟ ਫ਼ੋਟੋ", "ਸਥਾਨਕ 2 ਗਵਾਹ ਸੰਪਰਕ"] },
+            { id: "punjab-fard-jamabandi", name: "ਪੰਜਾਬ ਫ਼ਰਦ ਜਮ੍ਹਾਬੰਦੀ ਨਕਲ (PLRS Punjab Fard)", fee: 150, docs: ["ਖੇਵਟ / ਖਸਰਾ ਨੰਬਰ ਜਾਂ ਮਾਲਕ ਦਾ ਨਾਮ"] },
+            { id: "punjab-sewa-kendra", name: "ਪੰਜਾਬ ਸੇਵਾ ਕੇਂਦਰ ਸਰਟੀਫਿਕੇਟ (Sewa Kendra PB)", fee: 180, docs: ["ਆਧਾਰ ਕਾਰਡ", "ਵੋਟਰ ਕਾਰਡ / ਬਿਜਲੀ ਬਿੱਲ", "ਪਾਸਪੋਰਟ ਫ਼ੋਟੋ"] },
             { id: "character-cert", name: "पुलिस चरित्र प्रमाण पत्र (Police Character Verification)", fee: 250, docs: ["आधार कार्ड", "पासपोर्ट फोटो", "स्थानीय 2 गवाह विवरण"] },
             { id: "income-cert", name: "आय प्रमाण पत्र (Income Certificate e-District)", fee: 150, docs: ["आधार कार्ड", "स्वप्रमाणित आय घोषणा पत्र", "वेतन पर्ची / खतौनी"] },
             { id: "caste-obc", name: "ओबीसी (OBC) जाति प्रमाण पत्र", fee: 150, docs: ["आधार कार्ड", "पिता का जाति प्रमाण / खतौनी"] },
@@ -2218,6 +2248,101 @@
       };
 
       const rtoDistMap = {
+        // Punjab RTOs (ਪੰਜਾਬ ਆਰਟੀਓ)
+        "PB01": "PB-01 Tanda Urmar / Chandigarh Sectt (ਪੰਜਾਬ ਸਕੱਤਰੇਤ)",
+        "PB02": "PB-02 Amritsar-1 (ਅੰਮ੍ਰਿਤਸਰ RTO)",
+        "PB03": "PB-03 Bathinda (ਬਠਿੰਡਾ RTO)",
+        "PB04": "PB-04 Faridkot (ਫ਼ਰੀਦਕੋਟ)",
+        "PB05": "PB-05 Ferozepur (ਫ਼ਿਰੋਜ਼ਪੁਰ)",
+        "PB06": "PB-06 Gurdaspur (ਗੁਰਦਾਸਪੁਰ)",
+        "PB07": "PB-07 Hoshiarpur (ਹੁਸ਼ਿਆਰਪੁਰ)",
+        "PB08": "PB-08 Jalandhar-1 (ਜਲੰਧਰ RTO)",
+        "PB09": "PB-09 Kapurthala (ਕਪੂਰਥਲਾ)",
+        "PB10": "PB-10 Ludhiana East / Central (ਲੁਧਿਆਣਾ RTO)",
+        "PB11": "PB-11 Patiala (ਪਟਿਆਲਾ RTO)",
+        "PB12": "PB-12 Rupnagar / Ropar (ਰੂਪਨਗਰ)",
+        "PB13": "PB-13 Sangrur (ਸੰਗਰੂਰ)",
+        "PB14": "PB-14 Ajnala (ਅਜਨਾਲਾ)",
+        "PB15": "PB-15 Abohar (ਅਬੋਹਰ)",
+        "PB16": "PB-16 Anandpur Sahib (ਅਨੰਦਪੁਰ ਸਾਹਿਬ)",
+        "PB17": "PB-17 Baba Bakala (ਬਾਬਾ ਬਕਾਲਾ)",
+        "PB18": "PB-18 Batala (ਬਟਾਲਾ)",
+        "PB19": "PB-19 Barnala (ਬਰਨਾਲਾ)",
+        "PB20": "PB-20 Balachaur (ਬਲਾਚੌਰ)",
+        "PB21": "PB-21 Dasuya (ਦਸੂਹਾ)",
+        "PB22": "PB-22 Fazilka (ਫ਼ਾਜ਼ਿਲਕਾ)",
+        "PB23": "PB-23 Fatehgarh Sahib (ਫ਼ਤਹਿਗੜ੍ਹ ਸਾਹਿਬ)",
+        "PB24": "PB-24 Mukerian (ਮੁਕੇਰੀਆਂ)",
+        "PB25": "PB-25 Jagraon (ਜਗਰਾਉਂ)",
+        "PB26": "PB-26 Khanna (ਖੰਨਾ)",
+        "PB27": "PB-27 Kharar (ਖ਼ਰੜ)",
+        "PB28": "PB-28 Malerkotla (ਮਲੇਰਕੋਟਲਾ)",
+        "PB29": "PB-29 Moga (ਮੋਗਾ)",
+        "PB30": "PB-30 Sri Muktsar Sahib (ਸ੍ਰੀ ਮੁਕਤਸਰ ਸਾਹਿਬ)",
+        "PB31": "PB-31 Mansa (ਮਾਨਸਾ)",
+        "PB32": "PB-32 Nawanshahr / SBS Nagar (ਨਵਾਂਸ਼ਹਿਰ)",
+        "PB33": "PB-33 Samana (ਸਮਾਣਾ)",
+        "PB34": "PB-34 Nakodar (ਨਕੋਦਰ)",
+        "PB35": "PB-35 Pathankot (ਪਠਾਨਕੋਟ)",
+        "PB36": "PB-36 Phagwara (ਫਗਵਾੜਾ)",
+        "PB37": "PB-37 Phillaur (ਫਿਲੌਰ)",
+        "PB38": "PB-38 Patti (ਪੱਟੀ)",
+        "PB39": "PB-39 Rajpura (ਰਾਜਪੁਰਾ)",
+        "PB40": "PB-40 Rampura Phul (ਰਾਮਪੁਰਾ ਫੂਲ)",
+        "PB41": "PB-41 Sultanpur Lodhi (ਸੁਲਤਾਨਪੁਰ ਲੋਧੀ)",
+        "PB42": "PB-42 Samrala (ਸਮਰਾਲਾ)",
+        "PB43": "PB-43 Talwandi Sabo (ਤਲਵੰਡੀ ਸਾਬੋ)",
+        "PB44": "PB-44 Tarn Taran (ਤਰਨ ਤਾਰਨ)",
+        "PB45": "PB-45 Talwara (ਤਲਵਾੜਾ)",
+        "PB46": "PB-46 Dera Baba Nanak (ਡੇਰਾ ਬਾਬਾ ਨਾਨਕ)",
+        "PB47": "PB-47 Zira (ਜ਼ੀਰਾ)",
+        "PB48": "PB-48 Amloh (ਅਮਲੋਹ)",
+        "PB49": "PB-49 Khamanon (ਖਮਾਣੋਂ)",
+        "PB50": "PB-50 Budhlada (ਬੁਢਲਾਡਾ)",
+        "PB51": "PB-51 Sardulgarh (ਸਰਦੂਲਗੜ੍ਹ)",
+        "PB52": "PB-52 Bassi Pathana (ਬੱਸੀ ਪਠਾਣਾਂ)",
+        "PB53": "PB-53 Malout (ਮਲੋਟ)",
+        "PB54": "PB-54 Kalanaur (ਕਲਾਨੌਰ)",
+        "PB55": "PB-55 Payal (ਪਾਇਲ)",
+        "PB56": "PB-56 Raikot (ਰਾਏਕੋਟ)",
+        "PB57": "PB-57 Bhulath (ਭੁਲੱਥ)",
+        "PB58": "PB-58 Dera Bassi (ਡੇਰਾ ਬੱਸੀ)",
+        "PB59": "PB-59 Dhuri (ਧੂਰੀ)",
+        "PB60": "PB-60 Gidderbaha (ਗਿੱਦੜਬਾਹਾ)",
+        "PB61": "PB-61 Jalalabad (ਜਲਾਲਾਬਾਦ)",
+        "PB62": "PB-62 Jaitu (ਜੈਤੋ)",
+        "PB63": "PB-63 Khadoor Sahib (ਖਡੂਰ ਸਾਹਿਬ)",
+        "PB64": "PB-64 Moonak (ਮੂਣਕ)",
+        "PB65": "PB-65 SAS Nagar / Mohali (ਮੋਹਾਲੀ RTO)",
+        "PB66": "PB-66 Nihal Singh Wala (ਨਿਹਾਲ ਸਿੰਘ ਵਾਲਾ)",
+        "PB67": "PB-67 Shahkot (ਸ਼ਾਹਕੋਟ)",
+        "PB68": "PB-68 Dhar Kalan (ਧਾਰ ਕਲਾਂ)",
+        "PB69": "PB-69 Bagha Purana (ਬਾਘਾ ਪੁਰਾਣਾ)",
+        "PB70": "PB-70 Garhshankar (ਗੜ੍ਹਸ਼ੰਕਰ)",
+        "PB71": "PB-71 Chamkaur Sahib (ਚਮਕੌਰ ਸਾਹਿਬ)",
+        "PB72": "PB-72 Patran (ਪਾਤੜਾਂ)",
+        "PB73": "PB-73 Sunam (ਸੁਨਾਮ)",
+        "PB74": "PB-74 Bholath (ਭੁਲੱਥ)",
+        "PB75": "PB-75 Lehra Gaga (ਲਹਿਰਾ ਗਾਗਾ)",
+        "PB76": "PB-76 Ahmedgarh (ਅਹਿਮਦਗੜ੍ਹ)",
+        "PB77": "PB-77 Guru Har Sahai (ਗੁਰੂ ਹਰ ਸਹਾਏ)",
+        "PB78": "PB-78 Banga (ਬੰਗਾ)",
+        "PB79": "PB-79 Kotkapura (ਕੋਟਕਪੂਰਾ)",
+        "PB80": "PB-80 Maur (ਮੌੜ)",
+        "PB81": "PB-81 Majitha (ਮਜੀਠਾ)",
+        "PB82": "PB-82 Dinanagar (ਦੀਨਾਨਗਰ)",
+        "PB83": "PB-83 Morinda (ਮੋਰਿੰਡਾ)",
+        "PB84": "PB-84 Bhawanigarh (ਭਵਾਨੀਗੜ੍ਹ)",
+        "PB85": "PB-85 Dirba (ਦਿਰਬਾ)",
+        "PB86": "PB-86 Tapa (ਤਪਾ)",
+        "PB87": "PB-87 Shahpur Kandi (ਸ਼ਾਹਪੁਰ ਕੰਡੀ)",
+        "PB88": "PB-88 Dudhan Sadhan (ਦੂਧਨ ਸਾਧਾਂ)",
+        "PB89": "PB-89 Nabha (ਨਾਭਾ)",
+        "PB90": "PB-90 Amritsar-2 Sub-Div (ਅੰਮ੍ਰਿਤਸਰ 2)",
+        "PB91": "PB-91 Jalandhar-2 Sub-Div (ਜਲੰਧਰ 2)",
+        "PB92": "PB-92 Phul (ਫੂਲ)",
+        "PB99": "PB-99 Punjab State General (ਪੰਜਾਬ)",
+
         // Uttar Pradesh RTOs
         "UP11": "UP-11 Saharanpur (सहारनपुर)",
         "UP12": "UP-12 Muzaffarnagar (मुज़फ़्फ़रनगर)",
@@ -2374,7 +2499,7 @@
 
         const rawVal = input.value.trim();
         if (!rawVal) {
-          alert('Please enter your Vehicle Registration No. (e.g. UP50AB1234) or Challan No.');
+          alert('Please enter your Vehicle Registration No. (e.g. PB65AB1234 or PB10AB1234) or Challan No.');
           input.focus();
           return;
         }
@@ -2394,7 +2519,7 @@
         const isChallanNum = cleanVal.length >= 12 && /\d{6,}/.test(cleanVal);
         const stateCode = cleanVal.substring(0, 2);
         const rtoCode = cleanVal.substring(0, 4);
-        const stateInfo = rtoStateMap[stateCode] || { state: "Uttar Pradesh", name: "उत्तर प्रदेश" };
+        const stateInfo = rtoStateMap[stateCode] || { state: "Punjab", name: "पंजाब (ਪੰਜਾਬ)" };
         const rtoName = rtoDistMap[rtoCode] || `${stateInfo.state} RTO Authority (${rtoCode})`;
 
         const stateSelect = document.getElementById('applicantState');
@@ -2554,7 +2679,7 @@
         const isChallanNum = val.length >= 12 && /\d{6,}/.test(val);
         const stateCode = val.substring(0, 2);
         const rtoCode = val.substring(0, 4);
-        const stateInfo = rtoStateMap[stateCode] || { state: "Uttar Pradesh", name: "उत्तर प्रदेश" };
+        const stateInfo = rtoStateMap[stateCode] || { state: "Punjab", name: "पंजाब (ਪੰਜਾਬ)" };
         const rtoName = rtoDistMap[rtoCode] || `${stateInfo.state} RTO Authority (${rtoCode})`;
 
         renderChallanResultCard(context, val, isChallanNum, stateInfo, rtoName, 0);
@@ -2570,7 +2695,7 @@
         const isChallanNum = val.length >= 12 && /\d{6,}/.test(val);
         const stateCode = val.substring(0, 2);
         const rtoCode = val.substring(0, 4);
-        const stateInfo = rtoStateMap[stateCode] || { state: "Uttar Pradesh", name: "उत्तर प्रदेश" };
+        const stateInfo = rtoStateMap[stateCode] || { state: "Punjab", name: "पंजाब (ਪੰਜਾਬ)" };
         const rtoName = rtoDistMap[rtoCode] || `${stateInfo.state} RTO Authority (${rtoCode})`;
 
         renderChallanResultCard(context, val, isChallanNum, stateInfo, rtoName, fine);
@@ -2583,12 +2708,12 @@
 
         const inputId = context === 'apply' ? 'challanVehicleNum' : 'esevaChallanSearchInput';
         const rawVal = document.getElementById(inputId)?.value || '';
-        const cleanVal = rawVal.replace(/[^A-Za-z0-9]/g, '').toUpperCase() || 'UP50';
+        const cleanVal = rawVal.replace(/[^A-Za-z0-9]/g, '').toUpperCase() || 'PB65';
 
         const isChallanNum = cleanVal.length >= 12 && /\d{6,}/.test(cleanVal);
         const stateCode = cleanVal.substring(0, 2);
         const rtoCode = cleanVal.substring(0, 4);
-        const stateInfo = rtoStateMap[stateCode] || { state: "Uttar Pradesh", name: "उत्तर प्रदेश" };
+        const stateInfo = rtoStateMap[stateCode] || { state: "Punjab", name: "पंजाब (ਪੰਜਾਬ)" };
         const rtoName = rtoDistMap[rtoCode] || `${stateInfo.state} RTO Authority (${rtoCode})`;
 
         renderChallanResultCard(context, cleanVal, isChallanNum, stateInfo, rtoName, amount);
@@ -2601,7 +2726,7 @@
 
         const rawVal = input.value.trim();
         if (!rawVal) {
-          alert('Please enter your Vehicle Registration No. (e.g. UP50AB1234) or Challan No.');
+          alert('Please enter your Vehicle Registration No. (e.g. PB65AB1234 or PB10AB1234) or Challan No.');
           input.focus();
           return;
         }
@@ -2621,7 +2746,7 @@
         const isChallanNum = cleanVal.length >= 12 && /\d{6,}/.test(cleanVal);
         const stateCode = cleanVal.substring(0, 2);
         const rtoCode = cleanVal.substring(0, 4);
-        const stateInfo = rtoStateMap[stateCode] || { state: "Uttar Pradesh", name: "उत्तर प्रदेश" };
+        const stateInfo = rtoStateMap[stateCode] || { state: "Punjab", name: "पंजाब (ਪੰਜਾਬ)" };
         const rtoName = rtoDistMap[rtoCode] || `${stateInfo.state} RTO Authority (${rtoCode})`;
 
         renderQuickChallanResult(cleanVal, isChallanNum, stateInfo, rtoName, 1000);
@@ -3187,31 +3312,122 @@
         selectedFilesList = [];
       }
 
-      // Geolocation Auto-Detection
-      async function detectVisitorRegion() {
+      // High-Accuracy Browser Geolocation with Interactive Permission Prompt & IP Fallback
+      async function detectVisitorRegion(promptUser = true) {
         const badgeText = document.getElementById('detectedLocationText');
-        try {
-          const res = await fetch("https://ipwho.is/").catch(() => null);
-          if (res && res.ok) {
-            const data = await res.json();
-            if (data && data.success !== false) {
-              const region = data.region || data.city || "";
-              const country = data.country || "India";
-              badgeText.textContent = `${region ? region + ", " : ""}${country} (${data.ip})`;
-              
-              // If visitor is outside India, suggest Global/NRI tab
-              if (data.country_code && data.country_code !== "IN") {
-                renderServicesGrid('global');
-                document.querySelectorAll('.filter-tab-btn').forEach(b => {
-                  b.classList.toggle('active', b.getAttribute('data-cat') === 'global');
-                });
-                return;
+        const badgeEl = document.getElementById('detectedLocationBadge');
+        if (badgeText) {
+          badgeText.innerHTML = '🔄 <span style="color:#fde68a;">Detecting location…</span>';
+        }
+
+        function applyStateToPortal(stateName, cityName, source = 'GPS') {
+          if (!stateName) stateName = 'Punjab';
+          
+          let matchedState = 'Punjab';
+          const sLower = stateName.toLowerCase();
+          if (sLower.includes('punjab') || sLower === 'pb') matchedState = 'Punjab';
+          else if (sLower.includes('chandigarh') || sLower === 'ch') matchedState = 'Chandigarh';
+          else if (sLower.includes('haryana') || sLower === 'hr') matchedState = 'Haryana';
+          else if (sLower.includes('delhi') || sLower === 'dl') matchedState = 'Delhi';
+          else if (sLower.includes('uttar pradesh') || sLower === 'up') matchedState = 'Uttar Pradesh';
+          else if (sLower.includes('bihar') || sLower === 'br') matchedState = 'Bihar';
+          else if (sLower.includes('rajasthan') || sLower === 'rj') matchedState = 'Rajasthan';
+          else if (sLower.includes('himachal') || sLower === 'hp') matchedState = 'Himachal Pradesh';
+          else if (sLower.includes('jammu') || sLower.includes('kashmir') || sLower === 'jk') matchedState = 'Jammu and Kashmir';
+          else if (sLower.includes('maharashtra') || sLower === 'mh') matchedState = 'Maharashtra';
+          else if (sLower.includes('karnataka') || sLower === 'ka') matchedState = 'Karnataka';
+          else if (sLower.includes('gujarat') || sLower === 'gj') matchedState = 'Gujarat';
+          else if (sLower.includes('west bengal') || sLower === 'wb') matchedState = 'West Bengal';
+          else matchedState = stateName;
+
+          localStorage.setItem('userDetectedState', matchedState);
+          if (cityName) localStorage.setItem('userDetectedCity', cityName);
+
+          const displayLoc = cityName ? `${cityName}, ${matchedState}` : matchedState;
+          if (badgeText) {
+            badgeText.innerHTML = `<strong>📍 ${displayLoc}</strong> <small style="opacity:0.85; font-size:0.75rem;">(${source})</small>`;
+          }
+          if (badgeEl) {
+            badgeEl.title = `Detected: ${displayLoc} (${source}). Click to refresh or change.`;
+          }
+
+          const stateSelects = ['applicantState', 'stateFilterSelect', 'custModalStateSelect'];
+          stateSelects.forEach(selId => {
+            const el = document.getElementById(selId);
+            if (el) {
+              for (let i = 0; i < el.options.length; i++) {
+                if (el.options[i].value.toLowerCase().includes(matchedState.toLowerCase())) {
+                  el.selectedIndex = i;
+                  break;
+                }
               }
             }
+          });
+
+          currentSelectedState = matchedState;
+          if (typeof renderServicesGrid === 'function') {
+            renderServicesGrid(currentActiveCategory);
           }
-        } catch {}
-        badgeText.textContent = "All India & Global Portal";
-        renderServicesGrid('all');
+          if (typeof recalculateFees === 'function') {
+            recalculateFees();
+          }
+
+          if (matchedState === 'Punjab') {
+            const quickChallan = document.getElementById('quickChallanInput');
+            if (quickChallan) quickChallan.placeholder = 'e.g. PB65AB1234 ਜਾਂ PB10AB1234 ਜਾਂ ਚਲਾਨ ਨੰਬਰ...';
+          }
+        }
+
+        if (navigator.geolocation && promptUser) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              const lat = position.coords.latitude;
+              const lon = position.coords.longitude;
+              try {
+                const res = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`);
+                if (res.ok) {
+                  const data = await res.json();
+                  const state = data.principalSubdivision || data.countrySubdivision || "";
+                  const city = data.city || data.locality || data.localityInfo?.administrative?.[2]?.name || "";
+                  if (state) {
+                    applyStateToPortal(state, city, 'GPS Live');
+                    return;
+                  }
+                }
+              } catch (e) {
+                console.warn("Reverse geocode error:", e);
+              }
+              await fallbackToIP();
+            },
+            async (error) => {
+              console.log("Geolocation error or permission denied:", error.message);
+              await fallbackToIP();
+            },
+            { timeout: 7000, maximumAge: 60000, enableHighAccuracy: false }
+          );
+        } else {
+          await fallbackToIP();
+        }
+
+        async function fallbackToIP() {
+          try {
+            const res = await fetch("https://ipwho.is/").catch(() => null);
+            if (res && res.ok) {
+              const data = await res.json();
+              if (data && data.success !== false) {
+                const region = data.region || data.region_code || "";
+                const city = data.city || "";
+                if (region) {
+                  applyStateToPortal(region, city, 'IP');
+                  return;
+                }
+              }
+            }
+          } catch {}
+
+          // Default fallback is Punjab
+          applyStateToPortal('Punjab', 'Mohali / SAS Nagar', 'Default');
+        }
       }
 
       // PINCODE AUTO-LOOKUP (City, District & State Automation)
