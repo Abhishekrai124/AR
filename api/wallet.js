@@ -1,3 +1,5 @@
+import assistantHandler from "../lib/wallet-assistant.js";
+
 const supabaseUrl = String(process.env.SUPABASE_URL || "https://atphyjukjgnnbfbnizyx.supabase.co").trim();
 const anonKey = String(process.env.SUPABASE_ANON_KEY || "sb_publishable_1mRpCP5-rupEHnhOV3aK1w_lhFwAo6l").trim();
 const serviceKey = String(process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
@@ -12,6 +14,10 @@ async function readJson(response) {
 }
 
 export default async function handler(request, response) {
+  if (request.query?.type === "assistant" || request.url?.includes("wallet-assistant")) {
+    return assistantHandler(request, response);
+  }
+
   if (request.method !== "GET" && request.method !== "POST") {
     response.setHeader("Allow", "GET, POST");
     return response.status(405).json({ error: "Method not allowed." });
@@ -49,7 +55,7 @@ export default async function handler(request, response) {
       return response.status(502).json({ error: "Could not load or update your ledger. Confirm the wallet migration has been applied." });
     }
     return response.status(200).json(data);
-  } catch {
-    return response.status(502).json({ error: "The wallet service is temporarily unavailable." });
+  } catch (err) {
+    return response.status(500).json({ error: err.message || "Internal server error" });
   }
 }

@@ -2,7 +2,35 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/:username((?!dm$|community$|about$|services$|projects$|contact$|music$|chess$|auth$|owner$|payments$|privacy$|index$|makima-core$)[a-zA-Z0-9_]+)",
+      "source": "/api/detective-admin",
+      "destination": "/api/detective?type=admin"
+    },
+    {
+      "source": "/api/detective-cases",
+      "destination": "/api/detective?type=cases"
+    },
+    {
+      "source": "/api/detective-client",
+      "destination": "/api/detective?type=client"
+    },
+    {
+      "source": "/api/detective-member",
+      "destination": "/api/detective?type=member"
+    },
+    {
+      "source": "/api/detective-retention",
+      "destination": "/api/detective?type=retention"
+    },
+    {
+      "source": "/api/wallet-assistant",
+      "destination": "/api/wallet?type=assistant"
+    },
+    {
+      "source": "/api/staff",
+      "destination": "/api/account?type=staff"
+    },
+    {
+      "source": "/:username((?!dm$|community$|about$|services$|projects$|contact$|music$|chess$|auth$|owner$|payments$|privacy$|index$|makima-core$|eseva$)[a-zA-Z0-9_]+)",
       "destination": "/profile.html"
     }
   ]

@@ -1,3 +1,5 @@
+import staffHandler from "../lib/staff.js";
+
 const supabaseUrl = process.env.SUPABASE_URL || "https://atphyjukjgnnbfbnizyx.supabase.co";
 const anonKey = process.env.SUPABASE_ANON_KEY || "sb_publishable_1mRpCP5-rupEHnhOV3aK1w_lhFwAo6l";
 
@@ -8,6 +10,10 @@ const adminHeaders = () => ({
 });
 
 export default async function handler(request, response) {
+  if (request.query?.type === "staff" || request.url?.includes("staff")) {
+    return staffHandler(request, response);
+  }
+
   if (request.method !== "POST") return response.status(405).json({ error: "Method not allowed" });
   if (request.body?.action !== "delete-my-account") return response.status(400).json({ error: "Unknown account action." });
   try {
