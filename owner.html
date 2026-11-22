@@ -291,6 +291,57 @@
           </form>
         </section>
 
+        <!-- Section 4: Shan Cyber Cafe & E-Seva Applications & Payment Hub -->
+        <section class="owner-section owner-panel" style="margin-top: 32px; border-color: rgba(245, 158, 11, 0.4);">
+          <div class="owner-section-heading">
+            <div>
+              <p class="eyebrow" style="color: #f59e0b;">04 · Shan Cyber Cafe &amp; E-Seva Hub</p>
+              <h2>Citizen Applications &amp; Live Payment Orders</h2>
+              <p>Monitor all submitted Indian documents, applicant records, payment UTRs, and fulfillment status in real-time.</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button id="refreshEsevaOrdersBtn" class="button primary" style="background:#f59e0b; color:#0f172a; font-weight:700;" type="button">↻ Refresh Orders</button>
+              <button id="clearDemoEsevaBtn" class="button" type="button" style="font-size:0.8rem;">Purge Test Orders</button>
+            </div>
+          </div>
+
+          <!-- Summary Metric Cards -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin: 20px 0;">
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 16px; text-align: center;">
+              <small style="color: #94a3b8; font-weight: 600;">Total Applications</small>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #fff; margin-top: 4px;" id="esevaTotalCount">0</div>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 16px; text-align: center;">
+              <small style="color: #6ee7b7; font-weight: 600;">Total Revenue Collected</small>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #10b981; margin-top: 4px;" id="esevaTotalRevenue">₹0</div>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; padding: 16px; text-align: center;">
+              <small style="color: #fde68a; font-weight: 600;">Pending / In-Progress</small>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #f59e0b; margin-top: 4px;" id="esevaPendingCount">0</div>
+            </div>
+            <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 12px; padding: 16px; text-align: center;">
+              <small style="color: #7dd3fc; font-weight: 600;">Completed</small>
+              <div style="font-size: 1.8rem; font-weight: 800; color: #38bdf8; margin-top: 4px;" id="esevaCompletedCount">0</div>
+            </div>
+          </div>
+
+          <!-- Filter & Search Controls -->
+          <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; align-items: center;">
+            <input id="esevaOrderSearch" style="flex: 1; min-width: 240px; padding: 10px 14px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff;" placeholder="Search by applicant name, mobile, or Ref ID..." />
+            <select id="esevaStatusFilter" style="padding: 10px 14px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #fff;">
+              <option value="all">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="In-Progress">In-Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+
+          <!-- Applications List -->
+          <div id="esevaOrdersList" style="display: grid; gap: 14px;">
+            <!-- Populated dynamically -->
+          </div>
+        </section>
+
       </div>
     </main>
 

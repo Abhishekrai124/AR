@@ -118,5 +118,184 @@ editor.addEventListener("click", async (event) => {
     loadAnalytics().catch((e) => console.warn("Analytics note:", e)),
     loadSiteControls().catch((e) => console.warn("Site controls error:", e)),
     loadCards().catch((e) => console.warn("Cards error:", e)),
+    loadEsevaOrders().catch((e) => console.warn("E-Seva orders error:", e)),
   ]);
 })();
+
+// --- Shan Cyber Cafe & E-Seva Manager in Owner Studio ---
+const esevaTotalCount = document.querySelector("#esevaTotalCount");
+const esevaTotalRevenue = document.querySelector("#esevaTotalRevenue");
+const esevaPendingCount = document.querySelector("#esevaPendingCount");
+const esevaCompletedCount = document.querySelector("#esevaCompletedCount");
+const esevaOrdersList = document.querySelector("#esevaOrdersList");
+const esevaOrderSearch = document.querySelector("#esevaOrderSearch");
+const esevaStatusFilter = document.querySelector("#esevaStatusFilter");
+const refreshEsevaOrdersBtn = document.querySelector("#refreshEsevaOrdersBtn");
+const clearDemoEsevaBtn = document.querySelector("#clearDemoEsevaBtn");
+
+let cachedEsevaOrders = [];
+
+function getStoredEsevaOrders() {
+  try {
+    return JSON.parse(localStorage.getItem("shan_eseva_applications") || "[]");
+  } catch {
+    return [];
+  }
+}
+
+function saveStoredEsevaOrders(orders) {
+  try {
+    localStorage.setItem("shan_eseva_applications", JSON.stringify(orders));
+  } catch {}
+}
+
+async function loadEsevaOrders() {
+  if (!esevaOrdersList) return;
+  let orders = getStoredEsevaOrders();
+
+  if (window.arraiSupabase) {
+    try {
+      const { data } = await window.arraiSupabase
+        .from("eseva_applications")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (data && data.length) {
+        const refMap = new Map(orders.map((o) => [o.refId, o]));
+        data.forEach((row) => {
+          if (!refMap.has(row.ref_id)) {
+            const mapped = row.details || {
+              refId: row.ref_id,
+              service: row.service_name,
+              name: row.applicant_name,
+              phone: row.phone,
+              email: row.email,
+              utr: row.payment_ref,
+              fee: row.fee_paid,
+              status: "Pending",
+              formattedDate: new Date(row.created_at).toLocaleString("en-IN"),
+            };
+            orders.push(mapped);
+          }
+        });
+      }
+    } catch {}
+  }
+
+  cachedEsevaOrders = orders;
+  renderEsevaOrders();
+}
+
+function renderEsevaOrders() {
+  if (!esevaOrdersList) return;
+  const q = (esevaOrderSearch?.value || "").toLowerCase().trim();
+  const filter = esevaStatusFilter?.value || "all";
+
+  let filtered = cachedEsevaOrders.filter((order) => {
+    const matchFilter = filter === "all" || order.status === filter;
+    const matchQuery =
+      !q ||
+      (order.name || "").toLowerCase().includes(q) ||
+      (order.phone || "").toLowerCase().includes(q) ||
+      (order.refId || "").toLowerCase().includes(q) ||
+      (order.service || "").toLowerCase().includes(q);
+    return matchFilter && matchQuery;
+  });
+
+  const total = cachedEsevaOrders.length;
+  let revenue = 0;
+  let pending = 0;
+  let completed = 0;
+
+  cachedEsevaOrders.forEach((o) => {
+    const num = parseInt((o.fee || "0").replace(/[^0-9]/g, ""), 10) || 0;
+    revenue += num;
+    if (o.status === "Completed") completed++;
+    else pending++;
+  });
+
+  if (esevaTotalCount) esevaTotalCount.textContent = total;
+  if (esevaTotalRevenue) esevaTotalRevenue.textContent = `₹${new Intl.NumberFormat("en-IN").format(revenue)}`;
+  if (esevaPendingCount) esevaPendingCount.textContent = pending;
+  if (esevaCompletedCount) esevaCompletedCount.textContent = completed;
+
+  if (!filtered.length) {
+    esevaOrdersList.innerHTML = `<div style="text-align:center; padding:30px; background:rgba(15,23,42,0.6); border:1px dashed rgba(255,255,255,0.1); border-radius:12px; color:#94a3b8;">No applications found matching criteria.</div>`;
+    return;
+  }
+
+  esevaOrdersList.innerHTML = filtered
+    .map(
+      (order) => `
+    <div style="background:rgba(15,23,42,0.85); border:1px solid ${order.status === "Completed" ? "rgba(16,185,129,0.3)" : "rgba(245,158,11,0.3)"}; border-radius:12px; padding:18px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+        <div>
+          <span style="font-size:0.75rem; font-weight:800; background:rgba(245,158,11,0.15); color:#fde68a; border:1px solid rgba(245,158,11,0.3); padding:3px 10px; border-radius:999px;">
+            REF: ${escapeHtml(order.refId)}
+          </span>
+          <h3 style="color:#fff; margin:8px 0 2px; font-size:1.15rem;">${escapeHtml(order.service)}</h3>
+          <small style="color:#94a3b8;">Submitted: ${escapeHtml(order.formattedDate || "Recent")}</small>
+        </div>
+        <div style="text-align:right;">
+          <span style="font-size:1.4rem; font-weight:800; color:#fde68a;">${escapeHtml(order.fee)}</span>
+          <div style="margin-top:4px;">
+            <span style="font-size:0.75rem; font-weight:700; padding:3px 8px; border-radius:4px; ${order.status === "Completed" ? "background:rgba(16,185,129,0.2); color:#6ee7b7;" : order.status === "In-Progress" ? "background:rgba(56,189,248,0.2); color:#7dd3fc;" : "background:rgba(245,158,11,0.2); color:#fde68a;"}">
+              ● ${escapeHtml(order.status || "Pending")}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; background:rgba(0,0,0,0.25); padding:12px; border-radius:8px; font-size:0.85rem; color:#cbd5e1; margin-bottom:14px;">
+        <div><strong>आवेदक:</strong> ${escapeHtml(order.name)} (${escapeHtml(order.gender || "")}, DOB: ${escapeHtml(order.dob || "N/A")})</div>
+        <div><strong>पिता/पति:</strong> ${escapeHtml(order.guardian || "N/A")}</div>
+        <div><strong>फ़ोन:</strong> <a href="tel:${escapeHtml(order.phone)}" style="color:#38bdf8;">${escapeHtml(order.phone)}</a> (<a href="https://wa.me/91${escapeHtml(order.phone)}" target="_blank" style="color:#10b981;">WhatsApp ➔</a>)</div>
+        <div><strong>ईमेल:</strong> ${escapeHtml(order.email || "N/A")}</div>
+        <div style="grid-column:1/-1;"><strong>पता:</strong> ${escapeHtml(order.address || "")} (PIN: ${escapeHtml(order.pincode || "")})</div>
+        <div style="grid-column:1/-1;"><strong>पेमेंट UTR / ID:</strong> <code style="color:#6ee7b7; background:rgba(0,0,0,0.5); padding:2px 6px; border-radius:4px;">${escapeHtml(order.utr || "Verified")}</code></div>
+        ${order.existingId && order.existingId !== "N/A" ? `<div><strong>पूर्व आईडी:</strong> ${escapeHtml(order.existingId)}</div>` : ""}
+        ${order.fileNames ? `<div><strong>दस्तावेज़:</strong> ${escapeHtml(order.fileNames)}</div>` : ""}
+        ${order.notes && order.notes !== "None" ? `<div style="grid-column:1/-1;"><strong>विशेष निर्देश:</strong> ${escapeHtml(order.notes)}</div>` : ""}
+      </div>
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+        <button class="button" type="button" style="font-size:0.8rem;" onclick="updateOrderStatus('${escapeHtml(order.refId)}', 'In-Progress')">
+          ⏳ Mark In-Progress
+        </button>
+        <button class="button primary" type="button" style="font-size:0.8rem; background:#10b981; color:#fff;" onclick="updateOrderStatus('${escapeHtml(order.refId)}', 'Completed')">
+          ✓ Mark Completed
+        </button>
+        <button class="button" type="button" style="font-size:0.8rem; color:#f87171; border-color:#f87171;" onclick="deleteOrder('${escapeHtml(order.refId)}')">
+          🗑 Delete
+        </button>
+      </div>
+    </div>
+  `
+    )
+    .join("");
+}
+
+window.updateOrderStatus = (refId, newStatus) => {
+  const order = cachedEsevaOrders.find((o) => o.refId === refId);
+  if (order) {
+    order.status = newStatus;
+    saveStoredEsevaOrders(cachedEsevaOrders);
+    renderEsevaOrders();
+  }
+};
+
+window.deleteOrder = (refId) => {
+  if (!confirm("Are you sure you want to delete application " + refId + "?")) return;
+  cachedEsevaOrders = cachedEsevaOrders.filter((o) => o.refId !== refId);
+  saveStoredEsevaOrders(cachedEsevaOrders);
+  renderEsevaOrders();
+};
+
+refreshEsevaOrdersBtn?.addEventListener("click", loadEsevaOrders);
+clearDemoEsevaBtn?.addEventListener("click", () => {
+  if (!confirm("Are you sure you want to clear test applications?")) return;
+  saveStoredEsevaOrders([]);
+  cachedEsevaOrders = [];
+  renderEsevaOrders();
+});
+esevaOrderSearch?.addEventListener("input", renderEsevaOrders);
+esevaStatusFilter?.addEventListener("change", renderEsevaOrders);
