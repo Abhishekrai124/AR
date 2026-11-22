@@ -566,6 +566,9 @@
           <button onclick="sendWhatsAppConfirmation()" style="padding:10px 18px; border-radius:8px; background:#10b981; color:#fff; font-weight:700; border:none; cursor:pointer;">
             📲 WhatsApp पर सूचना भेजें
           </button>
+          <a id="trackOrderBtnModal" href="track.html" style="padding:10px 18px; border-radius:8px; background:#0284c7; color:#fff; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+            🔍 स्थिति ट्रैक करें (Track)
+          </a>
           <button onclick="closeReceiptModal()" style="padding:10px 18px; border-radius:8px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid var(--eseva-border); cursor:pointer;">
             बंद करें (Close)
           </button>
@@ -1399,6 +1402,8 @@
           <div><strong>दस्तावेज़:</strong> ${record.fileNames}</div>
           <div><strong>समय व तारीख:</strong> ${record.formattedDate}</div>
         `;
+        const trackBtn = document.getElementById('trackOrderBtnModal');
+        if (trackBtn) trackBtn.href = `track.html?ref=${encodeURIComponent(record.refId)}`;
         document.getElementById('successModal').style.display = 'flex';
       }
 

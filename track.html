@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="आवेदन की स्थिति जानें — शान साइबर कैफे एवं ई-सेवा पोर्टल | arrai.in" />
+    <meta name="theme-color" content="#0f172a" />
+    <title>आवेदन ट्रैक करें — शान साइबर कैफे एवं ई-सेवा | arrai.in</title>
+    <link rel="icon" type="image/svg+xml" href="assets/app-icon.svg" />
+    <link rel="alternate icon" href="assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      :root {
+        --eseva-gold: #f59e0b;
+        --eseva-emerald: #10b981;
+        --eseva-blue: #38bdf8;
+        --eseva-card-bg: rgba(15, 23, 42, 0.92);
+        --eseva-border: rgba(255, 255, 255, 0.12);
+      }
+      body {
+        background: #090d16;
+        color: #f8fafc;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        padding-bottom: 90px;
+        min-height: 100vh;
+      }
+      .track-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 24px 16px;
+      }
+      .track-header-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0 20px;
+        border-bottom: 1px solid var(--eseva-border);
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .btn-nav {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--eseva-border);
+        border-radius: 8px;
+        color: #cbd5e1;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+      }
+      .btn-nav:hover {
+        background: rgba(245, 158, 11, 0.2);
+        color: var(--eseva-gold);
+        border-color: var(--eseva-gold);
+      }
+      .search-card {
+        background: var(--eseva-card-bg);
+        border: 1px solid var(--eseva-border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+        margin-bottom: 24px;
+      }
+      .track-input-wrap {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+      .track-input {
+        flex: 1;
+        min-width: 240px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--eseva-border);
+        border-radius: 10px;
+        padding: 12px 16px;
+        color: #fff;
+        font-size: 1rem;
+        transition: border-color 0.2s;
+      }
+      .track-input:focus {
+        outline: none;
+        border-color: var(--eseva-blue);
+      }
+      .btn-search {
+        padding: 12px 24px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #0284c7, #0369a1);
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.2s, opacity 0.2s;
+      }
+      .btn-search:hover {
+        transform: translateY(-2px);
+        opacity: 0.95;
+      }
+      .status-result-card {
+        display: none;
+        background: var(--eseva-card-bg);
+        border: 1px solid var(--eseva-border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+        margin-bottom: 24px;
+      }
+      /* Progress Timeline */
+      .timeline-box {
+        margin: 24px 0;
+        position: relative;
+      }
+      .timeline-steps {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        margin-bottom: 24px;
+      }
+      .timeline-steps::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 1;
+      }
+      .timeline-progress-bar {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        height: 4px;
+        background: linear-gradient(90deg, #10b981, #38bdf8);
+        z-index: 2;
+        transition: width 0.4s ease;
+      }
+      .step-node {
+        position: relative;
+        z-index: 3;
+        text-align: center;
+        flex: 1;
+      }
+      .step-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #0f172a;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 8px;
+        font-weight: 800;
+        font-size: 0.9rem;
+        color: #94a3b8;
+        transition: all 0.3s;
+      }
+      .step-node.completed .step-circle {
+        background: #10b981;
+        border-color: #10b981;
+        color: #fff;
+        box-shadow: 0 0 14px rgba(16, 185, 129, 0.5);
+      }
+      .step-node.active .step-circle {
+        background: #0284c7;
+        border-color: #38bdf8;
+        color: #fff;
+        box-shadow: 0 0 14px rgba(56, 189, 248, 0.6);
+        animation: pulseRing 1.8s infinite;
+      }
+      @keyframes pulseRing {
+        0% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.6); }
+        70% { box-shadow: 0 0 0 10px rgba(56, 189, 248, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+      }
+      .step-title {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #cbd5e1;
+        display: block;
+        max-width: 120px;
+        margin: 0 auto;
+        line-height: 1.3;
+      }
+      .step-node.completed .step-title {
+        color: #6ee7b7;
+      }
+      .step-node.active .step-title {
+        color: #7dd3fc;
+      }
+      .details-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--eseva-border);
+        border-radius: 12px;
+        padding: 16px;
+        margin: 16px 0;
+        font-size: 0.88rem;
+      }
+      .badge-status {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 0.82rem;
+        font-weight: 800;
+      }
+      .status-pending {
+        background: rgba(245, 158, 11, 0.2);
+        color: #fde68a;
+        border: 1px solid rgba(245, 158, 11, 0.4);
+      }
+      .status-progress {
+        background: rgba(56, 189, 248, 0.2);
+        color: #7dd3fc;
+        border: 1px solid rgba(56, 189, 248, 0.4);
+      }
+      .status-completed {
+        background: rgba(16, 185, 129, 0.2);
+        color: #6ee7b7;
+        border: 1px solid rgba(16, 185, 129, 0.4);
+      }
+      .recent-badge-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--eseva-border);
+        color: #94a3b8;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.78rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .recent-badge-btn:hover {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--eseva-gold);
+        border-color: var(--eseva-gold);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="track-container">
+      <!-- Navigation Header -->
+      <div class="track-header-nav">
+        <div style="display:flex; align-items:center; gap:8px;">
+          <a href="eseva.html" class="btn-nav">⬅ ई-सेवा पोर्टल</a>
+          <a href="index.html" class="btn-nav" style="background:transparent; border-color:transparent;">🏠 होम</a>
+        </div>
+        <div>
+          <a href="apply.html" class="btn-nav" style="background:rgba(245, 158, 11, 0.15); border-color:var(--eseva-gold); color:var(--eseva-gold); font-weight:700;">
+            ⚡ नया आवेदन भरें ➔
+          </a>
+        </div>
+      </div>
+
+      <!-- Search Box -->
+      <div class="search-card">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+          <span style="font-size:1.6rem;">🔍</span>
+          <div>
+            <h2 style="margin:0; font-size:1.3rem; color:#fff;">आवेदन स्थिति ट्रैकर (Live Application Tracking)</h2>
+            <small style="color:#94a3b8; font-size:0.8rem;">शान साइबर कैफे एवं ई-सेवा केंद्र पर जमा किए गए आवेदन की ताज़ा प्रगति देखें</small>
+          </div>
+        </div>
+
+        <div class="track-input-wrap">
+          <input type="text" id="trackSearchInput" class="track-input" placeholder="संदर्भ संख्या (उदा. SHAN-123456) या मोबाइल नंबर डालें..." />
+          <button type="button" class="btn-search" onclick="performTracking()">
+            ट्रैक करें (Track Progress)
+          </button>
+        </div>
+
+        <div id="recentOrdersSection" style="margin-top:14px; font-size:0.8rem; color:#94a3b8; display:none;">
+          <span>हालिया आवेदन (Recent): </span>
+          <span id="recentOrdersBadges" style="display:inline-flex; gap:6px; flex-wrap:wrap;"></span>
+        </div>
+      </div>
+
+      <!-- Status Result Box -->
+      <div class="status-result-card" id="trackingResultCard">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; border-bottom:1px solid var(--eseva-border); padding-bottom:16px;">
+          <div>
+            <span class="badge-status status-progress" id="orderStatusBadge">● In-Progress</span>
+            <h3 style="color:#fff; margin:8px 0 2px; font-size:1.25rem;" id="orderServiceTitle">सेवा का नाम</h3>
+            <span style="color:#94a3b8; font-size:0.82rem;">संदर्भ संख्या (Reference ID): <strong style="color:var(--eseva-gold);" id="orderRefId">#SHAN-XXXXXX</strong></span>
+          </div>
+          <div style="text-align:right;">
+            <span style="font-size:1.5rem; font-weight:800; color:#10b981;" id="orderFeeDisplay">₹0</span>
+            <small style="display:block; color:#94a3b8; font-size:0.75rem;" id="orderPaymentMode">UPI Verified</small>
+          </div>
+        </div>
+
+        <!-- Visual Multi-Step Timeline -->
+        <div class="timeline-box">
+          <div class="timeline-steps">
+            <div class="timeline-progress-bar" id="timelineProgressBar" style="width: 25%;"></div>
+
+            <!-- Step 1 -->
+            <div class="step-node completed" id="stepNode1">
+              <div class="step-circle">1</div>
+              <span class="step-title">आवेदन व पेमेंट प्राप्त</span>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-node" id="stepNode2">
+              <div class="step-circle">2</div>
+              <span class="step-title">दस्तावेज़ सत्यापन</span>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-node" id="stepNode3">
+              <div class="step-circle">3</div>
+              <span class="step-title">सरकारी पोर्टल प्रक्रिया</span>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step-node" id="stepNode4">
+              <div class="step-circle">4</div>
+              <span class="step-title">प्रमाण पत्र / पूर्ण</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Current Status Detail Banner -->
+        <div style="background:rgba(56, 189, 248, 0.08); border:1px solid rgba(56, 189, 248, 0.25); border-radius:10px; padding:12px 16px; margin:16px 0; font-size:0.88rem; display:flex; align-items:center; gap:10px;">
+          <span style="font-size:1.4rem;">ℹ️</span>
+          <div>
+            <strong style="color:#38bdf8; display:block;" id="statusSummaryTitle">वर्तमान स्थिति: समीक्षाधीन</strong>
+            <span style="color:#cbd5e1; font-size:0.82rem;" id="statusSummaryDesc">आपके दस्तावेज़ों की साइबर कैफे द्वारा जाँच की जा रही है।</span>
+          </div>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="details-grid">
+          <div><strong>आवेदक का नाम:</strong> <span id="dtlApplicantName">-</span></div>
+          <div><strong>पिता / पति का नाम:</strong> <span id="dtlGuardianName">-</span></div>
+          <div><strong>मोबाइल नंबर:</strong> <span id="dtlPhone">-</span></div>
+          <div><strong>ईमेल:</strong> <span id="dtlEmail">-</span></div>
+          <div><strong>आवेदन तारीख:</strong> <span id="dtlDate">-</span></div>
+          <div><strong>पेमेंट UTR / ID:</strong> <span id="dtlUtr" style="color:#6ee7b7;">-</span></div>
+          <div style="grid-column:1/-1;"><strong>पता:</strong> <span id="dtlAddress">-</span></div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap; margin-top:16px;">
+          <button type="button" onclick="printApplicationSlip()" style="padding:10px 18px; border-radius:8px; background:rgba(255,255,255,0.08); border:1px solid var(--eseva-border); color:#fff; cursor:pointer;">
+            🖨️ पावती पर्ची प्रिंट करें
+          </button>
+          <a id="whatsappStatusBtn" href="#" target="_blank" style="padding:10px 18px; border-radius:8px; background:#10b981; color:#fff; font-weight:700; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+            <span>💬</span> <span>WhatsApp पर पूछताछ करें</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Not Found Box -->
+      <div id="notFoundBox" style="display:none; text-align:center; padding:32px; background:var(--eseva-card-bg); border:1px dashed rgba(248,113,113,0.4); border-radius:16px; color:#fca5a5;">
+        <div style="font-size:2.5rem; margin-bottom:8px;">⚠️</div>
+        <h3 style="margin:0 0 4px 0; color:#f87171;">कोई आवेदन नहीं मिला</h3>
+        <p style="font-size:0.88rem; color:#94a3b8; margin:0 0 16px 0;">कृपया अपनी संदर्भ संख्या (#SHAN-XXXXXX) या 10-अंकों का मोबाइल नंबर पुनः जाँचें।</p>
+        <a href="https://wa.me/917009446821?text=Hello%20Shan%20Cyber%20Cafe,%20I%20need%20help%20tracking%20my%20application" target="_blank" class="btn-nav" style="background:#10b981; color:#fff; border:none; font-weight:700;">
+          📞 हेल्पलाइन से सहायता प्राप्त करें
+        </a>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script>
+      let currentTrackedOrder = null;
+
+      function getAllOrders() {
+        try {
+          return JSON.parse(localStorage.getItem('shan_eseva_applications') || '[]');
+        } catch {
+          return [];
+        }
+      }
+
+      function initTracking() {
+        const params = new URLSearchParams(window.location.search);
+        const ref = params.get('ref') || params.get('phone') || '';
+        if (ref) {
+          document.getElementById('trackSearchInput').value = ref;
+          performTracking();
+        }
+
+        // Show recent badges
+        const orders = getAllOrders();
+        if (orders.length > 0) {
+          const wrap = document.getElementById('recentOrdersBadges');
+          wrap.innerHTML = '';
+          orders.slice(0, 3).forEach(o => {
+            const btn = document.createElement('button');
+            btn.className = 'recent-badge-btn';
+            btn.textContent = `${o.refId} (${o.name})`;
+            btn.onclick = () => {
+              document.getElementById('trackSearchInput').value = o.refId;
+              performTracking();
+            };
+            wrap.appendChild(btn);
+          });
+          document.getElementById('recentOrdersSection').style.display = 'block';
+        }
+      }
+
+      async function performTracking() {
+        const query = (document.getElementById('trackSearchInput').value || '').trim().toUpperCase();
+        if (!query) {
+          alert('कृपया अपनी संदर्भ संख्या या मोबाइल नंबर दर्ज करें।');
+          return;
+        }
+
+        const localOrders = getAllOrders();
+        let matched = localOrders.find(o => 
+          (o.refId && o.refId.toUpperCase() === query) ||
+          (o.phone && o.phone.replace(/[^0-9]/g, '') === query.replace(/[^0-9]/g, ''))
+        );
+
+        // If not found locally, check Supabase
+        if (!matched && window.arraiSupabase) {
+          try {
+            const { data } = await window.arraiSupabase
+              .from('eseva_applications')
+              .select('*')
+              .or(`ref_id.eq.${query},phone.eq.${query}`)
+              .limit(1);
+
+            if (data && data.length > 0) {
+              const row = data[0];
+              matched = row.details || {
+                refId: row.ref_id,
+                service: row.service_name,
+                name: row.applicant_name,
+                phone: row.phone,
+                email: row.email,
+                fee: row.fee_paid,
+                utr: row.payment_ref,
+                status: 'In-Progress'
+              };
+            }
+          } catch {}
+        }
+
+        if (matched) {
+          document.getElementById('notFoundBox').style.display = 'none';
+          renderOrderStatus(matched);
+        } else {
+          document.getElementById('trackingResultCard').style.display = 'none';
+          document.getElementById('notFoundBox').style.display = 'block';
+        }
+      }
+
+      function renderOrderStatus(order) {
+        currentTrackedOrder = order;
+        const status = order.status || 'Pending';
+
+        document.getElementById('orderRefId').textContent = '#' + (order.refId || 'SHAN-XXXXXX');
+        document.getElementById('orderServiceTitle').textContent = order.service || 'Citizen E-Seva';
+        document.getElementById('orderFeeDisplay').textContent = order.fee || '₹0';
+        document.getElementById('orderPaymentMode').textContent = `${order.paymentMethod || 'ONLINE'} - ${order.utr || 'VERIFIED'}`;
+
+        document.getElementById('dtlApplicantName').textContent = order.name || order.applicantName || 'N/A';
+        document.getElementById('dtlGuardianName').textContent = order.guardian || order.guardianName || 'N/A';
+        document.getElementById('dtlPhone').textContent = order.phone || 'N/A';
+        document.getElementById('dtlEmail').textContent = order.email || 'N/A';
+        document.getElementById('dtlDate').textContent = order.formattedDate || 'Recent';
+        document.getElementById('dtlUtr').textContent = order.utr || 'Verified';
+        document.getElementById('dtlAddress').textContent = `${order.address || ''} (PIN: ${order.pincode || ''})`;
+
+        // Badge & Timeline Logic
+        const badge = document.getElementById('orderStatusBadge');
+        const pBar = document.getElementById('timelineProgressBar');
+        const s1 = document.getElementById('stepNode1');
+        const s2 = document.getElementById('stepNode2');
+        const s3 = document.getElementById('stepNode3');
+        const s4 = document.getElementById('stepNode4');
+
+        // Reset
+        [s1, s2, s3, s4].forEach(s => s.className = 'step-node');
+
+        if (status === 'Pending') {
+          badge.className = 'badge-status status-pending';
+          badge.textContent = '● आवेदन प्राप्त (Pending Verification)';
+          pBar.style.width = '25%';
+          s1.className = 'step-node completed';
+          s2.className = 'step-node active';
+          document.getElementById('statusSummaryTitle').textContent = 'दस्तावेज़ सत्यापन प्रक्रियाधीन (Under Review)';
+          document.getElementById('statusSummaryDesc').textContent = 'आपका आवेदन और भुगतान साइबर कैफे ऑपरेटर द्वारा जांचा जा रहा है। जल्द ही सरकारी पोर्टल पर दर्ज किया जाएगा।';
+        } else if (status === 'In-Progress') {
+          badge.className = 'badge-status status-progress';
+          badge.textContent = '● प्रक्रियाधीन (In-Progress on Govt Portal)';
+          pBar.style.width = '65%';
+          s1.className = 'step-node completed';
+          s2.className = 'step-node completed';
+          s3.className = 'step-node active';
+          document.getElementById('statusSummaryTitle').textContent = 'सरकारी पोर्टल पर कार्रवाई जारी (Govt Processing)';
+          document.getElementById('statusSummaryDesc').textContent = 'दस्तावेज़ सत्यापित हो चुके हैं और संबंधित विभाग (e-District / Passport / Parivahan) के पोर्टल पर फाइल किए जा चुके हैं।';
+        } else if (status === 'Completed') {
+          badge.className = 'badge-status status-completed';
+          badge.textContent = '✓ पूर्ण व तैयार (Ready / Completed)';
+          pBar.style.width = '100%';
+          s1.className = 'step-node completed';
+          s2.className = 'step-node completed';
+          s3.className = 'step-node completed';
+          s4.className = 'step-node completed';
+          document.getElementById('statusSummaryTitle').textContent = 'आवेदन पूर्ण! प्रमाण पत्र तैयार (Application Completed)';
+          document.getElementById('statusSummaryDesc').textContent = 'आपका प्रमाण पत्र / सेवा सफलतापूर्वक तैयार हो चुकी है। आप इसे साइबर कैफे से प्राप्त कर सकते हैं या WhatsApp पर डाउनलोड कर सकते हैं।';
+        }
+
+        // WhatsApp inquiry link
+        const msg = encodeURIComponent(`नमस्ते शान साइबर कैफे,\nमेरी संदर्भ संख्या #${order.refId} है (${order.service})। कृपया मेरे आवेदन की ताज़ा स्थिति बताएं।`);
+        document.getElementById('whatsappStatusBtn').href = `https://wa.me/917009446821?text=${msg}`;
+
+        document.getElementById('trackingResultCard').style.display = 'block';
+        document.getElementById('trackingResultCard').scrollIntoView({ behavior: 'smooth' });
+      }
+
+      function printApplicationSlip() {
+        if (!currentTrackedOrder) return;
+        const r = currentTrackedOrder;
+        const w = window.open('', '', 'width=750,height=600');
+        w.document.write(`
+          <html>
+            <head>
+              <title>डिजिटल पावती - #${r.refId}</title>
+              <style>
+                body { font-family: sans-serif; padding: 24px; color: #111; line-height: 1.5; }
+                .hdr { text-align: center; border-bottom: 2px solid #222; padding-bottom: 12px; margin-bottom: 16px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+                th, td { border: 1px solid #ddd; padding: 8px 12px; font-size: 13px; }
+                th { background: #f4f4f4; text-align: left; width: 35%; }
+              </style>
+            </head>
+            <body>
+              <div class="hdr">
+                <h2 style="margin:0;">शान साइबर कैफे एवं ई-सेवा केंद्र</h2>
+                <p style="margin:4px 0;">Official Digital Application Slip · Reference #${r.refId}</p>
+                <small>Helpline: +91 7009446821 | Email: abhishekrai6897@gmail.com</small>
+              </div>
+              <table>
+                <tr><th>संदर्भ संख्या</th><td><strong>#${r.refId}</strong></td></tr>
+                <tr><th>स्थिति</th><td><strong>${r.status || 'Pending'}</strong></td></tr>
+                <tr><th>सेवा</th><td>${r.service}</td></tr>
+                <tr><th>आवेदक का नाम</th><td>${r.name || r.applicantName}</td></tr>
+                <tr><th>पिता/पति</th><td>${r.guardian || r.guardianName}</td></tr>
+                <tr><th>मोबाइल नंबर</th><td>${r.phone}</td></tr>
+                <tr><th>कुल शुल्क</th><td><strong>${r.fee}</strong></td></tr>
+                <tr><th>पेमेंट UTR / ID</th><td>${r.utr}</td></tr>
+                <tr><th>तारीख</th><td>${r.formattedDate || 'Recent'}</td></tr>
+              </table>
+            </body>
+          </html>
+        `);
+        w.document.close();
+        w.focus();
+        w.print();
+      }
+
+      // Enter key support for input
+      document.getElementById('trackSearchInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') performTracking();
+      });
+
+      // Init on load
+      initTracking();
+    </script>
+  </body>
+</html>

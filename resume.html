@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="प्रीमियम रिज़्यूमे व CV मेकर — शान साइबर कैफे एवं ई-सेवा | arrai.in" />
+    <meta name="theme-color" content="#0f172a" />
+    <title>प्रोफेशनल CV व रिज़्यूमे मेकर — शान साइबर कैफे (₹20) | arrai.in</title>
+    <link rel="icon" type="image/svg+xml" href="assets/app-icon.svg" />
+    <link rel="alternate icon" href="assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+      :root {
+        --eseva-gold: #f59e0b;
+        --eseva-emerald: #10b981;
+        --eseva-blue: #38bdf8;
+        --eseva-card-bg: rgba(15, 23, 42, 0.92);
+        --eseva-border: rgba(255, 255, 255, 0.12);
+      }
+      body {
+        background: #090d16;
+        color: #f8fafc;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        margin: 0;
+        padding-bottom: 60px;
+      }
+      .cv-container {
+        max-width: 1380px;
+        margin: 0 auto;
+        padding: 16px 20px;
+      }
+      .cv-header-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 12px 0 20px;
+        border-bottom: 1px solid var(--eseva-border);
+        margin-bottom: 20px;
+      }
+      .btn-nav {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--eseva-border);
+        border-radius: 8px;
+        color: #cbd5e1;
+        text-decoration: none;
+        font-size: 0.88rem;
+        transition: all 0.2s;
+      }
+      .btn-nav:hover {
+        background: rgba(245, 158, 11, 0.2);
+        color: var(--eseva-gold);
+        border-color: var(--eseva-gold);
+      }
+      .builder-layout {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+      @media (max-width: 980px) {
+        .builder-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+      .form-panel {
+        background: var(--eseva-card-bg);
+        border: 1px solid var(--eseva-border);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 16px 36px rgba(0,0,0,0.5);
+      }
+      .section-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--eseva-border);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 16px;
+      }
+      .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #38bdf8;
+        font-size: 1rem;
+        margin: 0 0 12px 0;
+        font-weight: 700;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 12px;
+      }
+      .form-label {
+        display: block;
+        font-size: 0.82rem;
+        color: #94a3b8;
+        margin-bottom: 4px;
+        font-weight: 600;
+      }
+      .form-input, .form-textarea {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid var(--eseva-border);
+        border-radius: 8px;
+        padding: 8px 12px;
+        color: #fff;
+        font-size: 0.9rem;
+        box-sizing: border-box;
+      }
+      .form-input:focus, .form-textarea:focus {
+        outline: none;
+        border-color: var(--eseva-gold);
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .btn-add-item {
+        background: rgba(56, 189, 248, 0.15);
+        color: #38bdf8;
+        border: 1px dashed rgba(56, 189, 248, 0.4);
+        border-radius: 6px;
+        padding: 6px 14px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .btn-add-item:hover {
+        background: rgba(56, 189, 248, 0.25);
+      }
+      .dynamic-entry {
+        background: rgba(0, 0, 0, 0.25);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        position: relative;
+      }
+      .btn-remove-entry {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: transparent;
+        border: none;
+        color: #f87171;
+        font-size: 1.1rem;
+        cursor: pointer;
+      }
+      /* Pay & Download Action Card */
+      .pay-banner {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.18), rgba(16, 185, 129, 0.18));
+        border: 1px solid var(--eseva-gold);
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .btn-download-pdf {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #0f172a;
+        font-weight: 800;
+        font-size: 1.05rem;
+        padding: 14px 26px;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
+        transition: transform 0.2s, opacity 0.2s;
+      }
+      .btn-download-pdf:hover {
+        transform: translateY(-2px);
+        opacity: 0.95;
+      }
+      /* Live A4 Preview */
+      .preview-wrapper {
+        position: sticky;
+        top: 20px;
+      }
+      .preview-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .resume-paper {
+        background: #ffffff;
+        color: #1e293b;
+        border-radius: 4px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        padding: 36px 40px;
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        line-height: 1.5;
+        min-height: 840px;
+        box-sizing: border-box;
+      }
+      .resume-header {
+        border-bottom: 2px solid #0f172a;
+        padding-bottom: 14px;
+        margin-bottom: 18px;
+      }
+      .resume-name {
+        font-size: 1.7rem;
+        font-weight: 900;
+        color: #0f172a;
+        margin: 0;
+        letter-spacing: -0.5px;
+      }
+      .resume-role {
+        font-size: 1rem;
+        color: #0284c7;
+        font-weight: 700;
+        margin: 3px 0 6px 0;
+      }
+      .resume-contact-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        font-size: 0.8rem;
+        color: #475569;
+      }
+      .resume-section-head {
+        font-size: 0.92rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #0f172a;
+        border-bottom: 1.5px solid #cbd5e1;
+        padding-bottom: 4px;
+        margin: 14px 0 8px 0;
+      }
+      .resume-summary-text {
+        font-size: 0.84rem;
+        color: #334155;
+        margin: 0 0 10px 0;
+        line-height: 1.6;
+      }
+      .resume-item-row {
+        margin-bottom: 10px;
+      }
+      .resume-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+      .resume-item-title {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: #0f172a;
+      }
+      .resume-item-subtitle {
+        font-size: 0.82rem;
+        color: #0284c7;
+        font-weight: 600;
+      }
+      .resume-item-date {
+        font-size: 0.78rem;
+        color: #64748b;
+        font-weight: 600;
+      }
+      .resume-item-desc {
+        font-size: 0.82rem;
+        color: #334155;
+        margin: 3px 0 0 0;
+        line-height: 1.5;
+      }
+      .skills-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 4px;
+      }
+      .skill-tag {
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        color: #0f172a;
+        font-size: 0.76rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 4px;
+      }
+
+      /* PRINT ONLY A4 PDF STYLES */
+      @media print {
+        body {
+          background: #fff !important;
+          color: #000 !important;
+          padding: 0 !important;
+        }
+        .cv-header-nav, .form-panel, .preview-card-header, .pay-banner {
+          display: none !important;
+        }
+        .builder-layout {
+          display: block !important;
+        }
+        .preview-wrapper {
+          position: static !important;
+        }
+        .resume-paper {
+          box-shadow: none !important;
+          padding: 0 !important;
+          min-height: auto !important;
+          width: 100% !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="cv-container">
+      <!-- Nav Header -->
+      <div class="cv-header-nav">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <a href="eseva.html" class="btn-nav">⬅ ई-सेवा मुख्य पोर्टल</a>
+          <a href="index.html" class="btn-nav" style="background:transparent; border-color:transparent;">🏠 होम</a>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="background:rgba(245, 158, 11, 0.15); border:1px solid rgba(245, 158, 11, 0.4); color:var(--eseva-gold); padding:4px 12px; border-radius:999px; font-size:0.8rem; font-weight:700;">
+            📄 AI-Ready ATS रिज़्यूमे मेकर · ₹20 मात्र
+          </span>
+          <a href="track.html" class="btn-nav">🔍 ट्रैक आवेदन</a>
+        </div>
+      </div>
+
+      <div class="builder-layout">
+        <!-- Left: Customizable Data Form -->
+        <div class="form-panel">
+          <div style="margin-bottom:16px;">
+            <h2 style="margin:0 0 4px 0; font-size:1.35rem; color:#fff;">अपना डेटा भरें (Customize Your CV)</h2>
+            <small style="color:#94a3b8;">सभी श्रेणियां अनुकूलन योग्य हैं। आवश्यकतानुसार नए अनुभव या शिक्षा जोड़ें।</small>
+          </div>
+
+          <!-- 1. Personal Details -->
+          <div class="section-card">
+            <h3 class="section-title"><span>👤 व्यक्तिगत जानकारी (Personal Details)</span></h3>
+            <div class="form-grid">
+              <div>
+                <label class="form-label">पूरा नाम (Full Name) *</label>
+                <input class="form-input" id="inpName" value="Abhishek Rai" oninput="updatePreview()" placeholder="Full Name" />
+              </div>
+              <div>
+                <label class="form-label">पद / पदनाम (Job Title) *</label>
+                <input class="form-input" id="inpTitle" value="Digital Services Specialist & Developer" oninput="updatePreview()" placeholder="e.g. Software Engineer, Accountant" />
+              </div>
+              <div>
+                <label class="form-label">मोबाइल नंबर (Phone) *</label>
+                <input class="form-input" id="inpPhone" value="+91 7009446821" oninput="updatePreview()" placeholder="+91 9876543210" />
+              </div>
+              <div>
+                <label class="form-label">ईमेल (Email) *</label>
+                <input class="form-input" id="inpEmail" value="abhishekrai6897@gmail.com" oninput="updatePreview()" placeholder="example@mail.com" />
+              </div>
+              <div style="grid-column:1/-1;">
+                <label class="form-label">शहर व राज्य (Location) *</label>
+                <input class="form-input" id="inpLocation" value="Azamgarh, Uttar Pradesh, India" oninput="updatePreview()" placeholder="City, State" />
+              </div>
+              <div style="grid-column:1/-1;">
+                <label class="form-label">LinkedIn / वेबसाइट (वैकल्पिक)</label>
+                <input class="form-input" id="inpWebsite" value="arrai.in" oninput="updatePreview()" placeholder="linkedin.com/in/... or portfolio" />
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Career Objective / Summary -->
+          <div class="section-card">
+            <h3 class="section-title"><span>📝 कैरियर उद्देश्य / प्रोफाइल सारांश (Profile Summary)</span></h3>
+            <textarea class="form-textarea" id="inpSummary" rows="3" oninput="updatePreview()" placeholder="Brief summary of your expertise and goals...">Dedicated professional with proven experience in digital platforms, citizen services management, and technical solutions. Skilled at delivering fast, error-free documentation and operational excellence.</textarea>
+          </div>
+
+          <!-- 3. Work Experience -->
+          <div class="section-card">
+            <div class="section-title">
+              <span>💼 कार्य अनुभव (Work Experience)</span>
+            </div>
+            <div id="experienceEntriesContainer">
+              <div class="dynamic-entry">
+                <button type="button" class="btn-remove-entry" onclick="removeEntry(this)">×</button>
+                <div class="form-grid">
+                  <div>
+                    <label class="form-label">कंपनी / प्रतिष्ठान (Company)</label>
+                    <input class="form-input exp-company" value="Shan Cyber Cafe & E-Seva" oninput="updatePreview()" />
+                  </div>
+                  <div>
+                    <label class="form-label">पद (Designation / Role)</label>
+                    <input class="form-input exp-role" value="Lead Operations & Documentation Manager" oninput="updatePreview()" />
+                  </div>
+                  <div>
+                    <label class="form-label">कार्यकाल (Duration)</label>
+                    <input class="form-input exp-duration" value="2022 - Present" oninput="updatePreview()" />
+                  </div>
+                  <div style="grid-column:1/-1;">
+                    <label class="form-label">मुख्य जिम्मेदारियां (Key Responsibilities)</label>
+                    <textarea class="form-textarea exp-desc" rows="2" oninput="updatePreview()">Managed passport, PAN, banking, and government applications for over 5,000+ satisfied clients. Optimized digital workflows and payment integration.</textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn-add-item" onclick="addExperienceEntry()">+ अन्य अनुभव जोड़ें</button>
+          </div>
+
+          <!-- 4. Education -->
+          <div class="section-card">
+            <div class="section-title">
+              <span>🎓 शैक्षणिक योग्यता (Education)</span>
+            </div>
+            <div id="educationEntriesContainer">
+              <div class="dynamic-entry">
+                <button type="button" class="btn-remove-entry" onclick="removeEntry(this)">×</button>
+                <div class="form-grid">
+                  <div>
+                    <label class="form-label">डिग्री / कोर्स (Degree / Standard)</label>
+                    <input class="form-input edu-degree" value="Bachelor of Computer Applications (BCA)" oninput="updatePreview()" />
+                  </div>
+                  <div>
+                    <label class="form-label">कॉलेज / बोर्ड (Institution / Board)</label>
+                    <input class="form-input edu-school" value="State University" oninput="updatePreview()" />
+                  </div>
+                  <div>
+                    <label class="form-label">उत्तीर्ण वर्ष व अंक (Year &amp; Score)</label>
+                    <input class="form-input edu-year" value="2021 · 78%" oninput="updatePreview()" />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn-add-item" onclick="addEducationEntry()">+ अन्य शिक्षा जोड़ें</button>
+          </div>
+
+          <!-- 5. Key Skills -->
+          <div class="section-card">
+            <h3 class="section-title"><span>⚡ मुख्य कौशल (Key Skills &amp; Competencies)</span></h3>
+            <label class="form-label">कौशल (कॉमा से अलग करें - e.g. MS Office, Tally, GST, HTML, Graphic Design)</label>
+            <input class="form-input" id="inpSkills" value="Government E-District Portals, MS Office & Excel, Online Banking & UPI Integration, Fast Typing & Data Entry, Customer Support, Problem Solving" oninput="updatePreview()" />
+          </div>
+
+          <!-- 6. Projects & Key Achievements -->
+          <div class="section-card">
+            <h3 class="section-title"><span>🏆 परियोजनाएं व उपलब्धियां (Projects / Achievements)</span></h3>
+            <div class="form-grid">
+              <div>
+                <label class="form-label">शीर्षक (Project / Award Title)</label>
+                <input class="form-input" id="inpProjectTitle" value="Automated Citizen E-Seva Portal (arrai.in)" oninput="updatePreview()" />
+              </div>
+              <div style="grid-column:1/-1;">
+                <label class="form-label">विवरण (Description)</label>
+                <textarea class="form-textarea" id="inpProjectDesc" rows="2" oninput="updatePreview()">Designed and deployed an all-in-one state-wise government service aggregator with digital payments, pincode lookup, and status tracking.</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7. Languages & Extra Details -->
+          <div class="section-card">
+            <h3 class="section-title"><span>🌐 भाषाएं व प्रमाण पत्र (Languages &amp; Extras)</span></h3>
+            <div class="form-grid">
+              <div>
+                <label class="form-label">ज्ञात भाषाएं (Languages Known)</label>
+                <input class="form-input" id="inpLanguages" value="Hindi (Native), English (Professional)" oninput="updatePreview()" />
+              </div>
+              <div>
+                <label class="form-label">सर्टिफिकेशन (Certifications)</label>
+                <input class="form-input" id="inpCertifications" value="CCC Certified · Advanced Computer Literacy" oninput="updatePreview()" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Payment & Download Action Box -->
+          <div class="pay-banner">
+            <div>
+              <span style="font-size:0.8rem; color:#0f172a; font-weight:800; text-transform:uppercase; background:rgba(0,0,0,0.1); padding:2px 8px; border-radius:4px;">
+                ऑटोमैटिक ₹20 पेमेंट गेटवे
+              </span>
+              <h3 style="margin:4px 0 0 0; color:#0f172a; font-size:1.15rem;">डाउनलोड हेतु शुल्क: ₹20 मात्र</h3>
+              <small style="color:#334155; font-size:0.78rem;">पेमेंट सफल होते ही हाई-रेजोल्यूशन ATS-फ्रेंडली PDF तुरंत डाउनलोड होगी।</small>
+            </div>
+            <div>
+              <button type="button" class="btn-download-pdf" onclick="processResumePayment()">
+                <span>⚡ ₹20 पे करें व PDF पाएं ➔</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Live A4 Real-Time Preview -->
+        <div class="preview-wrapper">
+          <div class="preview-card-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size:1.2rem;">👁️</span>
+              <strong style="color:#fff; font-size:0.95rem;">लाइव प्रीव्यू (Real-Time A4 Preview)</strong>
+            </div>
+            <span style="font-size:0.75rem; color:#10b981; background:rgba(16,185,129,0.15); padding:2px 10px; border-radius:999px;">
+              ✓ ATS अनुकूलित डिज़ाइन
+            </span>
+          </div>
+
+          <!-- The Printable Paper Document -->
+          <div class="resume-paper" id="resumePaperContent">
+            <!-- Header -->
+            <div class="resume-header">
+              <h1 class="resume-name" id="prevName">Abhishek Rai</h1>
+              <div class="resume-role" id="prevTitle">Digital Services Specialist &amp; Developer</div>
+              <div class="resume-contact-bar">
+                <span id="prevPhone">📞 +91 7009446821</span>
+                <span id="prevEmail">✉️ abhishekrai6897@gmail.com</span>
+                <span id="prevLocation">📍 Azamgarh, Uttar Pradesh</span>
+                <span id="prevWebsite">🌐 arrai.in</span>
+              </div>
+            </div>
+
+            <!-- Profile Summary -->
+            <div class="resume-section-head">प्रोफेशनल सारांश (Professional Summary)</div>
+            <p class="resume-summary-text" id="prevSummary">
+              Dedicated professional with proven experience in digital platforms, citizen services management, and technical solutions. Skilled at delivering fast, error-free documentation and operational excellence.
+            </p>
+
+            <!-- Work Experience -->
+            <div class="resume-section-head">कार्य अनुभव (Experience)</div>
+            <div id="prevExperienceList">
+              <!-- Dynamically populated from entries -->
+            </div>
+
+            <!-- Education -->
+            <div class="resume-section-head">शिक्षा (Education)</div>
+            <div id="prevEducationList">
+              <!-- Dynamically populated from entries -->
+            </div>
+
+            <!-- Skills -->
+            <div class="resume-section-head">कौशल व विशेषज्ञता (Skills &amp; Expertise)</div>
+            <div class="skills-cloud" id="prevSkillsList">
+              <!-- Dynamically populated tags -->
+            </div>
+
+            <!-- Projects & Highlights -->
+            <div id="prevProjectsSection">
+              <div class="resume-section-head">परियोजनाएं (Key Projects &amp; Highlights)</div>
+              <div class="resume-item-row">
+                <div class="resume-item-title" id="prevProjectTitle">Automated Citizen E-Seva Portal (arrai.in)</div>
+                <div class="resume-item-desc" id="prevProjectDesc">Designed and deployed an all-in-one state-wise government service aggregator with digital payments, pincode lookup, and status tracking.</div>
+              </div>
+            </div>
+
+            <!-- Languages & Certifications -->
+            <div class="resume-section-head">अतिरिक्त विवरण (Additional Details)</div>
+            <div style="font-size:0.82rem; color:#334155; line-height:1.6;">
+              <div><strong>भाषाएं:</strong> <span id="prevLanguages">Hindi (Native), English (Professional)</span></div>
+              <div><strong>प्रमाण पत्र:</strong> <span id="prevCertifications">CCC Certified · Advanced Computer Literacy</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase.js"></script>
+    <script>
+      function updatePreview() {
+        document.getElementById('prevName').textContent = document.getElementById('inpName').value || 'Your Name';
+        document.getElementById('prevTitle').textContent = document.getElementById('inpTitle').value || 'Professional Title';
+        document.getElementById('prevPhone').textContent = '📞 ' + (document.getElementById('inpPhone').value || '');
+        document.getElementById('prevEmail').textContent = '✉️ ' + (document.getElementById('inpEmail').value || '');
+        document.getElementById('prevLocation').textContent = '📍 ' + (document.getElementById('inpLocation').value || '');
+        
+        const web = document.getElementById('inpWebsite').value;
+        const webEl = document.getElementById('prevWebsite');
+        if (web) {
+          webEl.style.display = 'inline';
+          webEl.textContent = '🌐 ' + web;
+        } else {
+          webEl.style.display = 'none';
+        }
+
+        document.getElementById('prevSummary').textContent = document.getElementById('inpSummary').value || '';
+
+        // Render Experience
+        const expBox = document.getElementById('prevExperienceList');
+        expBox.innerHTML = '';
+        document.querySelectorAll('#experienceEntriesContainer .dynamic-entry').forEach(entry => {
+          const comp = entry.querySelector('.exp-company')?.value || '';
+          const role = entry.querySelector('.exp-role')?.value || '';
+          const dur = entry.querySelector('.exp-duration')?.value || '';
+          const desc = entry.querySelector('.exp-desc')?.value || '';
+
+          if (comp || role) {
+            const div = document.createElement('div');
+            div.className = 'resume-item-row';
+            div.innerHTML = `
+              <div class="resume-item-header">
+                <div>
+                  <span class="resume-item-title">${role}</span>
+                  <span style="color:#64748b; font-size:0.82rem;"> at </span>
+                  <span class="resume-item-subtitle">${comp}</span>
+                </div>
+                <span class="resume-item-date">${dur}</span>
+              </div>
+              <p class="resume-item-desc">${desc}</p>
+            `;
+            expBox.appendChild(div);
+          }
+        });
+
+        // Render Education
+        const eduBox = document.getElementById('prevEducationList');
+        eduBox.innerHTML = '';
+        document.querySelectorAll('#educationEntriesContainer .dynamic-entry').forEach(entry => {
+          const deg = entry.querySelector('.edu-degree')?.value || '';
+          const sch = entry.querySelector('.edu-school')?.value || '';
+          const yr = entry.querySelector('.edu-year')?.value || '';
+
+          if (deg || sch) {
+            const div = document.createElement('div');
+            div.className = 'resume-item-row';
+            div.innerHTML = `
+              <div class="resume-item-header">
+                <span class="resume-item-title">${deg}</span>
+                <span class="resume-item-date">${yr}</span>
+              </div>
+              <div class="resume-item-subtitle" style="color:#475569;">${sch}</div>
+            `;
+            eduBox.appendChild(div);
+          }
+        });
+
+        // Render Skills
+        const skillsBox = document.getElementById('prevSkillsList');
+        skillsBox.innerHTML = '';
+        const rawSkills = document.getElementById('inpSkills').value || '';
+        rawSkills.split(',').forEach(s => {
+          const trimmed = s.trim();
+          if (trimmed) {
+            const span = document.createElement('span');
+            span.className = 'skill-tag';
+            span.textContent = trimmed;
+            skillsBox.appendChild(span);
+          }
+        });
+
+        // Projects
+        document.getElementById('prevProjectTitle').textContent = document.getElementById('inpProjectTitle').value || '';
+        document.getElementById('prevProjectDesc').textContent = document.getElementById('inpProjectDesc').value || '';
+
+        // Languages & Certs
+        document.getElementById('prevLanguages').textContent = document.getElementById('inpLanguages').value || 'Hindi, English';
+        document.getElementById('prevCertifications').textContent = document.getElementById('inpCertifications').value || 'N/A';
+      }
+
+      function addExperienceEntry() {
+        const container = document.getElementById('experienceEntriesContainer');
+        const div = document.createElement('div');
+        div.className = 'dynamic-entry';
+        div.innerHTML = `
+          <button type="button" class="btn-remove-entry" onclick="removeEntry(this)">×</button>
+          <div class="form-grid">
+            <div>
+              <label class="form-label">कंपनी / प्रतिष्ठान (Company)</label>
+              <input class="form-input exp-company" placeholder="Company Name" oninput="updatePreview()" />
+            </div>
+            <div>
+              <label class="form-label">पद (Designation / Role)</label>
+              <input class="form-input exp-role" placeholder="Job Title" oninput="updatePreview()" />
+            </div>
+            <div>
+              <label class="form-label">कार्यकाल (Duration)</label>
+              <input class="form-input exp-duration" placeholder="e.g. 2020 - 2022" oninput="updatePreview()" />
+            </div>
+            <div style="grid-column:1/-1;">
+              <label class="form-label">मुख्य जिम्मेदारियां (Key Responsibilities)</label>
+              <textarea class="form-textarea exp-desc" rows="2" placeholder="Brief description of work..." oninput="updatePreview()"></textarea>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+        updatePreview();
+      }
+
+      function addEducationEntry() {
+        const container = document.getElementById('educationEntriesContainer');
+        const div = document.createElement('div');
+        div.className = 'dynamic-entry';
+        div.innerHTML = `
+          <button type="button" class="btn-remove-entry" onclick="removeEntry(this)">×</button>
+          <div class="form-grid">
+            <div>
+              <label class="form-label">डिग्री / कोर्स (Degree)</label>
+              <input class="form-input edu-degree" placeholder="Degree / Class" oninput="updatePreview()" />
+            </div>
+            <div>
+              <label class="form-label">कॉलेज / बोर्ड (Institution)</label>
+              <input class="form-input edu-school" placeholder="School / College" oninput="updatePreview()" />
+            </div>
+            <div>
+              <label class="form-label">उत्तीर्ण वर्ष व अंक (Year &amp; Score)</label>
+              <input class="form-input edu-year" placeholder="e.g. 2019 · 82%" oninput="updatePreview()" />
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+        updatePreview();
+      }
+
+      function removeEntry(btn) {
+        const entry = btn.closest('.dynamic-entry');
+        if (entry) {
+          entry.remove();
+          updatePreview();
+        }
+      }
+
+      // RAZORPAY ₹20 PAYMENT AND IMMEDIATE PDF DOWNLOAD
+      let activeRazorpayKey = null;
+      async function initRzp() {
+        try {
+          const res = await fetch("/api/razorpay");
+          if (res.ok) {
+            const data = await res.json();
+            if (data.keyId) activeRazorpayKey = data.keyId;
+          }
+        } catch {}
+      }
+      initRzp();
+
+      function processResumePayment() {
+        const applicantName = document.getElementById('inpName').value.trim() || 'Job Applicant';
+        const applicantEmail = document.getElementById('inpEmail').value.trim() || 'abhishekrai6897@gmail.com';
+        const applicantPhone = document.getElementById('inpPhone').value.trim() || '7009446821';
+
+        const effectiveKey = activeRazorpayKey || window.RAZORPAY_KEY_ID || 'rzp_test_placeholder';
+
+        if (typeof Razorpay === 'undefined') {
+          // If Razorpay script blocked, trigger print directly
+          triggerPdfPrint();
+          return;
+        }
+
+        const options = {
+          key: effectiveKey,
+          amount: 2000, // ₹20 in paise
+          currency: 'INR',
+          name: 'शान साइबर कैफे एवं ई-सेवा',
+          description: 'Premium ATS Resume / CV PDF Generation',
+          image: 'assets/app-icon.svg',
+          theme: { color: '#f59e0b' },
+          prefill: {
+            name: applicantName,
+            email: applicantEmail,
+            contact: applicantPhone
+          },
+          handler: async function (response) {
+            const refId = 'CV-' + Math.floor(100000 + Math.random() * 900000);
+            
+            // Record submission
+            const record = {
+              refId,
+              service: "Professional Resume / CV Builder",
+              name: applicantName,
+              phone: applicantPhone,
+              email: applicantEmail,
+              fee: "₹20",
+              paymentMethod: "RAZORPAY",
+              utr: response.razorpay_payment_id,
+              status: "Completed",
+              timestamp: new Date().toISOString(),
+              formattedDate: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+            };
+
+            try {
+              const list = JSON.parse(localStorage.getItem('shan_eseva_applications') || '[]');
+              list.unshift(record);
+              localStorage.setItem('shan_eseva_applications', JSON.stringify(list));
+            } catch {}
+
+            if (window.arraiSupabase) {
+              try {
+                await window.arraiSupabase.from('eseva_applications').insert([{
+                  ref_id: refId,
+                  service_name: "Professional Resume Builder",
+                  applicant_name: applicantName,
+                  phone: applicantPhone,
+                  email: applicantEmail,
+                  payment_ref: response.razorpay_payment_id,
+                  fee_paid: "₹20",
+                  details: record
+                }]);
+              } catch {}
+            }
+
+            alert(`✓ भुगतान सफल! पेमेंट ID: ${response.razorpay_payment_id}\nआपका रिज़्यूमे PDF प्रिंट व डाउनलोड के लिए तैयार है।`);
+            triggerPdfPrint();
+          }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+      }
+
+      function triggerPdfPrint() {
+        window.print();
+      }
+
+      // Initialize
+      updatePreview();
+    </script>
+  </body>
+</html>
