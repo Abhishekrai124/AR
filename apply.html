@@ -2064,42 +2064,6 @@
         updatePricingDisplay();
       }
 
-        subList.forEach(sub => {
-          const isSel = sub.id === targetSub.id;
-          const card = document.createElement('div');
-          card.className = `subservice-option ${isSel ? 'selected' : ''}`;
-          card.onclick = () => selectSubService(sub.id);
-          card.innerHTML = `
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-              <span class="subservice-title">${sub.name}</span>
-              <span class="subservice-fee">₹${sub.fee}</span>
-            </div>
-            <div class="subservice-desc">${sub.desc}</div>
-            <div style="margin-top:6px; font-size:0.75rem; color:${isSel ? '#38bdf8' : '#94a3b8'};">
-              ${isSel ? '● चयनित (Active)' : 'क्लिक करके चुनें'}
-            </div>
-          `;
-          grid.appendChild(card);
-        });
-
-        // Update Required Documents Checklist
-        const docsList = document.getElementById('docsChecklistItems');
-        docsList.innerHTML = '';
-        if (targetSub.docs && targetSub.docs.length > 0) {
-          targetSub.docs.forEach(d => {
-            const li = document.createElement('li');
-            li.textContent = d;
-            docsList.appendChild(li);
-          });
-        }
-
-        // Render Tailored Custom Form Fields
-        renderTailoredFields(targetSub.fields);
-
-        // Update Fee Display (No Government breakup shown! 100% Flat transparent fee!)
-        updatePricingDisplay();
-      }
-
       function adaptFormForService(subId) {
         const isChallan = subId === 'traffic-challan';
         const guardianInput = document.getElementById('guardianName');
@@ -2107,7 +2071,7 @@
         const genderSelect = document.getElementById('gender');
         const addressText = document.getElementById('address');
         const pincodeInput = document.getElementById('pincode');
-        const docsUploadBox = document.getElementById('docFiles') ? document.getElementById('docFiles').closest('.form-full') : null;
+        const docsUploadBox = document.getElementById('fileUploadInput') ? document.getElementById('fileUploadInput').closest('.form-full') : null;
 
         const guardianDiv = guardianInput ? guardianInput.closest('div') : null;
         const dobDiv = dobInput ? dobInput.closest('div') : null;
@@ -2405,15 +2369,11 @@
         const applicantEmail = document.getElementById('email').value || 'abhishekrai6897@gmail.com';
         const applicantPhone = document.getElementById('phone').value || '7009446821';
 
-        const rzpKey = activeRazorpayKey || window.RAZORPAY_KEY_ID;
-        if (!rzpKey || rzpKey === 'rzp_test_placeholder') {
-          alert('Razorpay लाइव गेटवे लोड हो रहा है या कॉन्फ़िगर हो रहा है। कृपया 0% अतिरिक्त शुल्क वाले "UPI QR Code" या अपने UPI ऐप से तुरंत भुगतान करें।');
-          switchPay('upi');
-          return;
-        }
+        const rzpKey = activeRazorpayKey || window.RAZORPAY_KEY_ID || 'rzp_test_placeholder';
 
         if (typeof Razorpay === 'undefined') {
-          alert('Razorpay लोड हो रहा है, कृपया UPI QR का उपयोग करें।');
+          alert('Razorpay gateway is initializing. Please pay via free instant UPI QR.');
+          switchPay('upi');
           return;
         }
 
@@ -2434,40 +2394,19 @@
             document.getElementById('rzpPaymentId').value = response.razorpay_payment_id;
             const badge = document.getElementById('rzpSuccessBadge');
             badge.style.display = 'block';
-            badge.textContent = `✓ Razorpay भुगतान सफल! ID: ${response.razorpay_payment_id}`;
+            badge.textContent = `✓ Razorpay payment successful! ID: ${response.razorpay_payment_id}`;
             document.getElementById('upiUtrNumber').value = response.razorpay_payment_id;
             handleApplicationSubmit(new Event('submit'));
           }
         };
 
-        const rzp = new Razorpay(options);
-        rzp.open();
-      }
-
-        const options = {
-          key: rzpKey,
-          amount: finalPayable * 100,
-          currency: 'INR',
-          name: 'शान साइबर कैफे एवं ई-सेवा',
-          description: `${activeSubService.name} - ${chosenState} (All Inclusive)`,
-          image: 'assets/app-icon.svg',
-          theme: { color: '#0284c7' },
-          prefill: {
-            name: applicantName,
-            email: applicantEmail,
-            contact: applicantPhone
-          },
-          handler: function(response) {
-            document.getElementById('rzpPaymentId').value = response.razorpay_payment_id;
-            const badge = document.getElementById('rzpSuccessBadge');
-            badge.style.display = 'block';
-            badge.textContent = `✓ Razorpay भुगतान सफल! ID: ${response.razorpay_payment_id}`;
-            document.getElementById('upiUtrNumber').value = response.razorpay_payment_id;
-          }
-        };
-
-        const rzp = new Razorpay(options);
-        rzp.open();
+        try {
+          const rzp = new Razorpay(options);
+          rzp.open();
+        } catch (err) {
+          console.warn('Razorpay initialization note:', err);
+          switchPay('upi');
+        }
       }
 
       // 3. PINCODE AUTO-LOOKUP AUTOMATION
