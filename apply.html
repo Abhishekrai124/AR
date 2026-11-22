@@ -333,15 +333,16 @@
                 <span>सेवा वर्ग (Service Category)</span> *
               </label>
               <select class="form-select" id="categorySelect" onchange="onCategorySelectChange()">
-                <option value="certificate">📜 सरकारी प्रमाण पत्र (Certificates &amp; Police Verification)</option>
+                <option value="certificate">📜 सरकारी प्रमाण पत्र (Certificates &amp; Revenue)</option>
                 <option value="legal">⚖️ कोर्ट शपथ पत्र व नोटरी (Court Affidavits)</option>
+                <option value="transport">🚗 ड्राइविंग लाइसेंस, वाहन व चालान (Transport &amp; e-Challan)</option>
+                <option value="welfare">🌾 सरकारी योजनाएँ, राशन व पेंशन (Welfare Schemes)</option>
+                <option value="finance">💼 बीमा, पेंशन व पीएफ क्लेम (Insurance &amp; EPFO)</option>
                 <option value="passport">✈️ पासपोर्ट सेवा (Passport Seva ₹4500 / ₹6000)</option>
                 <option value="aadhaar">🆔 आधार कार्ड सेवाएँ (Aadhaar Services)</option>
-                <option value="transport">🚗 ड्राइविंग लाइसेंस व वाहन (Transport)</option>
                 <option value="pan">💳 पैन कार्ड सेवाएँ (PAN Services)</option>
                 <option value="voter">🗳️ वोटर आईडी कार्ड (Voter ID)</option>
                 <option value="exam">🎓 सरकारी नौकरी व परीक्षा फॉर्म (Govt Jobs)</option>
-                <option value="epfo">💼 EPFO व पीएफ क्लेम (PF Claim)</option>
                 <option value="udyam">🏢 उद्यम / MSME व व्यापार रजिस्ट्रेशन</option>
               </select>
             </div>
@@ -387,7 +388,7 @@
 
           <!-- 4. Applicant Personal Details -->
           <div style="margin-bottom:14px;">
-            <h3 style="font-size:1.05rem; color:#fff; border-bottom:1px solid var(--eseva-border); padding-bottom:8px; margin-bottom:14px;">
+            <h3 style="font-size:1.05rem; color:#fff; border-bottom:1px solid var(--eseva-border); padding-bottom:8px; margin-bottom:14px;" id="applicantDetailsHeading">
               👤 आवेदक का विवरण (Applicant Details)
             </h3>
           </div>
@@ -876,6 +877,28 @@
               ]
             },
             {
+              id: "rc-transfer",
+              name: "वाहन आरसी ट्रांसफर (Vehicle RC Ownership Transfer)",
+              fee: 550,
+              desc: "गाड़ी की आरसी का नाम ट्रांसफर, एनओसी व नया पंजीकरण प्रमाण पत्र",
+              docs: ["वाहन आरसी", "क्रेता व विक्रेता आधार कार्ड", "एनओसी व फॉर्म 29/30"],
+              fields: [
+                { id: "rcTransferVehicleNo", label: "गाड़ी का रजिस्ट्रेशन नंबर (Vehicle Reg No.) *", type: "text", placeholder: "e.g. UP50-AB-1234", required: true },
+                { id: "buyerName", label: "नये मालिक / क्रेता का पूरा नाम *", type: "text", placeholder: "New Buyer Full Name", required: true }
+              ]
+            },
+            {
+              id: "rc-hypo",
+              name: "आरसी बैंक लोन हटाना (RC Loan HPA / HPT Removal)",
+              fee: 450,
+              desc: "बैंक लोन पूरा होने पर आरसी से हाइपोथिकेशन ऑनलाइन कैंसिलेशन",
+              docs: ["बैंक एनओसी व फॉर्म 35", "आरसी कॉपी"],
+              fields: [
+                { id: "rcHypoVehicleNo", label: "वाहन रजिस्ट्रेशन नंबर *", type: "text", placeholder: "Vehicle Reg No.", required: true },
+                { id: "bankNocName", label: "फाइनेंस कंपनी / बैंक का नाम *", type: "text", placeholder: "e.g. SBI / HDFC Bank", required: true }
+              ]
+            },
+            {
               id: "vehicle-insurance",
               name: "वाहन बीमा (2-व्हीलर / 4-व्हीलर इंश्योरेंस रिन्युअल)",
               fee: 250,
@@ -891,12 +914,149 @@
               name: "ट्रैफिक ई-चालान भुगतान व रसीद (Traffic e-Challan Settlement)",
               fee: 150,
               desc: "गाड़ी नंबर या चालान नंबर से ट्रैफिक ई-चालान जांच, ऑनलाइन निपटान व कोर्ट/ट्रैफिक रसीद",
-              docs: ["वाहन आरसी / चालान कॉपी", "चालान नोटिस एसएमएस / फोटो"],
+              docs: ["वाहन आरसी / चालान कॉपी (वैकल्पिक)", "चालान नोटिस एसएमएस / फोटो"],
               fields: [
-                { id: "challanSearchBy", label: "सर्च का आधार (Search By) *", type: "select", options: ["Vehicle Number (वाहन नंबर)", "Challan Number (चालान नंबर)", "Driving License (ड्राइविंग लाइसेंस)"], required: true },
+                { id: "challanSearchBy", label: "सर्च का आधार (Search By) *", type: "select", options: ["वाहन नंबर (Vehicle Number)", "चालान नंबर (Challan Number)", "ड्राइविंग लाइसेंस (DL Number)"], required: true },
                 { id: "challanVehicleNum", label: "वाहन या चालान नंबर (Vehicle / Challan No.) *", type: "text", placeholder: "e.g. UP50AB1234 or UP1234567890", required: true },
                 { id: "chassisLast5", label: "चेसिस नंबर के अंतिम 5 अंक (Chassis Last 5 Digits)", type: "text", placeholder: "e.g. 12345 (वाहन नंबर से जांच हेतु)" },
-                { id: "challanPenaltyAmt", label: "चालान जुर्माना राशि यदि ज्ञात हो (Fine Amount)", type: "number", placeholder: "₹ में जुर्माना राशि (यदि पता हो)" }
+                { id: "challanPenaltyAmount", label: "चालान जुर्माना राशि (₹ Fine Amount) *", type: "number", placeholder: "उदा. 500, 1000, 2000", required: true }
+              ]
+            }
+          ]
+        },
+
+        welfare: {
+          title: "सरकारी योजनाएँ, राशन व पेंशन (Welfare Schemes)",
+          subServices: [
+            {
+              id: "ayushman-card",
+              name: "आयुष्मान भारत गोल्डन कार्ड (₹5 Lakh Free Treatment)",
+              fee: 150,
+              desc: "₹5 लाख तक के मुफ्त इलाज हेतु अधिकृत आयुष्मान कार्ड डाउनलोड व ई-केवाईसी",
+              docs: ["राशन कार्ड / आधार कार्ड", "मोबाइल नंबर"],
+              fields: [
+                { id: "ayushmanFamilyId", label: "राशन कार्ड / HHID नंबर *", type: "text", placeholder: "Ration Card or Family ID", required: true }
+              ]
+            },
+            {
+              id: "pm-kisan",
+              name: "पीएम किसान सम्मान निधि (KYC व नया रजिस्ट्रेशन)",
+              fee: 150,
+              desc: "सालाना ₹6000 की किस्त हेतु नया पंजीकरण व फिंगरप्रिंट/OTP ई-केवाईसी",
+              docs: ["आधार कार्ड", "बैंक पासबुक", "खतौनी / ज़मीन का पर्चा"],
+              fields: [
+                { id: "pmKisanAadhaar", label: "किसान का आधार नंबर *", type: "text", maxlength: 12, placeholder: "12-digit Aadhaar No", required: true }
+              ]
+            },
+            {
+              id: "eshram-card",
+              name: "ई-श्रम राष्ट्रीय कामगार कार्ड (E-Shram Card)",
+              fee: 150,
+              desc: "असंगठित क्षेत्र के कामगारों हेतु सरकारी बीमा व ई-श्रम पंजीकरण",
+              docs: ["आधार कार्ड (मोबाइल लिंक)", "बैंक खाता विवरण"],
+              fields: [
+                { id: "eshramOccupation", label: "कार्य / पेशा (Occupation) *", type: "text", placeholder: "e.g. कृषि मजदूर / मिस्त्री / सिलाई", required: true }
+              ]
+            },
+            {
+              id: "ration-new",
+              name: "नया डिजिटल राशन कार्ड (APL / BPL / अंत्योदय)",
+              fee: 180,
+              desc: "नया डिजिटल राशन कार्ड आवेदन व खाद्य सुरक्षा पोर्टल सत्यापन",
+              docs: ["परिवार के सभी सदस्यों के आधार", "आय प्रमाण पत्र", "बैंक पासबुक", "मुखिया महिला फोटो"],
+              fields: [
+                { id: "rationFamilyHead", label: "परिवार की महिला मुखिया का नाम *", type: "text", placeholder: "Female Family Head Name", required: true },
+                { id: "totalFamilyMembers", label: "परिवार के कुल सदस्यों की संख्या *", type: "number", placeholder: "e.g. 5", required: true }
+              ]
+            },
+            {
+              id: "ration-member",
+              name: "राशन कार्ड में सदस्य जोड़ना / सुधार (Member Add)",
+              fee: 150,
+              desc: "राशन कार्ड में नए बच्चे या बहू का नाम जोड़ना या यूनिट संशोधन",
+              docs: ["मौजूदा राशन कार्ड", "नए सदस्य का आधार कार्ड / जन्म प्रमाण पत्र"],
+              fields: [
+                { id: "existingRationNo", label: "मौजूदा राशन कार्ड नंबर *", type: "text", placeholder: "Existing Ration Card No", required: true },
+                { id: "newMemberName", label: "जोड़े जाने वाले सदस्य का नाम *", type: "text", placeholder: "New Member Name", required: true }
+              ]
+            },
+            {
+              id: "pension-scheme",
+              name: "वृद्धा / विधवा / दिव्यांग पेंशन आवेदन",
+              fee: 150,
+              desc: "समाज कल्याण विभाग से मासिक सरकारी पेंशन का ऑनलाइन आवेदन",
+              docs: ["आधार कार्ड", "आय प्रमाण पत्र", "बैंक पासबुक", "आयु प्रमाण / मृत्यु प्रमाण पत्र / दिव्यांगता प्रमाण पत्र"],
+              fields: [
+                { id: "pensionType", label: "पेंशन का प्रकार *", type: "select", options: ["वृद्धावस्था पेंशन (Old Age 60+)", "निराश्रित महिला / विधवा पेंशन (Widow Pension)", "दिव्यांग पेंशन (Disability 40%+)"], required: true }
+              ]
+            },
+            {
+              id: "senior-citizen-card",
+              name: "वरिष्ठ नागरिक पहचान पत्र (Senior Citizen Card)",
+              fee: 150,
+              desc: "60 वर्ष से अधिक आयु के नागरिकों हेतु अधिकृत वरिष्ठ नागरिक प्रमाण पत्र",
+              docs: ["आयु प्रमाण (आधार / वोटर / मार्कशीट)", "निवास प्रमाण", "पासपोर्ट फोटो"],
+              fields: [
+                { id: "seniorCitizenAge", label: "आयु (Age - 60+ होना अनिवार्य) *", type: "number", placeholder: "e.g. 62", required: true }
+              ]
+            }
+          ]
+        },
+
+        finance: {
+          title: "बीमा, पेंशन व पीएफ क्लेम (Insurance & EPFO)",
+          subServices: [
+            {
+              id: "lic-services",
+              name: "एलआईसी पॉलिसी प्रीमियम व सेवाएँ (LIC Premium)",
+              fee: 150,
+              desc: "LIC जीवन बीमा प्रीमियम भुगतान, रसीद डाउनलोड व पॉलिसी स्टेटस",
+              docs: ["पॉलिसी बांड या पिछली प्रीमियम रसीद"],
+              fields: [
+                { id: "licPolicyNo", label: "एलआईसी पॉलिसी नंबर (9-Digits) *", type: "text", maxlength: 9, placeholder: "e.g. 123456789", required: true },
+                { id: "licInstallmentAmt", label: "प्रीमियम क़िस्त राशि (₹) *", type: "number", placeholder: "Premium Amount", required: true }
+              ]
+            },
+            {
+              id: "bima-schemes",
+              name: "प्रधानमंत्री सुरक्षा व जीवन ज्योति बीमा (PMJJBY / PMSBY)",
+              fee: 150,
+              desc: "₹2 लाख सरकारी जीवन व दुर्घटना बीमा ऑनलाइन पंजीकरण",
+              docs: ["आधार कार्ड", "बैंक पासबुक"],
+              fields: [
+                { id: "nomineeName", label: "नॉमिनी का नाम व संबंध *", type: "text", placeholder: "Nominee Name & Relationship", required: true }
+              ]
+            },
+            {
+              id: "pf-full",
+              name: "पीएफ पूरा पैसा निकालें (Full Withdrawal Form 19 & 10C)",
+              fee: 350,
+              desc: "नौकरी छोड़ने के बाद पीएफ व पेंशन का पूरा पैसा खाते में",
+              docs: ["आधार लिंक मोबाइल (OTP हेतु)", "बैंक पासबुक / कैंसिल्ड चेक", "पैन कार्ड"],
+              fields: [
+                { id: "uanNumber", label: "12-अंकों का UAN नंबर *", type: "text", maxlength: 12, placeholder: "UAN Number", required: true },
+                { id: "dateOfExit", label: "कंपनी छोड़ने की तारीख (Date of Exit) *", type: "text", placeholder: "DD/MM/YYYY", required: true }
+              ]
+            },
+            {
+              id: "pf-advance",
+              name: "पीएफ एडवांस क्लेम (Advance Form 31)",
+              fee: 250,
+              desc: "नौकरी के दौरान बीमारी, मकान निर्माण या शादी हेतु अग्रिम निकासी",
+              docs: ["UAN नंबर", "बैंक पासबुक"],
+              fields: [
+                { id: "uanAdvNum", label: "UAN नंबर *", type: "text", maxlength: 12, placeholder: "UAN Number", required: true },
+                { id: "advanceReason", label: "निकासी का कारण (Reason for Advance) *", type: "select", options: ["Illness (बीमारी हेतु)", "Construction of House (मकान निर्माण)", "Marriage (शादी हेतु)", "Natural Calamity"], required: true }
+              ]
+            },
+            {
+              id: "pf-kyc",
+              name: "UAN एक्टिवेशन व बैंक/पैन KYC लिंक",
+              fee: 150,
+              desc: "नया UAN पासवर्ड बनाना और बैंक खाता लिंक करना",
+              docs: ["आधार कार्ड", "बैंक पासबुक", "पैन कार्ड"],
+              fields: [
+                { id: "uanKycNum", label: "UAN नंबर *", type: "text", placeholder: "UAN Number", required: true }
               ]
             }
           ]
@@ -916,6 +1076,30 @@
                 { id: "charPoliceStation", label: "संबंधित पुलिस थाना *", type: "text", placeholder: "Police Station", required: true },
                 { id: "charPurpose", label: "प्रमाण पत्र का उद्देश्य (Purpose) *", type: "text", placeholder: "e.g. Job Verification / Contractor Licence", required: true },
                 { id: "charWitnesses", label: "स्थानीय 2 गवाहों के नाम व मोबाइल *", type: "text", placeholder: "Witness 1 & 2 Contact", required: true }
+              ]
+            },
+            {
+              id: "birth-cert",
+              alias: "cert-birth",
+              name: "डिजिटल जन्म प्रमाण पत्र (Birth Certificate Registration)",
+              fee: 200,
+              desc: "नगर निगम व ग्राम पंचायत द्वारा जारी आधिकारिक डिजिटल जन्म प्रमाण पत्र",
+              docs: ["अस्पताल डिस्चार्ज पर्ची / जन्म प्रमाण", "माता-पिता का आधार कार्ड"],
+              fields: [
+                { id: "childName", label: "बच्चे का नाम (Child Name) *", type: "text", placeholder: "Child Full Name", required: true },
+                { id: "birthPlace", label: "जन्म का स्थान (अस्पताल / घर का पता) *", type: "text", placeholder: "Hospital or Home Address", required: true }
+              ]
+            },
+            {
+              id: "death-cert",
+              alias: "cert-death",
+              name: "डिजिटल मृत्यु प्रमाण पत्र (Death Certificate Registration)",
+              fee: 200,
+              desc: "नगर निगम व पंचायत द्वारा जारी अधिकृत डिजिटल मृत्यु प्रमाण पत्र",
+              docs: ["अस्पताल पर्ची / श्मशान रसीद", "मृतक व वारिस का आधार कार्ड"],
+              fields: [
+                { id: "deceasedName", label: "मृतक का पूरा नाम (Deceased Name) *", type: "text", placeholder: "Deceased Full Name", required: true },
+                { id: "dateOfDeath", label: "मृत्यु की तारीख *", type: "date", required: true }
               ]
             },
             {
@@ -1206,9 +1390,30 @@
         let foundCat = '';
         let foundSubId = '';
 
-        if (sParam.includes('police') || sParam.includes('character') || sParam.includes('verif')) {
+        if (sParam.includes('challan') || sParam.includes('traffic')) {
+          foundCat = 'transport';
+          foundSubId = 'traffic-challan';
+        } else if (sParam.includes('ration') || sParam.includes('ayushman') || sParam.includes('kisan') || sParam.includes('eshram') || sParam.includes('welfare') || sParam.includes('pension')) {
+          foundCat = 'welfare';
+          if (sParam.includes('ayushman')) foundSubId = 'ayushman-card';
+          else if (sParam.includes('kisan')) foundSubId = 'pm-kisan';
+          else if (sParam.includes('eshram')) foundSubId = 'eshram-card';
+          else if (sParam.includes('member')) foundSubId = 'ration-member';
+          else if (sParam.includes('pension')) foundSubId = 'pension-scheme';
+          else if (sParam.includes('senior')) foundSubId = 'senior-citizen-card';
+          else foundSubId = 'ration-new';
+        } else if (sParam.includes('lic') || sParam.includes('bima')) {
+          foundCat = 'finance';
+          foundSubId = sParam.includes('lic') ? 'lic-services' : 'bima-schemes';
+        } else if (sParam.includes('police') || sParam.includes('character') || sParam.includes('verif')) {
           foundCat = 'certificate';
           foundSubId = 'character-cert';
+        } else if (sParam.includes('birth')) {
+          foundCat = 'certificate';
+          foundSubId = 'birth-cert';
+        } else if (sParam.includes('death')) {
+          foundCat = 'certificate';
+          foundSubId = 'death-cert';
         } else if (sParam.includes('income')) {
           foundCat = 'certificate';
           foundSubId = 'income-cert';
@@ -1224,26 +1429,28 @@
         } else if (sParam.includes('passport')) {
           foundCat = 'passport';
           foundSubId = sParam.includes('tatkaal') ? 'passport-tatkaal' : 'passport-normal';
-        } else if (sParam.includes('insurance') || sParam.includes('bima') || sParam.includes('lic')) {
+        } else if (sParam.includes('insurance')) {
           foundCat = 'transport';
           foundSubId = 'vehicle-insurance';
         } else if (sParam.includes('senior') || sParam.includes('old age') || sParam.includes('elder')) {
-          foundCat = 'certificate';
+          foundCat = 'welfare';
           foundSubId = 'senior-citizen-card';
-        } else if (sParam.includes('challan') || sParam.includes('traffic')) {
-          foundCat = 'transport';
-          foundSubId = 'traffic-challan';
         } else if (sParam.includes('dl') || sParam.includes('licence') || sParam.includes('transport') || sParam.includes('rc')) {
           foundCat = 'transport';
-          foundSubId = 'dl-ll';
+          if (sParam.includes('rc') && sParam.includes('hypo')) foundSubId = 'rc-hypo';
+          else if (sParam.includes('rc')) foundSubId = 'rc-transfer';
+          else if (sParam.includes('renewal')) foundSubId = 'dl-renewal';
+          else if (sParam.includes('permanent')) foundSubId = 'dl-permanent';
+          else foundSubId = 'dl-learning';
         } else if (sParam.includes('pan')) {
           foundCat = 'pan';
-          foundSubId = 'new-pan';
+          foundSubId = 'pan-new';
         } else if (sParam.includes('voter')) {
           foundCat = 'voter';
           foundSubId = 'voter-form6';
         } else if (sParam.includes('pf') || sParam.includes('epfo') || sParam.includes('uan')) {
-          foundCat = 'epfo';
+          foundCat = 'finance';
+          foundSubId = 'pf-full';
           foundSubId = 'pf-full';
         } else if (sParam.includes('job') || sParam.includes('exam') || sParam.includes('scholarship')) {
           foundCat = 'exam';
@@ -1363,9 +1570,112 @@
         updatePricingDisplay();
       }
 
+      function adaptFormForService(subId) {
+        const isChallan = subId === 'traffic-challan';
+        const guardianInput = document.getElementById('guardianName');
+        const dobInput = document.getElementById('dob');
+        const genderSelect = document.getElementById('gender');
+        const addressText = document.getElementById('address');
+        const pincodeInput = document.getElementById('pincode');
+        const docsUploadBox = document.getElementById('docFiles') ? document.getElementById('docFiles').closest('.form-full') : null;
+
+        const guardianDiv = guardianInput ? guardianInput.closest('div') : null;
+        const dobDiv = dobInput ? dobInput.closest('div') : null;
+        const genderDiv = genderSelect ? genderSelect.closest('div') : null;
+        const addressDiv = addressText ? addressText.closest('.form-full') : null;
+        const pincodeDiv = pincodeInput ? pincodeInput.closest('div') : null;
+
+        if (isChallan) {
+          if (guardianDiv) guardianDiv.style.display = 'none';
+          if (dobDiv) dobDiv.style.display = 'none';
+          if (genderDiv) genderDiv.style.display = 'none';
+          if (addressDiv) addressDiv.style.display = 'none';
+          if (pincodeDiv) pincodeDiv.style.display = 'none';
+          if (docsUploadBox) docsUploadBox.style.display = 'none';
+
+          if (guardianInput) guardianInput.required = false;
+          if (dobInput) dobInput.required = false;
+          if (genderSelect) genderSelect.required = false;
+          if (addressText) addressText.required = false;
+          if (pincodeInput) pincodeInput.required = false;
+
+          const heading = document.getElementById('applicantDetailsHeading');
+          if (heading) heading.textContent = '👤 वाहन स्वामी व संपर्क विवरण (Vehicle Owner & Contact)';
+        } else {
+          if (guardianDiv) guardianDiv.style.display = 'block';
+          if (dobDiv) dobDiv.style.display = 'block';
+          if (genderDiv) genderDiv.style.display = 'block';
+          if (addressDiv) addressDiv.style.display = 'block';
+          if (pincodeDiv) pincodeDiv.style.display = 'block';
+          if (docsUploadBox) docsUploadBox.style.display = 'block';
+
+          if (guardianInput) guardianInput.required = true;
+          if (dobInput) dobInput.required = true;
+          if (genderSelect) genderSelect.required = true;
+          if (addressText) addressText.required = true;
+          if (pincodeInput) pincodeInput.required = true;
+
+          const heading = document.getElementById('applicantDetailsHeading');
+          if (heading) heading.textContent = '👤 आवेदक का विवरण (Applicant Details)';
+        }
+      }
+
+      function setChallanFinePreset(amount) {
+        const inp = document.getElementById('challanPenaltyAmount');
+        if (inp) {
+          inp.value = amount;
+          updatePricingDisplay();
+        }
+      }
+
       function renderTailoredFields(fields = []) {
         const box = document.getElementById('tailoredInputsGrid');
         box.innerHTML = '';
+
+        if (activeSubService && activeSubService.id === 'traffic-challan') {
+          box.innerHTML = `
+            <div>
+              <label class="form-label">सर्च का प्रकार (Search Challan By) *</label>
+              <select class="form-select tailored-field" id="challanSearchBy" data-label="Challan Search Type" required>
+                <option value="Vehicle Number (वाहन नंबर)">वाहन नंबर (Vehicle / RC Number)</option>
+                <option value="Challan Number (चालान नंबर)">चालान नंबर (Challan Number)</option>
+                <option value="Driving License (ड्राइविंग लाइसेंस)">ड्राइविंग लाइसेंस (DL Number)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">वाहन / चालान नंबर (Vehicle / Challan No.) *</label>
+              <input class="form-input tailored-field" id="challanVehicleNum" data-label="Vehicle or Challan No" type="text" placeholder="e.g. UP50AB1234 या UP1234567890" required />
+            </div>
+            <div>
+              <label class="form-label">चेसिस नंबर के अंतिम 5 अंक (Chassis Last 5 Digits)</label>
+              <input class="form-input tailored-field" id="chassisLast5" data-label="Chassis Last 5 Digits" type="text" maxlength="5" placeholder="e.g. 12345 (वाहन नंबर से जांच हेतु)" />
+            </div>
+            <div>
+              <label class="form-label" style="color:var(--eseva-gold); display:flex; justify-content:space-between; align-items:center;">
+                <span>ट्रैफिक चालान जुर्माना राशि (₹ Fine Amount) *</span>
+                <small style="color:#38bdf8;">(राशि डालते ही कुल फीस स्वतः जुड़ेगी)</small>
+              </label>
+              <input class="form-input tailored-field" id="challanPenaltyAmount" data-label="Challan Fine Amount" type="number" min="0" step="50" placeholder="जुर्माना राशि दर्ज करें (उदा. 500, 1000, 2000)" oninput="updatePricingDisplay()" />
+              <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;">
+                <button type="button" class="btn-chip" onclick="setChallanFinePreset(500)" style="padding:4px 10px; border-radius:6px; font-size:0.75rem; background:rgba(255,255,255,0.06); border:1px solid var(--eseva-border); color:#fde68a; cursor:pointer;">₹500</button>
+                <button type="button" class="btn-chip" onclick="setChallanFinePreset(1000)" style="padding:4px 10px; border-radius:6px; font-size:0.75rem; background:rgba(255,255,255,0.06); border:1px solid var(--eseva-border); color:#fde68a; cursor:pointer;">₹1,000</button>
+                <button type="button" class="btn-chip" onclick="setChallanFinePreset(2000)" style="padding:4px 10px; border-radius:6px; font-size:0.75rem; background:rgba(255,255,255,0.06); border:1px solid var(--eseva-border); color:#fde68a; cursor:pointer;">₹2,000</button>
+                <button type="button" class="btn-chip" onclick="setChallanFinePreset(5000)" style="padding:4px 10px; border-radius:6px; font-size:0.75rem; background:rgba(255,255,255,0.06); border:1px solid var(--eseva-border); color:#fde68a; cursor:pointer;">₹5,000</button>
+              </div>
+            </div>
+            <div style="grid-column: 1 / -1; background:rgba(56, 189, 248, 0.08); border:1px solid rgba(56, 189, 248, 0.3); border-radius:8px; padding:10px 14px; font-size:0.83rem; color:#bae6fd; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+              <span>ℹ️ सही चालान राशि नहीं पता? परिवहन पोर्टल पर तुरंत चेक करें:</span>
+              <a href="https://echallan.parivahan.gov.in/index/accused-challan" target="_blank" rel="noopener noreferrer" style="color:#f59e0b; font-weight:700; text-decoration:underline;">
+                🔗 Parivahan e-Challan Portal ↗
+              </a>
+            </div>
+          `;
+          adaptFormForService('traffic-challan');
+          return;
+        }
+
+        adaptFormForService(activeSubService ? activeSubService.id : '');
+
         if (!fields || fields.length === 0) {
           box.innerHTML = '<div style="color:#94a3b8; font-size:0.85rem;">इस सेवा के लिए कोई अतिरिक्त फ़ील्ड आवश्यक नहीं है। सीधे नीचे अपना विवरण भरें।</div>';
           return;
@@ -1461,7 +1771,15 @@
       function updatePricingDisplay() {
         if (!activeSubService) return;
         let baseFee = Number(activeSubService.fee);
-        if (activeCategory === 'legal' && baseFee < 550) {
+        let challanFine = 0;
+
+        if (activeSubService.id === 'traffic-challan') {
+          const fineInp = document.getElementById('challanPenaltyAmount');
+          if (fineInp) {
+            challanFine = Math.max(0, parseInt(fineInp.value, 10) || 0);
+          }
+          baseFee = 150 + challanFine;
+        } else if (currentCategory === 'legal' && baseFee < 550) {
           baseFee = 550;
         } else if (baseFee < 150 && activeSubService.id !== 'exam-admit') {
           baseFee = 150;
@@ -1482,10 +1800,15 @@
         const applyServ = document.getElementById('applyFeeService');
         const applyTot = document.getElementById('applyFeeTotal');
 
-        if (applyBase) applyBase.innerText = `₹${pureBaseFee}`;
+        if (activeSubService.id === 'traffic-challan') {
+          if (applyBase) applyBase.innerText = challanFine > 0 ? `₹${challanFine} (सरकारी जुर्माना)` : `₹100 (पोर्टल चार्ज)`;
+          if (applyServ) applyServ.innerText = challanFine > 0 ? `+₹150 (कैफे निपटान शुल्क)` : `+₹50 (सेवा शुल्क)`;
+        } else {
+          if (applyBase) applyBase.innerText = `₹${pureBaseFee}`;
+          if (applyServ) applyServ.innerText = `+₹${serviceHandlingFee}`;
+        }
         if (applyState) applyState.innerText = `+₹${stateOffset}`;
         if (applyStateLbl) applyStateLbl.innerText = `राज्य पोर्टल व प्रोसेसिंग शुल्क (${chosenState}):`;
-        if (applyServ) applyServ.innerText = `+₹${serviceHandlingFee}`;
         if (applyTot) applyTot.innerText = `₹${totalBaseFee}`;
         
         const stateNotice = stateOffset > 0 ? ` (${chosenState} राज्य सुविधा शुल्क +₹${stateOffset} सम्मिलित)` : '';
@@ -1517,7 +1840,7 @@
         
         const upiUtr = document.getElementById('upiUtrNumber');
         if (method === 'upi') {
-          upiUtr.required = true;
+          upiUtr.required = false;
         } else {
           upiUtr.required = false;
         }
@@ -1527,7 +1850,11 @@
       function openRazorpayCheckout() {
         if (!activeSubService) return;
         let baseFee = Number(activeSubService.fee);
-        if (activeCategory === 'legal' && baseFee < 550) {
+        if (activeSubService.id === 'traffic-challan') {
+          const fineInp = document.getElementById('challanPenaltyAmount');
+          const challanFine = fineInp ? Math.max(0, parseInt(fineInp.value, 10) || 0) : 0;
+          baseFee = 150 + challanFine;
+        } else if (currentCategory === 'legal' && baseFee < 550) {
           baseFee = 550;
         } else if (baseFee < 150 && activeSubService.id !== 'exam-admit') {
           baseFee = 150;
@@ -1545,7 +1872,7 @@
 
         const rzpKey = activeRazorpayKey || window.RAZORPAY_KEY_ID;
         if (!rzpKey || rzpKey === 'rzp_test_placeholder') {
-          alert('Razorpay लाइव गेटवे वर्तमान में एक्टिवेट हो रहा है। कृपया बिना किसी अतिरिक्त शुल्क के तुरंत "UPI QR Code" या अपने UPI ऐप से भुगतान करें।');
+          alert('Razorpay लाइव गेटवे लोड हो रहा है या कॉन्फ़िगर हो रहा है। कृपया 0% अतिरिक्त शुल्क वाले "UPI QR Code" या अपने UPI ऐप से तुरंत भुगतान करें।');
           switchPay('upi');
           return;
         }
@@ -1554,6 +1881,33 @@
           alert('Razorpay लोड हो रहा है, कृपया UPI QR का उपयोग करें।');
           return;
         }
+
+        const options = {
+          key: rzpKey,
+          amount: finalPayable * 100,
+          currency: 'INR',
+          name: 'शान साइबर कैफे एवं ई-सेवा',
+          description: `${activeSubService.name} - ${chosenState} (All Inclusive)`,
+          image: 'assets/app-icon.svg',
+          theme: { color: '#0284c7' },
+          prefill: {
+            name: applicantName,
+            email: applicantEmail,
+            contact: applicantPhone
+          },
+          handler: function(response) {
+            document.getElementById('rzpPaymentId').value = response.razorpay_payment_id;
+            const badge = document.getElementById('rzpSuccessBadge');
+            badge.style.display = 'block';
+            badge.textContent = `✓ Razorpay भुगतान सफल! ID: ${response.razorpay_payment_id}`;
+            document.getElementById('upiUtrNumber').value = response.razorpay_payment_id;
+            handleApplicationSubmit(new Event('submit'));
+          }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+      }
 
         const options = {
           key: rzpKey,
@@ -1662,34 +2016,42 @@
       // 4. APPLICATION SUBMISSION & STORAGE
       let currentSubmittedRecord = null;
       async function handleApplicationSubmit(e) {
-        e.preventDefault();
+        if (e && e.preventDefault) e.preventDefault();
 
         if (currentPayMethod === 'razorpay' && !document.getElementById('rzpPaymentId').value && !document.getElementById('upiUtrNumber').value) {
-          alert('कृपया पहले "Pay Now via Razorpay" बटन दबाकर भुगतान पूरा करें।');
+          openRazorpayCheckout();
           return;
         }
 
-        if (currentPayMethod === 'upi' && !paymentScreenshotBase64) {
-          alert('कृपया भुगतान का स्क्रीनशॉट अपलोड करें ताकि आपकी फीस का सत्यापन तुरंत किया जा सके।');
-          return;
+        const utrVal = document.getElementById('upiUtrNumber').value.trim();
+        const rzpIdVal = document.getElementById('rzpPaymentId').value.trim();
+        let utr = utrVal || rzpIdVal;
+
+        if (currentPayMethod === 'upi' && !paymentScreenshotBase64 && !utrVal) {
+          const confirmSubmit = confirm('आपने भुगतान का स्क्रीनशॉट या UTR नंबर अभी नहीं डाला है।\n\nक्या आप अभी सीधे आवेदन सबमिट करना चाहते हैं? (ऑपरेटर आपसे WhatsApp पर संपर्क करके रसीद का सत्यापन कर लेगा)');
+          if (!confirmSubmit) return;
+          utr = 'Pending Proof (WhatsApp Verification)';
+        } else if (!utr) {
+          utr = 'Screenshot Attached (Pending Verification)';
         }
 
         const refId = 'SHAN-' + Math.floor(100000 + Math.random() * 900000);
         const mainCat = serviceCatalog[currentCategory]?.title || currentCategory;
         const subServiceTitle = activeSubService?.name || 'Standard Service';
+        const isChallan = activeSubService?.id === 'traffic-challan';
+
         const applicantName = document.getElementById('applicantName').value.trim();
-        const guardianName = document.getElementById('guardianName').value.trim();
-        const dob = document.getElementById('dob').value;
-        const gender = document.getElementById('gender').value;
+        const guardianName = isChallan ? 'N/A (Challan Settlement)' : (document.getElementById('guardianName')?.value.trim() || 'N/A');
+        const dob = isChallan ? 'N/A' : (document.getElementById('dob')?.value || 'N/A');
+        const gender = isChallan ? 'N/A' : (document.getElementById('gender')?.value || 'N/A');
         const phone = document.getElementById('phone').value.trim();
         const email = document.getElementById('email').value.trim() || 'Not provided';
-        const pincode = document.getElementById('pincode').value.trim();
-        const districtState = document.getElementById('districtState').value.trim();
-        const address = document.getElementById('address').value.trim();
-        const utr = document.getElementById('upiUtrNumber').value.trim() || document.getElementById('rzpPaymentId').value || 'Pending Verification (Screenshot Attached)';
+        const pincode = isChallan ? 'N/A' : (document.getElementById('pincode')?.value.trim() || 'N/A');
+        const districtState = document.getElementById('districtState')?.value.trim() || document.getElementById('applicantState').value;
+        const address = isChallan ? 'Parivahan Traffic Challan Clearance' : (document.getElementById('address')?.value.trim() || 'N/A');
         const fee = document.getElementById('paymentPayableFee').textContent;
         const remarks = document.getElementById('additionalRemarks').value.trim() || 'None';
-        const fileNames = chosenFiles.map(f => f.name).join(', ') || 'Attached Digitally';
+        const fileNames = chosenFiles.map(f => f.name).join(', ') || (isChallan ? 'Challan Online Record' : 'Attached Digitally');
 
         // Collect tailored inputs
         const tailoredData = {};

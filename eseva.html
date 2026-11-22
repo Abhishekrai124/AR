@@ -842,7 +842,7 @@
             </div>
 
             <!-- Supporting Documents Upload -->
-            <div class="form-group-full">
+            <div class="form-group-full" id="supportingDocsWrapper">
               <label class="form-label">
                 <span id="lblUploadDocs">सपोर्टिंग दस्तावेज़ (Upload Supporting Documents: ID proof, Photo, Old Slips)</span>
               </label>
@@ -1702,7 +1702,65 @@
       function onServiceDropdownChange() {
         currentSelectedSubtypeBasePrice = 0;
         renderDynamicServiceFields();
+        adaptEsevaFormForService();
         recalculateFees();
+      }
+
+      function adaptEsevaFormForService() {
+        const select = document.getElementById('selectedService');
+        const opt = select && select.selectedIndex >= 0 ? select.options[select.selectedIndex] : null;
+        const sId = opt ? (opt.getAttribute('data-service-id') || '') : '';
+        const sVal = (select ? select.value : '').toLowerCase();
+        const isChallan = sId === 'traffic-challan' || sVal.includes('चालान') || sVal.includes('challan');
+
+        const guardianInput = document.getElementById('guardianName');
+        const dobInput = document.getElementById('dob');
+        const genderSelect = document.getElementById('gender');
+        const addressText = document.getElementById('address');
+        const pincodeInput = document.getElementById('pincode');
+        const docsWrapper = document.getElementById('supportingDocsWrapper');
+        const lblName = document.getElementById('lblApplicantName');
+        const lblExistingId = document.getElementById('lblExistingId');
+
+        const guardianDiv = guardianInput ? guardianInput.closest('div') : null;
+        const dobDiv = dobInput ? dobInput.closest('div') : null;
+        const genderDiv = genderSelect ? genderSelect.closest('div') : null;
+        const addressDiv = addressText ? addressText.closest('.form-group-full') : null;
+        const pincodeDiv = pincodeInput ? pincodeInput.closest('div') : null;
+
+        if (isChallan) {
+          if (guardianDiv) guardianDiv.style.display = 'none';
+          if (dobDiv) dobDiv.style.display = 'none';
+          if (genderDiv) genderDiv.style.display = 'none';
+          if (addressDiv) addressDiv.style.display = 'none';
+          if (pincodeDiv) pincodeDiv.style.display = 'none';
+          if (docsWrapper) docsWrapper.style.display = 'none';
+
+          if (guardianInput) guardianInput.required = false;
+          if (dobInput) dobInput.required = false;
+          if (genderSelect) genderSelect.required = false;
+          if (addressText) addressText.required = false;
+          if (pincodeInput) pincodeInput.required = false;
+
+          if (lblName) lblName.textContent = 'वाहन स्वामी / आवेदक का नाम (Vehicle Owner Name)';
+          if (lblExistingId) lblExistingId.textContent = 'चालान नोटिस संख्या (Challan / Notice No. - यदि उपलब्ध हो)';
+        } else {
+          if (guardianDiv) guardianDiv.style.display = '';
+          if (dobDiv) dobDiv.style.display = '';
+          if (genderDiv) genderDiv.style.display = '';
+          if (addressDiv) addressDiv.style.display = '';
+          if (pincodeDiv) pincodeDiv.style.display = '';
+          if (docsWrapper) docsWrapper.style.display = '';
+
+          if (guardianInput) guardianInput.required = true;
+          if (dobInput) dobInput.required = true;
+          if (genderSelect) genderSelect.required = true;
+          if (addressText) addressText.required = true;
+          if (pincodeInput) pincodeInput.required = true;
+
+          if (lblName) lblName.textContent = 'आवेदक का पूरा नाम (Full Name)';
+          if (lblExistingId) lblExistingId.textContent = 'पूर्व आईडी / टोकन नंबर (यदि कोई हो)';
+        }
       }
 
       function renderDynamicServiceFields() {
@@ -1980,8 +2038,17 @@
               <input class="form-input dynamic-field" data-label="Chassis Last 5 Digits" type="text" maxlength="5" placeholder="e.g. 12345 (वाहन नंबर से जांच हेतु)" />
             </div>
             <div>
-              <label class="form-label">अनुमानित जुर्माना राशि (Challan Amount if Known)</label>
-              <input class="form-input dynamic-field" data-label="Challan Amount" type="number" placeholder="₹ में जुर्माना राशि (यदि पता हो)" />
+              <label class="form-label" style="color:var(--eseva-gold); display:flex; justify-content:space-between; align-items:center;">
+                <span>ट्रैफिक चालान जुर्माना राशि (₹ Fine Amount) *</span>
+                <small style="color:#38bdf8;">(राशि डालते ही कुल शुल्क स्वतः जुड़ेगा)</small>
+              </label>
+              <input class="form-input dynamic-field" id="esevaChallanFineAmount" data-label="Challan Penalty Amount" type="number" min="0" step="50" placeholder="जुर्माना राशि दर्ज करें (उदा. 500, 1000, 2000)" oninput="recalculateFees()" />
+              <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;">
+                <button type="button" class="btn-chip" onclick="setEsevaChallanFinePreset(500)" style="padding:4px 10px; border-radius:6px; font-size:0.75rem; background:rgba(255,255,255,0.06); border:1px solid var(--eseva-border); color:#fde68a; cursor:pointer;">₹500</button>
+                <button type="button" class="btn-chip" onclick="setEsevaChallanFinePreset(1000)" style="padding:4px 10px; border-radius:6px; font-size:0.75rem; background:rgba(255,255,255,0.06); border:1px solid var(--eseva-border); color:#fde68a; cursor:pointer;">₹1,000</button>
+                <button type="button" class="btn-chip" onclick="setEsevaChallanFinePreset(2000)" style="padding:4px 10px; border-radius:6px; font-size:0.75rem; background:rgba(255,255,255,0.06); border:1px solid var(--eseva-border); color:#fde68a; cursor:pointer;">₹2,000</button>
+                <button type="button" class="btn-chip" onclick="setEsevaChallanFinePreset(5000)" style="padding:4px 10px; border-radius:6px; font-size:0.75rem; background:rgba(255,255,255,0.06); border:1px solid var(--eseva-border); color:#fde68a; cursor:pointer;">₹5,000</button>
+              </div>
             </div>
             <div style="grid-column: 1 / -1; background:rgba(56, 189, 248, 0.08); border:1px solid rgba(56, 189, 248, 0.3); border-radius:8px; padding:10px 14px; font-size:0.83rem; color:#bae6fd; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
               <span>ℹ️ खुद परिवहन पोर्टल पर चालान देखना चाहते हैं?</span>
@@ -2054,24 +2121,42 @@
         recalculateFees();
       }
 
+      function setEsevaChallanFinePreset(amt) {
+        const inp = document.getElementById('esevaChallanFineAmount');
+        if (inp) {
+          inp.value = amt;
+          recalculateFees();
+        }
+      }
+
       function recalculateFees() {
         const select = document.getElementById('selectedService');
         const selectedOpt = select.options[select.selectedIndex];
         let basePrice = selectedOpt ? Number(selectedOpt.getAttribute('data-price') || 0) : 0;
+        const sId = selectedOpt ? (selectedOpt.getAttribute('data-service-id') || '') : '';
+        const sCat = selectedOpt ? (selectedOpt.getAttribute('data-cat') || '') : '';
+
+        // If traffic challan, dynamically add fine amount to base service fee
+        let challanFine = 0;
+        if (sId === 'traffic-challan') {
+          const fineInp = document.getElementById('esevaChallanFineAmount');
+          if (fineInp) {
+            challanFine = Math.max(0, parseInt(fineInp.value, 10) || 0);
+          }
+          basePrice = 150 + challanFine;
+        }
 
         // If granular subtype option was selected with custom pricing, use it
-        if (currentSelectedSubtypeBasePrice > 0) {
+        if (currentSelectedSubtypeBasePrice > 0 && sId !== 'traffic-challan') {
           basePrice = currentSelectedSubtypeBasePrice;
         }
 
         // Enforce minimum base price: ₹550 for legal affidavits, ₹150 for certificates/state documents (except resume at 20)
-        const sId = selectedOpt ? (selectedOpt.getAttribute('data-service-id') || '') : '';
-        const sCat = selectedOpt ? (selectedOpt.getAttribute('data-cat') || '') : '';
         if (sCat === 'legal') {
           if (basePrice > 0 && basePrice < 550) {
             basePrice = 550;
           }
-        } else if (sId !== 'resume-cv-builder' && (sCat === 'certificate' || sCat === 'welfare' || sCat === 'identity')) {
+        } else if (sId !== 'resume-cv-builder' && sId !== 'traffic-challan' && (sCat === 'certificate' || sCat === 'welfare' || sCat === 'identity')) {
           if (basePrice > 0 && basePrice < 150) {
             basePrice = 150;
           }
@@ -2207,27 +2292,45 @@
       async function handleEsevaSubmit(e, autoRzpId = null) {
         if (e && e.preventDefault) e.preventDefault();
 
-        const utr = autoRzpId || document.getElementById('utrNumber').value.trim();
+        const select = document.getElementById('selectedService');
+        const sOpt = select && select.selectedIndex >= 0 ? select.options[select.selectedIndex] : null;
+        const sId = sOpt ? (sOpt.getAttribute('data-service-id') || '') : '';
+        const sVal = (select ? select.value : '').toLowerCase();
+        const isChallan = sId === 'traffic-challan' || sVal.includes('चालान') || sVal.includes('challan');
+
+        const utrInput = document.getElementById('utrNumber');
+        const utr = autoRzpId || (utrInput ? utrInput.value.trim() : '');
+
+        // If Razorpay is active and not paid yet, open Razorpay popup
+        if (currentPaymentMethod === 'razorpay' && !autoRzpId && !utr) {
+          openRazorpayCheckout();
+          return;
+        }
+
+        let finalUtr = utr;
         if (currentPaymentMethod === 'upi' && !autoRzpId) {
           if (!utr && !upiPaymentProofBase64) {
-            alert('कृपया QR कोड से पेमेंट करने के बाद स्क्रीनशॉट अपलोड करें या 12-अंकों का UTR नंबर भरें।');
-            return;
+            const proceed = confirm('आपने UPI भुगतान का स्क्रीनशॉट या UTR नंबर अभी नहीं डाला है।\n\nक्या आप अभी सीधे सबमिट करना चाहते हैं? (ऑपरेटर WhatsApp पर सत्यापन कर लेगा)');
+            if (!proceed) return;
+            finalUtr = 'Pending Proof (WhatsApp Verification)';
+          } else if (!finalUtr) {
+            finalUtr = 'Screenshot Attached';
           }
         }
 
         const refId = 'SHAN-' + Math.floor(100000 + Math.random() * 900000);
-        const service = document.getElementById('selectedService').value;
-        const name = document.getElementById('applicantName').value;
-        const guardian = document.getElementById('guardianName').value;
-        const dob = document.getElementById('dob').value;
-        const gender = document.getElementById('gender').value;
-        const phone = document.getElementById('phone').value;
-        const email = document.getElementById('email').value || 'Not provided';
-        const address = document.getElementById('address').value;
-        const pincode = document.getElementById('pincode').value;
-        const existingId = document.getElementById('existingIdNum').value || 'N/A';
+        const service = select ? select.value : 'General Service';
+        const name = document.getElementById('applicantName').value.trim();
+        const guardian = isChallan ? 'N/A (Challan Settlement)' : ((document.getElementById('guardianName') && document.getElementById('guardianName').value.trim()) || 'N/A');
+        const dob = isChallan ? 'N/A' : ((document.getElementById('dob') && document.getElementById('dob').value) || 'N/A');
+        const gender = isChallan ? 'N/A' : ((document.getElementById('gender') && document.getElementById('gender').value) || 'N/A');
+        const phone = document.getElementById('phone').value.trim();
+        const email = (document.getElementById('email') && document.getElementById('email').value.trim()) || 'Not provided';
+        const address = isChallan ? 'N/A' : ((document.getElementById('address') && document.getElementById('address').value.trim()) || 'N/A');
+        const pincode = isChallan ? 'N/A' : ((document.getElementById('pincode') && document.getElementById('pincode').value.trim()) || 'N/A');
+        const existingId = (document.getElementById('existingIdNum') && document.getElementById('existingIdNum').value.trim()) || 'N/A';
         const fee = document.getElementById('displayTotalFee').innerText;
-        const notes = document.getElementById('extraInstructions').value || 'None';
+        const notes = (document.getElementById('extraInstructions') && document.getElementById('extraInstructions').value.trim()) || 'None';
         const fileNames = selectedFilesList.map(f => f.name).join(', ') || 'None';
 
         // Collect Service Specific Dynamic Fields
@@ -2252,7 +2355,7 @@
           pincode,
           existingId,
           customDetails,
-          utr: utr || (autoRzpId ? `RAZORPAY-${autoRzpId}` : 'PENDING_PROOF'),
+          utr: finalUtr || (autoRzpId ? `RAZORPAY-${autoRzpId}` : 'PENDING_PROOF'),
           paymentScreenshot: upiPaymentProofBase64,
           fee,
           paymentMethod: currentPaymentMethod.toUpperCase(),
@@ -2455,9 +2558,62 @@
         });
       }
 
+      // URL PARAMETER AUTO-SELECT & ROUTING
+      function initEsevaFromUrlParams() {
+        const params = new URLSearchParams(window.location.search);
+        const sParam = (params.get('service') || params.get('cat') || '').toLowerCase();
+        if (!sParam) return;
+
+        let targetId = '';
+        if (sParam.includes('challan') || sParam.includes('traffic')) {
+          targetId = 'traffic-challan';
+        } else if (sParam.includes('ayushman')) {
+          targetId = 'ayushman-card';
+        } else if (sParam.includes('kisan')) {
+          targetId = 'pm-kisan';
+        } else if (sParam.includes('eshram')) {
+          targetId = 'eshram-card';
+        } else if (sParam.includes('ration')) {
+          targetId = 'ration-card';
+        } else if (sParam.includes('pension')) {
+          targetId = 'pension-schemes';
+        } else if (sParam.includes('lic') || sParam.includes('bima')) {
+          targetId = sParam.includes('lic') ? 'lic-services' : 'bima-schemes';
+        } else if (sParam.includes('police') || sParam.includes('character')) {
+          targetId = 'police-character';
+        } else if (sParam.includes('income')) {
+          targetId = 'income-cert';
+        } else if (sParam.includes('caste')) {
+          targetId = 'caste-cert';
+        } else if (sParam.includes('domicile') || sParam.includes('niwas')) {
+          targetId = 'domicile-cert';
+        } else if (sParam.includes('birth')) {
+          targetId = 'birth-cert';
+        } else if (sParam.includes('death')) {
+          targetId = 'death-cert';
+        } else if (sParam.includes('affidavit') || sParam.includes('notary') || sParam.includes('legal')) {
+          targetId = 'affidavit-notary';
+        } else if (sParam.includes('passport')) {
+          targetId = 'passport-fresh';
+        } else if (sParam.includes('pan')) {
+          targetId = 'new-pan';
+        } else if (sParam.includes('aadhaar')) {
+          targetId = 'aadhaar-address';
+        } else if (sParam.includes('voter')) {
+          targetId = 'voter-new';
+        } else if (sParam.includes('pf') || sParam.includes('epfo')) {
+          targetId = 'pf-claim';
+        }
+
+        if (targetId) {
+          selectServiceDirectly(targetId);
+        }
+      }
+
       // Initialize
       setupPincodeLookup();
       detectVisitorRegion();
+      initEsevaFromUrlParams();
     </script>
   </body>
 </html>
