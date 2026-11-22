@@ -500,10 +500,27 @@
                 <span style="color:#94a3b8;">UPI ID:</span> <strong style="color:var(--eseva-gold); letter-spacing:0.5px;">kuzu@ptyes</strong>
               </div>
               <div style="max-width:400px; margin:14px auto 0;">
-                <label class="form-label" for="upiUtrNumber" style="text-align:left;">
-                  UPI UTR / 12-अंकों का ट्रांजेक्शन नंबर (Transaction Reference) *
+                <label class="form-label" for="upiPaymentScreenshot" style="color:var(--eseva-gold); display:flex; justify-content:space-between; align-items:center; text-align:left;">
+                  <span>📸 भुगतान स्क्रीनशॉट (Payment Screenshot) *</span>
+                  <small style="color:#38bdf8;">(सत्यापन हेतु अनिवार्य)</small>
                 </label>
-                <input class="form-input" id="upiUtrNumber" type="text" placeholder="12-digit UTR or Transaction ID" required />
+                <div style="background:rgba(255,255,255,0.04); border:1px dashed var(--eseva-gold); border-radius:8px; padding:12px; text-align:center; cursor:pointer;" onclick="document.getElementById('upiPaymentScreenshot').click()">
+                  <span style="font-size:1.4rem;">🧾</span>
+                  <div style="font-size:0.85rem; color:#fff;" id="screenshotPromptText">पेमेंट रसीद का स्क्रीनशॉट यहाँ अपलोड करें</div>
+                  <small style="color:#94a3b8; font-size:0.75rem;">(PhonePe / GPay / Paytm का सफल भुगतान स्क्रीनशॉट)</small>
+                  <input type="file" id="upiPaymentScreenshot" accept="image/*" style="display:none;" onchange="handlePaymentScreenshotSelect(event)" />
+                </div>
+                <div id="screenshotPreviewBox" style="display:none; margin-top:8px; text-align:center;">
+                  <img id="screenshotPreviewImg" src="" alt="Payment Receipt" style="max-height:120px; border-radius:6px; border:1px solid #10b981; box-shadow:0 4px 12px rgba(0,0,0,0.4);" />
+                  <div style="color:#10b981; font-size:0.78rem; margin-top:4px;">✓ स्क्रीनशॉट लोड हुआ</div>
+                </div>
+
+                <div style="margin-top:12px;">
+                  <label class="form-label" for="upiUtrNumber" style="text-align:left;">
+                    UPI UTR / 12-अंकों का ट्रांजेक्शन नंबर (Transaction Ref No.)
+                  </label>
+                  <input class="form-input" id="upiUtrNumber" type="text" placeholder="12-digit UTR No. (स्क्रीनशॉट में देखें)" />
+                </div>
               </div>
             </div>
 
@@ -1254,6 +1271,20 @@
         }
       }
 
+      let paymentScreenshotBase64 = null;
+      function handlePaymentScreenshotSelect(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          paymentScreenshotBase64 = evt.target.result;
+          document.getElementById('screenshotPreviewImg').src = paymentScreenshotBase64;
+          document.getElementById('screenshotPreviewBox').style.display = 'block';
+          document.getElementById('screenshotPromptText').textContent = `✓ ${file.name} (स्क्रीनशॉट लोड हुआ)`;
+        };
+        reader.readAsDataURL(file);
+      }
+
       // 4. APPLICATION SUBMISSION & STORAGE
       let currentSubmittedRecord = null;
       async function handleApplicationSubmit(e) {
@@ -1261,6 +1292,11 @@
 
         if (currentPayMethod === 'razorpay' && !document.getElementById('rzpPaymentId').value && !document.getElementById('upiUtrNumber').value) {
           alert('कृपया पहले "Pay Now via Razorpay" बटन दबाकर भुगतान पूरा करें।');
+          return;
+        }
+
+        if (currentPayMethod === 'upi' && !paymentScreenshotBase64) {
+          alert('कृपया भुगतान का स्क्रीनशॉट अपलोड करें ताकि आपकी फीस का सत्यापन तुरंत किया जा सके।');
           return;
         }
 
@@ -1276,7 +1312,7 @@
         const pincode = document.getElementById('pincode').value.trim();
         const districtState = document.getElementById('districtState').value.trim();
         const address = document.getElementById('address').value.trim();
-        const utr = document.getElementById('upiUtrNumber').value.trim() || document.getElementById('rzpPaymentId').value;
+        const utr = document.getElementById('upiUtrNumber').value.trim() || document.getElementById('rzpPaymentId').value || 'Pending Verification (Screenshot Attached)';
         const fee = document.getElementById('paymentPayableFee').textContent;
         const remarks = document.getElementById('additionalRemarks').value.trim() || 'None';
         const fileNames = chosenFiles.map(f => f.name).join(', ') || 'Attached Digitally';
@@ -1298,6 +1334,7 @@
           fee,
           paymentMethod: currentPayMethod.toUpperCase(),
           utr,
+          paymentScreenshot: paymentScreenshotBase64,
           applicantName,
           guardianName,
           dob,

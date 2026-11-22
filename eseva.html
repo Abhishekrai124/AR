@@ -511,8 +511,36 @@
 
       <!-- Services List Section -->
       <section class="eseva-grid-section">
-        <div class="section-label">
+        <div class="section-label" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
           <h2><span>📑</span> <span id="availableServicesHeading">उपलब्ध ई-सेवाएँ व दस्तावेज़ (Available Services)</span></h2>
+          <span style="font-size:0.82rem; color:#38bdf8; background:rgba(56, 189, 248, 0.1); padding:4px 10px; border-radius:999px; border:1px solid rgba(56, 189, 248, 0.25);">
+            🇮🇳 ऑल इंडिया व सभी 28 राज्यों के आधिकारिक पोर्टल
+          </span>
+        </div>
+
+        <!-- Search & State Selector Bar -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; margin: 16px 0 14px 0; align-items:center;">
+          <div style="flex:1; min-width:260px; position:relative;">
+            <input type="text" id="serviceSearchInput" placeholder="🔍 दस्तावेज़ या सेवा खोजें (उदा. आय, जाति, निवास, आधार, ईडब्ल्यूएस, ड्राइविंग लाइसेंस)..." class="form-input" style="padding:10px 16px; background:rgba(255,255,255,0.06); border-radius:999px; font-size:0.9rem;" oninput="onServiceSearchChange()" />
+          </div>
+          <div style="min-width:220px;">
+            <select id="stateFilterSelect" class="form-select" style="padding:10px 14px; border-radius:999px; background:#0f172a; border-color:var(--eseva-gold); color:#fde68a; font-weight:700; font-size:0.88rem;" onchange="onStateFilterChange()">
+              <option value="all">🇮🇳 सभी राज्य (All India Portal)</option>
+              <option value="UP">उत्तर प्रदेश (UP e-District)</option>
+              <option value="Bihar">बिहार (Bihar RTPS ServicePlus)</option>
+              <option value="Punjab">पंजाब (Punjab Sewa Kendra)</option>
+              <option value="Haryana">हरियाणा (Haryana Saral)</option>
+              <option value="Delhi">दिल्ली (e-District Delhi)</option>
+              <option value="MP">मध्य प्रदेश (MP e-District)</option>
+              <option value="Rajasthan">राजस्थान (Emitra)</option>
+              <option value="Maharashtra">महाराष्ट्र (Aaple Sarkar)</option>
+              <option value="WB">पश्चिम बंगाल (WB e-District)</option>
+              <option value="Gujarat">गुजरात (Digital Gujarat)</option>
+              <option value="Jharkhand">झारखंड (Jharsewa)</option>
+              <option value="Uttarakhand">उत्तराखंड (e-Services)</option>
+              <option value="other">अन्य सभी राज्य व केंद्र शासित प्रदेश</option>
+            </select>
+          </div>
         </div>
 
         <!-- Filter Tabs -->
@@ -761,7 +789,17 @@
                 <span>SCAN &amp; PAY</span>
               </div>
               <p style="font-size:0.85rem; color:#e2e8f0; margin:4px 0;"><strong>UPI ID:</strong> <code style="background:rgba(0,0,0,0.5); padding:2px 8px; border-radius:4px; color:#38bdf8;">kuzu@ptyes</code></p>
-              <p style="font-size:0.8rem; color:#94a3b8; margin:0;">दुकान: शान साइबर कैफे एवं ई-सेवा (+91 7009446821)</p>
+              <p style="font-size:0.8rem; color:#94a3b8; margin:0 0 12px 0;">दुकान: शान साइबर कैफे एवं ई-सेवा (+91 7009446821)</p>
+              
+              <!-- Payment Screenshot Upload for UPI -->
+              <div style="background:rgba(255,255,255,0.04); border:1px dashed var(--eseva-gold); border-radius:8px; padding:12px; max-width:380px; margin:0 auto; text-align:left;">
+                <label class="form-label" style="color:var(--eseva-gold); font-size:0.84rem; margin-bottom:4px; display:flex; justify-content:space-between;">
+                  <span>📸 भुगतान रसीद / स्क्रीनशॉट</span>
+                  <small style="color:#38bdf8;">(सत्यापन हेतु)</small>
+                </label>
+                <input type="file" id="upiPaymentProof" accept="image/*" class="form-input" style="padding:6px; font-size:0.8rem;" onchange="handleUpiProofSelected(event)" />
+                <div id="upiProofNotice" style="font-size:0.78rem; color:#10b981; margin-top:4px;"></div>
+              </div>
             </div>
 
             <!-- Payment Pane: Razorpay -->
@@ -772,21 +810,24 @@
               <h4 style="color:#fff; margin:10px 0 4px; font-size:1.05rem;">Razorpay सुरक्षित गेटवे चेकआउट</h4>
               <p style="font-size:0.82rem; color:#94a3b8; margin-bottom:12px;">गेटवे शुल्क 2% जोड़ने के बाद कुल राशि: <strong id="razorpayInclusiveAmount" style="color:#fde68a;">₹0</strong></p>
               <button type="button" id="razorpayPayBtn" onclick="payWithRazorpay()" style="width:100%; max-width:320px; margin:0 auto; background:linear-gradient(135deg, #0284c7, #0369a1); color:#fff; font-weight:700; padding:12px; border-radius:8px; border:none; cursor:pointer; font-size:0.95rem; box-shadow:0 4px 14px rgba(2,132,199,0.35);">
-                💳 Razorpay से पे करें (<span id="btnRzpAmountText">₹0</span>)
+                💳 Pay Now via Razorpay (<span id="btnRzpAmountText">₹0</span>)
               </button>
               <div id="razorpaySuccessBadge" style="display:none; margin-top:8px; font-size:0.85rem; color:#10b981; font-weight:700;">
                 ✓ Razorpay भुगतान सफल!
               </div>
+              <small style="display:block; color:#6ee7b7; font-size:0.76rem; margin-top:8px;">
+                ⚡ Razorpay भुगतान सफल होते ही आवेदन बिना किसी मैन्युअल UTR के स्वतः सबमिट हो जाएगा।
+              </small>
             </div>
 
-            <!-- Transaction Reference Input -->
-            <div style="margin-top:16px; background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:14px;">
+            <!-- Transaction Reference Input (Hidden for Razorpay) -->
+            <div id="utrWrapperBox" style="margin-top:16px; background:rgba(15,23,42,0.85); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:14px;">
               <label class="form-label" for="utrNumber">
-                <span id="lblUtrNumber">भुगतान रेफरेंस ID / Razorpay Payment ID / UPI UTR *</span>
+                <span id="lblUtrNumber">12-अंकों का UPI UTR / ट्रांजेक्शन नंबर</span>
               </label>
-              <input class="form-input" id="utrNumber" type="text" placeholder="12-digit UPI UTR or Razorpay Payment Ref" required />
+              <input class="form-input" id="utrNumber" type="text" placeholder="12-digit UPI UTR No. (स्क्रीनशॉट में देखें)" />
               <small style="color:#94a3b8; font-size:0.76rem; display:block; margin-top:4px;" id="utrHelperText">
-                UPI से भुगतान करने पर ऐप में दिख रहा 12 अंकों का UTR डालें। Razorpay से भुगतान करने पर यह स्वतः भर जाएगा।
+                PhonePe, GPay या Paytm ऐप में दिख रहा 12 अंकों का UTR नंबर यहाँ दर्ज करें।
               </small>
             </div>
           </div>
@@ -803,6 +844,78 @@
         </form>
       </section>
     </main>
+
+    <!-- Instant Service Customizer Modal -->
+    <div class="success-modal" id="serviceCustomizerModal">
+      <div class="modal-box" style="max-width:620px; text-align:left;">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--eseva-border); padding-bottom:12px; margin-bottom:14px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span id="custModalIcon" style="font-size:1.8rem;">📑</span>
+            <div>
+              <h3 id="custModalTitle" style="margin:0; font-size:1.15rem; color:#fff;">सेवा अनुकूलन</h3>
+              <small id="custModalCategory" style="color:#38bdf8; font-size:0.75rem;">विशिष्ट विकल्प व राज्यवार शुल्क</small>
+            </div>
+          </div>
+          <button type="button" onclick="closeCustomizerModal()" style="background:transparent; border:none; color:#94a3b8; font-size:1.6rem; cursor:pointer; line-height:1;">&times;</button>
+        </div>
+
+        <!-- Sub-options selection -->
+        <label class="form-label" style="color:#fde68a; margin-bottom:8px;">
+          <span>🎯 क्या कार्रवाई करानी है? (Select Sub-Service / Action)</span>
+        </label>
+        <div id="custModalSubOptions" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-bottom:14px;">
+          <!-- Dynamically populated options -->
+        </div>
+
+        <!-- State Selector for this service -->
+        <div id="custModalStateWrap" style="margin-bottom:14px;">
+          <label class="form-label" style="color:#94a3b8;">राज्य चुनें (Select State for Portal &amp; Fee):</label>
+          <select id="custModalStateSelect" class="form-select" onchange="onCustModalStateChange()">
+            <option value="UP">उत्तर प्रदेश (e-District UP)</option>
+            <option value="Bihar">बिहार (RTPS ServicePlus)</option>
+            <option value="Punjab">पंजाब (Sewa Kendra)</option>
+            <option value="Haryana">हरियाणा (Saral Haryana)</option>
+            <option value="Delhi">दिल्ली (e-District Delhi)</option>
+            <option value="MP">मध्य प्रदेश (MP e-District)</option>
+            <option value="Rajasthan">राजस्थान (Emitra)</option>
+            <option value="Maharashtra">महाराष्ट्र (Aaple Sarkar)</option>
+            <option value="WB">पश्चिम बंगाल (WB e-District)</option>
+            <option value="Gujarat">गुजरात (Digital Gujarat)</option>
+            <option value="Jharkhand">झारखंड (Jharsewa)</option>
+            <option value="Uttarakhand">उत्तराखंड (e-Services)</option>
+            <option value="all">अन्य सभी राज्य (All India)</option>
+          </select>
+        </div>
+
+        <!-- Dynamic Fee Display -->
+        <div style="background:rgba(245, 158, 11, 0.1); border:1px solid rgba(245, 158, 11, 0.3); border-radius:10px; padding:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <div>
+            <span style="font-size:0.8rem; color:#fde68a; display:block;">कुल देय शुल्क (All-Inclusive Fee):</span>
+            <small style="font-size:0.75rem; color:#94a3b8;">(सरकारी पोर्टल शुल्क + सेवा व प्रोसेसिंग सम्मिलित)</small>
+          </div>
+          <div>
+            <span id="custModalFeeDisplay" style="font-size:1.8rem; font-weight:900; color:var(--eseva-gold);">₹150</span>
+          </div>
+        </div>
+
+        <!-- Documents required -->
+        <div style="background:rgba(255,255,255,0.03); border:1px dashed var(--eseva-border); border-radius:10px; padding:12px; margin-bottom:18px;">
+          <strong style="color:#6ee7b7; font-size:0.85rem; display:block; margin-bottom:6px;">📋 आवश्यक दस्तावेज़:</strong>
+          <ul id="custModalDocsList" style="margin:0; padding-left:20px; font-size:0.8rem; color:#cbd5e1; line-height:1.6;">
+            <!-- Populated via JS -->
+          </ul>
+        </div>
+
+        <div style="display:flex; gap:10px; justify-content:flex-end;">
+          <button type="button" onclick="closeCustomizerModal()" style="padding:10px 16px; border-radius:8px; background:rgba(255,255,255,0.08); border:1px solid var(--eseva-border); color:#cbd5e1; cursor:pointer;">
+            रद्द करें
+          </button>
+          <button type="button" onclick="proceedFromCustomizerToApply()" style="padding:10px 20px; border-radius:8px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; font-weight:700; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(16,185,129,0.4);">
+            🚀 अभी आवेदन करें (Proceed to Apply) ➔
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Success Confirmation Modal -->
     <div class="success-modal" id="successModal">
@@ -925,14 +1038,30 @@
         currentActiveCategory = filterCat;
         const grid = document.getElementById('servicesGrid');
         grid.innerHTML = '';
-        const filtered = filterCat === 'all' ? servicesList : servicesList.filter(s => s.category === filterCat);
+        let filtered = filterCat === 'all' ? servicesList : servicesList.filter(s => s.category === filterCat);
+
+        if (currentSearchQuery) {
+          filtered = filtered.filter(s => 
+            (s.title && s.title.toLowerCase().includes(currentSearchQuery)) ||
+            (s.titleEn && s.titleEn.toLowerCase().includes(currentSearchQuery)) ||
+            (s.desc && s.desc.toLowerCase().includes(currentSearchQuery))
+          );
+        }
+
         const isHi = currentLang === "hi";
+        const stateOffset = stateFeeOffsets[currentSelectedState] || 0;
+
+        if (filtered.length === 0) {
+          grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:32px; color:#94a3b8;">कोई सेवा या दस्तावेज़ नहीं मिला। कृपया अन्य शब्द खोजें।</div>';
+          return;
+        }
 
         filtered.forEach(item => {
           const card = document.createElement('div');
           card.className = 'service-card';
           const title = isHi ? item.title : item.titleEn;
           const desc = isHi ? item.desc : item.descEn;
+          const adjustedFee = item.category === 'certificate' ? (item.fee + stateOffset) : item.fee;
 
           card.innerHTML = `
             <div>
@@ -945,10 +1074,10 @@
             </div>
             <div class="service-footer">
               <div class="service-fee">
-                ₹${item.fee}
+                ₹${adjustedFee}
                 <small>${isHi ? "कुल देय शुल्क" : "Total Inclusive Fee"}</small>
               </div>
-              <button class="btn-apply-card" onclick="autoSelectServiceAndApply('${item.title}', ${item.fee}, '${item.id}')">
+              <button class="btn-apply-card" onclick="openServiceCustomizer('${item.id}')">
                 ${isHi ? "आवेदन करें ➔" : "Apply Now ➔"}
               </button>
             </div>
@@ -966,34 +1095,244 @@
         }
       });
 
-      // AUTO-SELECTION FROM SERVICE CARD (Opens Dedicated Form Page)
-      function autoSelectServiceAndApply(serviceTitle, price, serviceId) {
-        window.location.href = `apply.html?service=${encodeURIComponent(serviceId || serviceTitle)}`;
+      // State & Search Filters
+      let currentSelectedState = "all";
+      let currentSearchQuery = "";
+
+      function onServiceSearchChange() {
+        currentSearchQuery = (document.getElementById('serviceSearchInput').value || '').toLowerCase().trim();
+        renderServicesGrid(currentActiveCategory);
       }
-        const select = document.getElementById('selectedService');
-        let matched = false;
-        for (let i = 0; i < select.options.length; i++) {
-          if (select.options[i].text.includes(serviceTitle) || select.options[i].value.includes(serviceTitle)) {
-            select.selectedIndex = i;
-            matched = true;
+
+      function onStateFilterChange() {
+        currentSelectedState = document.getElementById('stateFilterSelect').value;
+        renderServicesGrid(currentActiveCategory);
+      }
+
+      // State-wise fee adjustments
+      const stateFeeOffsets = {
+        "UP": 0,
+        "Bihar": -10,
+        "Punjab": 10,
+        "Haryana": 0,
+        "Delhi": 30,
+        "MP": -10,
+        "Rajasthan": 0,
+        "Maharashtra": 20,
+        "WB": 0,
+        "Gujarat": 10,
+        "Jharkhand": -10,
+        "Uttarakhand": 0,
+        "other": 0
+      };
+
+      // Service Sub-Options & Customization Map
+      const serviceCustomMap = {
+        "aadhaar": {
+          title: "आधार कार्ड सेवाएँ (Aadhaar Assistance)",
+          icon: "🪪",
+          options: [
+            { id: "aadhaar-address", name: "पता सुधार (Address Update)", fee: 250, docs: ["निवास प्रमाण (बिजली बिल / राशन कार्ड)", "आधार कार्ड प्रति"] },
+            { id: "aadhaar-mobile", name: "मोबाइल व ईमेल लिंक सहायता", fee: 150, docs: ["आधार कार्ड", "नया सक्रिय मोबाइल नंबर"] },
+            { id: "aadhaar-dob", name: "नाम / जन्मतिथि / लिंग सुधार", fee: 200, docs: ["10वीं मार्कशीट / जन्म प्रमाण पत्र", "आधार कार्ड"] },
+            { id: "pvc-aadhaar", name: "PVC वाटरप्रूफ स्मार्ट कार्ड आर्डर", fee: 100, docs: ["आधार कार्ड नंबर व पूरा पता"] },
+            { id: "aadhaar-bio", name: "बायोमेट्रिक फिंगरप्रिंट/आईरिस अपडेट", fee: 180, docs: ["आधार कार्ड", "जन्म प्रमाण पत्र (नाबालिग हेतु)"] }
+          ]
+        },
+        "caste": {
+          title: "जाति प्रमाण पत्र (Caste Certificate)",
+          icon: "📜",
+          options: [
+            { id: "caste-obc", name: "ओबीसी (OBC) जाति प्रमाण पत्र", fee: 150, docs: ["आधार कार्ड", "पिता का जाति प्रमाण / खतौनी", "फोटो"] },
+            { id: "caste-ncl", name: "नॉन-क्रीमी लेयर (NCL) प्रमाण पत्र", fee: 180, docs: ["आय प्रमाण पत्र", "जाति प्रमाण पत्र", "आधार कार्ड"] },
+            { id: "caste-sc", name: "अनुसूचित जाति (SC) प्रमाण पत्र", fee: 140, docs: ["आधार कार्ड", "राशन कार्ड / स्वप्रमाणित घोषणा"] },
+            { id: "caste-st", name: "अनुसूचित जनजाति (ST) प्रमाण पत्र", fee: 140, docs: ["आधार कार्ड", "ग्राम प्रधान / राजस्व सत्यापन"] },
+            { id: "caste-ebc", name: "अत्यंत पिछड़ा वर्ग (EBC - बिहार)", fee: 150, docs: ["आधार कार्ड", "निवास प्रमाण", "जाति दस्तावेज"] }
+          ]
+        },
+        "income": {
+          title: "आय प्रमाण पत्र (Income Certificate)",
+          icon: "📄",
+          options: [
+            { id: "income-normal", name: "तहसील आय प्रमाण पत्र (e-District)", fee: 150, docs: ["आधार कार्ड", "स्वप्रमाणित घोषणा पत्र", "वेतन पर्ची / खतौनी"] },
+            { id: "income-tatkaal", name: "फास्ट-ट्रैक प्राथमिकता आय प्रमाण", fee: 220, docs: ["आधार कार्ड", "तहसीलदार प्रार्थना पत्र"] }
+          ]
+        },
+        "domicile": {
+          title: "निवास प्रमाण पत्र (Domicile / Niwas)",
+          icon: "🏡",
+          options: [
+            { id: "domicile-normal", name: "स्थाई मूल निवास प्रमाण पत्र", fee: 150, docs: ["आधार कार्ड", "बिजली बिल / राशन कार्ड / स्कूल टीसी"] },
+            { id: "domicile-parivar", name: "परिवार रजिस्टर नकल सहित निवास", fee: 180, docs: ["परिवार रजिस्टर की प्रति", "आधार कार्ड"] }
+          ]
+        },
+        "ews": {
+          title: "ईडब्ल्यूएस प्रमाण पत्र (EWS 10% Quota)",
+          icon: "📑",
+          options: [
+            { id: "ews-state", name: "राज्य स्तरीय ईडब्ल्यूएस प्रमाण पत्र", fee: 180, docs: ["आधार कार्ड", "आय प्रमाण पत्र", "ज़मीन का पर्चा / खतौनी"] },
+            { id: "ews-central", name: "केंद्रीय भर्ती (Central Jobs) ईडब्ल्यूएस", fee: 200, docs: ["केंद्रीय फॉर्मेट आय व संपत्ति प्रमाण", "आधार कार्ड"] }
+          ]
+        },
+        "passport": {
+          title: "पासपोर्ट सेवा (Passport Seva)",
+          icon: "✈️",
+          options: [
+            { id: "passport-fresh", name: "सामान्य पासपोर्ट नया (36 पेज)", fee: 3100, docs: ["10वीं मार्कशीट / जन्म प्रमाण पत्र", "आधार कार्ड", "पैन कार्ड"] },
+            { id: "passport-reissue", name: "पासपोर्ट नवीनीकरण (Re-issue)", fee: 3100, docs: ["पुराना पासपोर्ट", "आधार कार्ड"] },
+            { id: "passport-tatkaal", name: "तत्काल पासपोर्ट स्लॉट (Tatkaal Priority)", fee: 4000, docs: ["आधार कार्ड", "पैन कार्ड", "10वीं मार्कशीट", "यात्रा विवरण"] },
+            { id: "passport-pcc", name: "पुलिस क्लीयरेंस सर्टिफिकेट (PCC)", fee: 800, docs: ["पासपोर्ट की प्रति", "जॉब ऑफर / वीज़ा"] }
+          ]
+        },
+        "driving": {
+          title: "ड्राइविंग लाइसेंस (Sarathi Parivahan)",
+          icon: "🚗",
+          options: [
+            { id: "dl-ll", name: "लर्निंग लाइसेंस ऑनलाइन (LL)", fee: 450, docs: ["आधार कार्ड (मोबाइल लिंक)", "10वीं मार्कशीट", "फोटो"] },
+            { id: "dl-perm", name: "स्थाई ड्राइविंग लाइसेंस टेस्ट स्लॉट", fee: 850, docs: ["लर्निंग लाइसेंस", "आधार कार्ड"] },
+            { id: "dl-renew", name: "डीएल नवीनीकरण / पता सुधार", fee: 550, docs: ["पुराना ड्राइविंग लाइसेंस", "आधार कार्ड", "मेडिकल फॉर्म 1A"] }
+          ]
+        },
+        "udyam": {
+          title: "उद्यम / MSME व व्यापार रजिस्ट्रेशन",
+          icon: "🏢",
+          options: [
+            { id: "udyam-new", name: "नया उद्यम / MSME रजिस्ट्रेशन सर्टिफिकेट", fee: 300, docs: ["मालिक का आधार कार्ड", "पैन कार्ड", "बैंक खाता विवरण"] },
+            { id: "gst-reg", name: "GST नया रजिस्ट्रेशन व पोर्टल फाइलिंग", fee: 1200, docs: ["बिजली बिल / रेंट एग्रीमेंट", "पैन व आधार", "बैंक पासबुक"] },
+            { id: "shop-licence", name: "दुकान लाइसेंस (गुमाश्ता प्रमाण पत्र)", fee: 650, docs: ["दुकान का फोटो बोर्ड सहित", "मालिक का आधार व पैन"] },
+            { id: "fssai-food", name: "FSSAI खाद्य सुरक्षा रजिस्ट्रेशन", fee: 800, docs: ["आधार कार्ड", "फोटो", "दुकान का पता"] }
+          ]
+        },
+        "pan": {
+          title: "पैन कार्ड सेवाएँ (PAN Services)",
+          icon: "💳",
+          options: [
+            { id: "new-pan", name: "नया पैन कार्ड (प्लास्टिक + डिजिटल)", fee: 250, docs: ["आधार कार्ड (मोबाइल लिंक)", "2 पासपोर्ट फोटो"] },
+            { id: "pan-correction", name: "पैन कार्ड सुधार / रिप्रिंट", fee: 200, docs: ["मौजूदा पैन कार्ड", "आधार कार्ड"] }
+          ]
+        },
+        "voter": {
+          title: "वोटर आईडी कार्ड (Voter ID NVSP)",
+          icon: "🗳️",
+          options: [
+            { id: "voter-form6", name: "नया वोटर कार्ड (Form 6)", fee: 120, docs: ["आयु प्रमाण", "निवास प्रमाण", "पासपोर्ट साइज रंगीन फोटो"] },
+            { id: "voter-form8", name: "वोटर कार्ड संशोधन / शिफ्टिंग (Form 8)", fee: 100, docs: ["मौजूदा वोटर कार्ड", "संशोधन का वैध प्रमाण"] },
+            { id: "voter-epic", name: "डिजिटल वोटर कार्ड डाउनलोड व लैमिनेट", fee: 50, docs: ["वोटर कार्ड नंबर (EPIC No.)"] }
+          ]
+        },
+        "pf": {
+          title: "EPFO व पीएफ क्लेम (PF Claim)",
+          icon: "💰",
+          options: [
+            { id: "pf-full", name: "पीएफ पूरा पैसा निकालें (Form 19 & 10C)", fee: 350, docs: ["UAN नंबर", "बैंक पासबुक / चेक", "पैन कार्ड"] },
+            { id: "pf-advance", name: "पीएफ एडवांस क्लेम (Form 31)", fee: 250, docs: ["UAN नंबर", "बैंक पासबुक"] },
+            { id: "uan-kyc", name: "UAN एक्टिवेशन व बैंक केवाईसी लिंक", fee: 120, docs: ["आधार कार्ड", "बैंक पासबुक"] }
+          ]
+        }
+      };
+
+      let activeCustomizerServiceKey = "aadhaar";
+      let activeCustomizerSubId = "aadhaar-address";
+      let activeCustomizerBaseFee = 250;
+
+      // OPEN INTERACTIVE SERVICE CUSTOMIZER MODAL
+      function openServiceCustomizer(serviceId) {
+        let matchedKey = "aadhaar";
+        for (const k of Object.keys(serviceCustomMap)) {
+          if (serviceId.includes(k)) {
+            matchedKey = k;
             break;
           }
         }
-        if (!matched) {
-          // If not in standard options, add temporary option and select
-          const opt = new Option(serviceTitle + ` - ₹${price}`, serviceTitle, true, true);
-          opt.setAttribute('data-price', price);
-          select.add(opt);
+        activeCustomizerServiceKey = matchedKey;
+        const sData = serviceCustomMap[matchedKey];
+        if (!sData) {
+          window.location.href = `apply.html?service=${encodeURIComponent(serviceId)}`;
+          return;
         }
 
-        renderDynamicServiceFields();
-        recalculateFees();
+        document.getElementById('custModalIcon').textContent = sData.icon;
+        document.getElementById('custModalTitle').textContent = sData.title;
 
-        // Smooth scroll right to the form and focus on applicant name
-        document.getElementById('apply-section').scrollIntoView({ behavior: 'smooth' });
-        setTimeout(() => {
-          document.getElementById('applicantName').focus();
-        }, 500);
+        // Render sub-options
+        const optsBox = document.getElementById('custModalSubOptions');
+        optsBox.innerHTML = '';
+        activeCustomizerSubId = sData.options[0].id;
+        activeCustomizerBaseFee = sData.options[0].fee;
+
+        sData.options.forEach((opt, idx) => {
+          const btn = document.createElement('div');
+          btn.style.cssText = `
+            background: ${idx === 0 ? 'rgba(245, 158, 11, 0.18)' : 'rgba(255, 255, 255, 0.04)'};
+            border: 1px solid ${idx === 0 ? 'var(--eseva-gold)' : 'var(--eseva-border)'};
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+          `;
+          btn.onclick = () => selectCustomizerSubOption(opt, btn);
+          btn.innerHTML = `
+            <div style="font-weight:700; color:#fff; font-size:0.86rem;">${opt.name}</div>
+            <div style="color:var(--eseva-gold); font-weight:800; font-size:0.95rem; margin-top:2px;">₹${opt.fee}</div>
+          `;
+          optsBox.appendChild(btn);
+        });
+
+        updateCustomizerDocsAndFee(sData.options[0]);
+        document.getElementById('serviceCustomizerModal').style.display = 'flex';
+      }
+
+      function selectCustomizerSubOption(opt, clickedBtn) {
+        activeCustomizerSubId = opt.id;
+        activeCustomizerBaseFee = opt.fee;
+        
+        const container = document.getElementById('custModalSubOptions');
+        Array.from(container.children).forEach(child => {
+          child.style.background = 'rgba(255, 255, 255, 0.04)';
+          child.style.borderColor = 'var(--eseva-border)';
+        });
+        clickedBtn.style.background = 'rgba(245, 158, 11, 0.18)';
+        clickedBtn.style.borderColor = 'var(--eseva-gold)';
+
+        updateCustomizerDocsAndFee(opt);
+      }
+
+      function onCustModalStateChange() {
+        const state = document.getElementById('custModalStateSelect').value;
+        const offset = stateFeeOffsets[state] || 0;
+        const finalFee = activeCustomizerBaseFee + offset;
+        document.getElementById('custModalFeeDisplay').textContent = `₹${finalFee}`;
+      }
+
+      function updateCustomizerDocsAndFee(opt) {
+        const state = document.getElementById('custModalStateSelect').value;
+        const offset = stateFeeOffsets[state] || 0;
+        const finalFee = opt.fee + offset;
+        document.getElementById('custModalFeeDisplay').textContent = `₹${finalFee}`;
+
+        const docsList = document.getElementById('custModalDocsList');
+        docsList.innerHTML = '';
+        if (opt.docs) {
+          opt.docs.forEach(d => {
+            const li = document.createElement('li');
+            li.textContent = d;
+            docsList.appendChild(li);
+          });
+        }
+      }
+
+      function closeCustomizerModal() {
+        document.getElementById('serviceCustomizerModal').style.display = 'none';
+      }
+
+      function proceedFromCustomizerToApply() {
+        const state = document.getElementById('custModalStateSelect').value;
+        window.location.href = `apply.html?service=${encodeURIComponent(activeCustomizerSubId)}&cat=${encodeURIComponent(activeCustomizerServiceKey)}&state=${encodeURIComponent(state)}`;
+      }
+
+      // Legacy autoSelectServiceAndApply redirects to customizer
+      function autoSelectServiceAndApply(serviceTitle, price, serviceId) {
+        openServiceCustomizer(serviceId || serviceTitle);
       }
 
       function onServiceDropdownChange() {
@@ -1131,6 +1470,19 @@
       // Payment Method State: 'upi' (free) or 'razorpay' (+2%)
       let currentPaymentMethod = 'upi';
       let currentBaseTotal = 0;
+      let upiPaymentProofBase64 = null;
+
+      function handleUpiProofSelected(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          upiPaymentProofBase64 = evt.target.result;
+          const notice = document.getElementById('upiProofNotice');
+          if (notice) notice.innerText = `✓ स्क्रीनशॉट संलग्न: ${file.name}`;
+        };
+        reader.readAsDataURL(file);
+      }
 
       function switchPaymentMethod(method) {
         currentPaymentMethod = method;
@@ -1138,6 +1490,12 @@
         document.getElementById('tabRazorpay').classList.toggle('active', method === 'razorpay');
         document.getElementById('paneUpi').style.display = method === 'upi' ? 'block' : 'none';
         document.getElementById('paneRazorpay').style.display = method === 'razorpay' ? 'block' : 'none';
+        
+        // Hide manual UTR wrapper when Razorpay is active
+        const utrBox = document.getElementById('utrWrapperBox');
+        if (utrBox) {
+          utrBox.style.display = method === 'upi' ? 'block' : 'none';
+        }
         recalculateFees();
       }
 
@@ -1214,11 +1572,15 @@
             email: applicantEmail,
             contact: applicantPhone
           },
-          handler: function (response) {
+          handler: async function (response) {
             document.getElementById('utrNumber').value = response.razorpay_payment_id;
             const badge = document.getElementById('razorpaySuccessBadge');
-            badge.style.display = 'block';
-            badge.innerText = `✓ Razorpay भुगतान सफल! Ref: ${response.razorpay_payment_id}`;
+            if (badge) {
+              badge.style.display = 'block';
+              badge.innerText = `✓ Razorpay भुगतान सफल! Ref: ${response.razorpay_payment_id}`;
+            }
+            // Auto submit immediately on payment success! No manual UTR typing required!
+            await handleEsevaSubmit(null, response.razorpay_payment_id);
           }
         };
 
@@ -1239,8 +1601,17 @@
 
       // AUTOMATIC SUBMISSION TO OWNER STUDIO DASHBOARD & STORAGE
       let lastSubmissionData = null;
-      async function handleEsevaSubmit(e) {
-        e.preventDefault();
+      async function handleEsevaSubmit(e, autoRzpId = null) {
+        if (e && e.preventDefault) e.preventDefault();
+
+        const utr = autoRzpId || document.getElementById('utrNumber').value.trim();
+        if (currentPaymentMethod === 'upi' && !autoRzpId) {
+          if (!utr && !upiPaymentProofBase64) {
+            alert('कृपया QR कोड से पेमेंट करने के बाद स्क्रीनशॉट अपलोड करें या 12-अंकों का UTR नंबर भरें।');
+            return;
+          }
+        }
+
         const refId = 'SHAN-' + Math.floor(100000 + Math.random() * 900000);
         const service = document.getElementById('selectedService').value;
         const name = document.getElementById('applicantName').value;
@@ -1252,7 +1623,6 @@
         const address = document.getElementById('address').value;
         const pincode = document.getElementById('pincode').value;
         const existingId = document.getElementById('existingIdNum').value || 'N/A';
-        const utr = document.getElementById('utrNumber').value;
         const fee = document.getElementById('displayTotalFee').innerText;
         const notes = document.getElementById('extraInstructions').value || 'None';
         const fileNames = selectedFilesList.map(f => f.name).join(', ') || 'None';
@@ -1279,7 +1649,8 @@
           pincode,
           existingId,
           customDetails,
-          utr,
+          utr: utr || (autoRzpId ? `RAZORPAY-${autoRzpId}` : 'PENDING_PROOF'),
+          paymentScreenshot: upiPaymentProofBase64,
           fee,
           paymentMethod: currentPaymentMethod.toUpperCase(),
           notes,
