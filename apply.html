@@ -872,6 +872,17 @@
               fields: [
                 { id: "originalDlNo", label: "मौजूदा ड्राइविंग लाइसेंस नंबर *", type: "text", placeholder: "DL Number", required: true }
               ]
+            },
+            {
+              id: "vehicle-insurance",
+              name: "वाहन बीमा (2-व्हीलर / 4-व्हीलर इंश्योरेंस रिन्युअल)",
+              fee: 250,
+              desc: "गाड़ी का थर्ड-पार्टी व कॉम्प्रिहेंसिव इंश्योरेंस तुरंत पाएं",
+              docs: ["वाहन आरसी", "पिछली बीमा पॉलिसी कॉपी"],
+              fields: [
+                { id: "vehicleRegNo", label: "गाड़ी का नंबर (Vehicle Reg No.) *", type: "text", placeholder: "e.g. UP50-AB-1234", required: true },
+                { id: "vehicleModel", label: "वाहन का मॉडल व वर्ष *", type: "text", placeholder: "e.g. Hero Splendor 2021", required: true }
+              ]
             }
           ]
         },
@@ -955,6 +966,16 @@
               docs: ["गाटा / खसरा / खाता संख्या"],
               fields: [
                 { id: "khatauniDetails", label: "गाटा / खसरा या खाता संख्या दर्ज करें *", type: "text", placeholder: "Khasra / Khata No.", required: true }
+              ]
+            },
+            {
+              id: "senior-citizen-card",
+              name: "वरिष्ठ नागरिक पहचान पत्र (Senior Citizen Card)",
+              fee: 150,
+              desc: "60 वर्ष से अधिक आयु के नागरिकों हेतु अधिकृत वरिष्ठ नागरिक प्रमाण पत्र",
+              docs: ["आयु प्रमाण (आधार / वोटर / मार्कशीट)", "निवास प्रमाण", "पासपोर्ट फोटो"],
+              fields: [
+                { id: "seniorCitizenAge", label: "आयु (Age - 60+ होना अनिवार्य) *", type: "number", placeholder: "e.g. 62", required: true }
               ]
             }
           ]
@@ -1155,6 +1176,12 @@
         } else if (sParam.includes('passport')) {
           foundCat = 'passport';
           foundSubId = sParam.includes('tatkaal') ? 'passport-tatkaal' : 'passport-normal';
+        } else if (sParam.includes('insurance') || sParam.includes('bima') || sParam.includes('lic')) {
+          foundCat = 'transport';
+          foundSubId = 'vehicle-insurance';
+        } else if (sParam.includes('senior') || sParam.includes('old age') || sParam.includes('elder')) {
+          foundCat = 'certificate';
+          foundSubId = 'senior-citizen-card';
         } else if (sParam.includes('dl') || sParam.includes('licence') || sParam.includes('transport') || sParam.includes('rc')) {
           foundCat = 'transport';
           foundSubId = 'dl-ll';
@@ -1326,45 +1353,46 @@
         });
       }
 
-      // State-wise Portal Processing Fee Offsets (Dynamically scales base ₹150 services up to ₹200, ₹230, ₹250, ₹300)
+      // State-wise Portal Processing Fee Offsets (Every state has min +₹50, scaling up to +₹150 and +₹200)
       const stateFeeOffsets = {
-        "Punjab": 150,
-        "Delhi": 100,
-        "Maharashtra": 100,
-        "Karnataka": 100,
-        "Goa": 100,
-        "Chandigarh": 100,
-        "Haryana": 80,
-        "Gujarat": 80,
-        "Rajasthan": 80,
-        "Kerala": 80,
-        "Tamil Nadu": 80,
-        "Telangana": 80,
-        "Andhra Pradesh": 80,
-        "Assam": 50,
-        "Jammu and Kashmir": 80,
-        "Ladakh": 80,
-        "Puducherry": 80,
-        "West Bengal": 50,
-        "Madhya Pradesh": 50,
-        "Uttarakhand": 50,
-        "Himachal Pradesh": 50,
-        "Odisha": 50,
-        "Arunachal Pradesh": 50,
-        "Manipur": 50,
-        "Meghalaya": 50,
-        "Mizoram": 50,
-        "Nagaland": 50,
-        "Sikkim": 50,
-        "Tripura": 50,
-        "Andaman and Nicobar": 50,
-        "Dadra and Nagar Haveli and Daman and Diu": 50,
-        "Lakshadweep": 50,
-        "Jharkhand": 30,
-        "Chhattisgarh": 30,
-        "Bihar": 0,
-        "Uttar Pradesh": 0,
-        "other": 50
+        "Punjab": 200,
+        "Delhi": 150,
+        "Maharashtra": 150,
+        "Karnataka": 150,
+        "Goa": 150,
+        "Chandigarh": 150,
+        "Haryana": 120,
+        "Gujarat": 120,
+        "Rajasthan": 120,
+        "Kerala": 120,
+        "Tamil Nadu": 120,
+        "Telangana": 120,
+        "Andhra Pradesh": 120,
+        "Assam": 80,
+        "Jammu and Kashmir": 120,
+        "Ladakh": 120,
+        "Puducherry": 120,
+        "West Bengal": 80,
+        "Madhya Pradesh": 80,
+        "Uttarakhand": 80,
+        "Himachal Pradesh": 80,
+        "Odisha": 80,
+        "Arunachal Pradesh": 80,
+        "Manipur": 80,
+        "Meghalaya": 80,
+        "Mizoram": 80,
+        "Nagaland": 80,
+        "Sikkim": 80,
+        "Tripura": 80,
+        "Andaman and Nicobar": 80,
+        "Dadra and Nagar Haveli and Daman and Diu": 80,
+        "Lakshadweep": 80,
+        "Jharkhand": 60,
+        "Chhattisgarh": 60,
+        "Bihar": 50,
+        "Uttar Pradesh": 50,
+        "other": 50,
+        "all": 50
       };
 
       function updatePricingDisplay() {

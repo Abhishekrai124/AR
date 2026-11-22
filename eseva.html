@@ -659,6 +659,7 @@
                   <option value="DL Renewal &amp; Address Change" data-price="550" data-cat="transport" data-service-id="dl-renewal">Driving License Renewal &amp; Change (डीएल नवीनीकरण) - ₹550</option>
                   <option value="Vehicle RC Ownership Transfer" data-price="550" data-cat="transport" data-service-id="rc-transfer">Vehicle RC Transfer / Re-registration (वाहन आरसी ट्रांसफर) - ₹550</option>
                   <option value="RC Hypothecation Loan Removal (HPA/HPT)" data-price="450" data-cat="transport" data-service-id="rc-hypo">RC Hypothecation Removal (आरसी बैंक लोन हटाना) - ₹450</option>
+                  <option value="Vehicle Insurance Quotation &amp; Policy Renewal" data-price="250" data-cat="transport" data-service-id="vehicle-insurance">Vehicle Insurance Renewal (वाहन बीमा रिन्युअल) - ₹250</option>
                 </optgroup>
 
                 <optgroup label="🌾 Government Welfare &amp; Ration (सरकारी योजनाएँ)">
@@ -668,13 +669,16 @@
                   <option value="New Digital Ration Card Application" data-price="180" data-cat="welfare" data-service-id="ration-new">New Digital Ration Card Application (नया राशन कार्ड) - ₹180</option>
                   <option value="Ration Card Member Addition / Correction" data-price="150" data-cat="welfare" data-service-id="ration-member">Ration Card Member Add / Unit Correction (राशन में नाम जोड़ना) - ₹150</option>
                   <option value="Old Age / Widow / Disability Pension" data-price="150" data-cat="welfare" data-service-id="pension-scheme">Govt Pension Scheme Application (वृद्धा/विधवा/दिव्यांग पेंशन) - ₹150</option>
+                  <option value="Senior Citizen Identity Card" data-price="150" data-cat="welfare" data-service-id="senior-citizen-card">Senior Citizen Card (वरिष्ठ नागरिक पहचान पत्र) - ₹150</option>
                 </optgroup>
 
-                <optgroup label="💼 EPFO, PF Claims &amp; Banking (पीएफ व बैंकिंग)">
+                <optgroup label="💼 EPFO, PF Claims &amp; Insurance (पीएफ, बीमा व बैंकिंग)">
                   <option value="PF Full Withdrawal (Form 19 &amp; 10C)" data-price="350" data-cat="finance" data-service-id="pf-full-withdrawal">EPFO Full PF &amp; Pension Settlement (पीएफ पूरा निकासी) - ₹350</option>
                   <option value="PF Advance Claim (Form 31 Emergency)" data-price="250" data-cat="finance" data-service-id="pf-advance">EPFO Emergency Advance Claim (पीएफ एडवांस Form 31) - ₹250</option>
                   <option value="UAN Activation &amp; Password Reset" data-price="150" data-cat="finance" data-service-id="uan-pass-reset">UAN Activation &amp; Password Reset (UAN एक्टिवेशन) - ₹150</option>
                   <option value="PF Bank &amp; PAN KYC Linkage" data-price="150" data-cat="finance" data-service-id="uan-kyc">PF Bank Account &amp; PAN KYC Linkage (पीएफ बैंक केवाईसी) - ₹150</option>
+                  <option value="LIC Policy Premium Payment &amp; Services" data-price="150" data-cat="finance" data-service-id="lic-services">LIC Policy Premium &amp; Services (एलआईसी पॉलिसी सेवाएँ) - ₹150</option>
+                  <option value="PM Jeevan Jyoti &amp; Suraksha Bima" data-price="150" data-cat="finance" data-service-id="bima-schemes">PMJJBY &amp; PMSBY Bima Yojana (सरकारी ₹2 लाख बीमा) - ₹150</option>
                 </optgroup>
 
                 <optgroup label="🎓 Jobs, Exams &amp; Resume Builder (नौकरी, परीक्षा व CV)">
@@ -1165,6 +1169,7 @@
         { id: "dl-renewal", title: "ड्राइविंग लाइसेंस नवीनीकरण व पता सुधार", titleEn: "DL Renewal & Address Correction", category: "transport", fee: 550, icon: "🔄", desc: "डीएल की वैधता समाप्त होने पर नवीनीकरण व नया पता दर्ज कराना।", descEn: "Driving license renewal, duplicate DL, and address change assistance." },
         { id: "rc-transfer", title: "वाहन आरसी ट्रांसफर व रिन्युअल", titleEn: "Vehicle RC Ownership Transfer", category: "transport", fee: 550, icon: "🚙", desc: "गाड़ी की आरसी का नाम ट्रांसफर, एनओसी, फिटनेस व हाइपोथिकेशन हटाना।", descEn: "Vehicle registration certificate ownership transfer, NOC, and re-registration." },
         { id: "rc-hypo", title: "आरसी लोन हटाना (HPA / HPT Removal)", titleEn: "Vehicle Hypothecation Loan Removal", category: "transport", fee: 450, icon: "🏦", desc: "बैंक लोन पूरा होने पर वाहन आरसी से हाइपोथिकेशन ऑनलाइन कैंसिलेशन।", descEn: "Online removal of bank hypothecation after vehicle loan closure." },
+        { id: "vehicle-insurance", title: "वाहन बीमा रिन्युअल व नई पॉलिसी (Vehicle Insurance)", titleEn: "Vehicle Insurance Quotation & Policy Renewal", category: "transport", fee: 250, icon: "🛡️", desc: "बाइक, कार व कमर्शियल वाहन का थर्ड-पार्टी व कॉम्प्रिहेंसिव इंश्योरेंस तुरंत पाएं।", descEn: "Instant third-party and comprehensive vehicle insurance quote, renewal and policy issue." },
 
         // Welfare
         { id: "ayushman-card", title: "आयुष्मान भारत गोल्डन कार्ड", titleEn: "Ayushman Bharat PMJAY Health Card", category: "welfare", fee: 150, icon: "🏥", desc: "₹5 लाख तक के मुफ्त इलाज के लिए अधिकृत आयुष्मान कार्ड डाउनलोड व पंजीकरण।", descEn: "PMJAY Ayushman Bharat card offering up to ₹5 lakh free annual medical treatment." },
@@ -1173,8 +1178,11 @@
         { id: "ration-new", title: "नया राशन कार्ड व नाम जोड़ना", titleEn: "New Ration Card Application", category: "welfare", fee: 180, icon: "🌾", desc: "राशन कार्ड में नए बच्चे/सदस्य का नाम जोड़ना, यूनिट ट्रांसफर या नया कार्ड।", descEn: "New digital ration card issuance or member addition in family food ration." },
         { id: "ration-member", title: "राशन कार्ड में सदस्य जोड़ना / सुधार", titleEn: "Ration Card Member Add / Correction", category: "welfare", fee: 150, icon: "👥", desc: "परिवार के नए सदस्य का नाम जोड़ना या यूनिट संशोधन।", descEn: "Addition of family member or unit modification on existing ration card." },
         { id: "pension-scheme", title: "वृद्धा / विधवा / दिव्यांग पेंशन आवेदन", titleEn: "Old Age / Widow / Disability Pension", category: "welfare", fee: 150, icon: "🧓", desc: "समाज कल्याण विभाग से मासिक सरकारी पेंशन का ऑनलाइन आवेदन।", descEn: "Online registration for senior citizen, widow and disability monthly pensions." },
+        { id: "senior-citizen-card", title: "वरिष्ठ नागरिक पहचान पत्र (Senior Citizen Card)", titleEn: "Senior Citizen Identity Card & Registration", category: "welfare", fee: 150, icon: "🪪", desc: "60 वर्ष से अधिक आयु के नागरिकों के लिए अधिकृत सरकारी वरिष्ठ नागरिक कार्ड।", descEn: "Official government senior citizen identity card registration with health benefits." },
 
         // Finance & EPFO
+        { id: "lic-services", title: "एलआईसी पॉलिसी प्रीमियम व सेवाएँ (LIC Services)", titleEn: "LIC Policy Premium Payment & Digital Services", category: "finance", fee: 150, icon: "📜", desc: "LIC जीवन बीमा पॉलिसी प्रीमियम भुगतान, रिवाइवल व स्टेटस रिपोर्ट।", descEn: "LIC life insurance premium collection, receipt download and policy revival assistance." },
+        { id: "bima-schemes", title: "प्रधानमंत्री सुरक्षा व जीवन ज्योति बीमा (PMJJBY / PMSBY)", titleEn: "PM Jeevan Jyoti & Suraksha Bima Schemes", category: "finance", fee: 150, icon: "🛡️", desc: "₹2 लाख सरकारी जीवन व दुर्घटना बीमा ऑनलाइन पंजीकरण।", descEn: "Government sponsored low-cost life and accidental insurance scheme registration." },
         { id: "pf-full-withdrawal", title: "पीएफ पूरा निकासी (Form 19 & 10C)", titleEn: "EPFO Full PF & Pension Withdrawal", category: "finance", fee: 350, icon: "💰", desc: "नौकरी छोड़ने के बाद पीएफ और पेंशन का पूरा पैसा बैंक खाते में पाएं।", descEn: "Complete withdrawal of employee provident fund and pension settlement." },
         { id: "pf-advance", title: "पीएफ एडवांस निकासी (Form 31)", titleEn: "EPFO Advance PF Claim (Form 31)", category: "finance", fee: 250, icon: "💼", desc: "इमरजेंसी, बीमारी या मकान के लिए पीएफ एडवांस तुरंत क्लेम करें।", descEn: "Emergency advance PF withdrawal claim during ongoing employment." },
         { id: "uan-kyc", title: "UAN एक्टिवेशन व बैंक केवाईसी लिंक", titleEn: "UAN Activation & Bank/PAN KYC", category: "finance", fee: 150, icon: "🔗", desc: "यूनिवर्सल अकाउंट नंबर को चालू करना और पैन/बैंक खाता जोड़ना।", descEn: "Activation of Universal Account Number and linking bank account with PAN." },
@@ -1289,46 +1297,46 @@
         recalculateFees();
       }
 
-      // State-wise Portal Processing Fee Offsets (Dynamically scales base ₹150 services up to ₹200, ₹230, ₹250, ₹300)
+      // State-wise Portal Processing Fee Offsets (Every state has min +₹50, scaling up to +₹150 and +₹200)
       const stateFeeOffsets = {
-        "Punjab": 150,
-        "Delhi": 100,
-        "Maharashtra": 100,
-        "Karnataka": 100,
-        "Goa": 100,
-        "Chandigarh": 100,
-        "Haryana": 80,
-        "Gujarat": 80,
-        "Rajasthan": 80,
-        "Kerala": 80,
-        "Tamil Nadu": 80,
-        "Telangana": 80,
-        "Andhra Pradesh": 80,
-        "Assam": 50,
-        "Jammu and Kashmir": 80,
-        "Ladakh": 80,
-        "Puducherry": 80,
-        "West Bengal": 50,
-        "Madhya Pradesh": 50,
-        "Uttarakhand": 50,
-        "Himachal Pradesh": 50,
-        "Odisha": 50,
-        "Arunachal Pradesh": 50,
-        "Manipur": 50,
-        "Meghalaya": 50,
-        "Mizoram": 50,
-        "Nagaland": 50,
-        "Sikkim": 50,
-        "Tripura": 50,
-        "Andaman and Nicobar": 50,
-        "Dadra and Nagar Haveli and Daman and Diu": 50,
-        "Lakshadweep": 50,
-        "Jharkhand": 30,
-        "Chhattisgarh": 30,
-        "Bihar": 0,
-        "Uttar Pradesh": 0,
+        "Punjab": 200,
+        "Delhi": 150,
+        "Maharashtra": 150,
+        "Karnataka": 150,
+        "Goa": 150,
+        "Chandigarh": 150,
+        "Haryana": 120,
+        "Gujarat": 120,
+        "Rajasthan": 120,
+        "Kerala": 120,
+        "Tamil Nadu": 120,
+        "Telangana": 120,
+        "Andhra Pradesh": 120,
+        "Assam": 80,
+        "Jammu and Kashmir": 120,
+        "Ladakh": 120,
+        "Puducherry": 120,
+        "West Bengal": 80,
+        "Madhya Pradesh": 80,
+        "Uttarakhand": 80,
+        "Himachal Pradesh": 80,
+        "Odisha": 80,
+        "Arunachal Pradesh": 80,
+        "Manipur": 80,
+        "Meghalaya": 80,
+        "Mizoram": 80,
+        "Nagaland": 80,
+        "Sikkim": 80,
+        "Tripura": 80,
+        "Andaman and Nicobar": 80,
+        "Dadra and Nagar Haveli and Daman and Diu": 80,
+        "Lakshadweep": 80,
+        "Jharkhand": 60,
+        "Chhattisgarh": 60,
+        "Bihar": 50,
+        "Uttar Pradesh": 50,
         "other": 50,
-        "all": 0
+        "all": 50
       };
 
       // Service Sub-Options & Customization Map
@@ -1351,45 +1359,47 @@
             { id: "income-cert", name: "आय प्रमाण पत्र (Income Certificate e-District)", fee: 150, docs: ["आधार कार्ड", "स्वप्रमाणित आय घोषणा पत्र", "वेतन पर्ची / खतौनी"] },
             { id: "caste-obc", name: "ओबीसी (OBC) जाति प्रमाण पत्र", fee: 150, docs: ["आधार कार्ड", "पिता का जाति प्रमाण / खतौनी"] },
             { id: "caste-ncl", name: "नॉन-क्रीमी लेयर (OBC-NCL) प्रमाण पत्र", fee: 180, docs: ["आय प्रमाण पत्र", "जाति प्रमाण पत्र", "आधार कार्ड"] },
-            { id: "caste-sc", name: "अनुसूचित जाति / जनजाति (SC/ST) प्रमाण पत्र", fee: 140, docs: ["आधार कार्ड", "राशन कार्ड / राजस्व सत्यापन"] },
+            { id: "caste-sc", name: "अनुसूचित जाति / जनजाति (SC/ST) प्रमाण पत्र", fee: 150, docs: ["आधार कार्ड", "राशन कार्ड / राजस्व सत्यापन"] },
             { id: "domicile-cert", name: "मूल निवास प्रमाण पत्र (Domicile / Niwas)", fee: 150, docs: ["आधार कार्ड", "बिजली बिल / राशन कार्ड / स्कूल टीसी"] },
             { id: "ews-cert", name: "ईडब्ल्यूएस प्रमाण पत्र (EWS 10% Quota)", fee: 180, docs: ["आय व संपत्ति प्रमाण", "खतौनी", "आधार कार्ड"] },
             { id: "birth-cert", name: "डिजिटल जन्म प्रमाण पत्र (Birth Certificate)", fee: 200, docs: ["अस्पताल डिस्चार्ज रसीद / माता-पिता आधार"] },
             { id: "death-cert", name: "डिजिटल मृत्यु प्रमाण पत्र (Death Certificate)", fee: 200, docs: ["अस्पताल पर्ची / श्मशान रसीद / वारिस आधार"] },
-            { id: "land-khatauni", name: "भूलेख खतौनी नकल व खसरा रिकॉर्ड", fee: 80, docs: ["गाटा / खसरा / खाता संख्या"] }
+            { id: "land-khatauni", name: "भूलेख खतौनी नकल व खसरा रिकॉर्ड", fee: 150, docs: ["गाटा / खसरा / खाता संख्या"] },
+            { id: "senior-citizen-card", name: "वरिष्ठ नागरिक पहचान पत्र (Senior Citizen Card)", fee: 150, docs: ["आधार कार्ड / आयु प्रमाण", "निवास प्रमाण"] }
           ]
         },
         "affidavit": {
           title: "कोर्ट शपथ पत्र व नोटरी (Court Affidavits & Legal)",
           icon: "⚖️",
           options: [
-            { id: "affidavit-name", name: "नाम व वर्तनी सुधार शपथ पत्र (Name Correction)", fee: 120, docs: ["आधार कार्ड", "10वीं मार्कशीट या सही नाम प्रमाण"] },
+            { id: "affidavit-name", name: "नाम व वर्तनी सुधार शपथ पत्र (Name Correction)", fee: 150, docs: ["आधार कार्ड", "10वीं मार्कशीट या सही नाम प्रमाण"] },
             { id: "affidavit-marriage", name: "विवाह पंजीकरण व संयुक्त शपथ पत्र (Marriage)", fee: 250, docs: ["पति-पत्नी आधार", "विवाह फोटो / कार्ड", "2 गवाह आधार"] },
-            { id: "affidavit-address", name: "पता परिवर्तन शपथ पत्र (Address Change)", fee: 120, docs: ["आधार कार्ड", "नवीनतम बिजली बिल / किरायानामा"] },
-            { id: "affidavit-gap", name: "गैप ईयर छात्र शपथ पत्र (Student Gap Year)", fee: 120, docs: ["पिछली मार्कशीट", "आधार कार्ड", "कारण विवरण"] },
-            { id: "affidavit-income", name: "आय स्व-घोषणा शपथ पत्र (Self Declaration)", fee: 100, docs: ["आधार कार्ड", "वार्षिक आय विवरण"] },
-            { id: "legal-drafting", name: "नोटरी व कानूनी ड्राफ्टिंग सहायता", fee: 200, docs: ["संबंधित विषय के साक्ष्य व आईडी"] }
+            { id: "affidavit-address", name: "पता परिवर्तन शपथ पत्र (Address Change)", fee: 150, docs: ["आधार कार्ड", "नवीनतम बिजली बिल / किरायानामा"] },
+            { id: "affidavit-gap", name: "गैप ईयर छात्र शपथ पत्र (Student Gap Year)", fee: 150, docs: ["पिछली मार्कशीट", "आधार कार्ड", "कारण विवरण"] },
+            { id: "affidavit-income", name: "आय स्व-घोषणा शपथ पत्र (Self Declaration)", fee: 150, docs: ["आधार कार्ड", "वार्षिक आय विवरण"] },
+            { id: "legal-drafting", name: "नोटरी व कानूनी ड्राफ्टिंग सहायता", fee: 250, docs: ["संबंधित विषय के साक्ष्य व आईडी"] }
           ]
         },
         "aadhaar": {
           title: "आधार कार्ड सेवाएँ (Aadhaar Assistance)",
           icon: "🪪",
           options: [
-            { id: "aadhaar-update", name: "पता सुधार व डेमोग्राफिक अपडेट", fee: 150, docs: ["निवास प्रमाण (बिजली बिल / राशन कार्ड)", "आधार कार्ड प्रति"] },
-            { id: "aadhaar-mobile", name: "मोबाइल व ईमेल लिंक सहायता", fee: 120, docs: ["आधार कार्ड", "नया सक्रिय मोबाइल नंबर"] },
-            { id: "pvc-aadhaar", name: "PVC वाटरप्रूफ स्मार्ट कार्ड आर्डर", fee: 100, docs: ["आधार कार्ड नंबर व पूरा पता"] },
-            { id: "aadhaar-bio", name: "बायोमेट्रिक फिंगरप्रिंट/आईरिस अपडेट", fee: 180, docs: ["आधार कार्ड", "जन्म प्रमाण पत्र (नाबालिग हेतु)"] }
+            { id: "aadhaar-update", name: "पता सुधार व डेमोग्राफिक अपडेट", fee: 180, docs: ["निवास प्रमाण (बिजली बिल / राशन कार्ड)", "आधार कार्ड प्रति"] },
+            { id: "aadhaar-mobile", name: "मोबाइल व ईमेल लिंक सहायता", fee: 150, docs: ["आधार कार्ड", "नया सक्रिय मोबाइल नंबर"] },
+            { id: "pvc-aadhaar", name: "PVC वाटरप्रूफ स्मार्ट कार्ड आर्डर", fee: 150, docs: ["आधार कार्ड नंबर व पूरा पता"] },
+            { id: "aadhaar-bio", name: "बायोमेट्रिक फिंगरप्रिंट/आईरिस अपडेट", fee: 200, docs: ["आधार कार्ड", "जन्म प्रमाण पत्र (नाबालिग हेतु)"] }
           ]
         },
         "driving": {
-          title: "ड्राइविंग लाइसेंस (Sarathi Parivahan)",
+          title: "ड्राइविंग लाइसेंस व वाहन (Sarathi & Parivahan)",
           icon: "🚗",
           options: [
             { id: "learning-licence", name: "लर्निंग लाइसेंस ऑनलाइन टेस्ट (LL Online)", fee: 450, docs: ["आधार कार्ड (मोबाइल लिंक)", "10वीं मार्कशीट", "फोटो"] },
             { id: "permanent-dl", name: "स्थाई ड्राइविंग लाइसेंस टेस्ट स्लॉट", fee: 650, docs: ["लर्निंग लाइसेंस", "आधार कार्ड"] },
             { id: "dl-renewal", name: "डीएल नवीनीकरण / पता सुधार", fee: 550, docs: ["पुराना ड्राइविंग लाइसेंस", "आधार कार्ड"] },
             { id: "rc-transfer", name: "वाहन आरसी ट्रांसफर", fee: 550, docs: ["आरसी कॉपी", "क्रेता-विक्रेता आधार"] },
-            { id: "rc-hypo", name: "आरसी बैंक लोन हटाना (HPA/HPT)", fee: 450, docs: ["बैंक एनओसी फॉर्म 35", "आरसी कॉपी"] }
+            { id: "rc-hypo", name: "आरसी बैंक लोन हटाना (HPA/HPT)", fee: 450, docs: ["बैंक एनओसी फॉर्म 35", "आरसी कॉपी"] },
+            { id: "vehicle-insurance", name: "वाहन बीमा कोटेशन व रिन्युअल", fee: 250, docs: ["वाहन आरसी", "पुरानी पॉलिसी प्रति"] }
           ]
         },
         "udyam": {
@@ -1414,19 +1424,21 @@
           title: "वोटर आईडी कार्ड (Voter ID NVSP)",
           icon: "🗳️",
           options: [
-            { id: "voter-new", name: "नया वोटर कार्ड (Form 6)", fee: 120, docs: ["आयु प्रमाण", "निवास प्रमाण", "पासपोर्ट साइज रंगीन फोटो"] },
-            { id: "voter-correction", name: "वोटर कार्ड संशोधन / शिफ्टिंग (Form 8)", fee: 100, docs: ["मौजूदा वोटर कार्ड", "संशोधन का वैध प्रमाण"] },
-            { id: "voter-epic", name: "डिजिटल वोटर कार्ड डाउनलोड व लैमिनेट", fee: 50, docs: ["वोटर कार्ड नंबर (EPIC No.)"] }
+            { id: "voter-new", name: "नया वोटर कार्ड (Form 6)", fee: 150, docs: ["आयु प्रमाण", "निवास प्रमाण", "पासपोर्ट साइज रंगीन फोटो"] },
+            { id: "voter-correction", name: "वोटर कार्ड संशोधन / शिफ्टिंग (Form 8)", fee: 150, docs: ["मौजूदा वोटर कार्ड", "संशोधन का वैध प्रमाण"] },
+            { id: "voter-epic", name: "डिजिटल वोटर कार्ड डाउनलोड व लैमिनेट", fee: 150, docs: ["वोटर कार्ड नंबर (EPIC No.)"] }
           ]
         },
         "finance": {
-          title: "EPFO व पीएफ क्लेम (PF Claim)",
+          title: "EPFO, बीमा व बैंकिंग (PF & Insurance)",
           icon: "💰",
           options: [
             { id: "pf-full-withdrawal", name: "पीएफ पूरा निकासी (Form 19 & 10C)", fee: 350, docs: ["UAN नंबर", "बैंक पासबुक / चेक", "पैन कार्ड"] },
             { id: "pf-advance", name: "पीएफ एडवांस निकासी (Form 31)", fee: 250, docs: ["UAN नंबर", "बैंक पासबुक"] },
-            { id: "uan-kyc", name: "UAN एक्टिवेशन व बैंक केवाईसी लिंक", fee: 100, docs: ["आधार कार्ड", "बैंक पासबुक"] },
-            { id: "uan-pass-reset", name: "UAN पासवर्ड रीसेट व मोबाइल लिंक", fee: 80, docs: ["आधार कार्ड", "UAN नंबर"] }
+            { id: "uan-kyc", name: "UAN एक्टिवेशन व बैंक केवाईसी लिंक", fee: 150, docs: ["आधार कार्ड", "बैंक पासबुक"] },
+            { id: "uan-pass-reset", name: "UAN पासवर्ड रीसेट व मोबाइल लिंक", fee: 150, docs: ["आधार कार्ड", "UAN नंबर"] },
+            { id: "lic-services", name: "एलआईसी पॉलिसी प्रीमियम व सेवाएँ", fee: 150, docs: ["पॉलिसी नंबर", "पैन कार्ड"] },
+            { id: "bima-schemes", name: "PMJJBY / PMSBY सरकारी ₹2 लाख बीमा", fee: 150, docs: ["आधार कार्ड", "बैंक पासबुक"] }
           ]
         }
       };
@@ -1905,6 +1917,42 @@
             <div>
               <label class="form-label">रोल नंबर / OTR ID (यदि उपलब्ध हो)</label>
               <input class="form-input dynamic-field" data-label="OTR / Registration No" type="text" placeholder="OTR / Registration ID (Optional)" />
+            </div>
+          `;
+        } else if (cat === 'welfare' || serviceVal.includes('ration') || serviceVal.includes('pension') || serviceVal.includes('senior')) {
+          html = `
+            <div>
+              <label class="form-label">कल्याणकारी योजना सेवा प्रकार *</label>
+              <select class="form-select dynamic-field" id="welfareTypeSelect" data-label="Welfare Action Type" required onchange="onDynamicSubtypePriceChange(this)">
+                <option value="Senior Citizen Identity Card" data-base-price="150">वरिष्ठ नागरिक पहचान पत्र (Senior Citizen Card) - Base: ₹150</option>
+                <option value="New Digital Ration Card" data-base-price="180">नया डिजिटल राशन कार्ड आवेदन - Base: ₹180</option>
+                <option value="Ration Card Member Addition" data-base-price="150">राशन कार्ड में सदस्य जोड़ना / यूनिट संशोधन - Base: ₹150</option>
+                <option value="Old Age / Widow / Disability Pension" data-base-price="150">वृद्धा / विधवा / दिव्यांग पेंशन फॉर्म - Base: ₹150</option>
+                <option value="Ayushman Bharat Health Card" data-base-price="150">आयुष्मान भारत ₹5 लाख गोल्डन कार्ड - Base: ₹150</option>
+                <option value="PM-Kisan Registration &amp; e-KYC" data-base-price="150">पीएम किसान ई-केवाईसी व आवेदन - Base: ₹150</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">राशन कार्ड / परिवार / पेंशनर आईडी (यदि हो)</label>
+              <input class="form-input dynamic-field" data-label="Welfare ID" type="text" placeholder="Ration / Pension / Family ID" />
+            </div>
+          `;
+        } else if (cat === 'finance' || serviceVal.includes('lic') || serviceVal.includes('bima') || serviceVal.includes('insurance') || serviceVal.includes('pf')) {
+          html = `
+            <div>
+              <label class="form-label">बीमा व वित्तीय सेवा प्रकार *</label>
+              <select class="form-select dynamic-field" id="financeTypeSelect" data-label="Finance Action Type" required onchange="onDynamicSubtypePriceChange(this)">
+                <option value="LIC Policy Premium Payment &amp; Services" data-base-price="150">LIC पॉलिसी प्रीमियम व सेवाएँ - Base: ₹150</option>
+                <option value="PM Jeevan Jyoti &amp; Suraksha Bima" data-base-price="150">PMJJBY / PMSBY सरकारी ₹2 लाख बीमा - Base: ₹150</option>
+                <option value="Vehicle Insurance Policy Renewal" data-base-price="250">वाहन बीमा रिन्युअल (बाइक / कार) - Base: ₹250</option>
+                <option value="PF Full Withdrawal (19 &amp; 10C)" data-base-price="350">पीएफ पूरा निकासी (Form 19 &amp; 10C) - Base: ₹350</option>
+                <option value="PF Advance Claim (Form 31)" data-base-price="250">पीएफ इमरजेंसी एडवांस (Form 31) - Base: ₹250</option>
+                <option value="UAN Activation &amp; KYC" data-base-price="150">UAN एक्टिवेशन व बैंक केवाईसी लिंक - Base: ₹150</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">पॉलिसी / UAN / वाहन नंबर *</label>
+              <input class="form-input dynamic-field" data-label="Policy / UAN / Vehicle No" type="text" placeholder="Policy / UAN / Vehicle No." required />
             </div>
           `;
         } else {
