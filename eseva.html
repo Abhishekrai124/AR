@@ -11,6 +11,7 @@
     <link rel="apple-touch-icon" href="assets/app-icon.svg" />
     <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="style.css" />
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
       :root {
         --eseva-gold: #f59e0b;
@@ -592,34 +593,67 @@
 
           <!-- Payment Box -->
           <div class="payment-card-box">
-            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
               <div>
                 <span class="eseva-badge" style="background:rgba(56, 189, 248, 0.15); border-color:rgba(56, 189, 248, 0.4); color:#7dd3fc; margin-bottom:4px;">
-                  💳 सुरक्षित भुगतान गेटवे
+                  💳 सुरक्षित भुगतान गेटवे (Razorpay &amp; UPI)
                 </span>
-                <h3 style="color:#fff; font-size:1.3rem; margin:0;">कुल सेवा शुल्क (Total Inclusive Fee)</h3>
+                <h3 style="color:#fff; font-size:1.3rem; margin:0;">शुल्क विवरण (Fee Details)</h3>
               </div>
               <div style="text-align:right;">
                 <span style="font-size:2rem; font-weight:900; color:#fde68a;" id="displayTotalFee">₹0</span>
-                <small style="display:block; color:#94a3b8; font-size:0.75rem;">(सभी टैक्स व पोर्टल शुल्क सम्मिलित)</small>
+                <small style="display:block; color:#94a3b8; font-size:0.8rem;" id="displayServiceChargeNotice">सर्विस चार्ज (20%) सम्मिलित</small>
               </div>
             </div>
 
-            <div class="qr-flex-box">
-              <div class="qr-image-wrapper">
-                <!-- Direct UPI QR Code generated dynamically -->
-                <img id="dynamicUpiQr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=7009446821@upi&pn=Shan%20Cyber%20Cafe&cu=INR" alt="UPI QR Code" />
-                <span>SCAN &amp; PAY (GPay/PhonePe/Paytm)</span>
+            <!-- Fee Breakdown Display (Only shows 20% Service Charge, hiding internal 30% & 18%) -->
+            <div style="background:rgba(15, 23, 42, 0.6); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:12px 16px; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+              <div style="font-size:0.9rem; color:#cbd5e1;">
+                <span>📌 सेवा आवेदन शुल्क: <strong id="baseServicePriceText" style="color:#fff;">₹0</strong></span>
+                <span style="margin: 0 10px; color:#64748b;">|</span>
+                <span>⚡ साइबर कैफे सर्विस चार्ज: <strong style="color:#38bdf8;">20% (<span id="serviceChargeAmountText">₹0</span>)</strong></span>
               </div>
-              <div class="payment-info-list">
-                <p><strong>UPI ID:</strong> <code style="background:rgba(0,0,0,0.4); padding:3px 8px; border-radius:4px; color:#38bdf8;">7009446821@upi</code></p>
-                <p><strong>दुकान का नाम:</strong> शान साइबर कैफे एवं ई-सेवा (Shan Cyber Cafe)</p>
-                <p><strong>सम्पर्क:</strong> +91 7009446821</p>
-                <div style="margin-top:10px;">
-                  <label class="form-label" for="utrNumber">भुगतान के बाद UPI Transaction ID / UTR भरें *</label>
-                  <input class="form-input" id="utrNumber" type="text" placeholder="12 अंकों का UTR / Transaction No." required style="max-width:320px;" />
+              <div style="font-size:0.85rem; color:#10b981; font-weight:600;">
+                ✓ पारदर्शी सेवा बिलिंग
+              </div>
+            </div>
+
+            <!-- Dual Payment Options: Razorpay + UPI -->
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:18px;">
+              <!-- Option A: Razorpay Gateway -->
+              <div style="background:rgba(15, 23, 42, 0.7); border:1px solid rgba(56, 189, 248, 0.3); border-radius:12px; padding:18px; text-align:center;">
+                <span style="font-size:0.75rem; font-weight:700; color:#38bdf8; background:rgba(56,189,248,0.15); padding:3px 10px; border-radius:999px;">
+                  विकल्प 1: तुरंत ऑनलाइन भुगतान
+                </span>
+                <h4 style="color:#fff; margin:10px 0 6px; font-size:1.1rem;">Razorpay सुरक्षित गेटवे</h4>
+                <p style="font-size:0.82rem; color:#94a3b8; margin-bottom:14px;">डेबिट/क्रेडिट कार्ड, नेटबैंकिंग या अन्य UPI ऐप्स से सुरक्षित भुगतान करें।</p>
+                <button type="button" id="razorpayPayBtn" onclick="payWithRazorpay()" style="width:100%; background:linear-gradient(135deg, #0284c7, #0369a1); color:#fff; font-weight:700; padding:12px; border-radius:8px; border:none; cursor:pointer; font-size:0.95rem; box-shadow:0 4px 14px rgba(2,132,199,0.35);">
+                  💳 Razorpay से पे करें (<span class="btnPayAmountText">₹0</span>)
+                </button>
+                <div id="razorpaySuccessBadge" style="display:none; margin-top:10px; font-size:0.85rem; color:#10b981; font-weight:700;">
+                  ✓ Razorpay भुगतान सफल!
                 </div>
               </div>
+
+              <!-- Option B: Direct UPI QR Code (kuzu@ptyes) -->
+              <div style="background:rgba(15, 23, 42, 0.7); border:1px solid rgba(245, 158, 11, 0.3); border-radius:12px; padding:18px; text-align:center;">
+                <span style="font-size:0.75rem; font-weight:700; color:#fde68a; background:rgba(245,158,11,0.15); padding:3px 10px; border-radius:999px;">
+                  विकल्प 2: डायरेक्ट UPI QR स्कैन
+                </span>
+                <h4 style="color:#fff; margin:10px 0 6px; font-size:1.1rem;">PhonePe / GPay / Paytm</h4>
+                <div class="qr-image-wrapper" style="margin: 10px auto;">
+                  <img id="dynamicUpiQr" src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=kuzu@ptyes&pn=Shan%20Cyber%20Cafe&cu=INR" alt="UPI QR Code" />
+                  <span>SCAN &amp; PAY</span>
+                </div>
+                <p style="font-size:0.85rem; color:#e2e8f0; margin:6px 0;"><strong>UPI ID:</strong> <code style="background:rgba(0,0,0,0.5); padding:2px 8px; border-radius:4px; color:#38bdf8;">kuzu@ptyes</code></p>
+              </div>
+            </div>
+
+            <!-- Transaction Reference Input -->
+            <div style="margin-top:20px; background:rgba(15,23,42,0.8); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:16px;">
+              <label class="form-label" for="utrNumber">भुगतान रेफरेंस ID / Razorpay Payment ID / UPI UTR *</label>
+              <input class="form-input" id="utrNumber" type="text" placeholder="12 अंकों का UPI UTR या Razorpay Ref ID दर्ज करें" required />
+              <small style="color:#94a3b8; font-size:0.78rem; display:block; margin-top:4px;">Razorpay से भुगतान करने पर यह नंबर अपने-आप भर जाएगा। QR कोड से भुगतान करने पर UPI ऐप से 12 अंकों का UTR डालें।</small>
             </div>
           </div>
 
@@ -743,17 +777,88 @@
         document.getElementById('apply-section').scrollIntoView({ behavior: 'smooth' });
       }
 
+      let activeRazorpayKey = null;
+      async function initRazorpayKey() {
+        try {
+          const res = await fetch("/api/razorpay");
+          if (res.ok) {
+            const data = await res.json();
+            if (data.keyId) activeRazorpayKey = data.keyId;
+          }
+        } catch {}
+      }
+      initRazorpayKey();
+
       function updateServicePrice() {
         const select = document.getElementById('selectedService');
         const selectedOpt = select.options[select.selectedIndex];
-        const price = selectedOpt ? selectedOpt.getAttribute('data-price') : 0;
-        document.getElementById('displayTotalFee').innerText = price ? `₹${price}` : '₹0';
+        const totalPrice = selectedOpt ? Number(selectedOpt.getAttribute('data-price') || 0) : 0;
         
-        // Update QR code amount
-        if (price) {
-          const upiUrl = `upi://pay?pa=7009446821@upi&pn=Shan%20Cyber%20Cafe&am=${price}&cu=INR&tn=${encodeURIComponent(select.value)}`;
-          document.getElementById('dynamicUpiQr').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUrl)}`;
+        // Transparent calculation for customer view:
+        // Shows Base Price + 20% Service Charge = Total Price
+        const serviceCharge = Math.round(totalPrice * 0.20);
+        const basePrice = totalPrice - serviceCharge;
+
+        document.getElementById('displayTotalFee').innerText = totalPrice ? `₹${totalPrice}` : '₹0';
+        document.getElementById('baseServicePriceText').innerText = totalPrice ? `₹${basePrice}` : '₹0';
+        document.getElementById('serviceChargeAmountText').innerText = totalPrice ? `₹${serviceCharge}` : '₹0';
+        document.querySelectorAll('.btnPayAmountText').forEach(el => {
+          el.innerText = totalPrice ? `₹${totalPrice}` : '₹0';
+        });
+
+        // Update UPI QR code (UPI ID: kuzu@ptyes)
+        if (totalPrice) {
+          const upiUrl = `upi://pay?pa=kuzu@ptyes&pn=Shan%20Cyber%20Cafe&am=${totalPrice}&cu=INR&tn=${encodeURIComponent(select.value)}`;
+          document.getElementById('dynamicUpiQr').src = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(upiUrl)}`;
         }
+      }
+
+      function payWithRazorpay() {
+        const select = document.getElementById('selectedService');
+        const selectedOpt = select.options[select.selectedIndex];
+        const price = selectedOpt ? Number(selectedOpt.getAttribute('data-price') || 0) : 0;
+
+        if (!price || price <= 0) {
+          alert('कृपया पहले कोई सेवा चुनें (Please select a service first).');
+          select.focus();
+          return;
+        }
+
+        const applicantName = document.getElementById('applicantName').value || 'Customer';
+        const applicantEmail = document.getElementById('email').value || 'abhishekrai6897@gmail.com';
+        const applicantPhone = document.getElementById('phone').value || '7009446821';
+
+        const effectiveKey = activeRazorpayKey || window.RAZORPAY_KEY_ID || 'rzp_test_placeholder';
+
+        if (typeof Razorpay === 'undefined') {
+          alert('Razorpay गेटवे लोड हो रहा है, कृपया 2 सेकंड बाद पुनः प्रयास करें या UPI QR कोड का उपयोग करें।');
+          return;
+        }
+
+        const options = {
+          key: effectiveKey,
+          amount: price * 100, // in paise
+          currency: 'INR',
+          name: 'शान साइबर कैफे एवं ई-सेवा',
+          description: `${select.value} (Service Fee)`,
+          image: 'assets/app-icon.svg',
+          theme: { color: '#0284c7' },
+          prefill: {
+            name: applicantName,
+            email: applicantEmail,
+            contact: applicantPhone
+          },
+          handler: function (response) {
+            document.getElementById('utrNumber').value = response.razorpay_payment_id;
+            const badge = document.getElementById('razorpaySuccessBadge');
+            badge.style.display = 'block';
+            badge.innerText = `✓ भुगतान सफल! Ref: ${response.razorpay_payment_id}`;
+            alert(`भुगतान सफल रहा! Payment ID: ${response.razorpay_payment_id}\nकृपया अब नीचे "आवेदन सबमिट करें" बटन दबाएं।`);
+          }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
       }
 
       let selectedFilesList = [];
