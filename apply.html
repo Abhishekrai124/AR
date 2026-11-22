@@ -333,15 +333,16 @@
                 <span>सेवा वर्ग (Service Category)</span> *
               </label>
               <select class="form-select" id="categorySelect" onchange="onCategorySelectChange()">
+                <option value="certificate">📜 सरकारी प्रमाण पत्र (Certificates &amp; Police Verification)</option>
+                <option value="legal">⚖️ कोर्ट शपथ पत्र व नोटरी (Court Affidavits)</option>
+                <option value="passport">✈️ पासपोर्ट सेवा (Passport Seva ₹4500 / ₹6000)</option>
                 <option value="aadhaar">🆔 आधार कार्ड सेवाएँ (Aadhaar Services)</option>
-                <option value="udyam">🏢 उद्यम / MSME व व्यापार रजिस्ट्रेशन</option>
-                <option value="passport">✈️ पासपोर्ट सेवा (Passport Seva)</option>
-                <option value="voter">🗳️ वोटर आईडी कार्ड (Voter ID)</option>
                 <option value="transport">🚗 ड्राइविंग लाइसेंस व वाहन (Transport)</option>
-                <option value="certificate">📜 सरकारी प्रमाण पत्र (Certificates)</option>
+                <option value="pan">💳 पैन कार्ड सेवाएँ (PAN Services)</option>
+                <option value="voter">🗳️ वोटर आईडी कार्ड (Voter ID)</option>
                 <option value="exam">🎓 सरकारी नौकरी व परीक्षा फॉर्म (Govt Jobs)</option>
                 <option value="epfo">💼 EPFO व पीएफ क्लेम (PF Claim)</option>
-                <option value="pan">💳 पैन कार्ड सेवाएँ (PAN Services)</option>
+                <option value="udyam">🏢 उद्यम / MSME व व्यापार रजिस्ट्रेशन</option>
               </select>
             </div>
 
@@ -694,8 +695,9 @@
           subServices: [
             {
               id: "passport-normal",
+              alias: "passport-fresh",
               name: "सामान्य नया पासपोर्ट / नवीनीकरण (36 पेज)",
-              fee: 3100,
+              fee: 4500,
               desc: "नया सामान्य पासपोर्ट ऑनलाइन आवेदन, अपॉइंटमेंट और सत्यापन सेवा",
               docs: ["10वीं की मार्कशीट / जन्म प्रमाण पत्र (ECNR हेतु)", "आधार कार्ड व पैन कार्ड", "बैंक पासबुक या बिजली बिल"],
               fields: [
@@ -706,8 +708,9 @@
             },
             {
               id: "passport-tatkaal",
+              alias: "tatkaal-passport",
               name: "तत्काल पासपोर्ट स्लॉट बुकिंग (Priority Fast-Track)",
-              fee: 4000,
+              fee: 6000,
               desc: "तत्काल श्रेणी में 3-5 कार्यदिवस में पासपोर्ट जारी करने हेतु प्राथमिकता स्लॉट बुकिंग",
               docs: ["आधार कार्ड", "पैन कार्ड", "वोटर आईडी या ड्राइविंग लाइसेंस (कम से कम 3 प्रमाण)", "10वीं मार्कशीट"],
               fields: [
@@ -717,6 +720,7 @@
             },
             {
               id: "passport-pcc",
+              alias: "pcc",
               name: "पुलिस क्लीयरेंस सर्टिफिकेट (PCC Slot Booking)",
               fee: 800,
               desc: "विदेश जाने, वर्क परमिट या इमिग्रेशन हेतु पासपोर्ट PCC",
@@ -806,10 +810,24 @@
         },
 
         certificate: {
-          title: "सरकारी प्रमाण पत्र (Revenue & E-District)",
+          title: "सरकारी प्रमाण पत्र (Revenue & Police Verification)",
           subServices: [
             {
-              id: "cert-income",
+              id: "character-cert",
+              alias: "cert-character",
+              name: "चरित्र प्रमाण पत्र (Police Character Verification)",
+              fee: 250,
+              desc: "सरकारी नौकरी, ठेकेदारी, पासपोर्ट व किरायेदार हेतु पुलिस सत्यापन प्रमाण पत्र",
+              docs: ["आधार कार्ड", "पासपोर्ट फोटो", "स्थानीय 2 गवाह विवरण"],
+              fields: [
+                { id: "charPoliceStation", label: "संबंधित पुलिस थाना *", type: "text", placeholder: "Police Station", required: true },
+                { id: "charPurpose", label: "प्रमाण पत्र का उद्देश्य (Purpose) *", type: "text", placeholder: "e.g. Job Verification / Contractor Licence", required: true },
+                { id: "charWitnesses", label: "स्थानीय 2 गवाहों के नाम व मोबाइल *", type: "text", placeholder: "Witness 1 & 2 Contact", required: true }
+              ]
+            },
+            {
+              id: "income-cert",
+              alias: "cert-income",
               name: "आय प्रमाण पत्र (Income Certificate)",
               fee: 150,
               desc: "तहसील व लेखपाल सत्यापन द्वारा आधिकारिक आय प्रमाण पत्र",
@@ -820,7 +838,8 @@
               ]
             },
             {
-              id: "cert-caste",
+              id: "caste-cert",
+              alias: "cert-caste",
               name: "जाति प्रमाण पत्र (Caste Certificate: OBC/SC/ST)",
               fee: 150,
               desc: "आरक्षण व सरकारी योजनाओं हेतु अधिकृत जाति प्रमाण पत्र",
@@ -830,7 +849,18 @@
               ]
             },
             {
-              id: "cert-domicile",
+              id: "caste-ncl",
+              name: "नॉन-क्रीमी लेयर (OBC-NCL) प्रमाण पत्र",
+              fee: 180,
+              desc: "केंद्रीय व राज्य स्तरीय सरकारी नौकरियों हेतु नॉन-क्रीमी लेयर प्रमाण पत्र",
+              docs: ["आय प्रमाण पत्र", "जाति प्रमाण पत्र", "आधार कार्ड"],
+              fields: [
+                { id: "nclFatherIncome", label: "पिता / परिवार की वार्षिक आय (₹) *", type: "number", placeholder: "e.g. 150000", required: true }
+              ]
+            },
+            {
+              id: "domicile-cert",
+              alias: "cert-domicile",
               name: "निवास प्रमाण पत्र (Domicile / Niwas Certificate)",
               fee: 150,
               desc: "राज्य व जिले में स्थाई निवास का सरकारी प्रमाण पत्र",
@@ -840,24 +870,63 @@
               ]
             },
             {
-              id: "cert-character",
-              name: "चरित्र प्रमाण पत्र (Police Character Verification)",
-              fee: 250,
-              desc: "सरकारी नौकरी व ठेकेदारी हेतु पुलिस सत्यापन प्रमाण पत्र",
-              docs: ["आधार कार्ड", "फोटो", "स्थानीय गवाह पहचान"],
-              fields: [
-                { id: "charPoliceStation", label: "संबंधित पुलिस थाना *", type: "text", placeholder: "Police Station", required: true },
-                { id: "charPurpose", label: "प्रमाण पत्र का उद्देश्य (Purpose) *", type: "text", placeholder: "e.g. Job Verification / Contractor Licence", required: true }
-              ]
-            },
-            {
-              id: "cert-ews",
+              id: "ews-cert",
+              alias: "cert-ews",
               name: "ईडब्ल्यूएस प्रमाण पत्र (EWS Certificate)",
               fee: 180,
               desc: "सामान्य वर्ग के आर्थिक रूप से कमजोर वर्ग का 10% आरक्षण",
               docs: ["आधार कार्ड", "खतौनी / ज़मीन का पर्चा", "आय प्रमाण पत्र", "मकान का विवरण"],
               fields: [
                 { id: "ewsLandArea", label: "पारिवारिक कृषि भूमि (यदि हो) *", type: "text", placeholder: "e.g. 2 बीघा या शून्य", required: true }
+              ]
+            },
+            {
+              id: "land-khatauni",
+              name: "भूलेख खतौनी नकल व खसरा रिकॉर्ड",
+              fee: 80,
+              desc: "राजस्व विभाग से प्रमाणित खतौनी व भू-अभिलेख की प्रति",
+              docs: ["गाटा / खसरा / खाता संख्या"],
+              fields: [
+                { id: "khatauniDetails", label: "गाटा / खसरा या खाता संख्या दर्ज करें *", type: "text", placeholder: "Khasra / Khata No.", required: true }
+              ]
+            }
+          ]
+        },
+
+        legal: {
+          title: "कोर्ट शपथ पत्र व कानूनी सहायता (Affidavits)",
+          subServices: [
+            {
+              id: "affidavit-name",
+              name: "नाम व स्पेलिंग सुधार शपथ पत्र (Name Correction)",
+              fee: 120,
+              desc: "मार्कशीट, आधार या पैन में नाम की गलती सुधारने हेतु नोटरीकृत शपथ पत्र",
+              docs: ["आधार कार्ड", "10वीं मार्कशीट / वैध रिकॉर्ड"],
+              fields: [
+                { id: "affWrongName", label: "गलत नाम जो दस्तावेजों में है *", type: "text", placeholder: "Incorrect spelling as printed", required: true },
+                { id: "affCorrectName", label: "सही नाम जो होना चाहिए *", type: "text", placeholder: "Correct spelling as required", required: true }
+              ]
+            },
+            {
+              id: "affidavit-marriage",
+              name: "विवाह पंजीकरण व संयुक्त शपथ पत्र (Marriage Affidavit)",
+              fee: 250,
+              desc: "विवाह पंजीकरण, सरकारी रिकॉर्ड व पासपोर्ट हेतु संयुक्त शपथ पत्र",
+              docs: ["पति-पत्नी का आधार", "विवाह निमंत्रण कार्ड / फोटो", "2 गवाह आधार"],
+              fields: [
+                { id: "spouseName", label: "पति / पत्नी का पूरा नाम *", type: "text", placeholder: "Spouse Full Name", required: true },
+                { id: "marriageDate", label: "विवाह की तारीख *", type: "date", required: true }
+              ]
+            },
+            {
+              id: "affidavit-gap",
+              name: "गैप ईयर छात्र शपथ पत्र (Student Gap Year Affidavit)",
+              fee: 120,
+              desc: "कॉलेज दाखिले या प्रतियोगी परीक्षा हेतु पढ़ाई के अंतराल का शपथ पत्र",
+              docs: ["अंतिम परीक्षा की मार्कशीट", "आधार कार्ड"],
+              fields: [
+                { id: "gapPeriod", label: "गैप की अवधि (वर्ष) *", type: "text", placeholder: "e.g. 2022 to 2024 (2 Years)", required: true },
+                { id: "gapReason", label: "गैप का कारण *", type: "text", placeholder: "e.g. Preparation for Competitive Exams", required: true }
               ]
             }
           ]
@@ -996,28 +1065,76 @@
       // Parse Query Params to automatically select category or service
       function initFromUrlParams() {
         const params = new URLSearchParams(window.location.search);
-        const sParam = params.get('service') || params.get('cat') || '';
+        const sParam = (params.get('service') || params.get('cat') || '').toLowerCase();
         
-        let foundCat = 'aadhaar';
+        let foundCat = '';
         let foundSubId = '';
 
-        for (const [catKey, catData] of Object.entries(serviceCatalog)) {
-          if (sParam.toLowerCase().includes(catKey)) {
-            foundCat = catKey;
-            break;
-          }
-          const matchedSub = catData.subServices.find(sub => 
-            sParam.toLowerCase().includes(sub.id) || 
-            sub.name.toLowerCase().includes(sParam.toLowerCase())
-          );
-          if (matchedSub) {
-            foundCat = catKey;
-            foundSubId = matchedSub.id;
-            break;
+        if (sParam.includes('police') || sParam.includes('character') || sParam.includes('verif')) {
+          foundCat = 'certificate';
+          foundSubId = 'character-cert';
+        } else if (sParam.includes('income')) {
+          foundCat = 'certificate';
+          foundSubId = 'income-cert';
+        } else if (sParam.includes('caste') || sParam.includes('obc') || sParam.includes('sc') || sParam.includes('st')) {
+          foundCat = 'certificate';
+          foundSubId = sParam.includes('ncl') ? 'caste-ncl' : 'caste-cert';
+        } else if (sParam.includes('domicile') || sParam.includes('niwas')) {
+          foundCat = 'certificate';
+          foundSubId = 'domicile-cert';
+        } else if (sParam.includes('affidavit') || sParam.includes('legal') || sParam.includes('marriage')) {
+          foundCat = 'legal';
+          foundSubId = sParam.includes('marriage') ? 'affidavit-marriage' : 'affidavit-name';
+        } else if (sParam.includes('passport')) {
+          foundCat = 'passport';
+          foundSubId = sParam.includes('tatkaal') ? 'passport-tatkaal' : 'passport-normal';
+        } else if (sParam.includes('dl') || sParam.includes('licence') || sParam.includes('transport') || sParam.includes('rc')) {
+          foundCat = 'transport';
+          foundSubId = 'dl-ll';
+        } else if (sParam.includes('pan')) {
+          foundCat = 'pan';
+          foundSubId = 'new-pan';
+        } else if (sParam.includes('voter')) {
+          foundCat = 'voter';
+          foundSubId = 'voter-form6';
+        } else if (sParam.includes('pf') || sParam.includes('epfo') || sParam.includes('uan')) {
+          foundCat = 'epfo';
+          foundSubId = 'pf-full';
+        } else if (sParam.includes('job') || sParam.includes('exam') || sParam.includes('scholarship')) {
+          foundCat = 'exam';
+          foundSubId = 'exam-central';
+        } else if (sParam.includes('msme') || sParam.includes('udyam') || sParam.includes('gst')) {
+          foundCat = 'udyam';
+          foundSubId = 'udyam-new';
+        } else if (sParam.includes('aadhaar') || sParam.includes('pvc')) {
+          foundCat = 'aadhaar';
+          foundSubId = sParam.includes('pvc') ? 'aadhaar-pvc' : 'aadhaar-address';
+        } else {
+          for (const [catKey, catData] of Object.entries(serviceCatalog)) {
+            if (sParam.includes(catKey)) {
+              foundCat = catKey;
+              break;
+            }
+            const matchedSub = catData.subServices.find(sub => 
+              sParam.includes(sub.id.toLowerCase()) || 
+              (sub.alias && sParam.includes(sub.alias.toLowerCase())) ||
+              sub.name.toLowerCase().includes(sParam)
+            );
+            if (matchedSub) {
+              foundCat = catKey;
+              foundSubId = matchedSub.id;
+              break;
+            }
           }
         }
 
-        document.getElementById('categorySelect').value = foundCat;
+        if (!foundCat || !serviceCatalog[foundCat]) {
+          foundCat = 'certificate';
+          foundSubId = serviceCatalog.certificate ? serviceCatalog.certificate.subServices[0].id : '';
+        }
+
+        const catSelect = document.getElementById('categorySelect');
+        if (catSelect) catSelect.value = foundCat;
         onCategorySelectChange(foundSubId);
       }
 

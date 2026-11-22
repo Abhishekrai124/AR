@@ -528,37 +528,64 @@
           <div style="flex:1; min-width:260px; position:relative;">
             <input type="text" id="serviceSearchInput" placeholder="🔍 दस्तावेज़ या सेवा खोजें (उदा. आय, जाति, निवास, आधार, ईडब्ल्यूएस, ड्राइविंग लाइसेंस)..." class="form-input" style="padding:10px 16px; background:rgba(255,255,255,0.06); border-radius:999px; font-size:0.9rem;" oninput="onServiceSearchChange()" />
           </div>
-          <div style="min-width:220px;">
+          <div style="min-width:240px;">
             <select id="stateFilterSelect" class="form-select" style="padding:10px 14px; border-radius:999px; background:#0f172a; border-color:var(--eseva-gold); color:#fde68a; font-weight:700; font-size:0.88rem;" onchange="onStateFilterChange()">
-              <option value="all">🇮🇳 सभी राज्य (All India Portal)</option>
-              <option value="UP">उत्तर प्रदेश (UP e-District)</option>
-              <option value="Bihar">बिहार (Bihar RTPS ServicePlus)</option>
-              <option value="Punjab">पंजाब (Punjab Sewa Kendra)</option>
-              <option value="Haryana">हरियाणा (Haryana Saral)</option>
-              <option value="Delhi">दिल्ली (e-District Delhi)</option>
-              <option value="MP">मध्य प्रदेश (MP e-District)</option>
-              <option value="Rajasthan">राजस्थान (Emitra)</option>
-              <option value="Maharashtra">महाराष्ट्र (Aaple Sarkar)</option>
-              <option value="WB">पश्चिम बंगाल (WB e-District)</option>
-              <option value="Gujarat">गुजरात (Digital Gujarat)</option>
-              <option value="Jharkhand">झारखंड (Jharsewa)</option>
-              <option value="Uttarakhand">उत्तराखंड (e-Services)</option>
-              <option value="other">अन्य सभी राज्य व केंद्र शासित प्रदेश</option>
+              <option value="all">🇮🇳 All India / Central Services</option>
+              <!-- 28 States -->
+              <option value="Andhra Pradesh">Andhra Pradesh (MeeSeva)</option>
+              <option value="Arunachal Pradesh">Arunachal Pradesh (ServicePlus)</option>
+              <option value="Assam">Assam (Sewa Setu)</option>
+              <option value="Bihar">Bihar (RTPS ServicePlus)</option>
+              <option value="Chhattisgarh">Chhattisgarh (e-District)</option>
+              <option value="Goa">Goa (Goa Online)</option>
+              <option value="Gujarat">Gujarat (Digital Gujarat)</option>
+              <option value="Haryana">Haryana (Antyodaya Saral)</option>
+              <option value="Himachal Pradesh">Himachal Pradesh (e-District)</option>
+              <option value="Jharkhand">Jharkhand (Jharsewa)</option>
+              <option value="Karnataka">Karnataka (Seva Sindhu)</option>
+              <option value="Kerala">Kerala (e-District)</option>
+              <option value="Madhya Pradesh">Madhya Pradesh (MP e-District / Samagra)</option>
+              <option value="Maharashtra">Maharashtra (Aaple Sarkar)</option>
+              <option value="Manipur">Manipur (e-District)</option>
+              <option value="Meghalaya">Meghalaya (e-District)</option>
+              <option value="Mizoram">Mizoram (Citizen Portal)</option>
+              <option value="Nagaland">Nagaland (e-District)</option>
+              <option value="Odisha">Odisha (Odisha e-District)</option>
+              <option value="Punjab">Punjab (Sewa Kendra)</option>
+              <option value="Rajasthan">Rajasthan (Emitra Portal)</option>
+              <option value="Sikkim">Sikkim (e-District)</option>
+              <option value="Tamil Nadu">Tamil Nadu (TNeGA e-Sevai)</option>
+              <option value="Telangana">Telangana (MeeSeva TS)</option>
+              <option value="Tripura">Tripura (e-District)</option>
+              <option value="Uttar Pradesh" selected>Uttar Pradesh (e-District UP)</option>
+              <option value="Uttarakhand">Uttarakhand (e-Services UK)</option>
+              <option value="West Bengal">West Bengal (WB e-District)</option>
+              <!-- 8 Union Territories -->
+              <option value="Andaman and Nicobar">Andaman and Nicobar Islands</option>
+              <option value="Chandigarh">Chandigarh (e-Jan Sampark)</option>
+              <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra &amp; Nagar Haveli and Daman &amp; Diu</option>
+              <option value="Delhi">Delhi NCT (e-District Delhi)</option>
+              <option value="Jammu and Kashmir">Jammu and Kashmir (JK e-Services)</option>
+              <option value="Ladakh">Ladakh UT (e-District Ladakh)</option>
+              <option value="Lakshadweep">Lakshadweep UT</option>
+              <option value="Puducherry">Puducherry UT (e-District)</option>
             </select>
           </div>
         </div>
 
         <!-- Filter Tabs -->
         <div class="filter-tabs-bar" id="categoryTabs">
-          <button class="filter-tab-btn active" data-cat="all">सभी सेवाएँ (All)</button>
-          <button class="filter-tab-btn" data-cat="identity">🆔 पहचान व पासपोर्ट</button>
-          <button class="filter-tab-btn" data-cat="certificate">📜 सरकारी प्रमाण पत्र</button>
-          <button class="filter-tab-btn" data-cat="transport">🚗 वाहन व ड्राइविंग लाइसेंस</button>
-          <button class="filter-tab-btn" data-cat="welfare">🌾 सरकारी योजनाएँ व राशन</button>
-          <button class="filter-tab-btn" data-cat="finance">💼 PF व बैंकिंग</button>
-          <button class="filter-tab-btn" data-cat="exam">🎓 ऑनलाइन फॉर्म व रिजल्ट</button>
-          <button class="filter-tab-btn" data-cat="global">🌍 ग्लोबल व NRI सेवाएँ</button>
-          <button class="filter-tab-btn" data-cat="utility">⚡ बिल भुगतान व अन्य</button>
+          <button class="filter-tab-btn active" data-cat="all">All Services (सभी सेवाएँ)</button>
+          <button class="filter-tab-btn" data-cat="identity">🆔 Identity &amp; Aadhaar</button>
+          <button class="filter-tab-btn" data-cat="certificate">📜 Certificates &amp; Verification</button>
+          <button class="filter-tab-btn" data-cat="legal">⚖️ Court Affidavits &amp; Legal</button>
+          <button class="filter-tab-btn" data-cat="transport">🚗 Driving &amp; Transport</button>
+          <button class="filter-tab-btn" data-cat="welfare">🌾 Welfare Schemes &amp; Ration</button>
+          <button class="filter-tab-btn" data-cat="finance">💼 EPFO &amp; Banking</button>
+          <button class="filter-tab-btn" data-cat="exam">🎓 Jobs, Exams &amp; Resume CV</button>
+          <button class="filter-tab-btn" data-cat="business">🏢 MSME Business &amp; GST</button>
+          <button class="filter-tab-btn" data-cat="global">🌍 Global &amp; NRI Services</button>
+          <button class="filter-tab-btn" data-cat="utility">⚡ Utilities &amp; Bills</button>
         </div>
 
         <!-- Services Grid -->
@@ -585,72 +612,98 @@
                 <span id="lblSelectService">चयनित सेवा (Selected Service)</span> *
               </label>
               <select class="form-select" id="selectedService" required onchange="onServiceDropdownChange()">
-                <option value="" disabled selected>-- सेवा का चयन करें --</option>
+                <option value="" disabled selected>-- Select a Service / सेवा का चयन करें --</option>
                 
-                <optgroup label="🆔 पासपोर्ट व पहचान सेवाएँ (Passport &amp; Identity)">
-                  <option value="Passport Seva Application (Fresh / Re-issue)" data-price="3100" data-cat="identity">पासपोर्ट नया आवेदन (Passport Seva Fresh/Reissue) - ₹3,100 (सरकारी फीस ₹2,500 + सर्विस)</option>
-                  <option value="Tatkaal Passport Online Slot" data-price="4000" data-cat="identity">तत्काल पासपोर्ट स्लॉट बुकिंग (Tatkaal Passport) - ₹4,000</option>
-                  <option value="New PAN Card (Physical + e-PAN)" data-price="250" data-cat="identity">नया पैन कार्ड (New PAN Card) - ₹250</option>
-                  <option value="PAN Card Correction / Reprint" data-price="200" data-cat="identity">पैन कार्ड संशोधन / पुनः प्राप्ति - ₹200</option>
-                  <option value="PVC Smart Aadhaar Card Order" data-price="100" data-cat="identity">आधार कार्ड PVC स्मार्ट ऑर्डर व प्रिन्ट - ₹100</option>
-                  <option value="Aadhaar Address Update Assistance" data-price="120" data-cat="identity">आधार कार्ड पता / मोबाइल अपडेट सहायता - ₹120</option>
-                  <option value="New Voter ID Card (Form 6)" data-price="120" data-cat="identity">नया वोटर आईडी कार्ड आवेदन (Form 6) - ₹120</option>
-                  <option value="Voter ID Correction & Shift (Form 8)" data-price="100" data-cat="identity">वोटर कार्ड संशोधन / शिफ्टिंग (Form 8) - ₹100</option>
-                  <option value="Digital e-EPIC Voter Card Download" data-price="50" data-cat="identity">डिजिटल वोटर कार्ड (e-EPIC) डाउनलोड - ₹50</option>
+                <optgroup label="✈️ Passport &amp; Travel Services (पासपोर्ट सेवाएँ)">
+                  <option value="Passport Seva Application (Fresh / Re-issue)" data-price="4500" data-cat="identity" data-service-id="passport-fresh">Passport Seva Fresh / Re-issue (नया पासपोर्ट सामान्य) - ₹4,500</option>
+                  <option value="Tatkaal Passport Online Slot" data-price="6000" data-cat="identity" data-service-id="passport-tatkaal">Tatkaal Passport Priority Booking (तत्काल पासपोर्ट स्लॉट) - ₹6,000</option>
+                  <option value="Passport PCC (Police Clearance Certificate)" data-price="800" data-cat="identity" data-service-id="passport-pcc">Passport PCC Police Clearance (पुलिस क्लीयरेंस सर्टिफिकेट) - ₹800</option>
                 </optgroup>
 
-                <optgroup label="📜 प्रमाण पत्र सेवाएँ (Certificates &amp; Revenue)">
-                  <option value="Income Certificate (आय प्रमाण पत्र)" data-price="150" data-cat="certificate">आय प्रमाण पत्र (Income Certificate) - ₹150</option>
-                  <option value="Caste Certificate (जाति प्रमाण पत्र: OBC/SC/ST)" data-price="150" data-cat="certificate">जाति प्रमाण पत्र (Caste Certificate) - ₹150</option>
-                  <option value="Domicile Certificate (निवास प्रमाण पत्र)" data-price="150" data-cat="certificate">निवास प्रमाण पत्र (Domicile / Niwas) - ₹150</option>
-                  <option value="Birth Certificate (जन्म प्रमाण पत्र)" data-price="200" data-cat="certificate">जन्म प्रमाण पत्र (Birth Certificate) - ₹200</option>
-                  <option value="Death Certificate (मृत्यु प्रमाण पत्र)" data-price="200" data-cat="certificate">मृत्यु प्रमाण पत्र (Death Certificate) - ₹200</option>
-                  <option value="Police Character Certificate (चरित्र प्रमाण पत्र)" data-price="250" data-cat="certificate">चरित्र प्रमाण पत्र (Police Character Verification) - ₹250</option>
-                  <option value="EWS Certificate (आर्थिक पिछड़ा प्रमाण पत्र)" data-price="180" data-cat="certificate">ईडब्ल्यूएस प्रमाण पत्र (EWS Certificate) - ₹180</option>
+                <optgroup label="📜 Official Certificates &amp; Police Verification (सरकारी प्रमाण पत्र व सत्यापन)">
+                  <option value="Police Character &amp; Verification Certificate" data-price="250" data-cat="certificate" data-service-id="character-cert">Police Character &amp; Background Verification (चरित्र प्रमाण पत्र) - ₹250</option>
+                  <option value="Income Certificate (आय प्रमाण पत्र)" data-price="150" data-cat="certificate" data-service-id="income-cert">Income Certificate (आय प्रमाण पत्र e-District) - ₹150</option>
+                  <option value="Caste Certificate (OBC / SC / ST / EBC)" data-price="150" data-cat="certificate" data-service-id="caste-cert">Caste Certificate (जाति प्रमाण पत्र: OBC/SC/ST/EBC) - ₹150</option>
+                  <option value="Non-Creamy Layer Certificate (OBC-NCL)" data-price="180" data-cat="certificate" data-service-id="caste-ncl">OBC Non-Creamy Layer Certificate (NCL प्रमाण पत्र) - ₹180</option>
+                  <option value="Domicile / Permanent Residence Certificate" data-price="150" data-cat="certificate" data-service-id="domicile-cert">Domicile / Residence Certificate (मूल निवास प्रमाण पत्र) - ₹150</option>
+                  <option value="EWS Certificate (10% Reservation Quota)" data-price="180" data-cat="certificate" data-service-id="ews-cert">EWS Certificate (आर्थिक रूप से कमजोर 10% आरक्षण) - ₹180</option>
+                  <option value="Birth Certificate (डिजिटल जन्म प्रमाण पत्र)" data-price="200" data-cat="certificate" data-service-id="birth-cert">Birth Certificate Registration (डिजिटल जन्म प्रमाण पत्र) - ₹200</option>
+                  <option value="Death Certificate (डिजिटल मृत्यु प्रमाण पत्र)" data-price="200" data-cat="certificate" data-service-id="death-cert">Death Certificate Registration (डिजिटल मृत्यु प्रमाण पत्र) - ₹200</option>
+                  <option value="Land Khatauni &amp; Bhulekh Record Copy" data-price="80" data-cat="certificate" data-service-id="land-khatauni">Land Khatauni &amp; Bhulekh Copy (भूलेख खतौनी नकल) - ₹80</option>
                 </optgroup>
 
-                <optgroup label="🚗 वाहन व सारथी (Transport &amp; Driving)">
-                  <option value="Learning Licence Application (LL Online)" data-price="450" data-cat="transport">लर्निंग ड्राइविंग लाइसेंस (LL Online) - ₹450</option>
-                  <option value="Permanent DL Appointment & Slot" data-price="650" data-cat="transport">पक्का ड्राइविंग लाइसेंस स्लॉट बुकिंग - ₹650</option>
-                  <option value="Vehicle RC Renewal / Transfer" data-price="550" data-cat="transport">वाहन आरसी ट्रांसफर / नवीनीकरण - ₹550</option>
-                  <option value="RC Hypothecation Removal (HPA/HPT)" data-price="450" data-cat="transport">आरसी लोन हटाना (Hypothecation Removal) - ₹450</option>
+                <optgroup label="⚖️ Court Affidavits &amp; Legal Documentation (कोर्ट शपथ पत्र व नोटरी)">
+                  <option value="Name &amp; Spelling Correction Court Affidavit" data-price="120" data-cat="legal" data-service-id="affidavit-name">Name / Spelling Mistake Affidavit (नाम व स्पेलिंग सुधार शपथ पत्र) - ₹120</option>
+                  <option value="Marriage Registration &amp; Joint Affidavit" data-price="250" data-cat="legal" data-service-id="affidavit-marriage">Marriage Registration &amp; Joint Affidavit (विवाह पंजीकरण शपथ पत्र) - ₹250</option>
+                  <option value="Address Change Notarized Affidavit" data-price="120" data-cat="legal" data-service-id="affidavit-address">Address Change Affidavit (पता परिवर्तन शपथ पत्र) - ₹120</option>
+                  <option value="Student Gap Year Education Affidavit" data-price="120" data-cat="legal" data-service-id="affidavit-gap">Student Gap Year Affidavit (गैप ईयर छात्र शपथ पत्र) - ₹120</option>
+                  <option value="Income Self-Declaration Affidavit" data-price="100" data-cat="legal" data-service-id="affidavit-income">Income Self-Declaration Affidavit (आय स्व-घोषणा शपथ पत्र) - ₹100</option>
+                  <option value="Notary &amp; Legal Agreement Drafting Assistance" data-price="200" data-cat="legal" data-service-id="legal-drafting">Notary &amp; Legal Drafting Assistance (कोर्ट नोटरी ड्राफ्टिंग) - ₹200</option>
                 </optgroup>
 
-                <optgroup label="🌾 सरकारी योजनाएँ व राशन (Welfare Schemes)">
-                  <option value="Ayushman Bharat Golden Card" data-price="100" data-cat="welfare">आयुष्मान भारत हेल्थ कार्ड (₹5 लाख बीमा) - ₹100</option>
-                  <option value="PM-Kisan Registration & e-KYC" data-price="90" data-cat="welfare">पीएम किसान सम्मान निधि ई-केवाईसी / पंजीकरण - ₹90</option>
-                  <option value="E-Shram Card Registration" data-price="80" data-cat="welfare">ई-श्रम कार्ड (E-Shram Card) - ₹80</option>
-                  <option value="New Ration Card Application" data-price="200" data-cat="welfare">नया राशन कार्ड आवेदन - ₹200</option>
-                  <option value="Ration Card Member Addition / Correction" data-price="150" data-cat="welfare">राशन कार्ड में नया नाम जोड़ना / सुधार - ₹150</option>
-                  <option value="Old Age / Widow / Disability Pension" data-price="150" data-cat="welfare">वृद्धा / विधवा / दिव्यांग पेंशन आवेदन - ₹150</option>
+                <optgroup label="🆔 Aadhaar, PAN &amp; Voter ID (पहचान पत्र सेवाएँ)">
+                  <option value="Aadhaar Address &amp; Demographic Update" data-price="150" data-cat="identity" data-service-id="aadhaar-update">Aadhaar Address &amp; Demographic Update (आधार पता / सुधार) - ₹150</option>
+                  <option value="Aadhaar Mobile &amp; Email Link Assistance" data-price="120" data-cat="identity" data-service-id="aadhaar-mobile">Aadhaar Mobile &amp; Email Linkage (मोबाइल लिंकेज सहायता) - ₹120</option>
+                  <option value="PVC Smart Aadhaar Card Official Order" data-price="100" data-cat="identity" data-service-id="pvc-aadhaar">PVC Smart Water-Proof Aadhaar Order (स्मार्ट पीवीसी कार्ड) - ₹100</option>
+                  <option value="Aadhaar Biometric &amp; Iris Update" data-price="180" data-cat="identity" data-service-id="aadhaar-bio">Aadhaar Biometric &amp; Fingerprint Update (बायोमेट्रिक अपडेट) - ₹180</option>
+                  <option value="New PAN Card (Physical Card + Instant e-PAN)" data-price="250" data-cat="identity" data-service-id="new-pan">New PAN Card Application (नया पैन कार्ड) - ₹250</option>
+                  <option value="PAN Card Correction / Reprint" data-price="200" data-cat="identity" data-service-id="pan-correction">PAN Card Correction &amp; Reprint (पैन कार्ड सुधार / रिप्रिंट) - ₹200</option>
+                  <option value="New Voter ID Card (Form 6 Registration)" data-price="120" data-cat="identity" data-service-id="voter-new">New Voter ID Card Form 6 (नया वोटर कार्ड) - ₹120</option>
+                  <option value="Voter ID Correction &amp; Shift (Form 8)" data-price="100" data-cat="identity" data-service-id="voter-correction">Voter ID Correction / Shifting Form 8 (वोटर कार्ड संशोधन) - ₹100</option>
+                  <option value="Digital e-EPIC Voter Card Download" data-price="50" data-cat="identity" data-service-id="voter-epic">Digital e-EPIC Voter Download (डिजिटल वोटर कार्ड) - ₹50</option>
                 </optgroup>
 
-                <optgroup label="💼 EPFO, PF व बैंकिंग">
-                  <option value="PF Full Withdrawal (Form 19 & 10C)" data-price="350" data-cat="finance">पीएफ पूरा पैसा निकालें (Full Withdrawal) - ₹350</option>
-                  <option value="PF Advance Claim (Form 31)" data-price="250" data-cat="finance">पीएफ एडवांस क्लेम (Advance Form 31) - ₹250</option>
-                  <option value="UAN Activation & Password Reset" data-price="80" data-cat="finance">UAN एक्टिवेशन व पासवर्ड रीसेट - ₹80</option>
-                  <option value="PF Bank & PAN KYC Linkage" data-price="100" data-cat="finance">पीएफ बैंक खाता व पैन केवाईसी लिंक - ₹100</option>
+                <optgroup label="🚗 Transport &amp; Driving License (वाहन व सारथी)">
+                  <option value="Learning Licence Application (LL Online)" data-price="450" data-cat="transport" data-service-id="learning-licence">Learner Driving License Online LL (लर्निंग लाइसेंस) - ₹450</option>
+                  <option value="Permanent DL Appointment &amp; Slot" data-price="650" data-cat="transport" data-service-id="permanent-dl">Permanent Driving License Test Slot (पक्का ड्राइविंग लाइसेंस) - ₹650</option>
+                  <option value="DL Renewal &amp; Address Change" data-price="550" data-cat="transport" data-service-id="dl-renewal">Driving License Renewal &amp; Change (डीएल नवीनीकरण) - ₹550</option>
+                  <option value="Vehicle RC Ownership Transfer" data-price="550" data-cat="transport" data-service-id="rc-transfer">Vehicle RC Transfer / Re-registration (वाहन आरसी ट्रांसफर) - ₹550</option>
+                  <option value="RC Hypothecation Loan Removal (HPA/HPT)" data-price="450" data-cat="transport" data-service-id="rc-hypo">RC Hypothecation Removal (आरसी बैंक लोन हटाना) - ₹450</option>
                 </optgroup>
 
-                <optgroup label="🎓 सरकारी नौकरी व परीक्षा फॉर्म (Exam &amp; Jobs)">
-                  <option value="Central Govt Job Form (SSC, Railway, Army)" data-price="150" data-cat="exam">केंद्रीय सरकारी नौकरी ऑनलाइन फॉर्म - ₹150</option>
-                  <option value="State Police / Sub-Inspector Form" data-price="150" data-cat="exam">राज्य पुलिस व दरोगा भर्ती फॉर्म - ₹150</option>
-                  <option value="UPSC / State PSC Application Form" data-price="250" data-cat="exam">UPSC / राज्य लोक सेवा आयोग फॉर्म - ₹250</option>
-                  <option value="Admit Card & Center Printout" data-price="50" data-cat="exam">एडमिट कार्ड / हॉल टिकट डाउनलोड व प्रिन्ट - ₹50</option>
-                  <option value="Scholarship Online Form" data-price="150" data-cat="exam">छात्रवृत्ति आवेदन (UP/National Scholarship) - ₹150</option>
+                <optgroup label="🌾 Government Welfare &amp; Ration (सरकारी योजनाएँ)">
+                  <option value="Ayushman Bharat Golden Card (₹5 Lakh Insurance)" data-price="100" data-cat="welfare" data-service-id="ayushman-card">Ayushman Bharat Golden Health Card (आयुष्मान भारत कार्ड) - ₹100</option>
+                  <option value="PM-Kisan Registration &amp; e-KYC" data-price="90" data-cat="welfare" data-service-id="pm-kisan">PM-Kisan Samman Nidhi e-KYC &amp; Registration (पीएम किसान) - ₹90</option>
+                  <option value="E-Shram National Worker Card" data-price="80" data-cat="welfare" data-service-id="eshram-card">E-Shram National Worker Card (ई-श्रम कार्ड) - ₹80</option>
+                  <option value="New Digital Ration Card Application" data-price="180" data-cat="welfare" data-service-id="ration-new">New Digital Ration Card Application (नया राशन कार्ड) - ₹180</option>
+                  <option value="Ration Card Member Addition / Correction" data-price="120" data-cat="welfare" data-service-id="ration-member">Ration Card Member Add / Unit Correction (राशन में नाम जोड़ना) - ₹120</option>
+                  <option value="Old Age / Widow / Disability Pension" data-price="150" data-cat="welfare" data-service-id="pension-scheme">Govt Pension Scheme Application (वृद्धा/विधवा/दिव्यांग पेंशन) - ₹150</option>
                 </optgroup>
 
-                <optgroup label="🌍 ग्लोबल व NRI सेवाएँ (Global &amp; NRI Services)">
-                  <option value="OCI Card Application / Renewal" data-price="2200" data-cat="global">OCI Card Overseas Citizen of India - ₹2,200</option>
-                  <option value="Indian Visa Assistance / Extension" data-price="1800" data-cat="global">Indian Visa Online Assistance - ₹1,800</option>
-                  <option value="Embassy Document Apostille & Attestation" data-price="2500" data-cat="global">Embassy Document Attestation - ₹2,500</option>
+                <optgroup label="💼 EPFO, PF Claims &amp; Banking (पीएफ व बैंकिंग)">
+                  <option value="PF Full Withdrawal (Form 19 &amp; 10C)" data-price="350" data-cat="finance" data-service-id="pf-full-withdrawal">EPFO Full PF &amp; Pension Settlement (पीएफ पूरा निकासी) - ₹350</option>
+                  <option value="PF Advance Claim (Form 31 Emergency)" data-price="250" data-cat="finance" data-service-id="pf-advance">EPFO Emergency Advance Claim (पीएफ एडवांस Form 31) - ₹250</option>
+                  <option value="UAN Activation &amp; Password Reset" data-price="80" data-cat="finance" data-service-id="uan-pass-reset">UAN Activation &amp; Password Reset (UAN एक्टिवेशन) - ₹80</option>
+                  <option value="PF Bank &amp; PAN KYC Linkage" data-price="100" data-cat="finance" data-service-id="uan-kyc">PF Bank Account &amp; PAN KYC Linkage (पीएफ बैंक केवाईसी) - ₹100</option>
                 </optgroup>
 
-                <optgroup label="⚡ बिल भुगतान व अन्य सेवाएँ (Utility &amp; Business)">
-                  <option value="Electricity Bill Payment & Receipt" data-price="30" data-cat="utility">बिजली बिल भुगतान व रसीद - ₹30</option>
-                  <option value="New Electricity Meter Application" data-price="250" data-cat="utility">नया बिजली मीटर कनेक्शन आवेदन - ₹250</option>
-                  <option value="Udyam / MSME Registration" data-price="300" data-cat="utility">उद्यम / MSME रजिस्ट्रेशन सर्टिफिकेट - ₹300</option>
-                  <option value="Fastag Recharge & Resolution" data-price="50" data-cat="utility">फास्टैग रिचार्ज व समस्या समाधान - ₹50</option>
+                <optgroup label="🎓 Jobs, Exams &amp; Resume Builder (नौकरी, परीक्षा व CV)">
+                  <option value="Professional ATS Resume / CV Builder (Instant PDF)" data-price="20" data-cat="exam" data-service-id="resume-cv-builder">Professional ATS Resume / CV Builder (ATS रिज़्यूमे मेकर ₹20 PDF) - ₹20</option>
+                  <option value="Central Govt Job Form (SSC, Railway, Army, Defence)" data-price="150" data-cat="exam" data-service-id="job-form-central">Central Govt Job Online Application (केंद्रीय नौकरी फॉर्म) - ₹150</option>
+                  <option value="State Police / Sub-Inspector Application" data-price="150" data-cat="exam" data-service-id="job-form-police">State Police &amp; Constable Recruitment Form (पुलिस भर्ती फॉर्म) - ₹150</option>
+                  <option value="UPSC / State PSC Civil Services Form" data-price="250" data-cat="exam" data-service-id="job-form-upsc">UPSC / State PSC Exam Form (सिविल सेवा भर्ती फॉर्म) - ₹250</option>
+                  <option value="Admit Card &amp; Center Verification Slip" data-price="50" data-cat="exam" data-service-id="admit-card">Admit Card &amp; Exam Center Verification Print (एडमिट कार्ड) - ₹50</option>
+                  <option value="Pre &amp; Post Matric Scholarship Application" data-price="150" data-cat="exam" data-service-id="scholarship">National &amp; State Scholarship Form (छात्रवृत्ति ऑनलाइन फॉर्म) - ₹150</option>
+                </optgroup>
+
+                <optgroup label="🏢 MSME Business &amp; GST Services (व्यापार व जीएसटी)">
+                  <option value="Udyam / MSME Registration Certificate" data-price="300" data-cat="business" data-service-id="udyam-msme">Udyam / MSME Registration Certificate (उद्यम रजिस्ट्रेशन) - ₹300</option>
+                  <option value="GST New Registration &amp; Filing Support" data-price="1200" data-cat="business" data-service-id="gst-reg">GST New Registration &amp; Portal Filing (जीएसटी पंजीकरण) - ₹1,200</option>
+                  <option value="Shop &amp; Commercial Establishment License (Gumasta)" data-price="650" data-cat="business" data-service-id="shop-licence">Shop License / Gumasta Certificate (दुकान लाइसेंस) - ₹650</option>
+                  <option value="FSSAI Food Safety Registration" data-price="800" data-cat="business" data-service-id="fssai-food">FSSAI Food License Registration (खाद्य सुरक्षा लाइसेंस) - ₹800</option>
+                </optgroup>
+
+                <optgroup label="🌍 Global &amp; NRI Citizen Services (ग्लोबल व एनआरआई)">
+                  <option value="OCI Card Application / Renewal" data-price="2200" data-cat="global" data-service-id="oci-card">OCI Overseas Citizen of India Card (ओसीआई कार्ड) - ₹2,200</option>
+                  <option value="Indian Visa Assistance / Extension" data-price="1800" data-cat="global" data-service-id="indian-visa">Indian Electronic Visa Assistance (भारतीय ई-वीज़ा) - ₹1,800</option>
+                  <option value="Embassy Document Apostille &amp; Attestation" data-price="2500" data-cat="global" data-service-id="apostille">MEA &amp; Embassy Document Apostille (दस्तावेज़ अपोस्टिल) - ₹2,500</option>
+                </optgroup>
+
+                <optgroup label="⚡ Utilities &amp; Bill Payments (बिजली व उपयोगिता)">
+                  <option value="Electricity / Water Bill Payment &amp; Receipt" data-price="30" data-cat="utility" data-service-id="bill-payment">Electricity / Water Utility Bill Payment (बिजली बिल भुगतान) - ₹30</option>
+                  <option value="New Electricity Meter Connection Application" data-price="250" data-cat="utility" data-service-id="electricity-meter">New Electricity Meter Connection (नया बिजली मीटर) - ₹250</option>
+                  <option value="Fastag Recharge &amp; Blacklist Resolution" data-price="50" data-cat="utility" data-service-id="fastag">Fastag Instant Recharge &amp; Unblocking (फास्टैग रिचार्ज) - ₹50</option>
+                </optgroup>
                 </optgroup>
               </select>
             </div>
@@ -719,6 +772,50 @@
                 <span id="lblAddress">स्थाई पता (Complete Address with City/State/Country)</span> *
               </label>
               <textarea class="form-textarea" id="address" rows="2" placeholder="House No, Ward, Village/City, District, State, Country" required></textarea>
+            </div>
+
+            <div>
+              <label class="form-label" for="applicantState">
+                <span id="lblApplicantState">राज्य / केंद्र शासित प्रदेश (State / Union Territory)</span> *
+              </label>
+              <select class="form-select" id="applicantState" required>
+                <option value="Uttar Pradesh" selected>Uttar Pradesh (उत्तर प्रदेश)</option>
+                <option value="Bihar">Bihar (बिहार)</option>
+                <option value="Andhra Pradesh">Andhra Pradesh (आंध्र प्रदेश)</option>
+                <option value="Arunachal Pradesh">Arunachal Pradesh (अरुणाचल प्रदेश)</option>
+                <option value="Assam">Assam (असम)</option>
+                <option value="Chhattisgarh">Chhattisgarh (छत्तीसगढ़)</option>
+                <option value="Goa">Goa (गोवा)</option>
+                <option value="Gujarat">Gujarat (गुजरात)</option>
+                <option value="Haryana">Haryana (हरियाणा)</option>
+                <option value="Himachal Pradesh">Himachal Pradesh (हिमाचल प्रदेश)</option>
+                <option value="Jharkhand">Jharkhand (झारखंड)</option>
+                <option value="Karnataka">Karnataka (कर्नाटक)</option>
+                <option value="Kerala">Kerala (केरल)</option>
+                <option value="Madhya Pradesh">Madhya Pradesh (मध्य प्रदेश)</option>
+                <option value="Maharashtra">Maharashtra (महाराष्ट्र)</option>
+                <option value="Manipur">Manipur (मणिपुर)</option>
+                <option value="Meghalaya">Meghalaya (मेघालय)</option>
+                <option value="Mizoram">Mizoram (मिज़ोरम)</option>
+                <option value="Nagaland">Nagaland (नागालैंड)</option>
+                <option value="Odisha">Odisha (ओडिशा)</option>
+                <option value="Punjab">Punjab (पंजाब)</option>
+                <option value="Rajasthan">Rajasthan (राजस्थान)</option>
+                <option value="Sikkim">Sikkim (सिक्किम)</option>
+                <option value="Tamil Nadu">Tamil Nadu (तमिलनाडु)</option>
+                <option value="Telangana">Telangana (तेलंगाना)</option>
+                <option value="Tripura">Tripura (त्रिपुरा)</option>
+                <option value="Uttarakhand">Uttarakhand (उत्तराखंड)</option>
+                <option value="West Bengal">West Bengal (पश्चिम बंगाल)</option>
+                <option value="Andaman and Nicobar">Andaman and Nicobar Islands</option>
+                <option value="Chandigarh">Chandigarh (चंडीगढ़)</option>
+                <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra &amp; Nagar Haveli and Daman &amp; Diu</option>
+                <option value="Delhi">Delhi NCT (दिल्ली)</option>
+                <option value="Jammu and Kashmir">Jammu and Kashmir (जम्मू व कश्मीर)</option>
+                <option value="Ladakh">Ladakh UT (लद्दाख)</option>
+                <option value="Lakshadweep">Lakshadweep UT</option>
+                <option value="Puducherry">Puducherry UT (पुदुचेरी)</option>
+              </select>
             </div>
 
             <div>
@@ -876,19 +973,43 @@
         <div id="custModalStateWrap" style="margin-bottom:14px;">
           <label class="form-label" style="color:#94a3b8;">राज्य चुनें (Select State for Portal &amp; Fee):</label>
           <select id="custModalStateSelect" class="form-select" onchange="onCustModalStateChange()">
-            <option value="UP">उत्तर प्रदेश (e-District UP)</option>
-            <option value="Bihar">बिहार (RTPS ServicePlus)</option>
-            <option value="Punjab">पंजाब (Sewa Kendra)</option>
-            <option value="Haryana">हरियाणा (Saral Haryana)</option>
-            <option value="Delhi">दिल्ली (e-District Delhi)</option>
-            <option value="MP">मध्य प्रदेश (MP e-District)</option>
-            <option value="Rajasthan">राजस्थान (Emitra)</option>
-            <option value="Maharashtra">महाराष्ट्र (Aaple Sarkar)</option>
-            <option value="WB">पश्चिम बंगाल (WB e-District)</option>
-            <option value="Gujarat">गुजरात (Digital Gujarat)</option>
-            <option value="Jharkhand">झारखंड (Jharsewa)</option>
-            <option value="Uttarakhand">उत्तराखंड (e-Services)</option>
-            <option value="all">अन्य सभी राज्य (All India)</option>
+            <option value="all">All India / Central Portal</option>
+            <option value="Uttar Pradesh" selected>Uttar Pradesh (e-District UP)</option>
+            <option value="Bihar">Bihar (RTPS ServicePlus)</option>
+            <option value="Andhra Pradesh">Andhra Pradesh (MeeSeva)</option>
+            <option value="Arunachal Pradesh">Arunachal Pradesh (ServicePlus)</option>
+            <option value="Assam">Assam (Sewa Setu)</option>
+            <option value="Chhattisgarh">Chhattisgarh (e-District)</option>
+            <option value="Goa">Goa (Goa Online)</option>
+            <option value="Gujarat">Gujarat (Digital Gujarat)</option>
+            <option value="Haryana">Haryana (Antyodaya Saral)</option>
+            <option value="Himachal Pradesh">Himachal Pradesh (e-District)</option>
+            <option value="Jharkhand">Jharkhand (Jharsewa)</option>
+            <option value="Karnataka">Karnataka (Seva Sindhu)</option>
+            <option value="Kerala">Kerala (e-District)</option>
+            <option value="Madhya Pradesh">Madhya Pradesh (MP e-District)</option>
+            <option value="Maharashtra">Maharashtra (Aaple Sarkar)</option>
+            <option value="Manipur">Manipur (e-District)</option>
+            <option value="Meghalaya">Meghalaya (e-District)</option>
+            <option value="Mizoram">Mizoram (Citizen Portal)</option>
+            <option value="Nagaland">Nagaland (e-District)</option>
+            <option value="Odisha">Odisha (Odisha e-District)</option>
+            <option value="Punjab">Punjab (Sewa Kendra)</option>
+            <option value="Rajasthan">Rajasthan (Emitra)</option>
+            <option value="Sikkim">Sikkim (e-District)</option>
+            <option value="Tamil Nadu">Tamil Nadu (TNeGA e-Sevai)</option>
+            <option value="Telangana">Telangana (MeeSeva TS)</option>
+            <option value="Tripura">Tripura (e-District)</option>
+            <option value="Uttarakhand">Uttarakhand (e-Services UK)</option>
+            <option value="West Bengal">West Bengal (WB e-District)</option>
+            <option value="Andaman and Nicobar">Andaman and Nicobar Islands</option>
+            <option value="Chandigarh">Chandigarh (e-Jan Sampark)</option>
+            <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra &amp; Nagar Haveli and Daman &amp; Diu</option>
+            <option value="Delhi">Delhi NCT (e-District Delhi)</option>
+            <option value="Jammu and Kashmir">Jammu and Kashmir (JK e-Services)</option>
+            <option value="Ladakh">Ladakh UT (e-District Ladakh)</option>
+            <option value="Lakshadweep">Lakshadweep UT</option>
+            <option value="Puducherry">Puducherry UT (e-District)</option>
           </select>
         </div>
 
@@ -959,54 +1080,69 @@
         nav?.classList.toggle("open");
       });
 
-      // Language Switcher State
-      let currentLang = "hi"; // 'hi' or 'en'
+      // Language Switcher State (Default English as primary)
+      let currentLang = "en"; // Primary English
       function toggleLanguage() {
-        currentLang = currentLang === "hi" ? "en" : "hi";
+        currentLang = currentLang === "en" ? "hi" : "en";
         applyLanguageStrings();
       }
 
       function applyLanguageStrings() {
         const isHi = currentLang === "hi";
         document.getElementById("langToggleBtn").textContent = isHi ? "🌐 Language: हिंदी (Switch to English)" : "🌐 Language: English (हिंदी में बदलें)";
-        document.getElementById("pageTitleText").textContent = isHi ? "शान साइबर कैफे एवं ई-सेवा केंद्र" : "Shan Cyber Cafe & Global E-Seva";
+        document.getElementById("pageTitleText").textContent = isHi ? "शान साइबर कैफे एवं ई-सेवा केंद्र" : "Shan Cyber Cafe & Global E-Seva Portal";
         document.getElementById("pageSubtitleText").textContent = isHi
           ? "Shan Cyber Cafe & Global E-Seva — भारत सरकार, राज्य सरकार व वैश्विक नागरिकों के सभी आधिकारिक दस्तावेज़, पासपोर्ट, पैन कार्ड, प्रमाण पत्र एवं ऑनलाइन आवेदन।"
-          : "Shan Cyber Cafe & Global E-Seva — Official Indian Government, State-wise & Global citizen documentation, Passport, PAN, Certificates & Online registrations.";
+          : "Shan Cyber Cafe & Global E-Seva — Official Indian Government, 28 States & 8 UTs citizen documentation, Passport, PAN, Affidavits, Certificates & Online registrations.";
         document.getElementById("availableServicesHeading").textContent = isHi ? "उपलब्ध ई-सेवाएँ व दस्तावेज़ (Available Services)" : "Available E-Seva & Citizen Services";
         document.getElementById("quickApplyText").textContent = isHi ? "नया आवेदन भरें ➔" : "Apply Online ➔";
         document.getElementById("formHeaderTitle").textContent = isHi ? "ऑनलाइन सेवा पंजीकरण फ़ॉर्म (Registration Form)" : "Online Service Registration Form";
-        document.getElementById("formHeaderDesc").textContent = isHi ? "कार्ड से 'आवेदन करें' दबाने पर सेवा अपने-आप सिलेक्ट हो जाती है।" : "Clicking 'Apply' auto-selects the exact service.";
+        document.getElementById("formHeaderDesc").textContent = isHi ? "कार्ड से 'आवेदन करें' दबाने पर सेवा अपने-आप सिलेक्ट हो जाती है।" : "Click 'Apply' on any service card to auto-select and proceed without leaving this page.";
         document.getElementById("btnSubmitText").textContent = isHi ? "आवेदन सबमिट करें (Submit Application to Portal)" : "Submit Application to Portal";
         document.getElementById("submitSubnote").textContent = isHi ? "सबमिट करते ही आवेदन सुरक्षित रूप से हमारे पोर्टल और ओनर स्टूडियो डैशबोर्ड पर दर्ज हो जाएगा।" : "Your application is directly saved to our portal & Owner Studio Dashboard.";
         renderServicesGrid(currentActiveCategory);
       }
 
-      // Expanded Real Services Catalog (All India, States, Passport, & Global NRI)
+      // Comprehensive Real Services Catalog (All India, States, Passport, Affidavits & Global)
       const servicesList = [
-        // Identity & Passport
-        { id: "passport-fresh", title: "पासपोर्ट नया आवेदन (Passport Seva Fresh / Reissue)", titleEn: "Passport Seva Fresh / Re-issue", category: "identity", fee: 3100, icon: "✈️", desc: "नया सामान्य पासपोर्ट ऑनलाइन आवेदन, अपॉइंटमेंट और दस्तावेज सत्यापन सेवा (सरकारी फीस ₹2,500 + सर्विस)।", descEn: "Fresh or renewal normal Indian Passport application, appointment booking & document verification (Govt fee ₹2,500 + service charge)." },
-        { id: "passport-tatkaal", title: "तत्काल पासपोर्ट (Tatkaal Passport Slot)", titleEn: "Tatkaal Passport Priority Booking", category: "identity", fee: 4000, icon: "⚡", desc: "तत्काल श्रेणी में 3-5 कार्यदिवस में पासपोर्ट जारी करने हेतु प्राथमिकता स्लॉट बुकिंग।", descEn: "Priority Tatkaal passport filing and slot assistance for urgent international travel." },
-        { id: "new-pan", title: "नया पैन कार्ड (New PAN Card)", titleEn: "New PAN Card (NSDL/UTIITSL)", category: "identity", fee: 250, icon: "💳", desc: "NSDL/UTIITSL से नया पैन कार्ड, 48 घंटे में ई-पैन और 10 दिन में भौतिक कार्ड।", descEn: "New PAN card application with instant digital e-PAN and doorstep physical delivery." },
+        // Passport & Global
+        { id: "passport-fresh", title: "पासपोर्ट नया सामान्य आवेदन (Passport Fresh / Re-issue)", titleEn: "Passport Seva Fresh / Re-issue (Normal)", category: "identity", fee: 4500, icon: "✈️", desc: "नया सामान्य पासपोर्ट ऑनलाइन आवेदन, अपॉइंटमेंट और दस्तावेज सत्यापन सेवा (सरकारी फीस ₹2,500 + सर्विस)।", descEn: "Fresh normal Indian Passport application, appointment booking & document verification (Govt fee ₹2,500 + service charge)." },
+        { id: "passport-tatkaal", title: "तत्काल पासपोर्ट प्राथमिकता स्लॉट (Tatkaal Passport Priority)", titleEn: "Tatkaal Passport Priority Fast-Track Booking", category: "identity", fee: 6000, icon: "⚡", desc: "तत्काल श्रेणी में 3-5 कार्यदिवस में पासपोर्ट जारी करने हेतु प्राथमिकता स्लॉट बुकिंग व संपूर्ण दस्तावेजीकरण।", descEn: "Priority Tatkaal passport filing and appointment slot assistance for urgent international travel." },
+        { id: "passport-pcc", title: "पासपोर्ट पुलिस क्लीयरेंस सर्टिफिकेट (Passport PCC)", titleEn: "Police Clearance Certificate (PCC Slot)", category: "identity", fee: 800, icon: "🛡️", desc: "विदेश यात्रा, नौकरी या स्थायी निवास हेतु पासपोर्ट सेवा केंद्र से अधिकृत PCC स्लॉट।", descEn: "Official Police Clearance Certificate appointment slot and filing for overseas employment/visa." },
+        { id: "new-pan", title: "नया पैन कार्ड (New PAN Card NSDL/UTIITSL)", titleEn: "New PAN Card (Physical + Instant e-PAN)", category: "identity", fee: 250, icon: "💳", desc: "NSDL/UTIITSL से नया पैन कार्ड, 48 घंटे में ई-पैन और 10 दिन में भौतिक कार्ड।", descEn: "New PAN card application with instant digital e-PAN and doorstep physical delivery." },
         { id: "pan-correction", title: "पैन कार्ड संशोधन (PAN Correction)", titleEn: "PAN Card Correction & Reprint", category: "identity", fee: 200, icon: "🔄", desc: "पैन कार्ड में नाम, पिता का नाम, फोटो, हस्ताक्षर या जन्मतिथि में सुधार।", descEn: "Correction of name, DOB, photo, signature or father name on existing PAN card." },
-        { id: "pvc-aadhaar", title: "पीवीसी आधार कार्ड (Smart PVC Aadhaar)", titleEn: "PVC Smart Aadhaar Card", category: "identity", fee: 100, icon: "🪪", desc: "ओरिजिनल वाटरप्रूफ पीवीसी स्मार्ट आधार कार्ड ऑनलाइन आर्डर व घर तक डिलीवरी।", descEn: "Official durable PVC smart Aadhaar card order delivered to your address." },
-        { id: "aadhaar-update", title: "आधार कार्ड सुधार व पता अपडेट", titleEn: "Aadhaar Demographic / Address Update", category: "identity", fee: 120, icon: "📝", desc: "आधार में नाम, जन्मतिथि, पता या मोबाइल नंबर सुधार की ऑनलाइन सुविधा।", descEn: "Online assistance for updating address, mobile linkage, and demographic details." },
+        { id: "pvc-aadhaar", title: "पीवीसी स्मार्ट आधार कार्ड (Smart PVC Aadhaar)", titleEn: "PVC Smart Waterproof Aadhaar Card", category: "identity", fee: 100, icon: "🪪", desc: "ओरिजिनल वाटरप्रूफ पीवीसी स्मार्ट आधार कार्ड ऑनलाइन आर्डर व घर तक डिलीवरी।", descEn: "Official durable PVC smart Aadhaar card order delivered to your address." },
+        { id: "aadhaar-update", title: "आधार कार्ड सुधार व पता अपडेट", titleEn: "Aadhaar Demographic / Address Update", category: "identity", fee: 150, icon: "📝", desc: "आधार में नाम, जन्मतिथि, पता या मोबाइल नंबर सुधार की ऑनलाइन सुविधा।", descEn: "Online assistance for updating address, mobile linkage, and demographic details." },
+        { id: "aadhaar-mobile", title: "आधार मोबाइल व ईमेल लिंक सहायता", titleEn: "Aadhaar Mobile & Email Linkage Assistance", category: "identity", fee: 120, icon: "📱", desc: "OTP प्रमाणीकरण हेतु आधार कार्ड में नया मोबाइल नंबर व ईमेल लिंक करना।", descEn: "Aadhaar active mobile number and email linkage assistance for OTP verification." },
+        { id: "aadhaar-bio", title: "आधार बायोमेट्रिक व फिंगरप्रिंट अपडेट", titleEn: "Aadhaar Biometric & Fingerprint Update Slot", category: "identity", fee: 180, icon: "👆", desc: "5 या 15 वर्ष की आयु में अनिवार्य बायोमेट्रिक व आईरिस फिंगरप्रिंट अपडेट।", descEn: "Mandatory biometric and iris update slot booking for children and adults." },
         { id: "voter-new", title: "नया वोटर कार्ड (Voter ID Form 6)", titleEn: "New Voter ID Card (Form 6)", category: "identity", fee: 120, icon: "🗳️", desc: "18 वर्ष पूर्ण होने पर भारतीय निर्वाचन आयोग में नया मतदाता पंजीकरण।", descEn: "New voter registration for Indian citizens turning 18 via Election Commission." },
         { id: "voter-correction", title: "वोटर कार्ड संशोधन (Form 8)", titleEn: "Voter ID Correction (Form 8)", category: "identity", fee: 100, icon: "✏️", desc: "मतदाता पहचान पत्र में नाम, फोटो, पता या बूथ शिफ्टिंग सुधार।", descEn: "Correction of personal details or assembly constituency shifting on voter card." },
         { id: "voter-epic", title: "डिजिटल वोटर कार्ड (e-EPIC Download)", titleEn: "Digital Voter Card e-EPIC Download", category: "identity", fee: 50, icon: "📥", desc: "ओरिजिनल डिजिटल वोटर कार्ड डाउनलोड व हाई-क्वालिटी प्रिंट।", descEn: "Instant download of verified digital e-EPIC card with QR code." },
 
-        // Certificates
+        // Certificates & Verification
+        { id: "character-cert", title: "पुलिस चरित्र प्रमाण पत्र (Police Character Verification)", titleEn: "Police Character & Background Verification Certificate", category: "certificate", fee: 250, icon: "🛡️", desc: "सरकारी व निजी नौकरियों, टेंडर व पासपोर्ट हेतु पुलिस चरित्र सत्यापन प्रमाण पत्र।", descEn: "Official state police verified character and criminal background clearance certificate." },
         { id: "income-cert", title: "आय प्रमाण पत्र (Income Certificate)", titleEn: "Income Certificate (e-District)", category: "certificate", fee: 150, icon: "📄", desc: "तहसील / ई-डिस्ट्रिक्ट द्वारा सत्यापित अधिकृत आय प्रमाण पत्र।", descEn: "Official revenue income certificate verified by state district administration." },
-        { id: "caste-cert", title: "जाति प्रमाण पत्र (Caste Certificate)", titleEn: "Caste Certificate (OBC/SC/ST)", category: "certificate", fee: 150, icon: "📜", desc: "ओबीसी, एससी, एसटी या ईडब्ल्यूएस जाति प्रमाण पत्र ऑनलाइन आवेदन।", descEn: "Caste verification and certificate generation for central & state reservations." },
-        { id: "domicile-cert", title: "निवास प्रमाण पत्र (Domicile/Niwas)", titleEn: "Domicile / Residence Certificate", category: "certificate", fee: 150, icon: "🏡", desc: "मूल निवास व स्थायी निवासी प्रमाण पत्र (सभी सरकारी नौकरियों के लिए मान्य)।", descEn: "State residential and permanent domicile certificate for job/college admissions." },
-        { id: "birth-cert", title: "जन्म प्रमाण पत्र (Birth Certificate)", titleEn: "Birth Certificate Registration", category: "certificate", fee: 200, icon: "👶", desc: "नगर निगम व ग्राम पंचायत द्वारा जारी डिजिटल जन्म प्रमाण पत्र।", descEn: "Municipal Corporation / Gram Panchayat birth certificate registration." },
-        { id: "death-cert", title: "मृत्यु प्रमाण पत्र (Death Certificate)", titleEn: "Death Certificate Registration", category: "certificate", fee: 200, icon: "🕯️", desc: "नगर निगम व पंचायत द्वारा जारी आधिकारिक मृत्यु प्रमाण पत्र।", descEn: "Official government death certificate application and registry." },
-        { id: "character-cert", title: "चरित्र प्रमाण पत्र (Police Verification)", titleEn: "Police Character Certificate", category: "certificate", fee: 250, icon: "🛡️", desc: "सरकारी व निजी नौकरियों के लिए पुलिस चरित्र सत्यापन प्रमाण पत्र।", descEn: "Police department verified character & background clearance certificate." },
+        { id: "caste-obc", title: "ओबीसी (OBC) जाति प्रमाण पत्र", titleEn: "OBC Caste Certificate", category: "certificate", fee: 150, icon: "📜", desc: "अन्य पिछड़ा वर्ग जाति प्रमाण पत्र ऑनलाइन आवेदन व राजस्व सत्यापन।", descEn: "Other Backward Classes (OBC) caste certificate application & revenue verification." },
+        { id: "caste-ncl", title: "नॉन-क्रीमी लेयर (OBC-NCL) प्रमाण पत्र", titleEn: "OBC Non-Creamy Layer (NCL) Certificate", category: "certificate", fee: 180, icon: "📜", desc: "केंद्रीय व राज्य स्तरीय सरकारी नौकरियों में आरक्षण हेतु NCL सर्टिफिकेट।", descEn: "Non-Creamy Layer certificate required for central and state govt job reservations." },
+        { id: "caste-sc", title: "अनुसूचित जाति / जनजाति (SC/ST) प्रमाण पत्र", titleEn: "SC / ST Caste Certificate", category: "certificate", fee: 140, icon: "📜", desc: "एससी व एसटी वर्ग हेतु अधिकृत सरकारी जाति प्रमाण पत्र।", descEn: "Official Scheduled Caste / Scheduled Tribe reservation certificate." },
+        { id: "domicile-cert", title: "मूल निवास प्रमाण पत्र (Domicile/Niwas)", titleEn: "Domicile / Residence Certificate", category: "certificate", fee: 150, icon: "🏡", desc: "मूल निवास व स्थायी निवासी प्रमाण पत्र (सभी सरकारी नौकरियों के लिए मान्य)।", descEn: "State residential and permanent domicile certificate for job/college admissions." },
+        { id: "birth-cert", title: "डिजिटल जन्म प्रमाण पत्र (Birth Certificate)", titleEn: "Birth Certificate Registration", category: "certificate", fee: 200, icon: "👶", desc: "नगर निगम व ग्राम पंचायत द्वारा जारी डिजिटल जन्म प्रमाण पत्र।", descEn: "Municipal Corporation / Gram Panchayat birth certificate registration." },
+        { id: "death-cert", title: "डिजिटल मृत्यु प्रमाण पत्र (Death Certificate)", titleEn: "Death Certificate Registration", category: "certificate", fee: 200, icon: "🕯️", desc: "नगर निगम व पंचायत द्वारा जारी आधिकारिक मृत्यु प्रमाण पत्र।", descEn: "Official government death certificate application and registry." },
         { id: "ews-cert", title: "ईडब्ल्यूएस प्रमाण पत्र (EWS 10% Quota)", titleEn: "EWS 10% Quota Certificate", category: "certificate", fee: 180, icon: "📑", desc: "सामान्य वर्ग के आर्थिक रूप से कमजोर वर्ग हेतु 10% आरक्षण सर्टिफिकेट।", descEn: "Economically Weaker Section certificate for education and jobs quota." },
+        { id: "land-khatauni", title: "भूलेख खतौनी व खसरा नकल", titleEn: "Land Khatauni & Bhulekh Record Copy", category: "certificate", fee: 80, icon: "🌾", desc: "राजस्व परिषद से अधिकृत डिजिटल प्रमाणित खतौनी व भू-अभिलेख पर्चा।", descEn: "Official verified land revenue record Khatauni and Khasra certified copy." },
+
+        // Court Affidavits & Legal
+        { id: "affidavit-name", title: "नाम व वर्तनी सुधार शपथ पत्र (Name Correction Affidavit)", titleEn: "Name / Spelling Mistake Correction Court Affidavit", category: "legal", fee: 120, icon: "⚖️", desc: "मार्कशीट, आधार या पैन में नाम की स्पेलिंग गलती सुधारने हेतु नोटरीकृत शपथ पत्र।", descEn: "Notarized affidavit for correcting spelling mistakes across marksheets, PAN, or Aadhaar." },
+        { id: "affidavit-marriage", title: "विवाह पंजीकरण व कोर्ट शपथ पत्र (Marriage Affidavit)", titleEn: "Marriage Registration Joint Affidavit & Certificate", category: "legal", fee: 250, icon: "💍", desc: "विवाह प्रमाण पत्र, संयुक्त घोषणा एवं नोटरी सत्यापन हेतु आधिकारिक शपथ पत्र।", descEn: "Joint sworn marriage affidavit and registration assistance with notary attestation." },
+        { id: "affidavit-address", title: "पता परिवर्तन शपथ पत्र (Address Change Affidavit)", titleEn: "Address Proof & Change Notarized Affidavit", category: "legal", fee: 120, icon: "🏠", desc: "किरायानामा या निवास प्रमाण न होने पर अधिकृत निवास शपथ पत्र।", descEn: "Sworn residence declaration affidavit accepted for bank, DL and government updates." },
+        { id: "affidavit-gap", title: "गैप ईयर छात्र शपथ पत्र (Student Gap Year Affidavit)", titleEn: "Student Education Gap Year Affidavit", category: "legal", fee: 120, icon: "🎓", desc: "कॉलेज दाखिले या सरकारी नौकरी में पढ़ाई के अंतराल (Gap Year) हेतु शपथ पत्र।", descEn: "Gap year affidavit required for college admission or competitive exams." },
+        { id: "affidavit-income", title: "आय स्व-घोषणा शपथ पत्र (Income Declaration Affidavit)", titleEn: "Income Self-Declaration Sworn Affidavit", category: "legal", fee: 100, icon: "📄", desc: "छात्रवृत्ति व राशन कार्ड हेतु स्वप्रमाणित वार्षिक आय घोषणा पत्र।", descEn: "Self-attested legal income declaration affidavit for scholarships and welfare." },
+        { id: "legal-drafting", title: "नोटरी व कानूनी ड्राफ्टिंग सहायता (Legal Drafting)", titleEn: "Notary & Legal Agreement Drafting Assistance", category: "legal", fee: 200, icon: "⚖️", desc: "रेंट एग्रीमेंट, पावर ऑफ अटॉर्नी, वसीयत व कानूनी समझौतों की ऑनलाइन ड्राफ्टिंग।", descEn: "Professional drafting of rent agreements, general power of attorney, and legal affidavits." },
 
         // Transport
-        { id: "learning-licence", title: "लर्निंग ड्राइविंग लाइसेंस (LL Online)", titleEn: "Learner Driving License (LL)", category: "transport", fee: 450, icon: "🚗", desc: "सारथी परिवहन पोर्टल पर बिना आरटीओ गए ऑनलाइन लर्निंग टेस्ट व अप्रूवल।", descEn: "Parivahan online learning driving license application and computer test booking." },
+        { id: "learning-licence", title: "लर्निंग ड्राइविंग लाइसेंस (LL Online)", titleEn: "Learner Driving License (LL Online)", category: "transport", fee: 450, icon: "🚗", desc: "सारथी परिवहन पोर्टल पर बिना आरटीओ गए ऑनलाइन लर्निंग टेस्ट व अप्रूवल।", descEn: "Parivahan online learning driving license application and computer test booking." },
         { id: "permanent-dl", title: "पक्का ड्राइविंग लाइसेंस स्लॉट बुकिंग", titleEn: "Permanent Driving License (DL)", category: "transport", fee: 650, icon: "🏍️", desc: "स्थायी डीएल के लिए स्लॉट बुकिंग, आरटीओ फीस व दस्तावेज सबमिशन।", descEn: "Permanent driving license slot appointment and biometric schedule." },
+        { id: "dl-renewal", title: "ड्राइविंग लाइसेंस नवीनीकरण व पता सुधार", titleEn: "DL Renewal & Address Correction", category: "transport", fee: 550, icon: "🔄", desc: "डीएल की वैधता समाप्त होने पर नवीनीकरण व नया पता दर्ज कराना।", descEn: "Driving license renewal, duplicate DL, and address change assistance." },
         { id: "rc-transfer", title: "वाहन आरसी ट्रांसफर व रिन्युअल", titleEn: "Vehicle RC Ownership Transfer", category: "transport", fee: 550, icon: "🚙", desc: "गाड़ी की आरसी का नाम ट्रांसफर, एनओसी, फिटनेस व हाइपोथिकेशन हटाना।", descEn: "Vehicle registration certificate ownership transfer, NOC, and re-registration." },
         { id: "rc-hypo", title: "आरसी लोन हटाना (HPA / HPT Removal)", titleEn: "Vehicle Hypothecation Loan Removal", category: "transport", fee: 450, icon: "🏦", desc: "बैंक लोन पूरा होने पर वाहन आरसी से हाइपोथिकेशन ऑनलाइन कैंसिलेशन।", descEn: "Online removal of bank hypothecation after vehicle loan closure." },
 
@@ -1014,17 +1150,29 @@
         { id: "ayushman-card", title: "आयुष्मान भारत गोल्डन कार्ड", titleEn: "Ayushman Bharat PMJAY Health Card", category: "welfare", fee: 100, icon: "🏥", desc: "₹5 लाख तक के मुफ्त इलाज के लिए अधिकृत आयुष्मान कार्ड डाउनलोड व पंजीकरण।", descEn: "PMJAY Ayushman Bharat card offering up to ₹5 lakh free annual medical treatment." },
         { id: "pm-kisan", title: "पीएम किसान ई-केवाईसी व आवेदन", titleEn: "PM-Kisan Registration & e-KYC", category: "welfare", fee: 90, icon: "🌾", desc: "सालाना ₹6000 की किस्त हेतु नया पंजीकरण व फिंगरप्रिंट/ओटीपी ई-केवाईसी।", descEn: "PM-Kisan Samman Nidhi farmer registration and biometric/OTP e-KYC." },
         { id: "eshram-card", title: "ई-श्रम कार्ड (E-Shram Card)", titleEn: "E-Shram National Worker Card", category: "welfare", fee: 80, icon: "👷", desc: "असंगठित क्षेत्र के कामगारों के लिए सरकारी बीमा व ई-श्रम पंजीकरण।", descEn: "National social security registration card for unorganized sector workers." },
-        { id: "ration-card", title: "नया राशन कार्ड व नाम जोड़ना", titleEn: "Ration Card Application / Member Add", category: "welfare", fee: 180, icon: "🌾", desc: "राशन कार्ड में नए बच्चे/सदस्य का नाम जोड़ना, यूनिट ट्रांसफर या नया कार्ड।", descEn: "New digital ration card issuance or member addition in family food ration." },
+        { id: "ration-new", title: "नया राशन कार्ड व नाम जोड़ना", titleEn: "New Ration Card Application", category: "welfare", fee: 180, icon: "🌾", desc: "राशन कार्ड में नए बच्चे/सदस्य का नाम जोड़ना, यूनिट ट्रांसफर या नया कार्ड।", descEn: "New digital ration card issuance or member addition in family food ration." },
+        { id: "ration-member", title: "राशन कार्ड में सदस्य जोड़ना / सुधार", titleEn: "Ration Card Member Add / Correction", category: "welfare", fee: 120, icon: "👥", desc: "परिवार के नए सदस्य का नाम जोड़ना या यूनिट संशोधन।", descEn: "Addition of family member or unit modification on existing ration card." },
+        { id: "pension-scheme", title: "वृद्धा / विधवा / दिव्यांग पेंशन आवेदन", titleEn: "Old Age / Widow / Disability Pension", category: "welfare", fee: 150, icon: "🧓", desc: "समाज कल्याण विभाग से मासिक सरकारी पेंशन का ऑनलाइन आवेदन।", descEn: "Online registration for senior citizen, widow and disability monthly pensions." },
 
         // Finance & EPFO
         { id: "pf-full-withdrawal", title: "पीएफ पूरा निकासी (Form 19 & 10C)", titleEn: "EPFO Full PF & Pension Withdrawal", category: "finance", fee: 350, icon: "💰", desc: "नौकरी छोड़ने के बाद पीएफ और पेंशन का पूरा पैसा बैंक खाते में पाएं।", descEn: "Complete withdrawal of employee provident fund and pension settlement." },
         { id: "pf-advance", title: "पीएफ एडवांस निकासी (Form 31)", titleEn: "EPFO Advance PF Claim (Form 31)", category: "finance", fee: 250, icon: "💼", desc: "इमरजेंसी, बीमारी या मकान के लिए पीएफ एडवांस तुरंत क्लेम करें।", descEn: "Emergency advance PF withdrawal claim during ongoing employment." },
-        { id: "uan-kyc", title: "UAN एक्टिवेशन व बैंक केवाईसी लिंक", titleEn: "UAN Activation & Bank/PAN KYC", category: "finance", fee: 80, icon: "🔗", desc: "यूनिवर्सल अकाउंट नंबर को चालू करना और पैन/बैंक खाता जोड़ना।", descEn: "Activation of Universal Account Number and linking bank account with PAN." },
+        { id: "uan-kyc", title: "UAN एक्टिवेशन व बैंक केवाईसी लिंक", titleEn: "UAN Activation & Bank/PAN KYC", category: "finance", fee: 100, icon: "🔗", desc: "यूनिवर्सल अकाउंट नंबर को चालू करना और पैन/बैंक खाता जोड़ना।", descEn: "Activation of Universal Account Number and linking bank account with PAN." },
+        { id: "uan-pass-reset", title: "UAN पासवर्ड रीसेट व मोबाइल सुधार", titleEn: "UAN Password Reset & Mobile Update", category: "finance", fee: 80, icon: "🔑", desc: "पीएफ खाते का भूला हुआ पासवर्ड रीसेट व नया सक्रिय नंबर जोड़ना।", descEn: "Password recovery, forgot password reset and active mobile update for EPFO." },
 
         // Exam & Jobs
-        { id: "job-form", title: "सरकारी नौकरी ऑनलाइन फॉर्म (SSC/Railway)", titleEn: "Government Job Application (SSC/RRB)", category: "exam", fee: 150, icon: "🎓", desc: "सभी केंद्रीय व राज्य स्तरीय सरकारी भर्तियों के फॉर्म बिना गलती के भरवाएं।", descEn: "Error-free online form filling for SSC, Railways, State Police, and Defence jobs." },
+        { id: "resume-cv-builder", title: "प्रोफेशनल रिज़्यूमे / CV मेकर (ATS-Ready PDF)", titleEn: "Professional ATS Resume & CV Builder", category: "exam", fee: 20, icon: "📄", desc: "कस्टमाइज़ेबल सेक्शन्स, तुरंत रियल-टाइम प्रीव्यू और ₹20 ऑनलाइन भुगतान के बाद प्रीमियम PDF डाउनलोड।", descEn: "Customizable sections, real-time live preview, and instant premium vector PDF generation for ₹20." },
+        { id: "job-form-central", title: "केंद्रीय सरकारी नौकरी फॉर्म (SSC/Railway/Army)", titleEn: "Central Govt Job Application (SSC/RRB/Defence)", category: "exam", fee: 150, icon: "🎓", desc: "SSC, Railway, Army, Navy व Air Force के सभी ऑनलाइन फॉर्म बिना गलती के।", descEn: "Error-free online form filling for SSC, Railways, State Police, and Defence jobs." },
+        { id: "job-form-police", title: "राज्य पुलिस व दरोगा भर्ती फॉर्म (Police / SI)", titleEn: "State Police Constable & SI Form", category: "exam", fee: 150, icon: "👮", desc: "यूपी, बिहार, राजस्थान, एमपी व दिल्ली पुलिस कांस्टेबल व दरोगा भर्ती फॉर्म।", descEn: "Online application submission for State Police Constable, Sub-Inspector and PAC jobs." },
+        { id: "job-form-upsc", title: "UPSC व राज्य लोक सेवा आयोग फॉर्म (Civil Services)", titleEn: "UPSC & State PSC Application Form", category: "exam", fee: 250, icon: "🏛️", desc: "UPSC सिविल सेवा, NDA, CDS व राज्य PCS परीक्षाओं के ऑनलाइन आवेदन।", descEn: "Comprehensive online form filing for UPSC Civil Services, CDS, NDA and State PCS." },
         { id: "admit-card", title: "एडमिट कार्ड व परीक्षा सेंटर स्लिप", titleEn: "Admit Card & Exam Slip Printout", category: "exam", fee: 50, icon: "🖨️", desc: "रंगीन प्रिंटआउट, रोल नंबर ढूंढना और परीक्षा दिशा-निर्देश।", descEn: "Hall ticket / Admit card download, center verification and color printout." },
         { id: "scholarship", title: "छात्रवृत्ति (Scholarship Form)", titleEn: "National / State Scholarship Form", category: "exam", fee: 150, icon: "📚", desc: "प्री-मैट्रिक, पोस्ट-मैट्रिक व दशमोत्तर छात्रवृत्ति ऑनलाइन आवेदन।", descEn: "Online scholarship application for pre-matric, post-matric and higher studies." },
+
+        // Business & MSME
+        { id: "udyam-msme", title: "उद्यम / MSME रजिस्ट्रेशन सर्टिफिकेट", titleEn: "Udyam / MSME Business Registration", category: "business", fee: 300, icon: "🏢", desc: "सरकारी व्यापार रजिस्ट्रेशन नंबर और अधिकृत एमएसएमई सर्टिफिकेट।", descEn: "Official government MSME/Udyam certificate registration for businesses." },
+        { id: "gst-reg", title: "GST नया रजिस्ट्रेशन व पोर्टल रिटर्न फाइलिंग", titleEn: "GST New Registration & Portal Filing", category: "business", fee: 1200, icon: "📊", desc: "नया 15 अंकों का जीएसटी नंबर और सरकारी पोर्टल पर रजिस्ट्रेशन सर्टिफिकेट।", descEn: "New 15-digit GST registration, documentation, and tax portal filing." },
+        { id: "shop-licence", title: "दुकान लाइसेंस (गुमाश्ता प्रमाण पत्र)", titleEn: "Shop & Establishment License (Gumasta)", category: "business", fee: 650, icon: "🏪", desc: "श्रम विभाग से व्यापार व दुकान का आधिकारिक कानूनी रजिस्ट्रेशन।", descEn: "Labor department shop and establishment commercial certificate." },
+        { id: "fssai-food", title: "FSSAI खाद्य सुरक्षा रजिस्ट्रेशन", titleEn: "FSSAI Food Safety License Registration", category: "business", fee: 800, icon: "🥗", desc: "होटल, किराना, कैफे, डेयरी हेतु अधिकृत 14 अंकों का FSSAI नंबर।", descEn: "Official 14-digit FSSAI food safety license registration for food businesses." },
 
         // Global & NRI Services
         { id: "oci-card", title: "OCI कार्ड आवेदन व रिन्युअल (Overseas Citizen)", titleEn: "OCI Card Application / Renewal", category: "global", fee: 2200, icon: "🌍", desc: "विदेशी भारतीय नागरिकों के लिए आजीवन वीज़ा व ओसीआई कार्ड आवेदन सहायता।", descEn: "Overseas Citizen of India (OCI) registration, renewal, and passport endorsement." },
@@ -1032,9 +1180,8 @@
         { id: "apostille", title: "दस्तावेज़ अपोस्टिल व दूतावास सत्यापन", titleEn: "Document Apostille & Attestation", category: "global", fee: 2500, icon: "🏛️", desc: "MEA भारत सरकार व विदेशी दूतावासों द्वारा जन्म, विवाह व डिग्री अपोस्टिल।", descEn: "MEA Govt of India & Embassy document apostille, attestation & notarization." },
 
         // Utility & Business
-        { id: "resume-cv-builder", title: "प्रोफेशनल रिज़्यूमे / CV मेकर (ATS-Ready PDF)", titleEn: "Professional ATS Resume & CV Builder", category: "exam", fee: 20, icon: "📄", desc: "कस्टमाइज़ेबल सेक्शन्स, तुरंत रियल-टाइम प्रीव्यू और ₹20 ऑनलाइन भुगतान के बाद प्रीमियम PDF डाउनलोड।", descEn: "Customizable sections, real-time live preview, and instant premium vector PDF generation for ₹20." },
         { id: "bill-payment", title: "बिजली बिल भुगतान व सरकारी रसीद", titleEn: "Electricity / Water Utility Bill Payment", category: "utility", fee: 30, icon: "⚡", desc: "विद्युत वितरण निगम के सभी ग्रामीण व शहरी बिलों का तुरंत भुगतान व पक्की रसीद।", descEn: "Instant payment of rural and urban electricity/water bills with verified receipt." },
-        { id: "udyam-msme", title: "उद्यम / MSME रजिस्ट्रेशन सर्टिफिकेट", titleEn: "Udyam / MSME Business Registration", category: "utility", fee: 300, icon: "🏢", desc: "सरकारी व्यापार रजिस्ट्रेशन नंबर और अधिकृत एमएसएमई सर्टिफिकेट।", descEn: "Official government MSME/Udyam certificate registration for businesses." },
+        { id: "electricity-meter", title: "नया बिजली मीटर कनेक्शन आवेदन", titleEn: "New Electricity Meter Connection", category: "utility", fee: 250, icon: "🔌", desc: "घरेलू व वाणिज्यिक नया बिजली कनेक्शन व लोड वृद्धि ऑनलाइन आवेदन।", descEn: "New domestic or commercial electricity connection & load extension online filing." },
         { id: "fastag", title: "फास्टैग नया रिचार्ज व समाधान", titleEn: "Fastag Recharge & Blacklist Resolution", category: "utility", fee: 50, icon: "🚘", desc: "ब्लैकलिस्टेड फास्टैग एक्टिवेशन और सभी बैंकों के फास्टैग रिचार्ज।", descEn: "Fastag instant recharge, wallet linking, and blacklist unblocking." }
       ];
 
@@ -1050,7 +1197,8 @@
           filtered = filtered.filter(s => 
             (s.title && s.title.toLowerCase().includes(currentSearchQuery)) ||
             (s.titleEn && s.titleEn.toLowerCase().includes(currentSearchQuery)) ||
-            (s.desc && s.desc.toLowerCase().includes(currentSearchQuery))
+            (s.desc && s.desc.toLowerCase().includes(currentSearchQuery)) ||
+            (s.descEn && s.descEn.toLowerCase().includes(currentSearchQuery))
           );
         }
 
@@ -1058,7 +1206,7 @@
         const stateOffset = stateFeeOffsets[currentSelectedState] || 0;
 
         if (filtered.length === 0) {
-          grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:32px; color:#94a3b8;">कोई सेवा या दस्तावेज़ नहीं मिला। कृपया अन्य शब्द खोजें।</div>';
+          grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px; color:#94a3b8;">${isHi ? 'कोई सेवा या दस्तावेज़ नहीं मिला। कृपया अन्य शब्द खोजें।' : 'No matching documents or services found. Please try another search term.'}</div>`;
           return;
         }
 
@@ -1073,7 +1221,7 @@
             <div>
               <div class="service-header">
                 <span class="service-icon">${item.icon}</span>
-                <span class="service-tag">${item.category}</span>
+                <span class="service-tag">${item.category.toUpperCase()}</span>
               </div>
               <h3 class="service-title">${title}</h3>
               <p class="service-desc">${desc}</p>
@@ -1083,7 +1231,7 @@
                 ₹${adjustedFee}
                 <small>${isHi ? "कुल देय शुल्क" : "Total Inclusive Fee"}</small>
               </div>
-              <button class="btn-apply-card" onclick="openServiceCustomizer('${item.id}')">
+              <button class="btn-apply-card" onclick="handleServiceApplyClick('${item.id}')">
                 ${isHi ? "आवेदन करें ➔" : "Apply Now ➔"}
               </button>
             </div>
@@ -1112,98 +1260,99 @@
 
       function onStateFilterChange() {
         currentSelectedState = document.getElementById('stateFilterSelect').value;
+        const applicantState = document.getElementById('applicantState');
+        if (applicantState && currentSelectedState !== 'all') {
+          applicantState.value = currentSelectedState;
+        }
         renderServicesGrid(currentActiveCategory);
       }
 
       // State-wise fee adjustments
       const stateFeeOffsets = {
+        "Uttar Pradesh": 0,
         "UP": 0,
         "Bihar": -10,
         "Punjab": 10,
         "Haryana": 0,
         "Delhi": 30,
+        "Madhya Pradesh": -10,
         "MP": -10,
         "Rajasthan": 0,
         "Maharashtra": 20,
+        "West Bengal": 0,
         "WB": 0,
         "Gujarat": 10,
         "Jharkhand": -10,
         "Uttarakhand": 0,
-        "other": 0
+        "all": 0
       };
 
       // Service Sub-Options & Customization Map
       const serviceCustomMap = {
-        "aadhaar": {
-          title: "आधार कार्ड सेवाएँ (Aadhaar Assistance)",
-          icon: "🪪",
-          options: [
-            { id: "aadhaar-address", name: "पता सुधार (Address Update)", fee: 250, docs: ["निवास प्रमाण (बिजली बिल / राशन कार्ड)", "आधार कार्ड प्रति"] },
-            { id: "aadhaar-mobile", name: "मोबाइल व ईमेल लिंक सहायता", fee: 150, docs: ["आधार कार्ड", "नया सक्रिय मोबाइल नंबर"] },
-            { id: "aadhaar-dob", name: "नाम / जन्मतिथि / लिंग सुधार", fee: 200, docs: ["10वीं मार्कशीट / जन्म प्रमाण पत्र", "आधार कार्ड"] },
-            { id: "pvc-aadhaar", name: "PVC वाटरप्रूफ स्मार्ट कार्ड आर्डर", fee: 100, docs: ["आधार कार्ड नंबर व पूरा पता"] },
-            { id: "aadhaar-bio", name: "बायोमेट्रिक फिंगरप्रिंट/आईरिस अपडेट", fee: 180, docs: ["आधार कार्ड", "जन्म प्रमाण पत्र (नाबालिग हेतु)"] }
-          ]
-        },
-        "caste": {
-          title: "जाति प्रमाण पत्र (Caste Certificate)",
-          icon: "📜",
-          options: [
-            { id: "caste-obc", name: "ओबीसी (OBC) जाति प्रमाण पत्र", fee: 150, docs: ["आधार कार्ड", "पिता का जाति प्रमाण / खतौनी", "फोटो"] },
-            { id: "caste-ncl", name: "नॉन-क्रीमी लेयर (NCL) प्रमाण पत्र", fee: 180, docs: ["आय प्रमाण पत्र", "जाति प्रमाण पत्र", "आधार कार्ड"] },
-            { id: "caste-sc", name: "अनुसूचित जाति (SC) प्रमाण पत्र", fee: 140, docs: ["आधार कार्ड", "राशन कार्ड / स्वप्रमाणित घोषणा"] },
-            { id: "caste-st", name: "अनुसूचित जनजाति (ST) प्रमाण पत्र", fee: 140, docs: ["आधार कार्ड", "ग्राम प्रधान / राजस्व सत्यापन"] },
-            { id: "caste-ebc", name: "अत्यंत पिछड़ा वर्ग (EBC - बिहार)", fee: 150, docs: ["आधार कार्ड", "निवास प्रमाण", "जाति दस्तावेज"] }
-          ]
-        },
-        "income": {
-          title: "आय प्रमाण पत्र (Income Certificate)",
-          icon: "📄",
-          options: [
-            { id: "income-normal", name: "तहसील आय प्रमाण पत्र (e-District)", fee: 150, docs: ["आधार कार्ड", "स्वप्रमाणित घोषणा पत्र", "वेतन पर्ची / खतौनी"] },
-            { id: "income-tatkaal", name: "फास्ट-ट्रैक प्राथमिकता आय प्रमाण", fee: 220, docs: ["आधार कार्ड", "तहसीलदार प्रार्थना पत्र"] }
-          ]
-        },
-        "domicile": {
-          title: "निवास प्रमाण पत्र (Domicile / Niwas)",
-          icon: "🏡",
-          options: [
-            { id: "domicile-normal", name: "स्थाई मूल निवास प्रमाण पत्र", fee: 150, docs: ["आधार कार्ड", "बिजली बिल / राशन कार्ड / स्कूल टीसी"] },
-            { id: "domicile-parivar", name: "परिवार रजिस्टर नकल सहित निवास", fee: 180, docs: ["परिवार रजिस्टर की प्रति", "आधार कार्ड"] }
-          ]
-        },
-        "ews": {
-          title: "ईडब्ल्यूएस प्रमाण पत्र (EWS 10% Quota)",
-          icon: "📑",
-          options: [
-            { id: "ews-state", name: "राज्य स्तरीय ईडब्ल्यूएस प्रमाण पत्र", fee: 180, docs: ["आधार कार्ड", "आय प्रमाण पत्र", "ज़मीन का पर्चा / खतौनी"] },
-            { id: "ews-central", name: "केंद्रीय भर्ती (Central Jobs) ईडब्ल्यूएस", fee: 200, docs: ["केंद्रीय फॉर्मेट आय व संपत्ति प्रमाण", "आधार कार्ड"] }
-          ]
-        },
         "passport": {
           title: "पासपोर्ट सेवा (Passport Seva)",
           icon: "✈️",
           options: [
-            { id: "passport-fresh", name: "सामान्य पासपोर्ट नया (36 पेज)", fee: 3100, docs: ["10वीं मार्कशीट / जन्म प्रमाण पत्र", "आधार कार्ड", "पैन कार्ड"] },
-            { id: "passport-reissue", name: "पासपोर्ट नवीनीकरण (Re-issue)", fee: 3100, docs: ["पुराना पासपोर्ट", "आधार कार्ड"] },
-            { id: "passport-tatkaal", name: "तत्काल पासपोर्ट स्लॉट (Tatkaal Priority)", fee: 4000, docs: ["आधार कार्ड", "पैन कार्ड", "10वीं मार्कशीट", "यात्रा विवरण"] },
-            { id: "passport-pcc", name: "पुलिस क्लीयरेंस सर्टिफिकेट (PCC)", fee: 800, docs: ["पासपोर्ट की प्रति", "जॉब ऑफर / वीज़ा"] }
+            { id: "passport-fresh", name: "सामान्य नया पासपोर्ट आवेदन (36 पेज)", fee: 4500, docs: ["10वीं मार्कशीट / जन्म प्रमाण पत्र", "आधार कार्ड", "पैन कार्ड"] },
+            { id: "passport-tatkaal", name: "तत्काल पासपोर्ट प्राथमिकता स्लॉट (Tatkaal Priority)", fee: 6000, docs: ["आधार कार्ड", "पैन कार्ड", "10वीं मार्कशीट", "तत्काल यात्रा विवरण"] },
+            { id: "passport-reissue", name: "पासपोर्ट नवीनीकरण (Passport Re-issue)", fee: 4500, docs: ["पुराना पासपोर्ट प्रति", "आधार कार्ड"] },
+            { id: "passport-pcc", name: "पुलिस क्लीयरेंस सर्टिफिकेट (PCC Slot)", fee: 800, docs: ["पासपोर्ट की प्रति", "जॉब ऑफर / वीज़ा विवरण"] }
+          ]
+        },
+        "certificate": {
+          title: "सरकारी प्रमाण पत्र व सत्यापन (Official Certificates)",
+          icon: "📜",
+          options: [
+            { id: "character-cert", name: "पुलिस चरित्र प्रमाण पत्र (Police Character Verification)", fee: 250, docs: ["आधार कार्ड", "पासपोर्ट फोटो", "स्थानीय 2 गवाह विवरण"] },
+            { id: "income-cert", name: "आय प्रमाण पत्र (Income Certificate e-District)", fee: 150, docs: ["आधार कार्ड", "स्वप्रमाणित आय घोषणा पत्र", "वेतन पर्ची / खतौनी"] },
+            { id: "caste-obc", name: "ओबीसी (OBC) जाति प्रमाण पत्र", fee: 150, docs: ["आधार कार्ड", "पिता का जाति प्रमाण / खतौनी"] },
+            { id: "caste-ncl", name: "नॉन-क्रीमी लेयर (OBC-NCL) प्रमाण पत्र", fee: 180, docs: ["आय प्रमाण पत्र", "जाति प्रमाण पत्र", "आधार कार्ड"] },
+            { id: "caste-sc", name: "अनुसूचित जाति / जनजाति (SC/ST) प्रमाण पत्र", fee: 140, docs: ["आधार कार्ड", "राशन कार्ड / राजस्व सत्यापन"] },
+            { id: "domicile-cert", name: "मूल निवास प्रमाण पत्र (Domicile / Niwas)", fee: 150, docs: ["आधार कार्ड", "बिजली बिल / राशन कार्ड / स्कूल टीसी"] },
+            { id: "ews-cert", name: "ईडब्ल्यूएस प्रमाण पत्र (EWS 10% Quota)", fee: 180, docs: ["आय व संपत्ति प्रमाण", "खतौनी", "आधार कार्ड"] },
+            { id: "birth-cert", name: "डिजिटल जन्म प्रमाण पत्र (Birth Certificate)", fee: 200, docs: ["अस्पताल डिस्चार्ज रसीद / माता-पिता आधार"] },
+            { id: "death-cert", name: "डिजिटल मृत्यु प्रमाण पत्र (Death Certificate)", fee: 200, docs: ["अस्पताल पर्ची / श्मशान रसीद / वारिस आधार"] },
+            { id: "land-khatauni", name: "भूलेख खतौनी नकल व खसरा रिकॉर्ड", fee: 80, docs: ["गाटा / खसरा / खाता संख्या"] }
+          ]
+        },
+        "affidavit": {
+          title: "कोर्ट शपथ पत्र व नोटरी (Court Affidavits & Legal)",
+          icon: "⚖️",
+          options: [
+            { id: "affidavit-name", name: "नाम व वर्तनी सुधार शपथ पत्र (Name Correction)", fee: 120, docs: ["आधार कार्ड", "10वीं मार्कशीट या सही नाम प्रमाण"] },
+            { id: "affidavit-marriage", name: "विवाह पंजीकरण व संयुक्त शपथ पत्र (Marriage)", fee: 250, docs: ["पति-पत्नी आधार", "विवाह फोटो / कार्ड", "2 गवाह आधार"] },
+            { id: "affidavit-address", name: "पता परिवर्तन शपथ पत्र (Address Change)", fee: 120, docs: ["आधार कार्ड", "नवीनतम बिजली बिल / किरायानामा"] },
+            { id: "affidavit-gap", name: "गैप ईयर छात्र शपथ पत्र (Student Gap Year)", fee: 120, docs: ["पिछली मार्कशीट", "आधार कार्ड", "कारण विवरण"] },
+            { id: "affidavit-income", name: "आय स्व-घोषणा शपथ पत्र (Self Declaration)", fee: 100, docs: ["आधार कार्ड", "वार्षिक आय विवरण"] },
+            { id: "legal-drafting", name: "नोटरी व कानूनी ड्राफ्टिंग सहायता", fee: 200, docs: ["संबंधित विषय के साक्ष्य व आईडी"] }
+          ]
+        },
+        "aadhaar": {
+          title: "आधार कार्ड सेवाएँ (Aadhaar Assistance)",
+          icon: "🪪",
+          options: [
+            { id: "aadhaar-update", name: "पता सुधार व डेमोग्राफिक अपडेट", fee: 150, docs: ["निवास प्रमाण (बिजली बिल / राशन कार्ड)", "आधार कार्ड प्रति"] },
+            { id: "aadhaar-mobile", name: "मोबाइल व ईमेल लिंक सहायता", fee: 120, docs: ["आधार कार्ड", "नया सक्रिय मोबाइल नंबर"] },
+            { id: "pvc-aadhaar", name: "PVC वाटरप्रूफ स्मार्ट कार्ड आर्डर", fee: 100, docs: ["आधार कार्ड नंबर व पूरा पता"] },
+            { id: "aadhaar-bio", name: "बायोमेट्रिक फिंगरप्रिंट/आईरिस अपडेट", fee: 180, docs: ["आधार कार्ड", "जन्म प्रमाण पत्र (नाबालिग हेतु)"] }
           ]
         },
         "driving": {
           title: "ड्राइविंग लाइसेंस (Sarathi Parivahan)",
           icon: "🚗",
           options: [
-            { id: "dl-ll", name: "लर्निंग लाइसेंस ऑनलाइन (LL)", fee: 450, docs: ["आधार कार्ड (मोबाइल लिंक)", "10वीं मार्कशीट", "फोटो"] },
-            { id: "dl-perm", name: "स्थाई ड्राइविंग लाइसेंस टेस्ट स्लॉट", fee: 850, docs: ["लर्निंग लाइसेंस", "आधार कार्ड"] },
-            { id: "dl-renew", name: "डीएल नवीनीकरण / पता सुधार", fee: 550, docs: ["पुराना ड्राइविंग लाइसेंस", "आधार कार्ड", "मेडिकल फॉर्म 1A"] }
+            { id: "learning-licence", name: "लर्निंग लाइसेंस ऑनलाइन टेस्ट (LL Online)", fee: 450, docs: ["आधार कार्ड (मोबाइल लिंक)", "10वीं मार्कशीट", "फोटो"] },
+            { id: "permanent-dl", name: "स्थाई ड्राइविंग लाइसेंस टेस्ट स्लॉट", fee: 650, docs: ["लर्निंग लाइसेंस", "आधार कार्ड"] },
+            { id: "dl-renewal", name: "डीएल नवीनीकरण / पता सुधार", fee: 550, docs: ["पुराना ड्राइविंग लाइसेंस", "आधार कार्ड"] },
+            { id: "rc-transfer", name: "वाहन आरसी ट्रांसफर", fee: 550, docs: ["आरसी कॉपी", "क्रेता-विक्रेता आधार"] },
+            { id: "rc-hypo", name: "आरसी बैंक लोन हटाना (HPA/HPT)", fee: 450, docs: ["बैंक एनओसी फॉर्म 35", "आरसी कॉपी"] }
           ]
         },
         "udyam": {
           title: "उद्यम / MSME व व्यापार रजिस्ट्रेशन",
           icon: "🏢",
           options: [
-            { id: "udyam-new", name: "नया उद्यम / MSME रजिस्ट्रेशन सर्टिफिकेट", fee: 300, docs: ["मालिक का आधार कार्ड", "पैन कार्ड", "बैंक खाता विवरण"] },
+            { id: "udyam-msme", name: "नया उद्यम / MSME रजिस्ट्रेशन सर्टिफिकेट", fee: 300, docs: ["मालिक का आधार कार्ड", "पैन कार्ड", "बैंक खाता विवरण"] },
             { id: "gst-reg", name: "GST नया रजिस्ट्रेशन व पोर्टल फाइलिंग", fee: 1200, docs: ["बिजली बिल / रेंट एग्रीमेंट", "पैन व आधार", "बैंक पासबुक"] },
             { id: "shop-licence", name: "दुकान लाइसेंस (गुमाश्ता प्रमाण पत्र)", fee: 650, docs: ["दुकान का फोटो बोर्ड सहित", "मालिक का आधार व पैन"] },
             { id: "fssai-food", name: "FSSAI खाद्य सुरक्षा रजिस्ट्रेशन", fee: 800, docs: ["आधार कार्ड", "फोटो", "दुकान का पता"] }
@@ -1221,37 +1370,94 @@
           title: "वोटर आईडी कार्ड (Voter ID NVSP)",
           icon: "🗳️",
           options: [
-            { id: "voter-form6", name: "नया वोटर कार्ड (Form 6)", fee: 120, docs: ["आयु प्रमाण", "निवास प्रमाण", "पासपोर्ट साइज रंगीन फोटो"] },
-            { id: "voter-form8", name: "वोटर कार्ड संशोधन / शिफ्टिंग (Form 8)", fee: 100, docs: ["मौजूदा वोटर कार्ड", "संशोधन का वैध प्रमाण"] },
+            { id: "voter-new", name: "नया वोटर कार्ड (Form 6)", fee: 120, docs: ["आयु प्रमाण", "निवास प्रमाण", "पासपोर्ट साइज रंगीन फोटो"] },
+            { id: "voter-correction", name: "वोटर कार्ड संशोधन / शिफ्टिंग (Form 8)", fee: 100, docs: ["मौजूदा वोटर कार्ड", "संशोधन का वैध प्रमाण"] },
             { id: "voter-epic", name: "डिजिटल वोटर कार्ड डाउनलोड व लैमिनेट", fee: 50, docs: ["वोटर कार्ड नंबर (EPIC No.)"] }
           ]
         },
-        "pf": {
+        "finance": {
           title: "EPFO व पीएफ क्लेम (PF Claim)",
           icon: "💰",
           options: [
-            { id: "pf-full", name: "पीएफ पूरा पैसा निकालें (Form 19 & 10C)", fee: 350, docs: ["UAN नंबर", "बैंक पासबुक / चेक", "पैन कार्ड"] },
-            { id: "pf-advance", name: "पीएफ एडवांस क्लेम (Form 31)", fee: 250, docs: ["UAN नंबर", "बैंक पासबुक"] },
-            { id: "uan-kyc", name: "UAN एक्टिवेशन व बैंक केवाईसी लिंक", fee: 120, docs: ["आधार कार्ड", "बैंक पासबुक"] }
+            { id: "pf-full-withdrawal", name: "पीएफ पूरा निकासी (Form 19 & 10C)", fee: 350, docs: ["UAN नंबर", "बैंक पासबुक / चेक", "पैन कार्ड"] },
+            { id: "pf-advance", name: "पीएफ एडवांस निकासी (Form 31)", fee: 250, docs: ["UAN नंबर", "बैंक पासबुक"] },
+            { id: "uan-kyc", name: "UAN एक्टिवेशन व बैंक केवाईसी लिंक", fee: 100, docs: ["आधार कार्ड", "बैंक पासबुक"] },
+            { id: "uan-pass-reset", name: "UAN पासवर्ड रीसेट व मोबाइल लिंक", fee: 80, docs: ["आधार कार्ड", "UAN नंबर"] }
           ]
         }
       };
 
-      let activeCustomizerServiceKey = "aadhaar";
-      let activeCustomizerSubId = "aadhaar-address";
-      let activeCustomizerBaseFee = 250;
+      let activeCustomizerServiceKey = "passport";
+      let activeCustomizerSubId = "passport-fresh";
+      let activeCustomizerBaseFee = 4500;
 
-      // OPEN INTERACTIVE SERVICE CUSTOMIZER MODAL
-      function openServiceCustomizer(serviceId) {
+      // Handle Apply Click on Service Card (No Redirect to apply.html!)
+      function handleServiceApplyClick(serviceId) {
         const idLower = (serviceId || '').toLowerCase();
-
-        // Direct routing for Resume/CV
         if (idLower.includes('resume') || idLower.includes('cv')) {
           window.location.href = 'resume.html';
           return;
         }
 
+        // If service is a major group in customizer modal
+        if (serviceCustomMap[serviceId]) {
+          openServiceCustomizer(serviceId);
+          return;
+        }
+
+        // Otherwise directly select on page form
+        selectServiceDirectly(serviceId);
+      }
+
+      function selectServiceDirectly(serviceId) {
+        const item = servicesList.find(s => s.id === serviceId);
+        if (!item) return;
+
+        const select = document.getElementById('selectedService');
+        let matchedIndex = -1;
+        for (let i = 0; i < select.options.length; i++) {
+          const opt = select.options[i];
+          if (opt.getAttribute('data-service-id') === item.id || 
+              opt.getAttribute('data-sub-id') === item.id ||
+              opt.value === item.title || 
+              opt.value === item.titleEn ||
+              opt.textContent.includes(item.title) || 
+              (item.titleEn && opt.textContent.includes(item.titleEn))) {
+            matchedIndex = i;
+            break;
+          }
+        }
+
+        if (matchedIndex >= 0) {
+          select.selectedIndex = matchedIndex;
+        } else {
+          const newOpt = document.createElement('option');
+          newOpt.value = item.title;
+          newOpt.setAttribute('data-price', item.fee);
+          newOpt.setAttribute('data-cat', item.category);
+          newOpt.setAttribute('data-service-id', item.id);
+          newOpt.textContent = `${item.title} - ₹${item.fee}`;
+          select.appendChild(newOpt);
+          select.value = item.title;
+        }
+
+        onServiceDropdownChange();
+
+        const formSection = document.getElementById('apply-section');
+        if (formSection) {
+          formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setTimeout(() => {
+            const nameInput = document.getElementById('applicantName');
+            if (nameInput) nameInput.focus();
+          }, 350);
+        }
+      }
+
+      // OPEN INTERACTIVE SERVICE CUSTOMIZER MODAL
+      function openServiceCustomizer(serviceId) {
+        const idLower = (serviceId || '').toLowerCase();
         let matchedKey = null;
+
         for (const k of Object.keys(serviceCustomMap)) {
           if (idLower.includes(k)) {
             matchedKey = k;
@@ -1259,25 +1465,29 @@
           }
         }
 
-        // Additional accurate mappings
         if (!matchedKey) {
-          if (idLower.includes('licence') || idLower.includes('dl')) matchedKey = 'driving';
-          else if (idLower.includes('msme') || idLower.includes('gst') || idLower.includes('shop')) matchedKey = 'udyam';
-          else if (idLower.includes('pvc')) matchedKey = 'aadhaar';
-          else if (idLower.includes('job') || idLower.includes('exam') || idLower.includes('scholarship')) {
-            window.location.href = `apply.html?service=${encodeURIComponent(serviceId)}&cat=exam`;
+          if (idLower.includes('police') || idLower.includes('character') || idLower.includes('income') || idLower.includes('caste') || idLower.includes('domicile') || idLower.includes('cert')) {
+            matchedKey = 'certificate';
+          } else if (idLower.includes('affidavit') || idLower.includes('legal') || idLower.includes('marriage')) {
+            matchedKey = 'affidavit';
+          } else if (idLower.includes('dl') || idLower.includes('licence') || idLower.includes('rc')) {
+            matchedKey = 'driving';
+          } else if (idLower.includes('passport')) {
+            matchedKey = 'passport';
+          } else if (idLower.includes('pf') || idLower.includes('uan')) {
+            matchedKey = 'finance';
+          } else {
+            selectServiceDirectly(serviceId);
             return;
           }
         }
 
-        // If not in the customizer map, navigate to dedicated apply page for that exact service!
-        if (!matchedKey || !serviceCustomMap[matchedKey]) {
-          window.location.href = `apply.html?service=${encodeURIComponent(serviceId)}`;
-          return;
-        }
-
         activeCustomizerServiceKey = matchedKey;
         const sData = serviceCustomMap[matchedKey];
+        if (!sData) {
+          selectServiceDirectly(serviceId);
+          return;
+        }
 
         document.getElementById('custModalIcon').textContent = sData.icon;
         document.getElementById('custModalTitle').textContent = sData.title;
@@ -1353,14 +1563,65 @@
         document.getElementById('serviceCustomizerModal').style.display = 'none';
       }
 
+      // Seamless On-Page Form Selection (NO External Redirect!)
       function proceedFromCustomizerToApply() {
-        const state = document.getElementById('custModalStateSelect').value;
-        window.location.href = `apply.html?service=${encodeURIComponent(activeCustomizerSubId)}&cat=${encodeURIComponent(activeCustomizerServiceKey)}&state=${encodeURIComponent(state)}`;
+        closeCustomizerModal();
+        const sData = serviceCustomMap[activeCustomizerServiceKey];
+        const chosenOpt = sData && sData.options ? sData.options.find(o => o.id === activeCustomizerSubId) : null;
+        const optTitle = chosenOpt ? chosenOpt.name : activeCustomizerSubId;
+        const optFee = chosenOpt ? chosenOpt.fee : activeCustomizerBaseFee;
+
+        const select = document.getElementById('selectedService');
+        let matchedIndex = -1;
+        for (let i = 0; i < select.options.length; i++) {
+          const opt = select.options[i];
+          if (opt.getAttribute('data-sub-id') === activeCustomizerSubId || 
+              opt.getAttribute('data-service-id') === activeCustomizerSubId ||
+              opt.value.includes(optTitle) || 
+              opt.textContent.includes(optTitle)) {
+            matchedIndex = i;
+            break;
+          }
+        }
+
+        if (matchedIndex >= 0) {
+          select.selectedIndex = matchedIndex;
+        } else {
+          const newOpt = document.createElement('option');
+          newOpt.value = optTitle;
+          newOpt.setAttribute('data-price', optFee);
+          newOpt.setAttribute('data-cat', activeCustomizerServiceKey);
+          newOpt.setAttribute('data-sub-id', activeCustomizerSubId);
+          newOpt.setAttribute('data-service-id', activeCustomizerSubId);
+          newOpt.textContent = `${optTitle} - ₹${optFee}`;
+          select.appendChild(newOpt);
+          select.value = optTitle;
+        }
+
+        // Sync modal state if chosen
+        const modalState = document.getElementById('custModalStateSelect').value;
+        if (modalState && modalState !== 'all') {
+          const stateFilter = document.getElementById('stateFilterSelect');
+          if (stateFilter) stateFilter.value = modalState;
+          const applicantState = document.getElementById('applicantState');
+          if (applicantState) applicantState.value = modalState;
+        }
+
+        onServiceDropdownChange();
+
+        const formSection = document.getElementById('apply-section');
+        if (formSection) {
+          formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          setTimeout(() => {
+            const nameInput = document.getElementById('applicantName');
+            if (nameInput) nameInput.focus();
+          }, 350);
+        }
       }
 
-      // Legacy autoSelectServiceAndApply redirects to customizer
+      // Legacy compatibility
       function autoSelectServiceAndApply(serviceTitle, price, serviceId) {
-        openServiceCustomizer(serviceId || serviceTitle);
+        handleServiceApplyClick(serviceId || serviceTitle);
       }
 
       function onServiceDropdownChange() {
@@ -1382,7 +1643,61 @@
         }
 
         let html = '';
-        if (serviceVal.includes('passport')) {
+        if (serviceVal.includes('police') || serviceVal.includes('character') || serviceVal.includes('चरित्र')) {
+          html = `
+            <div>
+              <label class="form-label">नजदीकी पुलिस थाना (Police Station) *</label>
+              <input class="form-input dynamic-field" data-label="Police Station" type="text" placeholder="e.g. Kotwali, Azamgarh / Cantt PS" required />
+            </div>
+            <div>
+              <label class="form-label">सत्यापन का उद्देश्य (Purpose of Verification) *</label>
+              <select class="form-select dynamic-field" data-label="Verification Purpose" required>
+                <option value="Govt / Private Job (सरकारी / प्राइवेट नौकरी)">Govt / Private Job (सरकारी या प्राइवेट नौकरी)</option>
+                <option value="Contract / Govt Tender (ठेकेदारी / टेंडर)">Contract / Tender (सरकारी ठेकेदारी)</option>
+                <option value="Passport / Visa Travel (पासपोर्ट / वीज़ा)">Passport / Visa Travel (पासपोर्ट / विदेश यात्रा)</option>
+                <option value="Arms License / Security (हथियार लाइसेंस)">Arms License / Security (हथियार लाइसेंस)</option>
+                <option value="Tenant / Rental Verification (किरायेदार)">Tenant / Rental Verification (किरायेदार सत्यापन)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">स्थानीय दो गवाहों के नाम व फोन (2 Local References) *</label>
+              <input class="form-input dynamic-field" data-label="Local References" type="text" placeholder="Name 1 & Phone, Name 2 & Phone" required />
+            </div>
+            <div>
+              <label class="form-label">पूर्व आपराधिक रिकॉर्ड (Past Criminal Record)</label>
+              <select class="form-select dynamic-field" data-label="Criminal Record">
+                <option value="No / Clean Record (कोई मुकदमा नहीं)">नहीं / साफ़ रिकॉर्ड (No Criminal Case)</option>
+                <option value="Yes / Disclosed (विवरण संलग्न)">हाँ (विवरण संलग्न)</option>
+              </select>
+            </div>
+          `;
+        } else if (cat === 'legal' || serviceVal.includes('affidavit') || serviceVal.includes('शपथ पत्र')) {
+          html = `
+            <div>
+              <label class="form-label">शपथ पत्र का प्रकार (Affidavit Purpose) *</label>
+              <select class="form-select dynamic-field" data-label="Affidavit Purpose" required>
+                <option value="Name & Spelling Correction (नाम/स्पेलिंग सुधार)">नाम व स्पेलिंग सुधार शपथ पत्र</option>
+                <option value="Marriage Joint Affidavit (विवाह पंजीकरण)">विवाह पंजीकरण व संयुक्त शपथ पत्र</option>
+                <option value="Address Proof Affidavit (पता परिवर्तन)">पता परिवर्तन शपथ पत्र</option>
+                <option value="Education Gap Year (गैप ईयर छात्र)">गैप ईयर छात्र शपथ पत्र</option>
+                <option value="Income Self Declaration (आय स्व-घोषणा)">आय स्व-घोषणा शपथ पत्र</option>
+                <option value="General Legal Notary Agreement (सामान्य नोटरी)">सामान्य कानूनी नोटरी ड्राफ्टिंग</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">शपथकर्ता का नाम (Deponent Full Name) *</label>
+              <input class="form-input dynamic-field" data-label="Deponent Name" type="text" placeholder="Name of person swearing affidavit" required />
+            </div>
+            <div>
+              <label class="form-label">स्टाम्प पेपर मूल्य (Stamp Paper Value) *</label>
+              <select class="form-select dynamic-field" data-label="Stamp Value" required>
+                <option value="₹10 E-Stamp (सामान्य)">₹10 ई-स्टाम्प (सामान्य उपयोग)</option>
+                <option value="₹50 E-Stamp (एग्रीमेंट/कॉलेज)">₹50 ई-स्टाम्प (एग्रीमेंट / कॉलेज)</option>
+                <option value="₹100 E-Stamp (विवाह / संपत्ति)">₹100 ई-स्टाम्प (विवाह / संपत्ति / कोर्ट)</option>
+              </select>
+            </div>
+          `;
+        } else if (serviceVal.includes('passport')) {
           html = `
             <div>
               <label class="form-label">आवेदन प्रकार (Passport Application Type) *</label>

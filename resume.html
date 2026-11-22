@@ -208,6 +208,67 @@
         line-height: 1.5;
         min-height: 840px;
         box-sizing: border-box;
+        position: relative;
+        overflow: hidden;
+      }
+      /* LIVE PREVIEW SECURITY WATERMARK (Active until ₹20 payment) */
+      .resume-watermark-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        pointer-events: none;
+        z-index: 60;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        user-select: none;
+        opacity: 0.16;
+        transform: rotate(-28deg);
+        transition: opacity 0.3s ease;
+      }
+      .resume-watermark-overlay.paid {
+        display: none !important;
+      }
+      .resume-watermark-overlay .watermark-badge {
+        font-size: 2.6rem;
+        font-weight: 900;
+        color: #b91c1c;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-align: center;
+        white-space: nowrap;
+        border: 4px solid #b91c1c;
+        padding: 10px 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 14px rgba(185, 28, 28, 0.25);
+      }
+      .resume-watermark-overlay .watermark-sub {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #1e293b;
+        letter-spacing: 3px;
+        margin-top: 10px;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .resume-watermark-repeater {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 50;
+        background-image: repeating-linear-gradient(
+          -35deg,
+          transparent,
+          transparent 110px,
+          rgba(220, 38, 38, 0.04) 110px,
+          rgba(220, 38, 38, 0.04) 130px
+        );
+      }
+      .resume-watermark-repeater.paid {
+        display: none !important;
       }
       .resume-header {
         border-bottom: 2px solid #0f172a;
@@ -316,6 +377,10 @@
           padding: 0 !important;
           min-height: auto !important;
           width: 100% !important;
+        }
+        .resume-watermark-overlay.paid,
+        .resume-watermark-repeater.paid {
+          display: none !important;
         }
       }
     </style>
@@ -477,17 +542,17 @@
           </div>
 
           <!-- Payment & Download Action Box -->
-          <div class="pay-banner">
+          <div class="pay-banner" id="payBanner">
             <div>
               <span style="font-size:0.8rem; color:#0f172a; font-weight:800; text-transform:uppercase; background:rgba(0,0,0,0.1); padding:2px 8px; border-radius:4px;">
                 ऑटोमैटिक ₹20 पेमेंट गेटवे
               </span>
-              <h3 style="margin:4px 0 0 0; color:#0f172a; font-size:1.15rem;">डाउनलोड हेतु शुल्क: ₹20 मात्र</h3>
-              <small style="color:#334155; font-size:0.78rem;">पेमेंट सफल होते ही हाई-रेजोल्यूशन ATS-फ्रेंडली PDF तुरंत डाउनलोड होगी।</small>
+              <h3 style="margin:4px 0 0 0; color:#0f172a; font-size:1.15rem;">डाउनलोड हेतु शुल्क: ₹20 मात्र (वॉटरमार्क हटाने हेतु)</h3>
+              <small style="color:#334155; font-size:0.78rem;">पेमेंट सफल होते ही लाइव प्रीव्यू से वॉटरमार्क हट जाएगा और ओरिजिनल ATS PDF डाउनलोड होगी।</small>
             </div>
             <div>
-              <button type="button" class="btn-download-pdf" onclick="processResumePayment()">
-                <span>⚡ ₹20 पे करें व PDF पाएं ➔</span>
+              <button type="button" class="btn-download-pdf" id="btnPayResume" onclick="processResumePayment()">
+                <span>⚡ ₹20 पे करें व वॉटरमार्क हटाएं ➔</span>
               </button>
             </div>
           </div>
@@ -507,6 +572,13 @@
 
           <!-- The Printable Paper Document -->
           <div class="resume-paper" id="resumePaperContent">
+            <!-- Security Watermark Overlay (Remains active until ₹20 payment verified) -->
+            <div class="resume-watermark-overlay" id="resumeWatermark">
+              <div class="watermark-badge">शान साइबर कैफे एवं ई-सेवा</div>
+              <div class="watermark-sub">SHAN CYBER CAFE &amp; E-SEVA · PREVIEW ONLY · UNLOCK FOR ₹20</div>
+            </div>
+            <div class="resume-watermark-repeater" id="resumeWatermarkRepeater"></div>
+
             <!-- Header -->
             <div class="resume-header">
               <h1 class="resume-name" id="prevName">Abhishek Rai</h1>
@@ -720,6 +792,8 @@
 
       // RAZORPAY ₹20 PAYMENT AND IMMEDIATE PDF DOWNLOAD
       let activeRazorpayKey = null;
+      let isResumePaid = false;
+
       async function initRzp() {
         try {
           const res = await fetch("/api/razorpay");
@@ -731,6 +805,34 @@
       }
       initRzp();
 
+      function unlockWatermarkAndEnableDownload(paymentId) {
+        isResumePaid = true;
+        const watermark = document.getElementById('resumeWatermark');
+        if (watermark) watermark.classList.add('paid');
+        const watermarkRep = document.getElementById('resumeWatermarkRepeater');
+        if (watermarkRep) watermarkRep.classList.add('paid');
+
+        const payBanner = document.getElementById('payBanner');
+        if (payBanner) {
+          payBanner.style.background = 'rgba(16, 185, 129, 0.18)';
+          payBanner.style.borderColor = 'rgba(16, 185, 129, 0.5)';
+          payBanner.innerHTML = `
+            <div>
+              <span style="font-size:0.8rem; color:#10b981; font-weight:800; text-transform:uppercase; background:rgba(16,185,129,0.2); padding:2px 8px; border-radius:4px;">
+                ✓ भुगतान सत्यापित (Payment Verified)
+              </span>
+              <h3 style="margin:4px 0 0 0; color:#fff; font-size:1.15rem;">वॉटरमार्क सफलतापूर्वक हटा दिया गया है!</h3>
+              <small style="color:#6ee7b7; font-size:0.82rem;">पेमेंट ID: ${paymentId || 'VERIFIED'} · आपका ओरिजिनल ATS रिज़्यूमे PDF तैयार है।</small>
+            </div>
+            <div>
+              <button type="button" class="btn-download-pdf" id="btnPayResume" onclick="triggerPdfPrint()" style="background:linear-gradient(135deg, #10b981, #059669);">
+                <span>📥 डाउनलोड ओरिजिनल PDF (Print) ➔</span>
+              </button>
+            </div>
+          `;
+        }
+      }
+
       function processResumePayment() {
         const applicantName = document.getElementById('inpName').value.trim() || 'Job Applicant';
         const applicantEmail = document.getElementById('inpEmail').value.trim() || 'abhishekrai6897@gmail.com';
@@ -739,7 +841,8 @@
         const effectiveKey = activeRazorpayKey || window.RAZORPAY_KEY_ID || 'rzp_test_placeholder';
 
         if (typeof Razorpay === 'undefined') {
-          // If Razorpay script blocked, trigger print directly
+          // If offline test or no network, allow unlock
+          unlockWatermarkAndEnableDownload('TEST_OFFLINE_VERIFIED');
           triggerPdfPrint();
           return;
         }
@@ -749,7 +852,7 @@
           amount: 2000, // ₹20 in paise
           currency: 'INR',
           name: 'शान साइबर कैफे एवं ई-सेवा',
-          description: 'Premium ATS Resume / CV PDF Generation',
+          description: 'Premium ATS Resume / CV PDF Generation (Watermark Free)',
           image: 'assets/app-icon.svg',
           theme: { color: '#f59e0b' },
           prefill: {
@@ -796,7 +899,8 @@
               } catch {}
             }
 
-            alert(`✓ भुगतान सफल! पेमेंट ID: ${response.razorpay_payment_id}\nआपका रिज़्यूमे PDF प्रिंट व डाउनलोड के लिए तैयार है।`);
+            unlockWatermarkAndEnableDownload(response.razorpay_payment_id);
+            alert(`✓ भुगतान सफल! पेमेंट ID: ${response.razorpay_payment_id}\nवॉटरमार्क हटा दिया गया है। आपका ओरिजिनल ATS रिज़्यूमे PDF डाउनलोड हो रहा है।`);
             triggerPdfPrint();
           }
         };
@@ -806,6 +910,13 @@
       }
 
       function triggerPdfPrint() {
+        if (!isResumePaid) {
+          const proceed = confirm('लाइव प्रीव्यू पर वर्तमान में "शान साइबर कैफे एवं ई-सेवा" का वॉटरमार्क लगा हुआ है।\n\nक्या आप ₹20 का ऑनलाइन भुगतान करके वॉटरमार्क-मुक्त ओरिजिनल ATS PDF डाउनलोड करना चाहते हैं?');
+          if (proceed) {
+            processResumePayment();
+            return;
+          }
+        }
         window.print();
       }
 
