@@ -526,6 +526,26 @@
               </div>
             </div>
 
+            <!-- Granular Transparent Price Breakdown Box -->
+            <div id="applyFeeBreakdownBox" style="background:rgba(15, 23, 42, 0.6); border:1px solid rgba(255,255,255,0.08); border-radius:10px; padding:12px; margin-bottom:14px; font-size:0.83rem; line-height:1.6;">
+              <div style="display:flex; justify-content:space-between; color:#cbd5e1;">
+                <span>मूल रजिस्ट्रेशन व आवेदन शुल्क (Base Application Fee):</span>
+                <strong id="applyFeeBase" style="color:#fff;">₹0</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; color:#cbd5e1;">
+                <span id="applyFeeStateLabel">राज्य पोर्टल व प्रोसेसिंग शुल्क (State Portal Charges):</span>
+                <strong id="applyFeeState" style="color:#38bdf8;">+₹0</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; color:#cbd5e1;">
+                <span>सत्यापन व डिजिटल सर्विस चार्ज (Service &amp; Verification):</span>
+                <strong id="applyFeeService" style="color:#10b981;">+₹50</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; padding-top:6px; margin-top:6px; border-top:1px dashed rgba(255,255,255,0.15); font-weight:700;">
+                <span style="color:#fbbf24;">कुल शुद्ध देय शुल्क (Total All-Inclusive Amount):</span>
+                <strong id="applyFeeTotal" style="color:var(--eseva-gold); font-size:1.05rem;">₹0</strong>
+              </div>
+            </div>
+
             <!-- Pay Tabs -->
             <div class="pay-tabs">
               <button type="button" class="pay-tab-btn active" id="tabUpi" onclick="switchPay('upi')">
@@ -666,7 +686,7 @@
             {
               id: "aadhaar-pvc",
               name: "PVC स्मार्ट आधार कार्ड ऑर्डर (PVC Card)",
-              fee: 100,
+              fee: 150,
               desc: "UIDAI अधिकृत वाटरप्रूफ स्मार्ट कार्ड डाक द्वारा डिलीवरी",
               docs: ["आधार कार्ड नंबर व मोबाइल OTP"],
               fields: [
@@ -786,7 +806,7 @@
             {
               id: "voter-form6",
               name: "नया वोटर कार्ड आवेदन (Form 6)",
-              fee: 120,
+              fee: 150,
               desc: "18 वर्ष पूरा होने पर नया मतदाता पहचान पत्र",
               docs: ["आयु प्रमाण (10वीं मार्कशीट / आधार)", "निवास प्रमाण", "पासपोर्ट साइज रंगीन फोटो"],
               fields: [
@@ -797,7 +817,7 @@
             {
               id: "voter-form8",
               name: "वोटर कार्ड संशोधन / शिफ्टिंग (Form 8)",
-              fee: 100,
+              fee: 150,
               desc: "नाम, पता, फोटो, जन्मतिथि या विधानसभा बदलाव",
               docs: ["मौजूदा वोटर कार्ड", "संशोधन का प्रमाण (आधार कार्ड)"],
               fields: [
@@ -808,7 +828,7 @@
             {
               id: "voter-epic-dl",
               name: "डिजिटल वोटर कार्ड (e-EPIC) डाउनलोड व लेमिनेशन",
-              fee: 50,
+              fee: 150,
               desc: "मूल आधिकारिक डिजिटल मतदाता पहचान पत्र डाउनलोड",
               docs: ["वोटर कार्ड नंबर या रेफरेंस नंबर"],
               fields: [
@@ -930,7 +950,7 @@
             {
               id: "land-khatauni",
               name: "भूलेख खतौनी नकल व खसरा रिकॉर्ड",
-              fee: 80,
+              fee: 150,
               desc: "राजस्व विभाग से प्रमाणित खतौनी व भू-अभिलेख की प्रति",
               docs: ["गाटा / खसरा / खाता संख्या"],
               fields: [
@@ -946,7 +966,7 @@
             {
               id: "affidavit-name",
               name: "नाम व स्पेलिंग सुधार शपथ पत्र (Name Correction)",
-              fee: 120,
+              fee: 150,
               desc: "मार्कशीट, आधार या पैन में नाम की गलती सुधारने हेतु नोटरीकृत शपथ पत्र",
               docs: ["आधार कार्ड", "10वीं मार्कशीट / वैध रिकॉर्ड"],
               fields: [
@@ -968,7 +988,7 @@
             {
               id: "affidavit-gap",
               name: "गैप ईयर छात्र शपथ पत्र (Student Gap Year Affidavit)",
-              fee: 120,
+              fee: 150,
               desc: "कॉलेज दाखिले या प्रतियोगी परीक्षा हेतु पढ़ाई के अंतराल का शपथ पत्र",
               docs: ["अंतिम परीक्षा की मार्कशीट", "आधार कार्ड"],
               fields: [
@@ -1306,61 +1326,81 @@
         });
       }
 
-      // State Fee Surcharges (Govt Portal / State Processing Offsets)
+      // State-wise Portal Processing Fee Offsets (Dynamically scales base ₹150 services up to ₹200, ₹230, ₹250, ₹300)
       const stateFeeOffsets = {
-        "Punjab": 50,
-        "Delhi": 40,
-        "Maharashtra": 40,
-        "Karnataka": 40,
-        "Goa": 40,
-        "Chandigarh": 40,
-        "Haryana": 30,
-        "Gujarat": 30,
-        "Rajasthan": 30,
-        "Kerala": 30,
-        "Tamil Nadu": 30,
-        "Telangana": 30,
-        "Andhra Pradesh": 30,
-        "Assam": 30,
-        "Jammu and Kashmir": 30,
-        "Ladakh": 30,
-        "Puducherry": 30,
-        "West Bengal": 20,
-        "Madhya Pradesh": 20,
-        "Uttarakhand": 20,
-        "Himachal Pradesh": 20,
-        "Odisha": 20,
-        "Arunachal Pradesh": 20,
-        "Manipur": 20,
-        "Meghalaya": 20,
-        "Mizoram": 20,
-        "Nagaland": 20,
-        "Sikkim": 20,
-        "Tripura": 20,
-        "Andaman and Nicobar": 20,
-        "Dadra and Nagar Haveli and Daman and Diu": 20,
-        "Lakshadweep": 20,
-        "Jharkhand": 10,
-        "Chhattisgarh": 10,
+        "Punjab": 150,
+        "Delhi": 100,
+        "Maharashtra": 100,
+        "Karnataka": 100,
+        "Goa": 100,
+        "Chandigarh": 100,
+        "Haryana": 80,
+        "Gujarat": 80,
+        "Rajasthan": 80,
+        "Kerala": 80,
+        "Tamil Nadu": 80,
+        "Telangana": 80,
+        "Andhra Pradesh": 80,
+        "Assam": 50,
+        "Jammu and Kashmir": 80,
+        "Ladakh": 80,
+        "Puducherry": 80,
+        "West Bengal": 50,
+        "Madhya Pradesh": 50,
+        "Uttarakhand": 50,
+        "Himachal Pradesh": 50,
+        "Odisha": 50,
+        "Arunachal Pradesh": 50,
+        "Manipur": 50,
+        "Meghalaya": 50,
+        "Mizoram": 50,
+        "Nagaland": 50,
+        "Sikkim": 50,
+        "Tripura": 50,
+        "Andaman and Nicobar": 50,
+        "Dadra and Nagar Haveli and Daman and Diu": 50,
+        "Lakshadweep": 50,
+        "Jharkhand": 30,
+        "Chhattisgarh": 30,
         "Bihar": 0,
         "Uttar Pradesh": 0,
-        "other": 20
+        "other": 50
       };
 
       function updatePricingDisplay() {
         if (!activeSubService) return;
-        const baseFee = Number(activeSubService.fee);
+        let baseFee = Number(activeSubService.fee);
+        if (baseFee < 150 && activeSubService.id !== 'exam-admit') {
+          baseFee = 150;
+        }
+
         const stateEl = document.getElementById('applicantState');
         const chosenState = stateEl ? stateEl.value : 'Uttar Pradesh';
         const stateOffset = stateFeeOffsets[chosenState] || 0;
         const totalBaseFee = baseFee + stateOffset;
+
+        const serviceHandlingFee = (baseFee >= 150 && activeSubService.id !== 'exam-admit') ? 50 : 0;
+        const pureBaseFee = Math.max(0, baseFee - serviceHandlingFee);
+
+        // Update transparent breakdown box
+        const applyBase = document.getElementById('applyFeeBase');
+        const applyState = document.getElementById('applyFeeState');
+        const applyStateLbl = document.getElementById('applyFeeStateLabel');
+        const applyServ = document.getElementById('applyFeeService');
+        const applyTot = document.getElementById('applyFeeTotal');
+
+        if (applyBase) applyBase.innerText = `₹${pureBaseFee}`;
+        if (applyState) applyState.innerText = `+₹${stateOffset}`;
+        if (applyStateLbl) applyStateLbl.innerText = `राज्य पोर्टल व प्रोसेसिंग शुल्क (${chosenState}):`;
+        if (applyServ) applyServ.innerText = `+₹${serviceHandlingFee}`;
+        if (applyTot) applyTot.innerText = `₹${totalBaseFee}`;
         
-        const stateNotice = stateOffset > 0 ? ` (+₹${stateOffset} राज्यवार पोर्टल सुविधा शुल्क सम्मिलित)` : '';
+        const stateNotice = stateOffset > 0 ? ` (${chosenState} राज्य सुविधा शुल्क +₹${stateOffset} सम्मिलित)` : '';
 
         if (currentPayMethod === 'upi') {
           document.getElementById('topFeeBadge').textContent = `₹${totalBaseFee}`;
           document.getElementById('paymentPayableFee').textContent = `₹${totalBaseFee}`;
-          document.getElementById('gatewayFeeNote').textContent = `UPI भुगतान 100% फ्री है (0% अतिरिक्त गेटवे शुल्क)${stateNotice}`;
+          document.getElementById('gatewayFeeNote').textContent = `UPI भुगतान 100% फ्री है (0% अतिरिक्त शुल्क)${stateNotice}`;
           
           // Update QR Code
           const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(`upi://pay?pa=kuzu@ptyes&pn=Shan%20Cyber%20Cafe&am=${totalBaseFee}&cu=INR&tn=${encodeURIComponent(activeSubService.name + ' - ' + chosenState)}`)}`;
@@ -1370,7 +1410,7 @@
           const totalWithSurcharge = totalBaseFee + surcharge;
           document.getElementById('topFeeBadge').textContent = `₹${totalWithSurcharge}`;
           document.getElementById('paymentPayableFee').textContent = `₹${totalWithSurcharge}`;
-          document.getElementById('gatewayFeeNote').textContent = `Razorpay: कुल ₹${totalBaseFee}${stateNotice} + 2% गेटवे शुल्क ₹${surcharge} = ₹${totalWithSurcharge}`;
+          document.getElementById('gatewayFeeNote').textContent = `Razorpay: कुल देय राशि ₹${totalBaseFee}${stateNotice} + 2% गेटवे शुल्क ₹${surcharge} = ₹${totalWithSurcharge}`;
           document.getElementById('rzpPayableText').textContent = `₹${totalWithSurcharge}`;
         }
       }
