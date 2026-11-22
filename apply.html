@@ -1,0 +1,1443 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="ऑनलाइन सेवा आवेदन फ़ॉर्म — शान साइबर कैफे एवं ई-सेवा केंद्र | arrai.in" />
+    <meta name="theme-color" content="#0f172a" />
+    <title>ऑनलाइन सेवा आवेदन — शान साइबर कैफे एवं ई-सेवा | arrai.in</title>
+    <link rel="icon" type="image/svg+xml" href="assets/app-icon.svg" />
+    <link rel="alternate icon" href="assets/app-icon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+      :root {
+        --eseva-gold: #f59e0b;
+        --eseva-emerald: #10b981;
+        --eseva-blue: #38bdf8;
+        --eseva-card-bg: rgba(15, 23, 42, 0.92);
+        --eseva-border: rgba(255, 255, 255, 0.12);
+      }
+      body {
+        background: #090d16;
+        color: #f8fafc;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        padding-bottom: 90px;
+        min-height: 100vh;
+      }
+      .apply-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px 16px;
+      }
+      .apply-header-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0 20px;
+        border-bottom: 1px solid var(--eseva-border);
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid var(--eseva-border);
+        border-radius: 8px;
+        color: #cbd5e1;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+      }
+      .btn-back:hover {
+        background: rgba(245, 158, 11, 0.2);
+        color: var(--eseva-gold);
+        border-color: var(--eseva-gold);
+      }
+      .portal-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .portal-badge {
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid rgba(245, 158, 11, 0.4);
+        color: var(--eseva-gold);
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 700;
+      }
+      .form-card {
+        background: var(--eseva-card-bg);
+        border: 1px solid var(--eseva-border);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+        backdrop-filter: blur(12px);
+      }
+      .step-banner {
+        background: linear-gradient(135deg, rgba(2, 132, 199, 0.15), rgba(16, 185, 129, 0.15));
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 18px;
+      }
+      .form-full {
+        grid-column: 1 / -1;
+      }
+      .form-label {
+        display: block;
+        font-size: 0.88rem;
+        color: #94a3b8;
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+      .form-input, .form-select, .form-textarea {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--eseva-border);
+        border-radius: 8px;
+        padding: 10px 14px;
+        color: #fff;
+        font-size: 0.92rem;
+        box-sizing: border-box;
+        transition: border-color 0.2s, background 0.2s;
+      }
+      .form-input:focus, .form-select:focus, .form-textarea:focus {
+        outline: none;
+        border-color: var(--eseva-blue);
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .form-select option {
+        background: #0f172a;
+        color: #fff;
+      }
+      .service-type-box {
+        background: rgba(14, 165, 233, 0.06);
+        border: 1px solid rgba(56, 189, 248, 0.35);
+        border-radius: 12px;
+        padding: 18px;
+        margin-bottom: 20px;
+      }
+      .subservice-radio-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .subservice-option {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--eseva-border);
+        border-radius: 10px;
+        padding: 12px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        transition: all 0.2s;
+        position: relative;
+      }
+      .subservice-option:hover {
+        border-color: var(--eseva-gold);
+        background: rgba(245, 158, 11, 0.08);
+      }
+      .subservice-option.selected {
+        border-color: var(--eseva-gold);
+        background: rgba(245, 158, 11, 0.15);
+        box-shadow: 0 0 12px rgba(245, 158, 11, 0.25);
+      }
+      .subservice-title {
+        font-weight: 700;
+        font-size: 0.92rem;
+        color: #fff;
+      }
+      .subservice-fee {
+        font-weight: 800;
+        font-size: 1.05rem;
+        color: var(--eseva-gold);
+      }
+      .subservice-desc {
+        font-size: 0.76rem;
+        color: #94a3b8;
+        line-height: 1.4;
+      }
+      .docs-checklist-box {
+        background: rgba(16, 185, 129, 0.06);
+        border: 1px dashed rgba(16, 185, 129, 0.4);
+        border-radius: 10px;
+        padding: 14px;
+        margin-top: 12px;
+      }
+      .docs-checklist-box h4 {
+        margin: 0 0 6px 0;
+        color: #6ee7b7;
+        font-size: 0.88rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .docs-checklist-box ul {
+        margin: 0;
+        padding-left: 20px;
+        font-size: 0.82rem;
+        color: #cbd5e1;
+        line-height: 1.6;
+      }
+      .payment-section-box {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(245, 158, 11, 0.35);
+        border-radius: 14px;
+        padding: 20px;
+        margin-top: 24px;
+      }
+      .pay-tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .pay-tab-btn {
+        flex: 1;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--eseva-border);
+        background: rgba(255, 255, 255, 0.05);
+        color: #cbd5e1;
+        font-weight: 700;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-align: center;
+      }
+      .pay-tab-btn.active {
+        background: var(--eseva-gold);
+        color: #0f172a;
+        border-color: var(--eseva-gold);
+      }
+      .btn-submit {
+        width: 100%;
+        padding: 15px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: #fff;
+        font-weight: 800;
+        font-size: 1.05rem;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+        margin-top: 20px;
+        transition: transform 0.2s, opacity 0.2s;
+      }
+      .btn-submit:hover {
+        transform: translateY(-2px);
+        opacity: 0.95;
+      }
+      .file-dropzone {
+        border: 2px dashed rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        background: rgba(255, 255, 255, 0.02);
+        transition: border-color 0.2s;
+      }
+      .file-dropzone:hover {
+        border-color: var(--eseva-blue);
+      }
+      /* Success Modal */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.88);
+        backdrop-filter: blur(8px);
+        z-index: 2000;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+      }
+      .modal-card {
+        background: #0f172a;
+        border: 1px solid var(--eseva-gold);
+        border-radius: 16px;
+        max-width: 540px;
+        width: 100%;
+        padding: 26px;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+      }
+      .modal-receipt {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid var(--eseva-border);
+        border-radius: 10px;
+        padding: 14px;
+        text-align: left;
+        margin: 16px 0;
+        font-size: 0.88rem;
+        line-height: 1.7;
+        color: #cbd5e1;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="apply-container">
+      <!-- Header Nav -->
+      <div class="apply-header-nav">
+        <div class="portal-brand">
+          <a href="eseva.html" class="btn-back">⬅ ई-सेवा मुख्य पोर्टल</a>
+          <a href="index.html" class="btn-back" style="background:transparent; border-color:transparent;">🏠 होम</a>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span class="portal-badge">⚡ अधिकृत ई-सेवा पोर्टल</span>
+          <button onclick="toggleLang()" id="langBtn" class="btn-back" style="padding:4px 10px; font-size:0.8rem;">🌐 English</button>
+        </div>
+      </div>
+
+      <!-- Main Form Card -->
+      <div class="form-card">
+        <div class="step-banner">
+          <div>
+            <span style="font-size:0.8rem; color:#38bdf8; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;" id="bannerStepTag">स्टेप 1: सेवा व विवरण</span>
+            <h2 style="margin:4px 0 0 0; font-size:1.35rem; color:#fff;" id="pageMainHeading">ऑनलाइन सेवा पंजीकरण (Dedicated Application)</h2>
+          </div>
+          <div style="text-align:right;">
+            <span style="font-size:0.75rem; color:#94a3b8; display:block;">कुल देय शुल्क (All-Inclusive Fee)</span>
+            <span style="font-size:1.8rem; font-weight:900; color:var(--eseva-gold);" id="topFeeBadge">₹0</span>
+          </div>
+        </div>
+
+        <form id="applyMainForm" onsubmit="handleApplicationSubmit(event)">
+          <!-- 1. Category & Major Service Selector -->
+          <div class="form-grid" style="margin-bottom:18px;">
+            <div>
+              <label class="form-label" for="categorySelect">
+                <span>सेवा वर्ग (Service Category)</span> *
+              </label>
+              <select class="form-select" id="categorySelect" onchange="onCategorySelectChange()">
+                <option value="aadhaar">🆔 आधार कार्ड सेवाएँ (Aadhaar Services)</option>
+                <option value="udyam">🏢 उद्यम / MSME व व्यापार रजिस्ट्रेशन</option>
+                <option value="passport">✈️ पासपोर्ट सेवा (Passport Seva)</option>
+                <option value="voter">🗳️ वोटर आईडी कार्ड (Voter ID)</option>
+                <option value="transport">🚗 ड्राइविंग लाइसेंस व वाहन (Transport)</option>
+                <option value="certificate">📜 सरकारी प्रमाण पत्र (Certificates)</option>
+                <option value="exam">🎓 सरकारी नौकरी व परीक्षा फॉर्म (Govt Jobs)</option>
+                <option value="epfo">💼 EPFO व पीएफ क्लेम (PF Claim)</option>
+                <option value="pan">💳 पैन कार्ड सेवाएँ (PAN Services)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="form-label" for="mainServiceSelect">
+                <span>मुख्य सेवा (Selected Service)</span> *
+              </label>
+              <select class="form-select" id="mainServiceSelect" onchange="onMainServiceSelectChange()">
+                <!-- Populated via JS -->
+              </select>
+            </div>
+          </div>
+
+          <!-- 2. Dynamic Sub-Service Options & Custom Pricing Selection -->
+          <div class="service-type-box" id="subServiceBox">
+            <label class="form-label" style="color:#38bdf8; display:flex; justify-content:space-between; align-items:center;">
+              <span>विशिष्ट कार्रवाई व शुल्क चयन (Select Exact Action &amp; Fee)</span>
+              <small style="color:#94a3b8; font-size:0.75rem;">(चुनी गई कार्रवाई अनुसार फीस तय होती है)</small>
+            </label>
+            <div class="subservice-radio-grid" id="subServiceGrid">
+              <!-- Dynamically populated radio cards -->
+            </div>
+
+            <!-- Dynamic Required Documents Checklist -->
+            <div class="docs-checklist-box" id="docsChecklistBox">
+              <h4><span>📋</span> <span id="docsChecklistTitle">इस सेवा के लिए आवश्यक दस्तावेज़ (Required Documents)</span></h4>
+              <ul id="docsChecklistItems">
+                <!-- Dynamically populated checklist -->
+              </ul>
+            </div>
+          </div>
+
+          <!-- 3. Dynamic Service-Tailored Inputs -->
+          <div class="service-type-box" id="tailoredInputsBox" style="background:rgba(255,255,255,0.02); border-color:var(--eseva-border); margin-bottom:20px;">
+            <label class="form-label" style="color:var(--eseva-gold); margin-bottom:12px;">
+              <span>⚙️ सेवा से जुड़े विशिष्ट विवरण (Specific Requirements)</span>
+            </label>
+            <div class="form-grid" id="tailoredInputsGrid">
+              <!-- Dynamically rendered inputs for the active service -->
+            </div>
+          </div>
+
+          <!-- 4. Applicant Personal Details -->
+          <div style="margin-bottom:14px;">
+            <h3 style="font-size:1.05rem; color:#fff; border-bottom:1px solid var(--eseva-border); padding-bottom:8px; margin-bottom:14px;">
+              👤 आवेदक का विवरण (Applicant Details)
+            </h3>
+          </div>
+
+          <div class="form-grid">
+            <div>
+              <label class="form-label" for="applicantName">आवेदक का पूरा नाम (Full Name) *</label>
+              <input class="form-input" id="applicantName" type="text" placeholder="As per official documents" required />
+            </div>
+
+            <div>
+              <label class="form-label" for="guardianName">पिता / पति का नाम (Father / Husband Name) *</label>
+              <input class="form-input" id="guardianName" type="text" placeholder="Father or Husband name" required />
+            </div>
+
+            <div>
+              <label class="form-label" for="dob">जन्म तिथि (Date of Birth) *</label>
+              <input class="form-input" id="dob" type="date" required />
+            </div>
+
+            <div>
+              <label class="form-label" for="gender">लिंग (Gender) *</label>
+              <select class="form-select" id="gender" required>
+                <option value="Male">पुरुष (Male)</option>
+                <option value="Female">महिला (Female)</option>
+                <option value="Other">अन्य (Other)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="form-label" for="phone">मोबाइल नंबर (WhatsApp Active) *</label>
+              <input class="form-input" id="phone" type="tel" pattern="[0-9]{10}" placeholder="10-digit WhatsApp number" required />
+            </div>
+
+            <div>
+              <label class="form-label" for="email">ईमेल आईडी (Email Address)</label>
+              <input class="form-input" id="email" type="email" placeholder="example@mail.com" />
+            </div>
+
+            <!-- Pincode Automation -->
+            <div>
+              <label class="form-label" for="pincode">
+                <span>पिन कोड (6-Digit Pincode)</span> *
+                <small style="color:#38bdf8;">(डालते ही जिला व राज्य स्वतः भरेगा)</small>
+              </label>
+              <input class="form-input" id="pincode" type="text" maxlength="6" pattern="[1-9][0-9]{5}" placeholder="e.g. 276001" required />
+              <div id="pincodeNotice" style="font-size:0.8rem; margin-top:4px;"></div>
+            </div>
+
+            <div>
+              <label class="form-label" for="districtState">जिला व राज्य (District &amp; State)</label>
+              <input class="form-input" id="districtState" type="text" placeholder="Auto-filled via pincode" />
+            </div>
+
+            <!-- Full Address -->
+            <div class="form-full">
+              <label class="form-label" for="address">स्थाई पता (Complete Address) *</label>
+              <textarea class="form-textarea" id="address" rows="2" placeholder="House No, Ward/Mohalla, Village/Town, Post Office" required></textarea>
+            </div>
+
+            <!-- Documents Upload -->
+            <div class="form-full">
+              <label class="form-label">सपोर्टिंग दस्तावेज़ अपलोड (Upload Required Documents) *</label>
+              <div class="file-dropzone" onclick="document.getElementById('fileUploadInput').click()">
+                <div style="font-size:2rem; margin-bottom:4px;">📂</div>
+                <strong style="color:#fff; display:block;">यहाँ क्लिक करके दस्तावेज़ चुनें या ड्रैग करें</strong>
+                <span style="font-size:0.8rem; color:#94a3b8;">(PDF, JPG, PNG - आधार कार्ड, पुराना दस्तावेज़, फोटो)</span>
+                <input type="file" id="fileUploadInput" multiple accept=".pdf,image/*" style="display:none;" onchange="onFileChosen(event)" />
+              </div>
+              <div id="chosenFilesNotice" style="margin-top:8px; font-size:0.85rem; color:#38bdf8;"></div>
+            </div>
+
+            <div class="form-full">
+              <label class="form-label" for="additionalRemarks">विशेष निर्देश या टिप्पणी (Optional Remarks)</label>
+              <textarea class="form-textarea" id="additionalRemarks" rows="2" placeholder="Any specific requirements..."></textarea>
+            </div>
+          </div>
+
+          <!-- 5. Payment Selection (Free UPI vs Razorpay +2%) -->
+          <div class="payment-section-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+              <div>
+                <span class="portal-badge" style="margin-bottom:6px; display:inline-block;">💳 भुगतान गेटवे चयन</span>
+                <h3 style="margin:0; font-size:1.2rem; color:#fff;">कुल देय राशि (Total Amount Payable)</h3>
+              </div>
+              <div style="text-align:right;">
+                <span style="font-size:2rem; font-weight:900; color:var(--eseva-gold);" id="paymentPayableFee">₹0</span>
+                <small style="display:block; color:#94a3b8; font-size:0.75rem;" id="gatewayFeeNote">UPI: 0% अतिरिक्त शुल्क · Razorpay: +2%</small>
+              </div>
+            </div>
+
+            <!-- Pay Tabs -->
+            <div class="pay-tabs">
+              <button type="button" class="pay-tab-btn active" id="tabUpi" onclick="switchPay('upi')">
+                ⚡ UPI QR कोड (100% फ्री - 0% शुल्क)
+              </button>
+              <button type="button" class="pay-tab-btn" id="tabRzp" onclick="switchPay('razorpay')">
+                💳 Razorpay (Card, NetBanking - +2%)
+              </button>
+            </div>
+
+            <!-- UPI Pane -->
+            <div id="paneUpi" style="display:block; text-align:center; padding:12px; background:rgba(255,255,255,0.03); border-radius:10px;">
+              <p style="margin:0 0 10px 0; font-size:0.85rem; color:#cbd5e1;">
+                किसी भी UPI ऐप (PhonePe, Google Pay, Paytm, BHIM) से नीचे दिए गए QR कोड को स्कैन करके भुगतान करें:
+              </p>
+              <div style="display:inline-block; padding:12px; background:#fff; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.5);">
+                <img id="upiDynamicQr" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=kuzu@ptyes&pn=Shan%20Cyber%20Cafe&cu=INR" alt="UPI QR Code" style="width:160px; height:160px; display:block;" />
+              </div>
+              <div style="margin-top:10px; font-size:0.9rem;">
+                <span style="color:#94a3b8;">UPI ID:</span> <strong style="color:var(--eseva-gold); letter-spacing:0.5px;">kuzu@ptyes</strong>
+              </div>
+              <div style="max-width:400px; margin:14px auto 0;">
+                <label class="form-label" for="upiUtrNumber" style="text-align:left;">
+                  UPI UTR / 12-अंकों का ट्रांजेक्शन नंबर (Transaction Reference) *
+                </label>
+                <input class="form-input" id="upiUtrNumber" type="text" placeholder="12-digit UTR or Transaction ID" required />
+              </div>
+            </div>
+
+            <!-- Razorpay Pane -->
+            <div id="paneRazorpay" style="display:none; text-align:center; padding:16px; background:rgba(255,255,255,0.03); border-radius:10px;">
+              <p style="margin:0 0 12px 0; font-size:0.88rem; color:#cbd5e1;">
+                डेबिट कार्ड, क्रेडिट कार्ड, नेट बैंकिंग या वॉलेट द्वारा भुगतान करें (गेटवे शुल्क 2% सम्मिलित):
+              </p>
+              <button type="button" onclick="openRazorpayCheckout()" style="padding:12px 24px; border-radius:8px; background:#0284c7; color:#fff; font-weight:700; border:none; cursor:pointer; font-size:0.95rem;">
+                💳 Pay Now via Razorpay: <span id="rzpPayableText">₹0</span>
+              </button>
+              <div id="rzpSuccessBadge" style="display:none; margin-top:10px; color:#10b981; font-weight:700; font-size:0.9rem;"></div>
+              <input type="hidden" id="rzpPaymentId" value="" />
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn-submit" id="submitBtn">
+            <span>🚀 आवेदन सुरक्षित सबमिट करें (Submit Application)</span>
+          </button>
+          <div style="text-align:center; margin-top:10px; font-size:0.78rem; color:#94a3b8;">
+            सबमिट करते ही आपको एक अधिकृत डिजिटल संदर्भ संख्या (#SHAN-XXXXXX) प्राप्त होगी।
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Success Slip Modal -->
+    <div class="modal-overlay" id="successModal">
+      <div class="modal-card">
+        <div style="font-size:3rem; margin-bottom:8px;">✅</div>
+        <h3 style="color:#10b981; margin:0 0 4px 0; font-size:1.35rem;">आवेदन सफलतापूर्वक दर्ज हुआ!</h3>
+        <p style="color:#94a3b8; font-size:0.85rem; margin:0 0 16px 0;">शान साइबर कैफे एवं ई-सेवा पोर्टल द्वारा पावती (Receipt)</p>
+        
+        <div class="modal-receipt" id="receiptContent">
+          <!-- Filled via JS -->
+        </div>
+
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <button onclick="printReceiptSlip()" style="padding:10px 18px; border-radius:8px; background:var(--eseva-gold); color:#0f172a; font-weight:700; border:none; cursor:pointer;">
+            🖨️ रसीद प्रिंट करें (Print Slip)
+          </button>
+          <button onclick="sendWhatsAppConfirmation()" style="padding:10px 18px; border-radius:8px; background:#10b981; color:#fff; font-weight:700; border:none; cursor:pointer;">
+            📲 WhatsApp पर सूचना भेजें
+          </button>
+          <button onclick="closeReceiptModal()" style="padding:10px 18px; border-radius:8px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid var(--eseva-border); cursor:pointer;">
+            बंद करें (Close)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 1. DATA CATALOG WITH SUB-SERVICES, TAILORED FIELDS, & ACCURATE PRICING
+      const serviceCatalog = {
+        aadhaar: {
+          title: "आधार कार्ड सेवाएँ (Aadhaar Services)",
+          subServices: [
+            {
+              id: "aadhaar-address",
+              name: "पता सुधार / अपडेट (Address Update)",
+              fee: 250,
+              desc: "नया पता, वार्ड या गाँव अपडेट सहायता",
+              docs: ["निवास प्रमाण (बिजली बिल / राशन कार्ड / बैंक पासबुक)", "मौजूदा आधार कार्ड की कॉपी"],
+              fields: [
+                { id: "newAddressReq", label: "नया पता जो आधार में चाहिए *", type: "text", placeholder: "House No, Village/Town, Dist, State", required: true },
+                { id: "aadhaarLast4", label: "आधार कार्ड के अंतिम 4 अंक *", type: "text", maxlength: 4, placeholder: "XXXX", required: true }
+              ]
+            },
+            {
+              id: "aadhaar-mobile",
+              name: "मोबाइल / ईमेल लिंक सहायता (Mobile Link)",
+              fee: 150,
+              desc: "OTP हेतु नया मोबाइल नंबर या ईमेल जोड़ना",
+              docs: ["मौजूदा आधार कार्ड की फोटो"],
+              fields: [
+                { id: "newMobileReq", label: "जो मोबाइल नंबर लिंक कराना है *", type: "tel", placeholder: "10-digit mobile number", required: true },
+                { id: "newEmailReq", label: "ईमेल आईडी जो लिंक करानी है", type: "email", placeholder: "example@mail.com" }
+              ]
+            },
+            {
+              id: "aadhaar-dob-name",
+              name: "नाम / जन्म तिथि / लिंग सुधार (Name/DOB Update)",
+              fee: 200,
+              desc: "10वीं मार्कशीट या जन्म प्रमाण पत्र अनुसार सुधार",
+              docs: ["10वीं मार्कशीट या जन्म प्रमाण पत्र या पैन कार्ड", "आधार कार्ड की प्रति"],
+              fields: [
+                { id: "correctNameDob", label: "सही नाम / जन्म तिथि जो दर्ज करानी है *", type: "text", placeholder: "Correct Name or Exact DOB (DD/MM/YYYY)", required: true },
+                { id: "aadhaarLast4", label: "आधार कार्ड के अंतिम 4 अंक *", type: "text", maxlength: 4, placeholder: "XXXX", required: true }
+              ]
+            },
+            {
+              id: "aadhaar-pvc",
+              name: "PVC स्मार्ट आधार कार्ड ऑर्डर (PVC Card)",
+              fee: 100,
+              desc: "UIDAI अधिकृत वाटरप्रूफ स्मार्ट कार्ड डाक द्वारा डिलीवरी",
+              docs: ["आधार कार्ड नंबर व मोबाइल OTP"],
+              fields: [
+                { id: "pvcDeliveryAddress", label: "डिलीवरी का पूरा पता *", type: "text", placeholder: "Where the PVC card should be delivered", required: true }
+              ]
+            },
+            {
+              id: "aadhaar-bio",
+              name: "बायोमेट्रिक फिंगरप्रिंट / आँख स्लॉट सहायता",
+              fee: 180,
+              desc: "5 या 15 वर्ष की आयु में अनिवार्य बायोमेट्रिक अपडेट",
+              docs: ["पुराना आधार कार्ड", "जन्म प्रमाण पत्र (नाबालिग हेतु)"],
+              fields: [
+                { id: "aadhaarCenterCity", label: "पसंदीदा आधार केंद्र / शहर *", type: "text", placeholder: "e.g. Kotwali, Azamgarh", required: true }
+              ]
+            }
+          ]
+        },
+
+        udyam: {
+          title: "उद्यम / MSME व व्यापार रजिस्ट्रेशन",
+          subServices: [
+            {
+              id: "udyam-new",
+              name: "नया उद्यम / MSME रजिस्ट्रेशन सर्टिफिकेट",
+              fee: 300,
+              desc: "सरकारी व्यापार रजिस्ट्रेशन नंबर और अधिकृत सर्टिफिकेट",
+              docs: ["मालिक का पैन कार्ड", "मालिक का आधार कार्ड", "बैंक पासबुक / कैंसिल्ड चेक"],
+              fields: [
+                { id: "firmName", label: "फर्म / दूकान का नाम (Firm / Shop Name) *", type: "text", placeholder: "e.g. Shan Enterprises", required: true },
+                { id: "businessActivity", label: "व्यापार की प्रकृति (Trading / Manufacturing / Service) *", type: "select", options: ["ट्रेडिंग / दूकान (Retail/Wholesale)", "सर्विस / कैफे / आईटी (Services)", "मैन्युफैक्चरिंग / निर्माण (Manufacturing)"], required: true },
+                { id: "ownerPan", label: "मालिक का पैन कार्ड नंबर *", type: "text", placeholder: "ABCDE1234F", required: true },
+                { id: "bankAcIfsc", label: "व्यापारिक बैंक खाता व IFSC कोड *", type: "text", placeholder: "Account No & IFSC Code", required: true }
+              ]
+            },
+            {
+              id: "gst-reg",
+              name: "GST नया रजिस्ट्रेशन आवेदन सहायता",
+              fee: 1200,
+              desc: "नया 15-अंकों का जीएसटी नंबर और सरकारी पोर्टल फाइलिंग",
+              docs: ["बिजली का बिल / रेंट एग्रीमेंट", "पैन कार्ड व आधार", "पासपोर्ट साइज फोटो", "बैंक पासबुक"],
+              fields: [
+                { id: "gstFirmName", label: "व्यापार का कानूनी नाम (Business Legal Name) *", type: "text", placeholder: "Legal Business Name", required: true },
+                { id: "shopAddress", label: "दूकान / ऑफिस का पूरा पता *", type: "text", placeholder: "Commercial Address", required: true }
+              ]
+            },
+            {
+              id: "shop-licence",
+              name: "दुकान व वाणिज्यिक अधिष्ठान लाइसेंस (गुमाश्ता)",
+              fee: 650,
+              desc: "श्रम विभाग से दूकान रजिस्ट्रेशन प्रमाण पत्र",
+              docs: ["दूकान का फोटो बोर्ड सहित", "मालिक का आधार व पैन"],
+              fields: [
+                { id: "employeeCount", label: "कर्मचारियों की संख्या (Number of Employees) *", type: "number", placeholder: "0 if self-operated", required: true },
+                { id: "shopNature", label: "दुकान में होने वाला काम *", type: "text", placeholder: "e.g. Cyber Cafe & Printing", required: true }
+              ]
+            },
+            {
+              id: "fssai-reg",
+              name: "खाद्य सुरक्षा FSSAI रजिस्ट्रेशन (Food Licence)",
+              fee: 800,
+              desc: "होटल, किराना, कैफे, डेयरी हेतु अधिकृत FSSAI नंबर",
+              docs: ["आधार कार्ड", "फोटो", "दूकान का पता प्रमाण"],
+              fields: [
+                { id: "foodBizName", label: "खाद्य प्रतिष्ठान का नाम *", type: "text", placeholder: "Restaurant / Grocery name", required: true }
+              ]
+            }
+          ]
+        },
+
+        passport: {
+          title: "पासपोर्ट सेवा (Passport Seva)",
+          subServices: [
+            {
+              id: "passport-normal",
+              name: "सामान्य नया पासपोर्ट / नवीनीकरण (36 पेज)",
+              fee: 3100,
+              desc: "नया सामान्य पासपोर्ट ऑनलाइन आवेदन, अपॉइंटमेंट और सत्यापन सेवा",
+              docs: ["10वीं की मार्कशीट / जन्म प्रमाण पत्र (ECNR हेतु)", "आधार कार्ड व पैन कार्ड", "बैंक पासबुक या बिजली बिल"],
+              fields: [
+                { id: "passportType", label: "आवेदन प्रकार (Fresh or Reissue) *", type: "select", options: ["Fresh (नया आवेदन)", "Reissue (नवीनीकरण/पेज समाप्त)", "Lost / Damaged (खोया/क्षतिग्रस्त)"], required: true },
+                { id: "policeStation", label: "नजदीकी पुलिस थाना (Police Station) *", type: "text", placeholder: "e.g. Cantt Police Station", required: true },
+                { id: "oldPassportNo", label: "पुराना पासपोर्ट नंबर (यदि नवीनीकरण हो)", type: "text", placeholder: "Old Passport No" }
+              ]
+            },
+            {
+              id: "passport-tatkaal",
+              name: "तत्काल पासपोर्ट स्लॉट बुकिंग (Priority Fast-Track)",
+              fee: 4000,
+              desc: "तत्काल श्रेणी में 3-5 कार्यदिवस में पासपोर्ट जारी करने हेतु प्राथमिकता स्लॉट बुकिंग",
+              docs: ["आधार कार्ड", "पैन कार्ड", "वोटर आईडी या ड्राइविंग लाइसेंस (कम से कम 3 प्रमाण)", "10वीं मार्कशीट"],
+              fields: [
+                { id: "tatkaalUrgency", label: "तत्काल का कारण व अपेक्षित यात्रा तारीख *", type: "text", placeholder: "Urgent travel reason & tentative date", required: true },
+                { id: "policeStation", label: "नजदीकी पुलिस थाना *", type: "text", placeholder: "Police Station", required: true }
+              ]
+            },
+            {
+              id: "passport-pcc",
+              name: "पुलिस क्लीयरेंस सर्टिफिकेट (PCC Slot Booking)",
+              fee: 800,
+              desc: "विदेश जाने, वर्क परमिट या इमिग्रेशन हेतु पासपोर्ट PCC",
+              docs: ["पासपोर्ट की मूल प्रति (आगे-पीछे)", "वीज़ा या जॉब ऑफर लेटर"],
+              fields: [
+                { id: "targetCountry", label: "किस देश के लिए PCC चाहिए (Destination Country) *", type: "text", placeholder: "e.g. Dubai, Canada, UK", required: true },
+                { id: "activePassportNum", label: "पासपोर्ट नंबर *", type: "text", placeholder: "Current Passport Number", required: true }
+              ]
+            }
+          ]
+        },
+
+        voter: {
+          title: "वोटर आईडी कार्ड (Voter ID NVSP / ECI)",
+          subServices: [
+            {
+              id: "voter-form6",
+              name: "नया वोटर कार्ड आवेदन (Form 6)",
+              fee: 120,
+              desc: "18 वर्ष पूरा होने पर नया मतदाता पहचान पत्र",
+              docs: ["आयु प्रमाण (10वीं मार्कशीट / आधार)", "निवास प्रमाण", "पासपोर्ट साइज रंगीन फोटो"],
+              fields: [
+                { id: "assemblyConstituency", label: "विधानसभा क्षेत्र का नाम (Assembly Constituency) *", type: "text", placeholder: "e.g. Mubarakpur / Azamgarh Sadar", required: true },
+                { id: "familyVoterEpic", label: "परिवार के किसी सदस्य का वोटर नंबर (वैकल्पिक)", type: "text", placeholder: "Family Member EPIC No." }
+              ]
+            },
+            {
+              id: "voter-form8",
+              name: "वोटर कार्ड संशोधन / शिफ्टिंग (Form 8)",
+              fee: 100,
+              desc: "नाम, पता, फोटो, जन्मतिथि या विधानसभा बदलाव",
+              docs: ["मौजूदा वोटर कार्ड", "संशोधन का प्रमाण (आधार कार्ड)"],
+              fields: [
+                { id: "existingEpic", label: "मौजूदा वोटर कार्ड नंबर (EPIC No.) *", type: "text", placeholder: "e.g. ABC1234567", required: true },
+                { id: "voterCorrectionField", label: "क्या संशोधन कराना है (Correction Required) *", type: "select", options: ["पता परिवर्तन (Address Shifting)", "नाम सुधार (Name Correction)", "फोटो अपडेट (Photo Update)", "जन्म तिथि सुधार (DOB Correction)"], required: true }
+              ]
+            },
+            {
+              id: "voter-epic-dl",
+              name: "डिजिटल वोटर कार्ड (e-EPIC) डाउनलोड व लेमिनेशन",
+              fee: 50,
+              desc: "मूल आधिकारिक डिजिटल मतदाता पहचान पत्र डाउनलोड",
+              docs: ["वोटर कार्ड नंबर या रेफरेंस नंबर"],
+              fields: [
+                { id: "epicNoDownload", label: "वोटर आईडी नंबर (EPIC No.) *", type: "text", placeholder: "EPIC No.", required: true }
+              ]
+            }
+          ]
+        },
+
+        transport: {
+          title: "ड्राइविंग लाइसेंस व वाहन (Transport Sarathi)",
+          subServices: [
+            {
+              id: "dl-learning",
+              name: "लर्निंग ड्राइविंग लाइसेंस (LL Online)",
+              fee: 450,
+              desc: "ऑनलाइन लर्निंग लाइसेंस आवेदन, फीस भुगतान व स्लॉट बुकिंग",
+              docs: ["आधार कार्ड (मोबाइल लिंक)", "10वीं मार्कशीट / आयु प्रमाण", "ब्लड ग्रुप रिपोर्ट"],
+              fields: [
+                { id: "vehicleClass", label: "वाहन श्रेणी (Vehicle Class) *", type: "select", options: ["MCWG (मोटरसाइकिल / स्कूटर)", "LMV (कार / चौपहिया)", "MCWG + LMV (बाइक + कार दोनों)"], required: true },
+                { id: "bloodGroup", label: "रक्त समूह (Blood Group) *", type: "select", options: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-", "Unknown"], required: true }
+              ]
+            },
+            {
+              id: "dl-permanent",
+              name: "स्थाई ड्राइविंग लाइसेंस (DL Slot Booking)",
+              fee: 850,
+              desc: "लर्निंग के बाद पक्का ड्राइविंग लाइसेंस टेस्ट स्लॉट व फॉर्म",
+              docs: ["लर्निंग लाइसेंस की प्रति", "आधार कार्ड"],
+              fields: [
+                { id: "existingLlNo", label: "लर्निंग लाइसेंस नंबर (LL Number) *", type: "text", placeholder: "UP-XXXX-LL-XXXX", required: true },
+                { id: "rtoOffice", label: "संबंधित आरटीओ ऑफिस (RTO Office) *", type: "text", placeholder: "e.g. RTO Azamgarh / Varanasi", required: true }
+              ]
+            },
+            {
+              id: "dl-renewal",
+              name: "लाइसेंस नवीनीकरण / डुप्लीकेट डीएल (Renewal/Duplicate)",
+              fee: 550,
+              desc: "अवधि समाप्त या खोए हुए ड्राइविंग लाइसेंस का नवीनीकरण",
+              docs: ["पुराना ड्राइविंग लाइसेंस", "मेडिकल फॉर्म 1A (यदि 40+ आयु)", "आधार कार्ड"],
+              fields: [
+                { id: "originalDlNo", label: "मौजूदा ड्राइविंग लाइसेंस नंबर *", type: "text", placeholder: "DL Number", required: true }
+              ]
+            }
+          ]
+        },
+
+        certificate: {
+          title: "सरकारी प्रमाण पत्र (Revenue & E-District)",
+          subServices: [
+            {
+              id: "cert-income",
+              name: "आय प्रमाण पत्र (Income Certificate)",
+              fee: 150,
+              desc: "तहसील व लेखपाल सत्यापन द्वारा आधिकारिक आय प्रमाण पत्र",
+              docs: ["आधार कार्ड", "स्वप्रमाणित घोषणा पत्र", "राशन कार्ड / वेतन पर्ची", "पासपोर्ट फोटो"],
+              fields: [
+                { id: "annualIncome", label: "अनुमानित वार्षिक पारिवारिक आय (₹) *", type: "number", placeholder: "e.g. 48000", required: true },
+                { id: "profession", label: "परिवार का मुख्य व्यवसाय (Profession) *", type: "text", placeholder: "e.g. कृषि / मजदूरी / प्राइवेट कार्य", required: true }
+              ]
+            },
+            {
+              id: "cert-caste",
+              name: "जाति प्रमाण पत्र (Caste Certificate: OBC/SC/ST)",
+              fee: 150,
+              desc: "आरक्षण व सरकारी योजनाओं हेतु अधिकृत जाति प्रमाण पत्र",
+              docs: ["आधार कार्ड", "पिता का जाति प्रमाण पत्र या पुराना अभिलेख", "फोटो"],
+              fields: [
+                { id: "casteSubcaste", label: "जाति एवं उप-जाति (Caste & Sub-Caste) *", type: "text", placeholder: "जैसे: यादव, मौर्य, पासवान, आदि", required: true }
+              ]
+            },
+            {
+              id: "cert-domicile",
+              name: "निवास प्रमाण पत्र (Domicile / Niwas Certificate)",
+              fee: 150,
+              desc: "राज्य व जिले में स्थाई निवास का सरकारी प्रमाण पत्र",
+              docs: ["आधार कार्ड", "बिजली का बिल या राशन कार्ड", "प्राइमरी स्कूल टीसी या वोटर कार्ड"],
+              fields: [
+                { id: "stayYears", label: "वर्तमान पते पर रहने की अवधि (वर्षों में) *", type: "number", placeholder: "e.g. 15 (जन्म से है तो उम्र लिखें)", required: true }
+              ]
+            },
+            {
+              id: "cert-character",
+              name: "चरित्र प्रमाण पत्र (Police Character Verification)",
+              fee: 250,
+              desc: "सरकारी नौकरी व ठेकेदारी हेतु पुलिस सत्यापन प्रमाण पत्र",
+              docs: ["आधार कार्ड", "फोटो", "स्थानीय गवाह पहचान"],
+              fields: [
+                { id: "charPoliceStation", label: "संबंधित पुलिस थाना *", type: "text", placeholder: "Police Station", required: true },
+                { id: "charPurpose", label: "प्रमाण पत्र का उद्देश्य (Purpose) *", type: "text", placeholder: "e.g. Job Verification / Contractor Licence", required: true }
+              ]
+            },
+            {
+              id: "cert-ews",
+              name: "ईडब्ल्यूएस प्रमाण पत्र (EWS Certificate)",
+              fee: 180,
+              desc: "सामान्य वर्ग के आर्थिक रूप से कमजोर वर्ग का 10% आरक्षण",
+              docs: ["आधार कार्ड", "खतौनी / ज़मीन का पर्चा", "आय प्रमाण पत्र", "मकान का विवरण"],
+              fields: [
+                { id: "ewsLandArea", label: "पारिवारिक कृषि भूमि (यदि हो) *", type: "text", placeholder: "e.g. 2 बीघा या शून्य", required: true }
+              ]
+            }
+          ]
+        },
+
+        exam: {
+          title: "सरकारी नौकरी व परीक्षा फॉर्म (Govt Jobs)",
+          subServices: [
+            {
+              id: "exam-upsc",
+              name: "UPSC / State PSC फॉर्म (Civil Services / RO/ARO)",
+              fee: 250,
+              desc: "लोक सेवा आयोग ऑनलाइन विस्तृत आवेदन व OTR रजिस्ट्रेशन",
+              docs: ["स्नातक अंकपत्र", "आधार कार्ड", "फोटो व हस्ताक्षर"],
+              fields: [
+                { id: "examPostName", label: "परीक्षा या पद का नाम *", type: "text", placeholder: "e.g. UPSC CSE / UPPSC RO ARO", required: true },
+                { id: "otrNumber", label: "OTR नंबर (यदि पहले से हो)", type: "text", placeholder: "OTR Number" },
+                { id: "examCategory", label: "आरक्षण वर्ग (Category) *", type: "select", options: ["General / UR", "OBC", "EWS", "SC", "ST"], required: true }
+              ]
+            },
+            {
+              id: "exam-central",
+              name: "केंद्रीय सरकारी नौकरी (SSC CGL/CHSL/MTS, Railway, Army)",
+              fee: 150,
+              desc: "एसएससी व रेलवे की सभी भर्तियों का बिना गलती फॉर्म",
+              docs: ["10वीं / 12वीं मार्कशीट", "आधार कार्ड", "जाति प्रमाण पत्र (यदि OBC/SC/ST हो)"],
+              fields: [
+                { id: "postNameReq", label: "भर्ती का नाम (Recruitment Board) *", type: "text", placeholder: "e.g. SSC GD / Railway Group D", required: true },
+                { id: "eduQualification", label: "उच्चतम शैक्षणिक योग्यता *", type: "select", options: ["10th High School", "12th Intermediate", "Graduate", "Post Graduate"], required: true }
+              ]
+            },
+            {
+              id: "exam-police",
+              name: "राज्य पुलिस व दरोगा भर्ती फॉर्म",
+              fee: 150,
+              desc: "कांस्टेबल व सब-इंस्पेक्टर भर्ती ऑनलाइन फॉर्म व चालान",
+              docs: ["12वीं / ग्रेजुएशन मार्कशीट", "डोमिसाइल सर्टिफिकेट", "जाति प्रमाण पत्र"],
+              fields: [
+                { id: "statePoliceName", label: "राज्य व पद *", type: "text", placeholder: "e.g. UP Police Constable / SI", required: true }
+              ]
+            },
+            {
+              id: "exam-admit",
+              name: "एडमिट कार्ड डाउनलोड व लेमिनेटेड प्रिंट",
+              fee: 50,
+              desc: "परीक्षा प्रवेश पत्र, रोल नंबर सर्च व दिशा-निर्देश प्रिंट",
+              docs: ["रजिस्ट्रेशन नंबर व जन्मतिथि"],
+              fields: [
+                { id: "examRollReg", label: "रजिस्ट्रेशन नंबर या पासवर्ड *", type: "text", placeholder: "Application / Reg ID", required: true }
+              ]
+            },
+            {
+              id: "exam-scholarship",
+              name: "छात्रवृत्ति ऑनलाइन फॉर्म (UP / National Scholarship)",
+              fee: 150,
+              desc: "दशमोत्तर व पोस्ट-मैट्रिक छात्रवृत्ति पूर्ण आवेदन",
+              docs: ["आय, जाति, निवास प्रमाण", "फीस रसीद", "गत वर्ष की मार्कशीट", "बैंक खाता (आधार लिंक)"],
+              fields: [
+                { id: "collegeCourse", label: "कॉलेज / स्कूल व कक्षा का नाम *", type: "text", placeholder: "School / College & Course", required: true }
+              ]
+            }
+          ]
+        },
+
+        epfo: {
+          title: "EPFO व पीएफ क्लेम (PF Claim)",
+          subServices: [
+            {
+              id: "pf-full",
+              name: "पीएफ पूरा पैसा निकालें (Full Withdrawal Form 19 & 10C)",
+              fee: 350,
+              desc: "नौकरी छोड़ने के बाद पीएफ व पेंशन का पूरा पैसा खाते में",
+              docs: ["आधार लिंक मोबाइल (OTP हेतु)", "बैंक पासबुक / कैंसिल्ड चेक", "पैन कार्ड"],
+              fields: [
+                { id: "uanNumber", label: "12-अंकों का UAN नंबर *", type: "text", maxlength: 12, placeholder: "UAN Number", required: true },
+                { id: "dateOfExit", label: "कंपनी छोड़ने की तारीख (Date of Exit) *", type: "text", placeholder: "DD/MM/YYYY", required: true }
+              ]
+            },
+            {
+              id: "pf-advance",
+              name: "पीएफ एडवांस क्लेम (Advance Form 31)",
+              fee: 250,
+              desc: "नौकरी के दौरान बीमारी, मकान निर्माण या शादी हेतु अग्रिम निकासी",
+              docs: ["UAN नंबर", "बैंक पासबुक"],
+              fields: [
+                { id: "uanAdvNum", label: "UAN नंबर *", type: "text", maxlength: 12, placeholder: "UAN Number", required: true },
+                { id: "advanceReason", label: "निकासी का कारण (Reason for Advance) *", type: "select", options: ["Illness (बीमारी हेतु)", "Construction of House (मकान निर्माण)", "Marriage (शादी हेतु)", "Natural Calamity"], required: true }
+              ]
+            },
+            {
+              id: "pf-kyc",
+              name: "UAN एक्टिवेशन व बैंक/पैन KYC लिंक",
+              fee: 120,
+              desc: "नया UAN पासवर्ड बनाना और बैंक खाता लिंक करना",
+              docs: ["आधार कार्ड", "बैंक पासबुक", "पैन कार्ड"],
+              fields: [
+                { id: "uanKycNum", label: "UAN नंबर *", type: "text", placeholder: "UAN Number", required: true }
+              ]
+            }
+          ]
+        },
+
+        pan: {
+          title: "पैन कार्ड सेवाएँ (PAN Services)",
+          subServices: [
+            {
+              id: "pan-new",
+              name: "नया पैन कार्ड (Physical Plastic + Digital e-PAN)",
+              fee: 250,
+              desc: "NSDL/UTIITSL से नया पैन कार्ड, 48 घंटे में ई-पैन और 10 दिन में घर पर डिलीवरी",
+              docs: ["आधार कार्ड (मोबाइल लिंक)", "2 पासपोर्ट फोटो"],
+              fields: [
+                { id: "fatherPanName", label: "पिता का पूरा नाम (पैन कार्ड पर दर्ज कराने हेतु) *", type: "text", placeholder: "Father's Full Name", required: true }
+              ]
+            },
+            {
+              id: "pan-correction",
+              name: "पैन कार्ड संशोधन (Name / DOB / Photo Correction)",
+              fee: 200,
+              desc: "पैन कार्ड में नाम, पिता का नाम, फोटो या जन्मतिथि में बदलाव",
+              docs: ["मौजूदा पैन कार्ड", "आधार कार्ड", "संशोधन का वैध प्रमाण"],
+              fields: [
+                { id: "existingPanNo", label: "मौजूदा 10-अंकों का पैन नंबर *", type: "text", maxlength: 10, placeholder: "ABCDE1234F", required: true }
+              ]
+            }
+          ]
+        }
+      };
+
+      // 2. STATE MANAGEMENT
+      let currentCategory = "aadhaar";
+      let activeSubService = null;
+      let currentPayMethod = "upi";
+      let chosenFiles = [];
+
+      // Parse Query Params to automatically select category or service
+      function initFromUrlParams() {
+        const params = new URLSearchParams(window.location.search);
+        const sParam = params.get('service') || params.get('cat') || '';
+        
+        let foundCat = 'aadhaar';
+        let foundSubId = '';
+
+        for (const [catKey, catData] of Object.entries(serviceCatalog)) {
+          if (sParam.toLowerCase().includes(catKey)) {
+            foundCat = catKey;
+            break;
+          }
+          const matchedSub = catData.subServices.find(sub => 
+            sParam.toLowerCase().includes(sub.id) || 
+            sub.name.toLowerCase().includes(sParam.toLowerCase())
+          );
+          if (matchedSub) {
+            foundCat = catKey;
+            foundSubId = matchedSub.id;
+            break;
+          }
+        }
+
+        document.getElementById('categorySelect').value = foundCat;
+        onCategorySelectChange(foundSubId);
+      }
+
+      function onCategorySelectChange(preSelectedSubId = '') {
+        currentCategory = document.getElementById('categorySelect').value;
+        const cat = serviceCatalog[currentCategory];
+        if (!cat) return;
+
+        // Populate Main Service Dropdown
+        const mainSel = document.getElementById('mainServiceSelect');
+        mainSel.innerHTML = '';
+        cat.subServices.forEach((sub, idx) => {
+          const opt = document.createElement('option');
+          opt.value = sub.id;
+          opt.textContent = `${sub.name} — ₹${sub.fee}`;
+          opt.setAttribute('data-fee', sub.fee);
+          mainSel.appendChild(opt);
+        });
+
+        if (preSelectedSubId) {
+          mainSel.value = preSelectedSubId;
+        }
+
+        renderSubServiceCards(cat.subServices, mainSel.value);
+      }
+
+      function onMainServiceSelectChange() {
+        const val = document.getElementById('mainServiceSelect').value;
+        const cat = serviceCatalog[currentCategory];
+        if (!cat) return;
+        renderSubServiceCards(cat.subServices, val);
+      }
+
+      function selectSubService(subId) {
+        document.getElementById('mainServiceSelect').value = subId;
+        const cat = serviceCatalog[currentCategory];
+        if (!cat) return;
+        renderSubServiceCards(cat.subServices, subId);
+      }
+
+      function renderSubServiceCards(subList, selectedId) {
+        const grid = document.getElementById('subServiceGrid');
+        grid.innerHTML = '';
+
+        const targetSub = subList.find(s => s.id === selectedId) || subList[0];
+        activeSubService = targetSub;
+
+        subList.forEach(sub => {
+          const isSel = sub.id === targetSub.id;
+          const card = document.createElement('div');
+          card.className = `subservice-option ${isSel ? 'selected' : ''}`;
+          card.onclick = () => selectSubService(sub.id);
+          card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <span class="subservice-title">${sub.name}</span>
+              <span class="subservice-fee">₹${sub.fee}</span>
+            </div>
+            <div class="subservice-desc">${sub.desc}</div>
+            <div style="margin-top:6px; font-size:0.75rem; color:${isSel ? '#38bdf8' : '#94a3b8'};">
+              ${isSel ? '● चयनित (Active)' : 'क्लिक करके चुनें'}
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+        // Update Required Documents Checklist
+        const docsList = document.getElementById('docsChecklistItems');
+        docsList.innerHTML = '';
+        if (targetSub.docs && targetSub.docs.length > 0) {
+          targetSub.docs.forEach(d => {
+            const li = document.createElement('li');
+            li.textContent = d;
+            docsList.appendChild(li);
+          });
+        }
+
+        // Render Tailored Custom Form Fields
+        renderTailoredFields(targetSub.fields);
+
+        // Update Fee Display (No Government breakup shown! 100% Flat transparent fee!)
+        updatePricingDisplay();
+      }
+
+      function renderTailoredFields(fields = []) {
+        const box = document.getElementById('tailoredInputsGrid');
+        box.innerHTML = '';
+        if (!fields || fields.length === 0) {
+          box.innerHTML = '<div style="color:#94a3b8; font-size:0.85rem;">इस सेवा के लिए कोई अतिरिक्त फ़ील्ड आवश्यक नहीं है। सीधे नीचे अपना विवरण भरें।</div>';
+          return;
+        }
+
+        fields.forEach(f => {
+          const wrapper = document.createElement('div');
+          const lbl = document.createElement('label');
+          lbl.className = 'form-label';
+          lbl.innerHTML = `${f.label}`;
+          wrapper.appendChild(lbl);
+
+          if (f.type === 'select') {
+            const sel = document.createElement('select');
+            sel.className = 'form-select tailored-field';
+            sel.setAttribute('data-label', f.label.replace(/\*/g, '').trim());
+            if (f.required) sel.required = true;
+            f.options.forEach(optVal => {
+              const o = document.createElement('option');
+              o.value = optVal;
+              o.textContent = optVal;
+              sel.appendChild(o);
+            });
+            wrapper.appendChild(sel);
+          } else {
+            const inp = document.createElement('input');
+            inp.className = 'form-input tailored-field';
+            inp.type = f.type || 'text';
+            inp.placeholder = f.placeholder || '';
+            inp.setAttribute('data-label', f.label.replace(/\*/g, '').trim());
+            if (f.maxlength) inp.maxLength = f.maxlength;
+            if (f.required) inp.required = true;
+            wrapper.appendChild(inp);
+          }
+          box.appendChild(wrapper);
+        });
+      }
+
+      function updatePricingDisplay() {
+        if (!activeSubService) return;
+        const baseFee = Number(activeSubService.fee);
+        
+        if (currentPayMethod === 'upi') {
+          document.getElementById('topFeeBadge').textContent = `₹${baseFee}`;
+          document.getElementById('paymentPayableFee').textContent = `₹${baseFee}`;
+          document.getElementById('gatewayFeeNote').textContent = 'UPI भुगतान 100% फ्री है (0% अतिरिक्त शुल्क)';
+          
+          // Update QR Code
+          const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=kuzu@ptyes&pn=Shan%20Cyber%20Cafe&am=${baseFee}&cu=INR`;
+          document.getElementById('upiDynamicQr').src = qrUrl;
+        } else {
+          const surcharge = Math.round(baseFee * 0.02);
+          const totalWithSurcharge = baseFee + surcharge;
+          document.getElementById('topFeeBadge').textContent = `₹${totalWithSurcharge}`;
+          document.getElementById('paymentPayableFee').textContent = `₹${totalWithSurcharge}`;
+          document.getElementById('gatewayFeeNote').textContent = `Razorpay: मूल ₹${baseFee} + 2% गेटवे शुल्क ₹${surcharge} = ₹${totalWithSurcharge}`;
+          document.getElementById('rzpPayableText').textContent = `₹${totalWithSurcharge}`;
+        }
+      }
+
+      function switchPay(method) {
+        currentPayMethod = method;
+        document.getElementById('tabUpi').classList.toggle('active', method === 'upi');
+        document.getElementById('tabRzp').classList.toggle('active', method === 'razorpay');
+        document.getElementById('paneUpi').style.display = method === 'upi' ? 'block' : 'none';
+        document.getElementById('paneRazorpay').style.display = method === 'razorpay' ? 'block' : 'none';
+        
+        const upiUtr = document.getElementById('upiUtrNumber');
+        if (method === 'upi') {
+          upiUtr.required = true;
+        } else {
+          upiUtr.required = false;
+        }
+        updatePricingDisplay();
+      }
+
+      function openRazorpayCheckout() {
+        if (!activeSubService) return;
+        const baseFee = Number(activeSubService.fee);
+        const surcharge = Math.round(baseFee * 0.02);
+        const finalPayable = baseFee + surcharge;
+
+        const applicantName = document.getElementById('applicantName').value || 'Customer';
+        const applicantEmail = document.getElementById('email').value || 'abhishekrai6897@gmail.com';
+        const applicantPhone = document.getElementById('phone').value || '7009446821';
+
+        const rzpKey = window.RAZORPAY_KEY_ID || 'rzp_test_placeholder';
+
+        if (typeof Razorpay === 'undefined') {
+          alert('Razorpay लोड हो रहा है, कृपया UPI QR का उपयोग करें।');
+          return;
+        }
+
+        const options = {
+          key: rzpKey,
+          amount: finalPayable * 100,
+          currency: 'INR',
+          name: 'शान साइबर कैफे एवं ई-सेवा',
+          description: `${activeSubService.name} (All Inclusive)`,
+          image: 'assets/app-icon.svg',
+          theme: { color: '#0284c7' },
+          prefill: {
+            name: applicantName,
+            email: applicantEmail,
+            contact: applicantPhone
+          },
+          handler: function(response) {
+            document.getElementById('rzpPaymentId').value = response.razorpay_payment_id;
+            const badge = document.getElementById('rzpSuccessBadge');
+            badge.style.display = 'block';
+            badge.textContent = `✓ Razorpay भुगतान सफल! ID: ${response.razorpay_payment_id}`;
+            document.getElementById('upiUtrNumber').value = response.razorpay_payment_id;
+          }
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+      }
+
+      // 3. PINCODE AUTO-LOOKUP AUTOMATION
+      function initPincodeAutomation() {
+        const pinInput = document.getElementById('pincode');
+        const noticeEl = document.getElementById('pincodeNotice');
+        const distInput = document.getElementById('districtState');
+        const addressInput = document.getElementById('address');
+
+        pinInput.addEventListener('input', async function() {
+          const pin = this.value.trim();
+          if (/^[1-9][0-9]{5}$/.test(pin)) {
+            noticeEl.innerHTML = '<span style="color:#38bdf8;">🔄 डाकघर व लोकेशन पहचानी जा रही है...</span>';
+            try {
+              const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+              const data = await res.json();
+              if (data && data[0] && data[0].Status === 'Success' && data[0].PostOffice && data[0].PostOffice.length > 0) {
+                const po = data[0].PostOffice[0];
+                const dist = po.District;
+                const state = po.State;
+                const name = po.Name;
+                noticeEl.innerHTML = `<span style="color:#10b981;">✓ ${name}, ${dist}, ${state}</span>`;
+                distInput.value = `${dist}, ${state}`;
+                
+                if (addressInput && !addressInput.value.includes(dist)) {
+                  if (addressInput.value.trim() === '') {
+                    addressInput.value = `${name}, ${dist}, ${state} - ${pin}`;
+                  } else {
+                    addressInput.value += `, ${name}, ${dist}, ${state} - ${pin}`;
+                  }
+                }
+              } else {
+                noticeEl.innerHTML = '<span style="color:#f59e0b;">(पिनकोड विवरण स्वतः नहीं मिला, मैन्युअल भरें)</span>';
+              }
+            } catch {
+              noticeEl.innerHTML = '';
+            }
+          } else {
+            noticeEl.innerHTML = '';
+          }
+        });
+      }
+
+      function onFileChosen(e) {
+        chosenFiles = Array.from(e.target.files);
+        const notice = document.getElementById('chosenFilesNotice');
+        if (chosenFiles.length > 0) {
+          notice.textContent = `✓ चयनित फ़ाइलें (${chosenFiles.length}): ${chosenFiles.map(f => f.name).join(', ')}`;
+        } else {
+          notice.textContent = '';
+        }
+      }
+
+      // 4. APPLICATION SUBMISSION & STORAGE
+      let currentSubmittedRecord = null;
+      async function handleApplicationSubmit(e) {
+        e.preventDefault();
+
+        if (currentPayMethod === 'razorpay' && !document.getElementById('rzpPaymentId').value && !document.getElementById('upiUtrNumber').value) {
+          alert('कृपया पहले "Pay Now via Razorpay" बटन दबाकर भुगतान पूरा करें।');
+          return;
+        }
+
+        const refId = 'SHAN-' + Math.floor(100000 + Math.random() * 900000);
+        const mainCat = serviceCatalog[currentCategory]?.title || currentCategory;
+        const subServiceTitle = activeSubService?.name || 'Standard Service';
+        const applicantName = document.getElementById('applicantName').value.trim();
+        const guardianName = document.getElementById('guardianName').value.trim();
+        const dob = document.getElementById('dob').value;
+        const gender = document.getElementById('gender').value;
+        const phone = document.getElementById('phone').value.trim();
+        const email = document.getElementById('email').value.trim() || 'Not provided';
+        const pincode = document.getElementById('pincode').value.trim();
+        const districtState = document.getElementById('districtState').value.trim();
+        const address = document.getElementById('address').value.trim();
+        const utr = document.getElementById('upiUtrNumber').value.trim() || document.getElementById('rzpPaymentId').value;
+        const fee = document.getElementById('paymentPayableFee').textContent;
+        const remarks = document.getElementById('additionalRemarks').value.trim() || 'None';
+        const fileNames = chosenFiles.map(f => f.name).join(', ') || 'Attached Digitally';
+
+        // Collect tailored inputs
+        const tailoredData = {};
+        document.querySelectorAll('.tailored-field').forEach(el => {
+          const lbl = el.getAttribute('data-label') || el.name || 'field';
+          if (el.value) {
+            tailoredData[lbl] = el.value.trim();
+          }
+        });
+
+        const record = {
+          refId,
+          category: mainCat,
+          service: subServiceTitle,
+          subServiceId: activeSubService?.id,
+          fee,
+          paymentMethod: currentPayMethod.toUpperCase(),
+          utr,
+          applicantName,
+          guardianName,
+          dob,
+          gender,
+          phone,
+          email,
+          pincode,
+          districtState,
+          address,
+          tailoredData,
+          remarks,
+          fileNames,
+          status: 'Pending',
+          timestamp: new Date().toISOString(),
+          formattedDate: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })
+        };
+        currentSubmittedRecord = record;
+
+        // 1. Save into localStorage for Owner Studio
+        try {
+          const list = JSON.parse(localStorage.getItem('shan_eseva_applications') || '[]');
+          list.unshift(record);
+          localStorage.setItem('shan_eseva_applications', JSON.stringify(list));
+        } catch {}
+
+        // 2. Insert into Supabase if configured
+        if (window.arraiSupabase) {
+          try {
+            await window.arraiSupabase.from('eseva_applications').insert([{
+              ref_id: refId,
+              service_name: `${mainCat} - ${subServiceTitle}`,
+              applicant_name: applicantName,
+              phone: phone,
+              email: email,
+              payment_ref: utr,
+              fee_paid: fee,
+              details: record
+            }]);
+          } catch {}
+        }
+
+        // Show Modal
+        renderReceiptModal(record);
+      }
+
+      function renderReceiptModal(record) {
+        const rc = document.getElementById('receiptContent');
+        let tailoredRows = '';
+        if (record.tailoredData && Object.keys(record.tailoredData).length > 0) {
+          tailoredRows = Object.entries(record.tailoredData).map(([k, v]) => `<div><strong>${k}:</strong> ${v}</div>`).join('');
+        }
+
+        rc.innerHTML = `
+          <div><strong>संदर्भ संख्या (Reference ID):</strong> <span style="color:var(--eseva-gold); font-weight:800;">#${record.refId}</span></div>
+          <div><strong>सेवा का नाम:</strong> ${record.service}</div>
+          <div><strong>आवेदक का नाम:</strong> ${record.applicantName} (${record.guardianName})</div>
+          <div><strong>मोबाइल नंबर:</strong> ${record.phone}</div>
+          <div><strong>पता व पिनकोड:</strong> ${record.address} (PIN: ${record.pincode})</div>
+          ${tailoredRows ? `<div style="margin:6px 0; padding:6px; background:rgba(255,255,255,0.03); border-radius:6px;">${tailoredRows}</div>` : ''}
+          <div><strong>कुल देय शुल्क (All-Inclusive):</strong> <span style="color:#10b981; font-weight:800;">${record.fee}</span></div>
+          <div><strong>भुगतान माध्यम व UTR:</strong> ${record.paymentMethod} - ${record.utr}</div>
+          <div><strong>दस्तावेज़:</strong> ${record.fileNames}</div>
+          <div><strong>समय व तारीख:</strong> ${record.formattedDate}</div>
+        `;
+        document.getElementById('successModal').style.display = 'flex';
+      }
+
+      function printReceiptSlip() {
+        if (!currentSubmittedRecord) return;
+        const r = currentSubmittedRecord;
+        const w = window.open('', '', 'width=750,height=600');
+        w.document.write(`
+          <html>
+            <head>
+              <title>डिजिटल पावती - #${r.refId}</title>
+              <style>
+                body { font-family: sans-serif; padding: 24px; color: #111; line-height: 1.5; }
+                .hdr { text-align: center; border-bottom: 2px solid #222; padding-bottom: 12px; margin-bottom: 16px; }
+                table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+                th, td { border: 1px solid #ddd; padding: 8px 12px; font-size: 13px; }
+                th { background: #f4f4f4; text-align: left; width: 35%; }
+              </style>
+            </head>
+            <body>
+              <div class="hdr">
+                <h2 style="margin:0;">शान साइबर कैफे एवं ई-सेवा केंद्र</h2>
+                <p style="margin:4px 0;">Official Digital Application Slip · Reference #${r.refId}</p>
+                <small>Helpline: +91 7009446821 | Email: abhishekrai6897@gmail.com</small>
+              </div>
+              <table>
+                <tr><th>संदर्भ संख्या</th><td><strong>#${r.refId}</strong></td></tr>
+                <tr><th>सेवा</th><td>${r.service}</td></tr>
+                <tr><th>आवेदक का नाम</th><td>${r.applicantName}</td></tr>
+                <tr><th>पिता/पति</th><td>${r.guardianName}</td></tr>
+                <tr><th>मोबाइल नंबर</th><td>${r.phone}</td></tr>
+                <tr><th>पता व पिनकोड</th><td>${r.address} (${r.pincode})</td></tr>
+                <tr><th>कुल शुल्क</th><td><strong>${r.fee}</strong></td></tr>
+                <tr><th>भुगतान UTR</th><td>${r.paymentMethod} - ${r.utr}</td></tr>
+                <tr><th>आवेदन तारीख</th><td>${r.formattedDate}</td></tr>
+              </table>
+            </body>
+          </html>
+        `);
+        w.document.close();
+        w.focus();
+        w.print();
+      }
+
+      function sendWhatsAppConfirmation() {
+        if (!currentSubmittedRecord) return;
+        const r = currentSubmittedRecord;
+        const msg = encodeURIComponent(
+          `नमस्ते शान साइबर कैफे,\nमैंने ई-सेवा पोर्टल पर आवेदन किया है:\n\n` +
+          `• संदर्भ संख्या: #${r.refId}\n` +
+          `• सेवा: ${r.service}\n` +
+          `• आवेदक: ${r.applicantName}\n` +
+          `• मोबाइल: ${r.phone}\n` +
+          `• शुल्क: ${r.fee}\n` +
+          `• UTR / पेमेंट ID: ${r.utr}\n\n` +
+          `कृपया मेरे आवेदन की पुष्टि करें व आवश्यक दिशा-निर्देश भेजें।`
+        );
+        window.open(`https://wa.me/917009446821?text=${msg}`, '_blank');
+      }
+
+      function closeReceiptModal() {
+        document.getElementById('successModal').style.display = 'none';
+        document.getElementById('applyMainForm').reset();
+        window.location.href = 'eseva.html';
+      }
+
+      function toggleLang() {
+        const btn = document.getElementById('langBtn');
+        const isHi = btn.textContent.includes('English');
+        btn.textContent = isHi ? '🌐 हिंदी में बदलें' : '🌐 English';
+        document.getElementById('pageMainHeading').textContent = isHi ? 'Online Service Dedicated Application' : 'ऑनलाइन सेवा पंजीकरण (Dedicated Application)';
+      }
+
+      // Initialize on load
+      initPincodeAutomation();
+      initFromUrlParams();
+    </script>
+  </body>
+</html>

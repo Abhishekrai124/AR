@@ -503,8 +503,8 @@
           <a class="contact-chip" href="mailto:abhishekrai6897@gmail.com">
             <span>✉️</span> <strong>Email:</strong> abhishekrai6897@gmail.com
           </a>
-          <a class="contact-chip" href="#apply-section" style="background: rgba(245, 158, 11, 0.2); border-color: var(--eseva-gold); color:#fde68a; font-weight:700;">
-            <span>⚡</span> <span id="quickApplyText">नया आवेदन भरें ➔</span>
+          <a class="contact-chip" href="apply.html" style="background: rgba(245, 158, 11, 0.2); border-color: var(--eseva-gold); color:#fde68a; font-weight:700;">
+            <span>⚡</span> <span id="quickApplyText">नया आवेदन भरें (Dedicated Form) ➔</span>
           </a>
         </div>
       </section>
@@ -948,7 +948,7 @@
                 ₹${item.fee}
                 <small>${isHi ? "कुल देय शुल्क" : "Total Inclusive Fee"}</small>
               </div>
-              <button class="btn-apply-card" onclick="autoSelectServiceAndApply('${item.title}', ${item.fee})">
+              <button class="btn-apply-card" onclick="autoSelectServiceAndApply('${item.title}', ${item.fee}, '${item.id}')">
                 ${isHi ? "आवेदन करें ➔" : "Apply Now ➔"}
               </button>
             </div>
@@ -966,8 +966,10 @@
         }
       });
 
-      // AUTO-SELECTION FROM SERVICE CARD (No manual search needed!)
-      function autoSelectServiceAndApply(serviceTitle, price) {
+      // AUTO-SELECTION FROM SERVICE CARD (Opens Dedicated Form Page)
+      function autoSelectServiceAndApply(serviceTitle, price, serviceId) {
+        window.location.href = `apply.html?service=${encodeURIComponent(serviceId || serviceTitle)}`;
+      }
         const select = document.getElementById('selectedService');
         let matched = false;
         for (let i = 0; i < select.options.length; i++) {
