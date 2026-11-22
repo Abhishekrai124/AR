@@ -427,11 +427,58 @@
               <input class="form-input" id="email" type="email" placeholder="example@mail.com" />
             </div>
 
+            <!-- State & Pincode -->
+            <div>
+              <label class="form-label" for="applicantState">
+                <span>राज्य / केंद्र शासित प्रदेश (State / Union Territory)</span> *
+                <small style="color:#38bdf8;">(राज्य अनुसार सरकारी पोर्टल शुल्क स्वतः अपडेट होगा)</small>
+              </label>
+              <select class="form-select" id="applicantState" required onchange="updatePricingDisplay()">
+                <option value="Uttar Pradesh" selected>Uttar Pradesh (उत्तर प्रदेश)</option>
+                <option value="Bihar">Bihar (बिहार)</option>
+                <option value="Punjab">Punjab (पंजाब - Sewa Kendra +₹50)</option>
+                <option value="Delhi">Delhi NCT (दिल्ली e-District +₹40)</option>
+                <option value="Maharashtra">Maharashtra (महाराष्ट्र Aaple Sarkar +₹40)</option>
+                <option value="Karnataka">Karnataka (कर्नाटक Seva Sindhu +₹40)</option>
+                <option value="Goa">Goa (गोवा Online +₹40)</option>
+                <option value="Chandigarh">Chandigarh (चंडीगढ़ Sampark +₹40)</option>
+                <option value="Haryana">Haryana (हरियाणा Saral +₹30)</option>
+                <option value="Gujarat">Gujarat (गुजरात Digital Gujarat +₹30)</option>
+                <option value="Rajasthan">Rajasthan (राजस्थान Emitra +₹30)</option>
+                <option value="Kerala">Kerala (केरल e-District +₹30)</option>
+                <option value="Tamil Nadu">Tamil Nadu (तमिलनाडु TNeGA +₹30)</option>
+                <option value="Telangana">Telangana (तेलंगाना MeeSeva +₹30)</option>
+                <option value="Andhra Pradesh">Andhra Pradesh (आंध्र प्रदेश MeeSeva +₹30)</option>
+                <option value="Assam">Assam (असम Sewa Setu +₹30)</option>
+                <option value="Jammu and Kashmir">Jammu and Kashmir (जम्मू व कश्मीर +₹30)</option>
+                <option value="Ladakh">Ladakh (लद्दाख +₹30)</option>
+                <option value="Puducherry">Puducherry (पुदुचेरी +₹30)</option>
+                <option value="West Bengal">West Bengal (पश्चिम बंगाल Duare Sarkar +₹20)</option>
+                <option value="Madhya Pradesh">Madhya Pradesh (मध्य प्रदेश Samagra +₹20)</option>
+                <option value="Uttarakhand">Uttarakhand (उत्तराखंड e-Services +₹20)</option>
+                <option value="Himachal Pradesh">Himachal Pradesh (हिमाचल प्रदेश +₹20)</option>
+                <option value="Odisha">Odisha (ओडिशा e-District +₹20)</option>
+                <option value="Arunachal Pradesh">Arunachal Pradesh (+₹20)</option>
+                <option value="Manipur">Manipur (+₹20)</option>
+                <option value="Meghalaya">Meghalaya (+₹20)</option>
+                <option value="Mizoram">Mizoram (+₹20)</option>
+                <option value="Nagaland">Nagaland (+₹20)</option>
+                <option value="Sikkim">Sikkim (+₹20)</option>
+                <option value="Tripura">Tripura (+₹20)</option>
+                <option value="Andaman and Nicobar">Andaman and Nicobar (+₹20)</option>
+                <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra &amp; Nagar Haveli and Daman &amp; Diu (+₹20)</option>
+                <option value="Lakshadweep">Lakshadweep (+₹20)</option>
+                <option value="Jharkhand">Jharkhand (झारखंड Jharsewa +₹10)</option>
+                <option value="Chhattisgarh">Chhattisgarh (छत्तीसगढ़ e-District +₹10)</option>
+                <option value="other">अन्य राज्य / Other (+₹20)</option>
+              </select>
+            </div>
+
             <!-- Pincode Automation -->
             <div>
               <label class="form-label" for="pincode">
                 <span>पिन कोड (6-Digit Pincode)</span> *
-                <small style="color:#38bdf8;">(डालते ही जिला व राज्य स्वतः भरेगा)</small>
+                <small style="color:#38bdf8;">(डालते ही जिला स्वतः भरेगा)</small>
               </label>
               <input class="form-input" id="pincode" type="text" maxlength="6" pattern="[1-9][0-9]{5}" placeholder="e.g. 276001" required />
               <div id="pincodeNotice" style="font-size:0.8rem; margin-top:4px;"></div>
@@ -1259,24 +1306,71 @@
         });
       }
 
+      // State Fee Surcharges (Govt Portal / State Processing Offsets)
+      const stateFeeOffsets = {
+        "Punjab": 50,
+        "Delhi": 40,
+        "Maharashtra": 40,
+        "Karnataka": 40,
+        "Goa": 40,
+        "Chandigarh": 40,
+        "Haryana": 30,
+        "Gujarat": 30,
+        "Rajasthan": 30,
+        "Kerala": 30,
+        "Tamil Nadu": 30,
+        "Telangana": 30,
+        "Andhra Pradesh": 30,
+        "Assam": 30,
+        "Jammu and Kashmir": 30,
+        "Ladakh": 30,
+        "Puducherry": 30,
+        "West Bengal": 20,
+        "Madhya Pradesh": 20,
+        "Uttarakhand": 20,
+        "Himachal Pradesh": 20,
+        "Odisha": 20,
+        "Arunachal Pradesh": 20,
+        "Manipur": 20,
+        "Meghalaya": 20,
+        "Mizoram": 20,
+        "Nagaland": 20,
+        "Sikkim": 20,
+        "Tripura": 20,
+        "Andaman and Nicobar": 20,
+        "Dadra and Nagar Haveli and Daman and Diu": 20,
+        "Lakshadweep": 20,
+        "Jharkhand": 10,
+        "Chhattisgarh": 10,
+        "Bihar": 0,
+        "Uttar Pradesh": 0,
+        "other": 20
+      };
+
       function updatePricingDisplay() {
         if (!activeSubService) return;
         const baseFee = Number(activeSubService.fee);
+        const stateEl = document.getElementById('applicantState');
+        const chosenState = stateEl ? stateEl.value : 'Uttar Pradesh';
+        const stateOffset = stateFeeOffsets[chosenState] || 0;
+        const totalBaseFee = baseFee + stateOffset;
         
+        const stateNotice = stateOffset > 0 ? ` (+₹${stateOffset} राज्यवार पोर्टल सुविधा शुल्क सम्मिलित)` : '';
+
         if (currentPayMethod === 'upi') {
-          document.getElementById('topFeeBadge').textContent = `₹${baseFee}`;
-          document.getElementById('paymentPayableFee').textContent = `₹${baseFee}`;
-          document.getElementById('gatewayFeeNote').textContent = 'UPI भुगतान 100% फ्री है (0% अतिरिक्त शुल्क)';
+          document.getElementById('topFeeBadge').textContent = `₹${totalBaseFee}`;
+          document.getElementById('paymentPayableFee').textContent = `₹${totalBaseFee}`;
+          document.getElementById('gatewayFeeNote').textContent = `UPI भुगतान 100% फ्री है (0% अतिरिक्त गेटवे शुल्क)${stateNotice}`;
           
           // Update QR Code
-          const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=kuzu@ptyes&pn=Shan%20Cyber%20Cafe&am=${baseFee}&cu=INR`;
+          const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(`upi://pay?pa=kuzu@ptyes&pn=Shan%20Cyber%20Cafe&am=${totalBaseFee}&cu=INR&tn=${encodeURIComponent(activeSubService.name + ' - ' + chosenState)}`)}`;
           document.getElementById('upiDynamicQr').src = qrUrl;
         } else {
-          const surcharge = Math.round(baseFee * 0.02);
-          const totalWithSurcharge = baseFee + surcharge;
+          const surcharge = Math.round(totalBaseFee * 0.02);
+          const totalWithSurcharge = totalBaseFee + surcharge;
           document.getElementById('topFeeBadge').textContent = `₹${totalWithSurcharge}`;
           document.getElementById('paymentPayableFee').textContent = `₹${totalWithSurcharge}`;
-          document.getElementById('gatewayFeeNote').textContent = `Razorpay: मूल ₹${baseFee} + 2% गेटवे शुल्क ₹${surcharge} = ₹${totalWithSurcharge}`;
+          document.getElementById('gatewayFeeNote').textContent = `Razorpay: कुल ₹${totalBaseFee}${stateNotice} + 2% गेटवे शुल्क ₹${surcharge} = ₹${totalWithSurcharge}`;
           document.getElementById('rzpPayableText').textContent = `₹${totalWithSurcharge}`;
         }
       }
@@ -1300,8 +1394,12 @@
       function openRazorpayCheckout() {
         if (!activeSubService) return;
         const baseFee = Number(activeSubService.fee);
-        const surcharge = Math.round(baseFee * 0.02);
-        const finalPayable = baseFee + surcharge;
+        const stateEl = document.getElementById('applicantState');
+        const chosenState = stateEl ? stateEl.value : 'Uttar Pradesh';
+        const stateOffset = stateFeeOffsets[chosenState] || 0;
+        const totalBaseFee = baseFee + stateOffset;
+        const surcharge = Math.round(totalBaseFee * 0.02);
+        const finalPayable = totalBaseFee + surcharge;
 
         const applicantName = document.getElementById('applicantName').value || 'Customer';
         const applicantEmail = document.getElementById('email').value || 'abhishekrai6897@gmail.com';
@@ -1319,7 +1417,7 @@
           amount: finalPayable * 100,
           currency: 'INR',
           name: 'शान साइबर कैफे एवं ई-सेवा',
-          description: `${activeSubService.name} (All Inclusive)`,
+          description: `${activeSubService.name} - ${chosenState} (All Inclusive)`,
           image: 'assets/app-icon.svg',
           theme: { color: '#0284c7' },
           prefill: {
@@ -1361,6 +1459,19 @@
                 const name = po.Name;
                 noticeEl.innerHTML = `<span style="color:#10b981;">✓ ${name}, ${dist}, ${state}</span>`;
                 distInput.value = `${dist}, ${state}`;
+
+                // Auto-sync applicantState and recalculate pricing
+                const stateSelect = document.getElementById('applicantState');
+                if (stateSelect && state) {
+                  for (let i = 0; i < stateSelect.options.length; i++) {
+                    const optVal = stateSelect.options[i].value.toLowerCase();
+                    if (optVal.includes(state.toLowerCase()) || state.toLowerCase().includes(optVal)) {
+                      stateSelect.selectedIndex = i;
+                      updatePricingDisplay();
+                      break;
+                    }
+                  }
+                }
                 
                 if (addressInput && !addressInput.value.includes(dist)) {
                   if (addressInput.value.trim() === '') {

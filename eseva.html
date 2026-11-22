@@ -778,7 +778,7 @@
               <label class="form-label" for="applicantState">
                 <span id="lblApplicantState">राज्य / केंद्र शासित प्रदेश (State / Union Territory)</span> *
               </label>
-              <select class="form-select" id="applicantState" required>
+              <select class="form-select" id="applicantState" required onchange="recalculateFees()">
                 <option value="Uttar Pradesh" selected>Uttar Pradesh (उत्तर प्रदेश)</option>
                 <option value="Bihar">Bihar (बिहार)</option>
                 <option value="Andhra Pradesh">Andhra Pradesh (आंध्र प्रदेश)</option>
@@ -1215,7 +1215,8 @@
           card.className = 'service-card';
           const title = isHi ? item.title : item.titleEn;
           const desc = isHi ? item.desc : item.descEn;
-          const adjustedFee = item.category === 'certificate' ? (item.fee + stateOffset) : item.fee;
+          const isStateApplicable = (item.id !== 'resume-cv-builder' && item.category !== 'global');
+          const adjustedFee = isStateApplicable ? (item.fee + stateOffset) : item.fee;
 
           card.innerHTML = `
             <div>
@@ -1265,25 +1266,37 @@
           applicantState.value = currentSelectedState;
         }
         renderServicesGrid(currentActiveCategory);
+        recalculateFees();
       }
 
-      // State-wise fee adjustments
+      // Comprehensive Real State-wise Pricing Surcharges (Govt Portal Rates + Service Charge)
       const stateFeeOffsets = {
+        "Punjab": 50,
+        "Delhi": 40,
+        "Maharashtra": 40,
+        "Karnataka": 40,
+        "Goa": 40,
+        "Chandigarh": 40,
+        "Haryana": 30,
+        "Gujarat": 30,
+        "Rajasthan": 30,
+        "Kerala": 30,
+        "Tamil Nadu": 30,
+        "Telangana": 30,
+        "Andhra Pradesh": 30,
+        "Assam": 30,
+        "Jammu and Kashmir": 30,
+        "Ladakh": 30,
+        "Puducherry": 30,
+        "West Bengal": 20,
+        "Madhya Pradesh": 20,
+        "Uttarakhand": 20,
+        "Himachal Pradesh": 20,
+        "Odisha": 20,
+        "Jharkhand": 10,
+        "Chhattisgarh": 10,
+        "Bihar": 0,
         "Uttar Pradesh": 0,
-        "UP": 0,
-        "Bihar": -10,
-        "Punjab": 10,
-        "Haryana": 0,
-        "Delhi": 30,
-        "Madhya Pradesh": -10,
-        "MP": -10,
-        "Rajasthan": 0,
-        "Maharashtra": 20,
-        "West Bengal": 0,
-        "WB": 0,
-        "Gujarat": 10,
-        "Jharkhand": -10,
-        "Uttarakhand": 0,
         "all": 0
       };
 
@@ -1845,25 +1858,33 @@
       function recalculateFees() {
         const select = document.getElementById('selectedService');
         const selectedOpt = select.options[select.selectedIndex];
-        currentBaseTotal = selectedOpt ? Number(selectedOpt.getAttribute('data-price') || 0) : 0;
+        const basePrice = selectedOpt ? Number(selectedOpt.getAttribute('data-price') || 0) : 0;
+        
+        // Dynamic State Offset Adjustment
+        const appState = document.getElementById('applicantState') ? document.getElementById('applicantState').value : currentSelectedState;
+        const stateOffset = stateFeeOffsets[appState] || stateFeeOffsets[currentSelectedState] || 0;
+        
+        currentBaseTotal = basePrice ? (basePrice + stateOffset) : 0;
+
+        const stateNotice = stateOffset > 0 ? ` (राज्यवार सरकारी पोर्टल सुविधा शुल्क +₹${stateOffset} सम्मिलित)` : '';
 
         if (currentPaymentMethod === 'upi') {
           // UPI is 100% Free: ₹0 Gateway Surcharge
           document.getElementById('displayTotalFee').innerText = currentBaseTotal ? `₹${currentBaseTotal}` : '₹0';
-          document.getElementById('gatewayFeeBreakdownNotice').innerText = 'UPI भुगतान 100% फ्री है (0% अतिरिक्त शुल्क)';
+          document.getElementById('gatewayFeeBreakdownNotice').innerText = `UPI भुगतान 100% फ्री है (0% अतिरिक्त गेटवे शुल्क)${stateNotice}`;
         } else {
           // Razorpay has 2% gateway convenience surcharge
           const rzpSurcharge = Math.round(currentBaseTotal * 0.02);
           const rzpTotal = currentBaseTotal + rzpSurcharge;
           document.getElementById('displayTotalFee').innerText = rzpTotal ? `₹${rzpTotal}` : '₹0';
-          document.getElementById('razorpayInclusiveAmount').innerText = `₹${rzpTotal} (मूल: ₹${currentBaseTotal} + 2% गेटवे शुल्क: ₹${rzpSurcharge})`;
+          document.getElementById('razorpayInclusiveAmount').innerText = `₹${rzpTotal} (मूल + राज्य: ₹${currentBaseTotal} + 2% गेटवे शुल्क: ₹${rzpSurcharge})`;
           document.getElementById('btnRzpAmountText').innerText = `₹${rzpTotal}`;
-          document.getElementById('gatewayFeeBreakdownNotice').innerText = `Razorpay 2% गेटवे शुल्क (+₹${rzpSurcharge}) सम्मिलित`;
+          document.getElementById('gatewayFeeBreakdownNotice').innerText = `Razorpay 2% गेटवे शुल्क (+₹${rzpSurcharge}) सम्मिलित${stateNotice}`;
         }
 
         // Update Dynamic QR for UPI
         if (currentBaseTotal) {
-          const upiUrl = `upi://pay?pa=kuzu@ptyes&pn=Shan%20Cyber%20Cafe&am=${currentBaseTotal}&cu=INR&tn=${encodeURIComponent(select.value)}`;
+          const upiUrl = `upi://pay?pa=kuzu@ptyes&pn=Shan%20Cyber%20Cafe&am=${currentBaseTotal}&cu=INR&tn=${encodeURIComponent(select.value + ' - ' + appState)}`;
           document.getElementById('dynamicUpiQr').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(upiUrl)}`;
         }
       }
@@ -2163,6 +2184,17 @@
                 const office = po.Name;
                 if (statusEl) {
                   statusEl.innerHTML = `<span style="color:#10b981;">✓ ${office}, ${dist}, ${state}</span>`;
+                }
+                const appStateSelect = document.getElementById('applicantState');
+                if (appStateSelect && state) {
+                  for (let i = 0; i < appStateSelect.options.length; i++) {
+                    const optVal = appStateSelect.options[i].value.toLowerCase();
+                    if (optVal.includes(state.toLowerCase()) || state.toLowerCase().includes(optVal)) {
+                      appStateSelect.selectedIndex = i;
+                      recalculateFees();
+                      break;
+                    }
+                  }
                 }
                 const addressField = document.getElementById('address');
                 if (addressField && !addressField.value.includes(dist)) {
