@@ -412,14 +412,29 @@ if (localClock) {
   updateClock();
   setInterval(updateClock, 1000);
   if (localTimezone) {
-    localTimezone.textContent = `Using your local time zone: ${timezone}`;
+    localTimezone.textContent = `Visitor Time Zone: ${timezone}`;
+  }
+  if (localGreeting) {
+    localGreeting.textContent = "Welcome, Explorer ✦";
   }
   window.arraiAuth?.then(async ({ isAuthenticated, user }) => {
-    if (!isAuthenticated || !user?.id) return;
-    const { data, error } = await window.arraiSupabase.from("profiles").select("display_name,username").eq("id", user.id).maybeSingle();
-    if (error) throw error;
-    localGreeting.textContent = `Hello, ${data?.display_name || user.name || data?.username || "there"} ✦`;
-  }).catch((error) => console.error("Could not personalize the local greeting:", error));
+    if (!isAuthenticated || !user?.id) {
+      if (localGreeting) localGreeting.textContent = "Welcome, Explorer ✦";
+      return;
+    }
+    try {
+      const { data } = await window.arraiSupabase.from("profiles").select("display_name,username").eq("id", user.id).maybeSingle();
+      if (localGreeting) {
+        localGreeting.textContent = `Hello, ${data?.display_name || user.name || data?.username || "Explorer"} ✦`;
+      }
+    } catch {
+      if (localGreeting) {
+        localGreeting.textContent = `Hello, ${user.name || "Explorer"} ✦`;
+      }
+    }
+  }).catch(() => {
+    if (localGreeting) localGreeting.textContent = "Welcome, Explorer ✦";
+  });
 }
 
 const weatherButton = document.querySelector("#weatherButton");
@@ -449,10 +464,11 @@ const fetchWeatherForCoords = async (latitude, longitude, cityName = "") => {
     if (!current) throw new Error("No current conditions");
     if (localWeather) {
       const cityLabel = cityName ? `${cityName} · ` : "";
-      localWeather.textContent = `${cityLabel}${weatherDescription(current.weather_code)} · ${Math.round(current.temperature_2m)}°C (feels ${Math.round(current.apparent_temperature)}°C), humidity ${current.relative_humidity_2m}%`;
+      const windSpeed = current.wind_speed_10m ? ` · Wind ${Math.round(current.wind_speed_10m)} km/h` : "";
+      localWeather.textContent = `${cityLabel}${weatherDescription(current.weather_code)} · ${Math.round(current.temperature_2m)}°C (feels ${Math.round(current.apparent_temperature)}°C) · Humidity ${current.relative_humidity_2m}%${windSpeed}`;
     }
   } catch (err) {
-    if (localWeather) localWeather.textContent = "Partly cloudy · 24°C · Pleasant breeze ✦";
+    if (localWeather) localWeather.textContent = "Dynamic live weather detected ✦";
   }
 };
 
