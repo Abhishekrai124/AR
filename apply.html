@@ -881,24 +881,39 @@
           subServices: [
             {
               id: "dl-learning",
-              name: "लर्निंग ड्राइविंग लाइसेंस (LL Online)",
-              fee: 450,
-              desc: "ऑनलाइन लर्निंग लाइसेंस आवेदन, फीस भुगतान व स्लॉट बुकिंग",
+              name: "लर्निंग ड्राइविंग लाइसेंस (LL Online Application & Slot) - ₹900",
+              fee: 900,
+              desc: "ऑनलाइन लर्निंग लाइसेंस आवेदन, सरकारी RTO फीस भुगतान व ऑनलाइन टेस्ट स्लॉट",
               docs: ["आधार कार्ड (मोबाइल लिंक)", "10वीं मार्कशीट / आयु प्रमाण", "ब्लड ग्रुप रिपोर्ट"],
               fields: [
-                { id: "vehicleClass", label: "वाहन श्रेणी (Vehicle Class) *", type: "select", options: ["MCWG (मोटरसाइकिल / स्कूटर)", "LMV (कार / चौपहिया)", "MCWG + LMV (बाइक + कार दोनों)"], required: true },
-                { id: "bloodGroup", label: "रक्त समूह (Blood Group) *", type: "select", options: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-", "Unknown"], required: true }
+                { id: "vehicleClass", label: "वाहन श्रेणी (Vehicle Class) *", type: "select", options: ["MCWG (2-व्हीलर बाइक / स्कूटर) - ₹900", "LMV (4-व्हीलर कार) - ₹1,050", "MCWG + LMV (बाइक + कार दोनों) - ₹1,200"], required: true },
+                { id: "bloodGroup", label: "रक्त समूह (Blood Group) *", type: "select", options: ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-", "Unknown"], required: true },
+                { id: "rtoOffice", label: "संबंधित आरटीओ ऑफिस (RTO Office Jurisdiction) *", type: "text", placeholder: "e.g. RTO SAS Nagar (PB65) / RTO Ludhiana (PB10) / RTO Delhi", required: true }
               ]
             },
             {
               id: "dl-permanent",
-              name: "स्थाई ड्राइविंग लाइसेंस (DL Slot Booking)",
-              fee: 850,
-              desc: "लर्निंग के बाद पक्का ड्राइविंग लाइसेंस टेस्ट स्लॉट व फॉर्म",
-              docs: ["लर्निंग लाइसेंस की प्रति", "आधार कार्ड"],
+              name: "स्थाई ड्राइविंग लाइसेंस (Permanent DL Test Booking) - ₹1,100",
+              fee: 1100,
+              desc: "लर्निंग के बाद पक्का ड्राइविंग लाइसेंस टेस्ट स्लॉट बुकिंग व बायोमेट्रिक फॉर्म",
+              docs: ["लर्निंग लाइसेंस की प्रति", "आधार कार्ड", "पासपोर्ट साइज फोटो"],
               fields: [
-                { id: "existingLlNo", label: "लर्निंग लाइसेंस नंबर (LL Number) *", type: "text", placeholder: "UP-XXXX-LL-XXXX", required: true },
+                { id: "existingLlNo", label: "लर्निंग लाइसेंस नंबर (LL Number) *", type: "text", placeholder: "PB-XXXX-LL-XXXX", required: true },
+                { id: "dlVehicleType", label: "लाइसेंस वाहन श्रेणी (Vehicle Category) *", type: "select", options: ["2-Wheeler (MCWG बाइक / स्कूटर) - ₹1,100", "4-Wheeler Car (LMV चौपहिया) - ₹1,300", "Both 2-Wheeler + 4-Wheeler (MCWG + LMV) - ₹1,450", "Commercial / 6-Wheeler Heavy Transport - ₹1,700"], required: true },
                 { id: "rtoOffice", label: "संबंधित आरटीओ ऑफिस (RTO Office) *", type: "text", placeholder: "e.g. RTO SAS Nagar (PB65) / RTO Ludhiana (PB10)", required: true }
+              ]
+            },
+            {
+              id: "dl-international",
+              name: "इंटरनेशनल ड्राइविंग लाइसेंस (International Driving Permit - IDP)",
+              fee: 1500,
+              desc: "विदेश में गाड़ी चलाने हेतु अधिकृत 1 वर्ष वैध इंटरनेशनल ड्राइविंग परमिट",
+              docs: ["वैलिड भारतीय ड्राइविंग लाइसेंस", "पासपोर्ट मूल प्रति", "वीज़ा व फ्लाइट टिकट", "मेडिकल फॉर्म 1A"],
+              fields: [
+                { id: "validDlNo", label: "मौजूदा भारतीय ड्राइविंग लाइसेंस नंबर *", type: "text", placeholder: "PB10 20210012345", required: true },
+                { id: "passportNo", label: "पासपोर्ट नंबर *", type: "text", placeholder: "Passport Number", required: true },
+                { id: "idpVehicleClass", label: "इंटरनेशनल वाहन प्रकार (Vehicle Class) *", type: "select", options: ["2-Wheeler Motorcycle / Scooter (₹1,500)", "4-Wheeler Car / LMV (₹1,800)", "Commercial / All Classes (₹2,200)"], required: true },
+                { id: "destinationCountry", label: "यात्रा का देश (Destination Country) *", type: "text", placeholder: "e.g. USA, Canada, UAE, UK, Australia", required: true }
               ]
             },
             {
@@ -2215,6 +2230,8 @@
 
         // Update Fee Display
         updatePricingDisplay();
+        attachAtmVoiceListeners();
+        if (typeof atmVoiceAssistant !== 'undefined') atmVoiceAssistant.speak('सेवा चुनी गई। कृपया संबंधित विवरण भरें।', 'Service selected. Please enter required details.');
       }
 
       function adaptFormForService(subId) {
@@ -2367,56 +2384,56 @@
       }
 
       // State-wise Portal Processing Fee Offsets (Every state has min +₹50, scaling up to +₹150 and +₹200)
-      const const stateFeeOffsets = {
-        // Home State (Punjab - 0 interstate coordination surcharge, local base ₹110)
-        "Punjab": 0,
+      const const const stateFeeOffsets = {
+        // Punjab Home State (Base state fee ₹40)
+        "Punjab": 40,
 
-        // Tier 1: Neighboring States & UTs (+₹20 minor interstate coordination)
-        "Chandigarh": 20,
-        "Haryana": 20,
-        "Himachal Pradesh": 20,
-        "Delhi": 20,
-        "Jammu and Kashmir": 20,
+        // Neighboring States & UTs (₹50)
+        "Chandigarh": 50,
+        "Haryana": 50,
+        "Himachal Pradesh": 50,
+        "Delhi": 50,
+        "Jammu and Kashmir": 50,
 
-        // Tier 2: Northern & Central States (+₹30 minor interstate coordination)
-        "Uttarakhand": 30,
-        "Rajasthan": 30,
-        "Uttar Pradesh": 30,
-        "Madhya Pradesh": 30,
-        "Bihar": 30,
-        "Jharkhand": 30,
-        "Chhattisgarh": 30,
+        // Northern & Central States (₹50)
+        "Uttarakhand": 50,
+        "Rajasthan": 50,
+        "Uttar Pradesh": 50,
+        "Madhya Pradesh": 50,
+        "Bihar": 50,
+        "Jharkhand": 50,
+        "Chhattisgarh": 50,
 
-        // Tier 3: Western, Southern & Eastern States (+₹40 minor interstate coordination)
-        "Gujarat": 40,
-        "Maharashtra": 40,
-        "Goa": 40,
-        "West Bengal": 40,
-        "Odisha": 40,
-        "Karnataka": 40,
-        "Telangana": 40,
-        "Andhra Pradesh": 40,
-        "Tamil Nadu": 40,
-        "Kerala": 40,
+        // Western, Southern & Eastern States (₹50 to ₹60)
+        "Gujarat": 50,
+        "Maharashtra": 60,
+        "Goa": 50,
+        "West Bengal": 60,
+        "Odisha": 50,
+        "Karnataka": 60,
+        "Telangana": 60,
+        "Andhra Pradesh": 60,
+        "Tamil Nadu": 60,
+        "Kerala": 60,
 
-        // Tier 4: North-Eastern States & Remote UTs (+₹50 minor interstate coordination)
-        "Assam": 50,
-        "Sikkim": 50,
-        "Tripura": 50,
-        "Meghalaya": 50,
-        "Manipur": 50,
-        "Nagaland": 50,
-        "Mizoram": 50,
-        "Arunachal Pradesh": 50,
-        "Ladakh": 50,
-        "Puducherry": 50,
-        "Dadra and Nagar Haveli and Daman and Diu": 50,
-        "Andaman and Nicobar": 50,
-        "Lakshadweep": 50,
+        // North-Eastern & Remote Island UTs (₹60)
+        "Assam": 60,
+        "Sikkim": 60,
+        "Tripura": 60,
+        "Meghalaya": 60,
+        "Manipur": 60,
+        "Nagaland": 60,
+        "Mizoram": 60,
+        "Arunachal Pradesh": 60,
+        "Ladakh": 60,
+        "Puducherry": 60,
+        "Dadra and Nagar Haveli and Daman and Diu": 60,
+        "Andaman and Nicobar": 60,
+        "Lakshadweep": 60,
 
         // Fallbacks
-        "all": 20,
-        "other": 30
+        "all": 50,
+        "other": 50
       };
 
       let activeRazorpayKey = null;
@@ -2436,7 +2453,44 @@
         let baseFee = Number(activeSubService.fee);
         let challanFine = 0;
 
-        const isCentral = currentCategory === 'central' || activeSubService.id.startsWith('pan-') || activeSubService.id.startsWith('passport-') || activeSubService.id === 'traffic-challan' || activeSubService.id.startsWith('pf-') || activeSubService.id.startsWith('aadhaar-') || activeSubService.id.startsWith('voter-');
+        // Dynamic DL Vehicle Type Modifier:
+        if (activeSubService.id === 'dl-permanent') {
+          const vTypeEl = document.getElementById('dlVehicleType');
+          const vVal = vTypeEl ? vTypeEl.value : '';
+          if (vVal.includes('4-Wheeler Car')) baseFee = 1300;
+          else if (vVal.includes('Both 2-Wheeler')) baseFee = 1450;
+          else if (vVal.includes('Commercial') || vVal.includes('6-Wheeler')) baseFee = 1700;
+          else baseFee = 1100; // 2-Wheeler default
+        } else if (activeSubService.id === 'dl-international') {
+          const idpEl = document.getElementById('idpVehicleClass');
+          const idpVal = idpEl ? idpEl.value : '';
+          if (idpVal.includes('4-Wheeler')) baseFee = 1800;
+          else if (idpVal.includes('Commercial')) baseFee = 2200;
+          else baseFee = 1500;
+        } else if (activeSubService.id === 'dl-learning') {
+          const vClassEl = document.getElementById('vehicleClass');
+          const vVal = vClassEl ? vClassEl.value : '';
+          if (vVal.includes('LMV (4-व्हीलर')) baseFee = 1050;
+          else if (vVal.includes('MCWG + LMV')) baseFee = 1200;
+          else baseFee = 900;
+        }
+
+        // State-governed services that genuinely vary by state (Caste, Domicile, DL, RC, Land, Income, Birth/Death):
+        const isStateGoverned = (
+          currentCategory === 'certificate' ||
+          currentCategory === 'welfare' ||
+          currentCategory === 'transport' ||
+          activeSubService.id.includes('caste') ||
+          activeSubService.id.includes('domicile') ||
+          activeSubService.id.includes('income') ||
+          activeSubService.id.includes('residence') ||
+          activeSubService.id.includes('dl-') ||
+          activeSubService.id.includes('rc-') ||
+          activeSubService.id.includes('land-') ||
+          activeSubService.id.includes('ration-') ||
+          activeSubService.id.includes('birth-') ||
+          activeSubService.id.includes('death-')
+        );
 
         if (activeSubService.id === 'traffic-challan') {
           const fineInp = document.getElementById('challanPenaltyAmount');
@@ -2454,10 +2508,17 @@
 
         const stateEl = document.getElementById('applicantState');
         const chosenState = stateEl ? stateEl.value : (localStorage.getItem('userDetectedState') || 'Punjab');
-        const stateOffset = isCentral ? 0 : (stateFeeOffsets[chosenState] || 0);
+        const stateOffset = isStateGoverned ? (stateFeeOffsets[chosenState] || 50) : 0;
         const totalBaseFee = baseFee + stateOffset;
 
-        const serviceHandlingFee = isCentral ? (activeSubService.id === 'pan-new' ? 93 : (activeSubService.id === 'pan-correction' ? 73 : (baseFee >= 150 ? 50 : 20))) : 30;
+        // Operator digital processing fee added later in breakdown rather than upfront:
+        let serviceHandlingFee = 60;
+        if (!isStateGoverned) {
+          if (activeSubService.id === 'pan-new') serviceHandlingFee = 93;
+          else if (activeSubService.id === 'pan-correction') serviceHandlingFee = 73;
+          else if (activeSubService.id === 'traffic-challan') serviceHandlingFee = 150;
+          else serviceHandlingFee = (baseFee >= 200 ? 50 : 20);
+        }
         const pureBaseFee = Math.max(0, baseFee - serviceHandlingFee);
 
         // Update transparent breakdown box
@@ -2472,15 +2533,20 @@
           if (applyServ) applyServ.innerText = "+₹150 (ई-चालान निपटान व ऑपरेटर शुल्क)";
         } else {
           if (applyBase) applyBase.innerText = "₹" + pureBaseFee;
-          if (applyServ) applyServ.innerText = "+₹" + serviceHandlingFee;
+          if (applyServ) applyServ.innerText = "+₹" + serviceHandlingFee + " (डिजिटल प्रोसेसिंग)";
         }
-        if (applyState) applyState.innerText = isCentral ? "₹0 (National)" : ("+₹" + stateOffset);
+        if (applyState) applyState.innerText = isStateGoverned ? ("+₹" + stateOffset) : "₹0 (National)";
         if (applyStateLbl) {
-          applyStateLbl.innerText = isCentral ? "राज्य शुल्क (केंद्रीय सेवा हेतु शून्य):" : ("राज्य पोर्टल व रिमोट सुविधा शुल्क (" + chosenState + "):");
+          const isHome = chosenState.toLowerCase().includes('punjab');
+          applyStateLbl.innerText = isStateGoverned 
+            ? (isHome ? `राज्य RTO/पोर्टल शुल्क (${chosenState} बेस ₹40):` : `राज्य RTO समन्वय शुल्क (${chosenState}):`)
+            : "राज्य शुल्क (केंद्रीय सेवा हेतु शून्य):";
         }
         if (applyTot) applyTot.innerText = "₹" + totalBaseFee;
         
-        const stateNotice = isCentral ? " (केंद्रीय सेवा - कोई राज्य अतिरिक्त शुल्क नहीं)" : (stateOffset > 0 ? (" (" + chosenState + " राज्य सुविधा शुल्क +₹" + stateOffset + " सम्मिलित)") : " (पंजाब राज्य दर - ₹0 अतिरिक्त समायोजन)");
+        const stateNotice = isStateGoverned 
+          ? (" (" + chosenState + " राज्य RTO शुल्क +₹" + stateOffset + " सम्मिलित)") 
+          : " (केंद्रीय/अखिल भारतीय सेवा - कोई राज्य अतिरिक्त शुल्क नहीं)";
 
         if (currentPayMethod === 'upi') {
           document.getElementById('topFeeBadge').textContent = "₹" + totalBaseFee;
@@ -2514,6 +2580,8 @@
           upiUtr.required = false;
         }
         updatePricingDisplay();
+        attachAtmVoiceListeners();
+        if (typeof atmVoiceAssistant !== 'undefined') atmVoiceAssistant.speak('सेवा चुनी गई। कृपया संबंधित विवरण भरें।', 'Service selected. Please enter required details.');
       }
 
       function openRazorpayCheckout() {

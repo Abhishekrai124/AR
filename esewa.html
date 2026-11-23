@@ -521,48 +521,264 @@
         </div>
       </section>
 
-      <!-- Dedicated Instant Traffic e-Challan Check & Pay Banner / Widget -->
+      <!-- Official Government Verification & Live Status Hub -->
       <section class="wrap" style="margin-bottom:28px;">
         <div style="background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98)); border: 1.5px solid var(--eseva-gold); border-radius: 16px; padding: 22px 24px; box-shadow: 0 12px 36px rgba(0,0,0,0.5);">
-          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:14px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:12px;">
+          <!-- Header -->
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:14px;">
             <div style="display:flex; align-items:center; gap:12px;">
-              <span style="font-size:2.2rem;">🚦</span>
+              <span style="font-size:2.2rem;">🛡️</span>
               <div>
-                <h3 style="margin:0; color:#fff; font-size:1.2rem; font-weight:800; display:flex; align-items:center; gap:8px;">
-                  ट्रैफिक ई-चालान त्वरित जांच व ऑनलाइन भुगतान
-                  <span style="background:#ef4444; color:#fff; font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:4px;">LIVE NIC</span>
+                <h3 style="margin:0; color:#fff; font-size:1.25rem; font-weight:800; display:flex; align-items:center; gap:8px;">
+                  Official Document Verification &amp; Live Status Hub
+                  <span style="background:#10b981; color:#fff; font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:4px;">OFFICIAL GOVT LINKS</span>
                 </h3>
                 <p style="margin:3px 0 0; color:#94a3b8; font-size:0.85rem;">
-                  गाड़ी नंबर (RC) या चालान नंबर डालें — कितना चालान पड़ा है तुरंत देखें और सीधे ऑनलाइन निपटान करें
+                  ड्राइविंग लाइसेंस, गाड़ी आरसी, ट्रैफिक चालान, पैन कार्ड व अन्य सरकारी दस्तावेज़ों की 100% आधिकारिक स्थिति तुरंत जांचें
                 </p>
               </div>
             </div>
             <div style="display:flex; gap:8px;">
-              <a href="apply.html?service=traffic-challan" style="background:rgba(245, 158, 11, 0.15); border:1px solid var(--eseva-gold); color:#fde68a; font-size:0.8rem; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; display:flex; align-items:center; gap:4px;">
-                📝 डेडीकेटेड फॉर्म में खोलें ↗
+              <a href="apply.html" style="background:rgba(245, 158, 11, 0.15); border:1px solid var(--eseva-gold); color:#fde68a; font-size:0.8rem; font-weight:700; padding:6px 14px; border-radius:999px; text-decoration:none; display:flex; align-items:center; gap:4px;">
+                📝 Apply for Fresh/Correction ➔
               </a>
             </div>
           </div>
 
-          <!-- Quick Search Bar -->
-          <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
-            <div style="flex:1; min-width:260px;">
-              <label style="display:block; font-size:0.78rem; color:#fde68a; font-weight:700; margin-bottom:4px;">वाहन रजिस्ट्रेशन नंबर / चालान नंबर *</label>
-              <input type="text" id="quickChallanInput" class="form-input" placeholder="e.g. PB65AB1234 ਜਾਂ PB10AB1234 ਜਾਂ ਚਲਾਨ ਨੰਬਰ..." style="padding:12px 16px; font-weight:800; text-transform:uppercase; letter-spacing:1px; font-size:1rem; border-color:var(--eseva-gold); background:rgba(0,0,0,0.5); color:#fff;" onkeydown="if(event.key==='Enter') lookupQuickChallan()" />
-            </div>
-            <div style="width:160px;">
-              <label style="display:block; font-size:0.78rem; color:#94a3b8; margin-bottom:4px;">चेसिस अंतिम 5 अंक</label>
-              <input type="text" id="quickChallanChassis" class="form-input" placeholder="e.g. 12345 (वैकल्पिक)" maxlength="5" style="padding:12px; font-size:0.88rem;" />
-            </div>
-            <div style="align-self:flex-end;">
-              <button type="button" onclick="lookupQuickChallan()" style="padding:12px 22px; background:linear-gradient(135deg, #f59e0b, #d97706); color:#0f172a; font-weight:800; font-size:0.95rem; border-radius:8px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 15px rgba(245, 158, 11, 0.35);">
-                🔍 चालान चेक करें
-              </button>
-            </div>
+          <!-- Verification Tabs -->
+          <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:18px;">
+            <button type="button" class="verify-tab-btn active" onclick="switchVerifyTab('challan', this)" style="padding:8px 14px; border-radius:8px; font-size:0.84rem; font-weight:700; border:1px solid var(--eseva-gold); background:var(--eseva-gold); color:#000; cursor:pointer;">
+              🚦 Traffic e-Challan
+            </button>
+            <button type="button" class="verify-tab-btn" onclick="switchVerifyTab('dl', this)" style="padding:8px 14px; border-radius:8px; font-size:0.84rem; font-weight:700; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); color:#cbd5e1; cursor:pointer;">
+              🪪 Driving License (DL)
+            </button>
+            <button type="button" class="verify-tab-btn" onclick="switchVerifyTab('rc', this)" style="padding:8px 14px; border-radius:8px; font-size:0.84rem; font-weight:700; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); color:#cbd5e1; cursor:pointer;">
+              🚗 Vehicle RC &amp; PUC
+            </button>
+            <button type="button" class="verify-tab-btn" onclick="switchVerifyTab('pan', this)" style="padding:8px 14px; border-radius:8px; font-size:0.84rem; font-weight:700; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); color:#cbd5e1; cursor:pointer;">
+              💳 PAN Card Status
+            </button>
+            <button type="button" class="verify-tab-btn" onclick="switchVerifyTab('aadhaar', this)" style="padding:8px 14px; border-radius:8px; font-size:0.84rem; font-weight:700; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); color:#cbd5e1; cursor:pointer;">
+              🆔 Aadhaar Verification
+            </button>
+            <button type="button" class="verify-tab-btn" onclick="switchVerifyTab('passport', this)" style="padding:8px 14px; border-radius:8px; font-size:0.84rem; font-weight:700; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); color:#cbd5e1; cursor:pointer;">
+              🛂 Passport Track
+            </button>
+            <button type="button" class="verify-tab-btn" onclick="switchVerifyTab('epfo', this)" style="padding:8px 14px; border-radius:8px; font-size:0.84rem; font-weight:700; border:1px solid rgba(255,255,255,0.15); background:rgba(255,255,255,0.05); color:#cbd5e1; cursor:pointer;">
+              🏦 EPFO / UAN Claim
+            </button>
           </div>
 
-          <!-- Result Container -->
-          <div id="quickChallanResultBox" style="display:none; margin-top:14px;"></div>
+          <!-- Dynamic Panel Content -->
+          <div id="verifyPanelContent">
+            <!-- 1. Challan (Default) -->
+            <div id="verifyPane_challan">
+              <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                <div style="flex:1; min-width:260px;">
+                  <label style="display:block; font-size:0.78rem; color:#fde68a; font-weight:700; margin-bottom:4px;">वाहन रजिस्ट्रेशन नंबर / चालान नंबर *</label>
+                  <input type="text" id="quickChallanInput" class="form-input" placeholder="e.g. PB65AB1234 or PB10AB1234 or Challan No..." style="padding:12px 16px; font-weight:800; text-transform:uppercase; letter-spacing:1px; font-size:1rem; border-color:var(--eseva-gold); background:rgba(0,0,0,0.5); color:#fff;" onkeydown="if(event.key==='Enter') lookupQuickChallan()" />
+                </div>
+                <div style="width:160px;">
+                  <label style="display:block; font-size:0.78rem; color:#94a3b8; margin-bottom:4px;">चेसिस अंतिम 5 अंक</label>
+                  <input type="text" id="quickChallanChassis" class="form-input" placeholder="e.g. 12345 (वैकल्पिक)" maxlength="5" style="padding:12px; font-size:0.88rem;" />
+                </div>
+                <div style="align-self:flex-end;">
+                  <button type="button" onclick="lookupQuickChallan()" style="padding:12px 22px; background:linear-gradient(135deg, #f59e0b, #d97706); color:#0f172a; font-weight:800; font-size:0.95rem; border-radius:8px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 4px 15px rgba(245, 158, 11, 0.35);">
+                    🔍 चालान चेक करें
+                  </button>
+                </div>
+              </div>
+              <div id="quickChallanResultBox" style="display:none; margin-top:14px;"></div>
+            </div>
+
+            <!-- 2. Driving License (DL) -->
+            <div id="verifyPane_dl" style="display:none;">
+              <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(56, 189, 248, 0.3); border-radius:10px; padding:16px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                  <div>
+                    <h4 style="margin:0; color:#38bdf8; font-size:1.05rem;">🪪 Official Sarathi Parivahan DL Verification</h4>
+                    <p style="margin:4px 0 0; color:#cbd5e1; font-size:0.82rem;">Check Driving License status, class of vehicle (MCWG, LMV), and validity dates directly on MoRTH Sarathi portal.</p>
+                  </div>
+                  <a href="https://sarathi.parivahan.gov.in/sarathiservice/driving_licence.do" target="_blank" rel="noopener noreferrer" style="padding:8px 16px; background:linear-gradient(135deg, #0284c7, #0369a1); color:#fff; font-weight:700; font-size:0.84rem; border-radius:6px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                    🔗 Open Sarathi Portal ↗
+                  </a>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                  <div style="flex:1; min-width:240px;">
+                    <label style="display:block; font-size:0.78rem; color:#cbd5e1; margin-bottom:4px;">Enter DL Number</label>
+                    <input type="text" id="verifyDlInput" class="form-input" placeholder="e.g. PB10 20210012345" style="padding:10px 14px; text-transform:uppercase; font-weight:700;" />
+                  </div>
+                  <div style="align-self:flex-end;">
+                    <button type="button" onclick="copyAndOpen('verifyDlInput', 'https://sarathi.parivahan.gov.in/sarathiservice/driving_licence.do')" style="padding:10px 18px; background:rgba(56, 189, 248, 0.2); border:1px solid #38bdf8; color:#38bdf8; font-weight:700; font-size:0.85rem; border-radius:6px; cursor:pointer;">
+                      📋 Copy &amp; Verify on Sarathi
+                    </button>
+                  </div>
+                  <div style="align-self:flex-end;">
+                    <button type="button" onclick="selectServiceDirectly('permanent-dl')" style="padding:10px 18px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; font-weight:700; font-size:0.85rem; border-radius:6px; border:none; cursor:pointer;">
+                      📝 Apply for DL Renewal / Slot
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Vehicle RC & PUC -->
+            <div id="verifyPane_rc" style="display:none;">
+              <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(16, 185, 129, 0.3); border-radius:10px; padding:16px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                  <div>
+                    <h4 style="margin:0; color:#34d399; font-size:1.05rem;">🚗 Official Vahan Citizen Services (RC Status &amp; PUC)</h4>
+                    <p style="margin:4px 0 0; color:#cbd5e1; font-size:0.82rem;">Verify Vehicle Owner details, Maker/Model, Fitness, Insurance expiry, and Pollution (PUCC) validity on MoRTH Vahan.</p>
+                  </div>
+                  <a href="https://vahan.parivahan.gov.in/nrservices/faces/user/citizen/citizenlogin.xhtml" target="_blank" rel="noopener noreferrer" style="padding:8px 16px; background:linear-gradient(135deg, #059669, #047857); color:#fff; font-weight:700; font-size:0.84rem; border-radius:6px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                    🔗 Open Vahan Portal ↗
+                  </a>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                  <div style="flex:1; min-width:240px;">
+                    <label style="display:block; font-size:0.78rem; color:#cbd5e1; margin-bottom:4px;">Enter Vehicle Registration No.</label>
+                    <input type="text" id="verifyRcInput" class="form-input" placeholder="e.g. PB10AB1234 or DL1CA1234" style="padding:10px 14px; text-transform:uppercase; font-weight:700;" />
+                  </div>
+                  <div style="align-self:flex-end;">
+                    <button type="button" onclick="copyAndOpen('verifyRcInput', 'https://vahan.parivahan.gov.in/nrservices/faces/user/citizen/citizenlogin.xhtml')" style="padding:10px 18px; background:rgba(16, 185, 129, 0.2); border:1px solid #10b981; color:#34d399; font-weight:700; font-size:0.85rem; border-radius:6px; cursor:pointer;">
+                      📋 Copy &amp; Verify on Vahan
+                    </button>
+                  </div>
+                  <div style="align-self:flex-end;">
+                    <button type="button" onclick="selectServiceDirectly('vehicle-rc-transfer')" style="padding:10px 18px; background:linear-gradient(135deg, #f59e0b, #d97706); color:#0f172a; font-weight:700; font-size:0.85rem; border-radius:6px; border:none; cursor:pointer;">
+                      📝 Transfer RC / Insurance
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. PAN Card Status -->
+            <div id="verifyPane_pan" style="display:none;">
+              <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(245, 158, 11, 0.3); border-radius:10px; padding:16px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                  <div>
+                    <h4 style="margin:0; color:#fde68a; font-size:1.05rem;">💳 Official Income Tax e-Filing (Verify Your PAN)</h4>
+                    <p style="margin:4px 0 0; color:#cbd5e1; font-size:0.82rem;">Check whether PAN is Active and In-Use, verify Name/DOB as per NSDL/UTIITSL, and inspect Aadhaar linking status.</p>
+                  </div>
+                  <a href="https://eportal.incometax.gov.in/iec/foservices/#/pre-login/verifyYourPAN" target="_blank" rel="noopener noreferrer" style="padding:8px 16px; background:linear-gradient(135deg, #f59e0b, #d97706); color:#0f172a; font-weight:700; font-size:0.84rem; border-radius:6px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                    🔗 Open IT e-Filing Portal ↗
+                  </a>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                  <div style="flex:1; min-width:240px;">
+                    <label style="display:block; font-size:0.78rem; color:#cbd5e1; margin-bottom:4px;">Enter 10-Digit PAN Number</label>
+                    <input type="text" id="verifyPanInput" class="form-input" maxlength="10" placeholder="e.g. ABCDE1234F" style="padding:10px 14px; text-transform:uppercase; font-weight:700;" />
+                  </div>
+                  <div style="align-self:flex-end;">
+                    <button type="button" onclick="copyAndOpen('verifyPanInput', 'https://eportal.incometax.gov.in/iec/foservices/#/pre-login/verifyYourPAN')" style="padding:10px 18px; background:rgba(245, 158, 11, 0.2); border:1px solid var(--eseva-gold); color:#fde68a; font-weight:700; font-size:0.85rem; border-radius:6px; cursor:pointer;">
+                      📋 Copy &amp; Verify PAN
+                    </button>
+                  </div>
+                  <div style="align-self:flex-end;">
+                    <button type="button" onclick="selectServiceDirectly('pan-correction')" style="padding:10px 18px; background:linear-gradient(135deg, #0284c7, #0369a1); color:#fff; font-weight:700; font-size:0.85rem; border-radius:6px; border:none; cursor:pointer;">
+                      📝 Apply for PAN Correction (₹180)
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Aadhaar Verification -->
+            <div id="verifyPane_aadhaar" style="display:none;">
+              <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(147, 51, 234, 0.3); border-radius:10px; padding:16px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                  <div>
+                    <h4 style="margin:0; color:#c084fc; font-size:1.05rem;">🆔 UIDAI MyAadhaar (Verify an Aadhaar Number)</h4>
+                    <p style="margin:4px 0 0; color:#cbd5e1; font-size:0.82rem;">Verify if an Aadhaar is valid, active, and check age band, gender, state, and masked linked mobile digits.</p>
+                  </div>
+                  <a href="https://myaadhaar.uidai.gov.in/verify-aadhaar" target="_blank" rel="noopener noreferrer" style="padding:8px 16px; background:linear-gradient(135deg, #9333ea, #7e22ce); color:#fff; font-weight:700; font-size:0.84rem; border-radius:6px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                    🔗 Open UIDAI MyAadhaar ↗
+                  </a>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                  <div style="flex:1; min-width:240px;">
+                    <label style="display:block; font-size:0.78rem; color:#cbd5e1; margin-bottom:4px;">Enter 12-Digit Aadhaar Number</label>
+                    <input type="text" id="verifyAadhaarInput" class="form-input" maxlength="12" placeholder="e.g. 1234 5678 9012" style="padding:10px 14px; font-weight:700;" />
+                  </div>
+                  <div style="align-self:flex-end;">
+                    <button type="button" onclick="copyAndOpen('verifyAadhaarInput', 'https://myaadhaar.uidai.gov.in/verify-aadhaar')" style="padding:10px 18px; background:rgba(147, 51, 234, 0.2); border:1px solid #9333ea; color:#c084fc; font-weight:700; font-size:0.85rem; border-radius:6px; cursor:pointer;">
+                      📋 Copy &amp; Verify on UIDAI
+                    </button>
+                  </div>
+                  <div style="align-self:flex-end;">
+                    <button type="button" onclick="selectServiceDirectly('aadhaar-update')" style="padding:10px 18px; background:linear-gradient(135deg, #f59e0b, #d97706); color:#0f172a; font-weight:700; font-size:0.85rem; border-radius:6px; border:none; cursor:pointer;">
+                      📝 Update Aadhaar Mobile / PVC (₹50)
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. Passport Tracking -->
+            <div id="verifyPane_passport" style="display:none;">
+              <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(14, 165, 233, 0.3); border-radius:10px; padding:16px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                  <div>
+                    <h4 style="margin:0; color:#38bdf8; font-size:1.05rem;">🛂 Passport Seva Application Status Tracker</h4>
+                    <p style="margin:4px 0 0; color:#cbd5e1; font-size:0.82rem;">Track Passport, PCC, Surrender Certificate dispatch status, and Police Verification progress via Ministry of External Affairs.</p>
+                  </div>
+                  <a href="https://portal2.passportindia.gov.in/AppOnlineProject/statusTracker/trackStatusInpNew" target="_blank" rel="noopener noreferrer" style="padding:8px 16px; background:linear-gradient(135deg, #0284c7, #0369a1); color:#fff; font-weight:700; font-size:0.84rem; border-radius:6px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                    🔗 Open Passport Seva Tracker ↗
+                  </a>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                  <div style="flex:1; min-width:240px;">
+                    <label style="display:block; font-size:0.78rem; color:#cbd5e1; margin-bottom:4px;">Enter 15-Digit File Number</label>
+                    <input type="text" id="verifyPassportInput" class="form-input" placeholder="e.g. DEL123456789012" style="padding:10px 14px; text-transform:uppercase; font-weight:700;" />
+                  </div>
+                  <div style="align-self:flex-end;">
+                    <button type="button" onclick="copyAndOpen('verifyPassportInput', 'https://portal2.passportindia.gov.in/AppOnlineProject/statusTracker/trackStatusInpNew')" style="padding:10px 18px; background:rgba(14, 165, 233, 0.2); border:1px solid #0ea5e9; color:#38bdf8; font-weight:700; font-size:0.85rem; border-radius:6px; cursor:pointer;">
+                      📋 Copy &amp; Track Passport
+                    </button>
+                  </div>
+                  <div style="align-self:flex-end;">
+                    <button type="button" onclick="selectServiceDirectly('passport-fresh')" style="padding:10px 18px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; font-weight:700; font-size:0.85rem; border-radius:6px; border:none; cursor:pointer;">
+                      📝 Book Passport Appointment
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 7. EPFO / UAN Claim -->
+            <div id="verifyPane_epfo" style="display:none;">
+              <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(234, 179, 8, 0.3); border-radius:10px; padding:16px; margin-bottom:12px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:12px;">
+                  <div>
+                    <h4 style="margin:0; color:#facc15; font-size:1.05rem;">🏦 EPFO Member Passbook &amp; Claim Status</h4>
+                    <p style="margin:4px 0 0; color:#cbd5e1; font-size:0.82rem;">Check Provident Fund balance, pension contribution, and track online claim status (Form 19, 10C, 31 advance).</p>
+                  </div>
+                  <a href="https://passbook.epfindia.gov.in/MemberPassBook/Login" target="_blank" rel="noopener noreferrer" style="padding:8px 16px; background:linear-gradient(135deg, #ca8a04, #a16207); color:#fff; font-weight:700; font-size:0.84rem; border-radius:6px; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                    🔗 Open EPFO Member Portal ↗
+                  </a>
+                </div>
+                <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+                  <div style="flex:1; min-width:240px;">
+                    <label style="display:block; font-size:0.78rem; color:#cbd5e1; margin-bottom:4px;">Enter 12-Digit UAN Number</label>
+                    <input type="text" id="verifyEpfoInput" class="form-input" maxlength="12" placeholder="e.g. 100123456789" style="padding:10px 14px; font-weight:700;" />
+                  </div>
+                  <div style="align-self:flex-end;">
+                    <button type="button" onclick="copyAndOpen('verifyEpfoInput', 'https://passbook.epfindia.gov.in/MemberPassBook/Login')" style="padding:10px 18px; background:rgba(234, 179, 8, 0.2); border:1px solid #eab308; color:#facc15; font-weight:700; font-size:0.85rem; border-radius:6px; cursor:pointer;">
+                      📋 Copy &amp; Check EPFO
+                    </button>
+                  </div>
+                  <div style="align-self:flex-end;">
+                    <button type="button" onclick="selectServiceDirectly('pf-withdrawal')" style="padding:10px 18px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; font-weight:700; font-size:0.85rem; border-radius:6px; border:none; cursor:pointer;">
+                      📝 File PF Advance / Withdrawal Claim
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </section>
 
@@ -709,8 +925,12 @@
                 </optgroup>
 
                 <optgroup label="🚗 Transport &amp; Driving License (वाहन व सारथी)">
-                  <option value="Learning Licence Application (LL Online)" data-price="450" data-cat="transport" data-service-id="learning-licence">Learner Driving License Online LL (लर्निंग लाइसेंस) - ₹450</option>
-                  <option value="Permanent DL Appointment &amp; Slot" data-price="650" data-cat="transport" data-service-id="permanent-dl">Permanent Driving License Test Slot (पक्का ड्राइविंग लाइसेंस) - ₹650</option>
+                  <option value="Learner Driving License (LL Online Slot &amp; Application)" data-price="900" data-cat="transport" data-service-id="learning-licence">Learner Driving License Online LL (लर्निंग लाइसेंस) - ₹450</option>
+                  <option value="Permanent Driving License (DL Slot &amp; Test 2W)" data-price="1100" data-cat="transport" data-service-id="permanent-dl">
+                  <option value="Permanent DL (4-Wheeler Car LMV)" data-price="1300" data-cat="transport" data-service-id="permanent-dl-4w">
+                  <option value="Permanent DL (Both 2W + 4W Car)" data-price="1450" data-cat="transport" data-service-id="permanent-dl-combo">
+                  <option value="Commercial / Heavy 6-Wheeler Transport DL" data-price="1700" data-cat="transport" data-service-id="permanent-dl-heavy">
+                  <option value="International Driving Permit (IDP)" data-price="1500" data-cat="transport" data-service-id="dl-international">Permanent Driving License Test Slot (पक्का ड्राइविंग लाइसेंस) - ₹650</option>
                   <option value="DL Renewal &amp; Address Change" data-price="550" data-cat="transport" data-service-id="dl-renewal">Driving License Renewal &amp; Change (डीएल नवीनीकरण) - ₹550</option>
                   <option value="Vehicle RC Ownership Transfer" data-price="550" data-cat="transport" data-service-id="rc-transfer">Vehicle RC Transfer / Re-registration (वाहन आरसी ट्रांसफर) - ₹550</option>
                   <option value="RC Hypothecation Loan Removal (HPA/HPT)" data-price="450" data-cat="transport" data-service-id="rc-hypo">RC Hypothecation Removal (आरसी बैंक लोन हटाना) - ₹450</option>
@@ -1594,59 +1814,60 @@
         }
         renderServicesGrid(currentActiveCategory);
         recalculateFees();
+        attachAtmVoiceToEsewaInputs();
       }
 
       // State-wise Portal Processing Fee Offsets (Every state has min +₹50, scaling up to +₹150 and +₹200)
       const stateFeeOffsets = {
-        // Home State (Punjab - 0 interstate coordination surcharge, local base ₹110)
-        "Punjab": 0,
+        // Punjab Home State (Base state fee ₹40)
+        "Punjab": 40,
 
-        // Tier 1: Neighboring States & UTs (+₹20 minor interstate coordination)
-        "Chandigarh": 20,
-        "Haryana": 20,
-        "Himachal Pradesh": 20,
-        "Delhi": 20,
-        "Jammu and Kashmir": 20,
+        // Neighboring States & UTs (₹50)
+        "Chandigarh": 50,
+        "Haryana": 50,
+        "Himachal Pradesh": 50,
+        "Delhi": 50,
+        "Jammu and Kashmir": 50,
 
-        // Tier 2: Northern & Central States (+₹30 minor interstate coordination)
-        "Uttarakhand": 30,
-        "Rajasthan": 30,
-        "Uttar Pradesh": 30,
-        "Madhya Pradesh": 30,
-        "Bihar": 30,
-        "Jharkhand": 30,
-        "Chhattisgarh": 30,
+        // Northern & Central States (₹50)
+        "Uttarakhand": 50,
+        "Rajasthan": 50,
+        "Uttar Pradesh": 50,
+        "Madhya Pradesh": 50,
+        "Bihar": 50,
+        "Jharkhand": 50,
+        "Chhattisgarh": 50,
 
-        // Tier 3: Western, Southern & Eastern States (+₹40 minor interstate coordination)
-        "Gujarat": 40,
-        "Maharashtra": 40,
-        "Goa": 40,
-        "West Bengal": 40,
-        "Odisha": 40,
-        "Karnataka": 40,
-        "Telangana": 40,
-        "Andhra Pradesh": 40,
-        "Tamil Nadu": 40,
-        "Kerala": 40,
+        // Western, Southern & Eastern States (₹50 to ₹60)
+        "Gujarat": 50,
+        "Maharashtra": 60,
+        "Goa": 50,
+        "West Bengal": 60,
+        "Odisha": 50,
+        "Karnataka": 60,
+        "Telangana": 60,
+        "Andhra Pradesh": 60,
+        "Tamil Nadu": 60,
+        "Kerala": 60,
 
-        // Tier 4: North-Eastern States & Remote UTs (+₹50 minor interstate coordination)
-        "Assam": 50,
-        "Sikkim": 50,
-        "Tripura": 50,
-        "Meghalaya": 50,
-        "Manipur": 50,
-        "Nagaland": 50,
-        "Mizoram": 50,
-        "Arunachal Pradesh": 50,
-        "Ladakh": 50,
-        "Puducherry": 50,
-        "Dadra and Nagar Haveli and Daman and Diu": 50,
-        "Andaman and Nicobar": 50,
-        "Lakshadweep": 50,
+        // North-Eastern & Remote Island UTs (₹60)
+        "Assam": 60,
+        "Sikkim": 60,
+        "Tripura": 60,
+        "Meghalaya": 60,
+        "Manipur": 60,
+        "Nagaland": 60,
+        "Mizoram": 60,
+        "Arunachal Pradesh": 60,
+        "Ladakh": 60,
+        "Puducherry": 60,
+        "Dadra and Nagar Haveli and Daman and Diu": 60,
+        "Andaman and Nicobar": 60,
+        "Lakshadweep": 60,
 
         // Fallbacks
-        "all": 20,
-        "other": 30
+        "all": 50,
+        "other": 50
       };
 
       // Service Sub-Options & Customization Map
@@ -2015,6 +2236,7 @@
           }
         }
         recalculateFees();
+        attachAtmVoiceToEsewaInputs();
       }
 
       function onServiceDropdownChange() {
@@ -2022,6 +2244,7 @@
         renderDynamicServiceFields();
         adaptEsevaFormForService();
         recalculateFees();
+        attachAtmVoiceToEsewaInputs();
       }
 
       function adaptEsevaFormForService() {
@@ -2442,6 +2665,7 @@
           utrBox.style.display = method === 'upi' ? 'block' : 'none';
         }
         recalculateFees();
+        attachAtmVoiceToEsewaInputs();
       }
 
       const rtoStateMap = {
@@ -2954,7 +3178,160 @@
         renderChallanResultCard(context, cleanVal, isChallanNum, stateInfo, rtoName, amount);
       }
 
-      async function lookupQuickChallan() {
+      async 
+      function switchVerifyTab(tabId, btn) {
+        document.querySelectorAll('.verify-tab-btn').forEach(b => {
+          b.classList.remove('active');
+          b.style.background = 'rgba(255,255,255,0.05)';
+          b.style.borderColor = 'rgba(255,255,255,0.15)';
+          b.style.color = '#cbd5e1';
+        });
+        if (btn) {
+          btn.classList.add('active');
+          btn.style.background = 'var(--eseva-gold)';
+          btn.style.borderColor = 'var(--eseva-gold)';
+          btn.style.color = '#000';
+        }
+
+        const tabs = ['challan', 'dl', 'rc', 'pan', 'aadhaar', 'passport', 'epfo'];
+        tabs.forEach(t => {
+          const el = document.getElementById('verifyPane_' + t);
+          if (el) el.style.display = (t === tabId) ? 'block' : 'none';
+        });
+      }
+
+      function copyAndOpen(inputId, portalUrl) {
+        const inp = document.getElementById(inputId);
+        const val = inp ? inp.value.trim() : '';
+        if (val) {
+          navigator.clipboard.writeText(val).then(() => {
+            alert(`✓ "${val}" copied to clipboard! Opening official portal...`);
+            window.open(portalUrl, '_blank', 'noopener,noreferrer');
+          }).catch(() => {
+            window.open(portalUrl, '_blank', 'noopener,noreferrer');
+          });
+        } else {
+          window.open(portalUrl, '_blank', 'noopener,noreferrer');
+        }
+      }
+
+      
+      // ==========================================
+      // ATM-STYLE INTERACTIVE VOICE ASSISTANT ENGINE
+      // ==========================================
+      const atmVoiceAssistant = {
+        enabled: true,
+        audioCtx: null,
+
+        initAudio() {
+          if (!this.audioCtx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) this.audioCtx = new AudioCtx();
+          }
+          if (this.audioCtx && this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume();
+          }
+        },
+
+        playBeep(type = 'focus') {
+          try {
+            this.initAudio();
+            if (!this.audioCtx) return;
+            const now = this.audioCtx.currentTime;
+
+            if (type === 'focus') {
+              const osc = this.audioCtx.createOscillator();
+              const gain = this.audioCtx.createGain();
+              osc.connect(gain);
+              gain.connect(this.audioCtx.destination);
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(587.33, now);
+              gain.gain.setValueAtTime(0.04, now);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+              osc.start(now);
+              osc.stop(now + 0.08);
+            } else if (type === 'select') {
+              const osc = this.audioCtx.createOscillator();
+              const gain = this.audioCtx.createGain();
+              osc.connect(gain);
+              gain.connect(this.audioCtx.destination);
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(659.25, now);
+              osc.frequency.setValueAtTime(880.00, now + 0.08);
+              gain.gain.setValueAtTime(0.06, now);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+              osc.start(now);
+              osc.stop(now + 0.25);
+            } else if (type === 'pay') {
+              [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                const o = this.audioCtx.createOscillator();
+                const g = this.audioCtx.createGain();
+                o.connect(g);
+                g.connect(this.audioCtx.destination);
+                o.type = 'sine';
+                o.frequency.setValueAtTime(freq, now + i * 0.08);
+                g.gain.setValueAtTime(0.07, now + i * 0.08);
+                g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.16);
+                o.start(now + i * 0.08);
+                o.stop(now + i * 0.08 + 0.16);
+              });
+            }
+          } catch {}
+        },
+
+        speak(textHi, textEn) {
+          if (!this.enabled || !window.speechSynthesis) return;
+          const isEn = (typeof currentLang !== 'undefined' ? currentLang : 'hi') === 'en';
+          const text = isEn ? textEn : textHi;
+          if (!text) return;
+
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(text);
+          utterance.lang = isEn ? 'en-IN' : 'hi-IN';
+          utterance.rate = 1.02;
+          utterance.pitch = 1.05;
+          window.speechSynthesis.speak(utterance);
+        },
+
+        toggle() {
+          this.enabled = !this.enabled;
+          const btns = document.querySelectorAll('.btn-voice-toggle');
+          btns.forEach(btn => {
+            btn.innerHTML = this.enabled ? '🔊 ATM Voice: ON' : '🔇 ATM Voice: MUTE';
+            btn.style.borderColor = this.enabled ? '#10b981' : '#64748b';
+            btn.style.color = this.enabled ? '#34d399' : '#94a3b8';
+          });
+          if (this.enabled) {
+            this.playBeep('select');
+            this.speak("एटीएम वॉइस सहायता चालू है। कृपया अपना विवरण दर्ज करें।", "ATM voice assistance activated. Please enter your details.");
+          } else {
+            window.speechSynthesis.cancel();
+          }
+        }
+      };
+
+      function attachAtmVoiceToEsewaInputs() {
+        const fields = [
+          { id: 'applicantName', hi: 'कृपया अपना पूरा नाम दर्ज करें जैसा आधार पर है।', en: 'Please enter your full legal name as on your Aadhaar card.' },
+          { id: 'phone', hi: 'कृपया अपना 10 अंकों का सक्रिय व्हाट्सएप मोबाइल नंबर दर्ज करें।', en: 'Please enter your active 10-digit mobile number.' },
+          { id: 'guardianName', hi: 'कृपया पिता अथवा पति का नाम दर्ज करें।', en: 'Please enter your father or husband name.' },
+          { id: 'address', hi: 'कृपया अपना पूरा पता दर्ज करें।', en: 'Please enter your complete residential address.' },
+          { id: 'pincode', hi: 'कृपया अपना 6 अंकों का क्षेत्र पिनकोड दर्ज करें।', en: 'Please enter your 6-digit area pincode.' }
+        ];
+
+        fields.forEach(f => {
+          const el = document.getElementById(f.id);
+          if (el && !el.dataset.atmAttached) {
+            el.dataset.atmAttached = 'true';
+            el.addEventListener('focus', () => {
+              atmVoiceAssistant.playBeep('focus');
+              atmVoiceAssistant.speak(f.hi, f.en);
+            });
+          }
+        });
+      }
+
+      function lookupQuickChallan() {
         const input = document.getElementById('quickChallanInput');
         const resultBox = document.getElementById('quickChallanResultBox');
         if (!input || !resultBox) return;
@@ -3122,32 +3499,51 @@
         const sId = selectedOpt ? (selectedOpt.getAttribute('data-service-id') || '') : '';
         const sCat = selectedOpt ? (selectedOpt.getAttribute('data-cat') || '') : '';
 
-        // Check if service is Central / National (No state surcharge ever)
-        const isCentral = sCat === 'central' || sId.startsWith('new-pan') || sId.startsWith('pan-') || sId.startsWith('passport-') || sId === 'traffic-challan' || sId.startsWith('epfo-') || sId.startsWith('uan-') || sId.startsWith('aadhaar-') || sId === 'resume-cv-builder';
+        // State-governed services that genuinely vary by state (Caste, Domicile, DL, RC, Land, Income, Birth/Death):
+        const isStateGoverned = (
+          sCat === 'certificate' ||
+          sId.includes('caste') ||
+          sId.includes('domicile') ||
+          sId.includes('income') ||
+          sId.includes('residence') ||
+          sId.includes('driving') ||
+          sId.includes('licence') ||
+          sId.includes('dl-') ||
+          sId.includes('rc-') ||
+          sId.includes('land-') ||
+          sId.includes('ration-') ||
+          sId.includes('birth-') ||
+          sId.includes('death-')
+        );
 
-        // Specific fixed prices for PAN card
+        // Fixed rates for Central documents (No state fee):
         if (sId === 'new-pan') {
-          basePrice = 200;
+          basePrice = 200; // Flat ₹200 for Fresh PAN
         } else if (sId === 'pan-correction') {
-          basePrice = 180;
+          basePrice = 180; // Flat ₹180 for PAN Correction
         } else if (sId === 'traffic-challan') {
           const fineInp = document.getElementById('esevaChallanFineAmount');
           let challanFine = fineInp ? Math.max(0, parseInt(fineInp.value, 10) || 0) : 0;
-          basePrice = 150 + challanFine; // ₹150 cafe settlement & receipt fee + actual fine
+          basePrice = 150 + challanFine; // ₹150 cafe settlement & receipt + verified fine
         } else if (currentSelectedSubtypeBasePrice > 0 && sId !== 'traffic-challan') {
           basePrice = currentSelectedSubtypeBasePrice;
         }
 
-        // Dynamic State Offset Adjustment
+        // Dynamic State Offset Adjustment (only for state-governed services)
         const appState = document.getElementById('applicantState') ? document.getElementById('applicantState').value : currentSelectedState;
-        // Central services have 0 state surcharge
-        const stateOffset = isCentral ? 0 : (stateFeeOffsets[appState] || stateFeeOffsets[currentSelectedState] || 0);
-        
-        // Transparent Breakdown computation:
-        const serviceHandlingFee = isCentral ? (sId === 'new-pan' ? 93 : (sId === 'pan-correction' ? 73 : (basePrice >= 150 ? 50 : 20))) : 30;
-        const pureBaseFee = Math.max(0, basePrice - serviceHandlingFee);
+        const stateOffset = isStateGoverned ? (stateFeeOffsets[appState] || stateFeeOffsets[currentSelectedState] || 50) : 0;
         
         currentBaseTotal = basePrice ? (basePrice + stateOffset) : 0;
+
+        // Transparent Breakdown computation:
+        let serviceHandlingFee = 40;
+        if (!isStateGoverned) {
+          if (sId === 'new-pan') serviceHandlingFee = 93;
+          else if (sId === 'pan-correction') serviceHandlingFee = 73;
+          else if (sId === 'traffic-challan') serviceHandlingFee = 150;
+          else serviceHandlingFee = (basePrice >= 200 ? 50 : 20);
+        }
+        const pureBaseFee = Math.max(0, basePrice - (isStateGoverned ? 0 : serviceHandlingFee));
 
         // Update Transparent Breakdown in UI
         const baseEl = document.getElementById('feeBreakdownBase');
@@ -3157,12 +3553,14 @@
         const totalEl = document.getElementById('feeBreakdownTotal');
         
         if (baseEl) baseEl.innerText = `₹${pureBaseFee}`;
-        if (stateEl) stateEl.innerText = isCentral ? `₹0 (Central Service)` : `+₹${stateOffset}`;
-        if (stateLbl) stateLbl.innerText = isCentral ? `राज्य शुल्क (केंद्रीय सेवा हेतु शून्य):` : `राज्य पोर्टल व सुविधा शुल्क (${appState}):`;
+        if (stateEl) stateEl.innerText = isStateGoverned ? `+₹${stateOffset}` : `₹0 (Central Service)`;
+        if (stateLbl) stateLbl.innerText = isStateGoverned ? `राज्य पोर्टल शुल्क (${appState}):` : `राज्य शुल्क (केंद्रीय सेवा हेतु शून्य):`;
         if (servEl) servEl.innerText = `+₹${serviceHandlingFee}`;
         if (totalEl) totalEl.innerText = `₹${currentBaseTotal}`;
 
-        const stateNotice = isCentral ? ' (केंद्रीय सेवा - कोई राज्य अतिरिक्त शुल्क नहीं)' : (stateOffset > 0 ? ` (${appState} राज्य सुविधा समायोजन +₹${stateOffset} सम्मिलित)` : ' (पंजाब राज्य दर - ₹0 अतिरिक्त समायोजन)');
+        const stateNotice = isStateGoverned 
+          ? ` (${appState} राज्य शुल्क +₹${stateOffset} सम्मिलित)` 
+          : ' (केंद्रीय/अखिल भारतीय सेवा - कोई राज्य अधिभार नहीं)';
 
         if (currentPaymentMethod === 'upi') {
           // UPI is 100% Free: ₹0 Gateway Surcharge
