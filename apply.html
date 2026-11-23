@@ -2773,48 +2773,42 @@
       function updatePricingDisplay() {
         if (!activeSubService) return;
         let basePackageFee = Number(activeSubService.fee);
-        let govtFee = Number(activeSubService.govtFee || 0);
-        let serviceFee = Number(activeSubService.serviceFee || 0);
         let challanFine = 0;
 
         // Dynamic DL Vehicle Type Modifier:
         if (activeSubService.id === 'dl-permanent') {
           const vTypeEl = document.getElementById('dlVehicleType');
           const vVal = vTypeEl ? vTypeEl.value : '';
-          if (vVal.includes('4-Wheeler Car')) { govtFee = 400; serviceFee = 900; basePackageFee = 1300; }
-          else if (vVal.includes('Both 2-Wheeler')) { govtFee = 400; serviceFee = 1050; basePackageFee = 1450; }
-          else if (vVal.includes('Commercial') || vVal.includes('6-Wheeler')) { govtFee = 500; serviceFee = 1200; basePackageFee = 1700; }
-          else { govtFee = 400; serviceFee = 700; basePackageFee = 1100; }
+          if (vVal.includes('4-Wheeler Car')) basePackageFee = 1300;
+          else if (vVal.includes('Both 2-Wheeler')) basePackageFee = 1450;
+          else if (vVal.includes('Commercial') || vVal.includes('6-Wheeler')) basePackageFee = 1700;
+          else basePackageFee = 1100;
         } else if (activeSubService.id === 'dl-international') {
           const idpEl = document.getElementById('idpVehicleClass');
           const idpVal = idpEl ? idpEl.value : '';
-          if (idpVal.includes('4-Wheeler')) { govtFee = 500; serviceFee = 1300; basePackageFee = 1800; }
-          else if (idpVal.includes('Commercial')) { govtFee = 500; serviceFee = 1700; basePackageFee = 2200; }
-          else { govtFee = 500; serviceFee = 1000; basePackageFee = 1500; }
+          if (idpVal.includes('4-Wheeler')) basePackageFee = 1800;
+          else if (idpVal.includes('Commercial')) basePackageFee = 2200;
+          else basePackageFee = 1500;
         } else if (activeSubService.id === 'dl-learning') {
           const vClassEl = document.getElementById('vehicleClass');
           const vVal = vClassEl ? vClassEl.value : '';
-          if (vClassEl && vVal.includes('LMV') && !vVal.includes('MCWG')) { govtFee = 200; serviceFee = 850; basePackageFee = 1050; }
-          else if (vClassEl && vVal.includes('MCWG + LMV')) { govtFee = 200; serviceFee = 1000; basePackageFee = 1200; }
-          else { govtFee = 200; serviceFee = 700; basePackageFee = 900; }
+          if (vClassEl && vVal.includes('LMV') && !vVal.includes('MCWG')) basePackageFee = 1050;
+          else if (vClassEl && vVal.includes('MCWG + LMV')) basePackageFee = 1200;
+          else basePackageFee = 900;
         } else if (activeSubService.id === 'passport-normal' || activeSubService.alias === 'passport-fresh') {
-          govtFee = 1500; serviceFee = 1000; basePackageFee = 2500;
+          basePackageFee = 2500;
         } else if (activeSubService.id === 'aadhaar-address') {
-          govtFee = 50; serviceFee = 50; basePackageFee = 100;
+          basePackageFee = 100;
         } else if (activeSubService.id === 'traffic-challan') {
           const fineInp = document.getElementById('challanPenaltyAmount');
           if (fineInp) {
             challanFine = Math.max(0, parseInt(fineInp.value, 10) || 0);
           }
-          govtFee = challanFine;
-          serviceFee = 150;
           basePackageFee = 150 + challanFine;
         } else if (activeSubService.id === 'pan-new') {
-          govtFee = 107; serviceFee = 93; basePackageFee = 200;
+          basePackageFee = 200;
         } else if (activeSubService.id === 'pan-correction') {
-          govtFee = 107; serviceFee = 73; basePackageFee = 180;
-        } else {
-          if (!serviceFee) serviceFee = Math.max(50, basePackageFee - govtFee);
+          basePackageFee = 180;
         }
 
         // State-governed services check
@@ -2856,6 +2850,15 @@
         const stateDistanceSurcharge = isCentralOnly ? 0 : (isHomeBase ? 0 : Math.max(0, (stateFeeOffsets[chosenState] || 50) - 40));
         const totalBaseFee = basePackageFee + stateDistanceSurcharge;
 
+        // Capping visible service charge <= ₹100
+        let visibleServiceFee = 80;
+        if (totalBaseFee <= 100) visibleServiceFee = 50;
+        else if (totalBaseFee <= 150) visibleServiceFee = 60;
+        else if (totalBaseFee >= 3000) visibleServiceFee = 100;
+        else visibleServiceFee = 80;
+
+        let applicationPackageFee = Math.max(0, totalBaseFee - statePortalFee - visibleServiceFee);
+
         // Update transparent breakdown box elements
         const applyBase = document.getElementById('applyFeeBase');
         const applyState = document.getElementById('applyFeeState');
@@ -2863,7 +2866,7 @@
         const applyServ = document.getElementById('applyFeeService');
         const applyTot = document.getElementById('applyFeeTotal');
 
-        if (applyBase) applyBase.innerText = "₹" + govtFee;
+        if (applyBase) applyBase.innerText = "₹" + applicationPackageFee;
         if (applyState) {
           applyState.innerText = isCentralOnly ? "₹0 (All India)" : `₹${statePortalFee} (${statePortalDesc})`;
         }
@@ -2872,7 +2875,7 @@
             ? "🇮🇳 राज्य पोर्टल शुल्क (केंद्रीय सेवा):" 
             : `🌐 ${stateKey} सेवा केंद्र / ई-डिस्ट्रिक्ट पोर्टल शुल्क:`;
         }
-        if (applyServ) applyServ.innerText = "₹" + serviceFee;
+        if (applyServ) applyServ.innerText = "₹" + visibleServiceFee;
         if (applyTot) applyTot.innerText = "₹" + totalBaseFee;
 
         const stateNotice = isCentralOnly 

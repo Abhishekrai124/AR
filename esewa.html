@@ -1167,10 +1167,10 @@
               </div>
             </div>
 
-            <!-- Granular Transparent Price Breakdown Box -->
+            <!-- Granular Transparent Price Breakdown Box (Service Fee Capped <= ₹100, High Charges Managed in Product/Application Package) -->
             <div id="feeBreakdownDetailsBox" style="background:rgba(15, 23, 42, 0.7); border:1px solid rgba(245, 158, 11, 0.25); border-radius:10px; padding:14px; margin-bottom:14px; font-size:0.84rem; line-height:1.7;">
               <div style="display:flex; justify-content:space-between; color:#cbd5e1; margin-bottom:3px;">
-                <span id="feeBreakdownGovtLabel">🏛️ सरकारी / विभागीय पंजीकरण शुल्क:</span>
+                <span id="feeBreakdownGovtLabel">📦 दस्तावेज़, स्लॉट व अधिकृत आवेदन पैकेज:</span>
                 <strong id="feeBreakdownBase" style="color:#fff;">₹0</strong>
               </div>
               <div style="display:flex; justify-content:space-between; color:#cbd5e1; margin-bottom:3px;">
@@ -1178,7 +1178,7 @@
                 <strong id="feeBreakdownState" style="color:#38bdf8;">₹0</strong>
               </div>
               <div style="display:flex; justify-content:space-between; color:#cbd5e1; margin-bottom:3px;">
-                <span id="feeBreakdownServiceLabel">⚡ शान साइबर कैफे सर्विसिंग व फ़ाइलिंग चार्ज:</span>
+                <span id="feeBreakdownServiceLabel">⚡ शान साइबर कैफे फ़ाइलिंग व सुविधा शुल्क:</span>
                 <strong id="feeBreakdownService" style="color:#10b981; font-size:0.92rem;">₹0</strong>
               </div>
               <div style="display:flex; justify-content:space-between; padding-top:8px; margin-top:8px; border-top:1px dashed rgba(255,255,255,0.18); font-weight:700;">
@@ -1884,9 +1884,18 @@
               <div class="service-fee" style="text-align: left;">
                 <span style="font-size: 1.35rem; font-weight: 800; color: #38bdf8;">₹${totalFee}</span>
                 <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 2px; line-height: 1.35;">
-                  <span style="color: #cbd5e1;">सरकारी: <strong style="color:#fff;">₹${item.govtFee || 0}</strong></span>
-                  ${!isCentral ? ` · <span style="color: #7dd3fc;">राज्य: <strong>₹${(typeof stateFeeOffsets !== 'undefined' && stateFeeOffsets[currentSelectedState]) ? stateFeeOffsets[currentSelectedState] : 40}</strong></span>` : ''}
-                  · <span style="color: #6ee7b7;">सर्विस: <strong style="color: #10b981;">₹${item.serviceFee || Math.max(50, totalFee - (item.govtFee || 0))}</strong></span>
+                  ${(() => {
+                    const stPortFee = isCentral ? 0 : ((typeof stateFeeOffsets !== 'undefined' && stateFeeOffsets[currentSelectedState]) ? stateFeeOffsets[currentSelectedState] : 40);
+                    // Service charges over 100 are bundled into product/application package
+                    const rawServ = Number(item.serviceFee || 80);
+                    const visibleServ = (rawServ > 100) ? 80 : Math.min(rawServ, 80);
+                    const appPkg = totalFee - stPortFee - visibleServ;
+                    return `
+                      <span style="color: #cbd5e1;">आवेदन पैकेज: <strong style="color:#fff;">₹${appPkg}</strong></span>
+                      ${!isCentral ? ` · <span style="color: #7dd3fc;">राज्य: <strong>₹${stPortFee}</strong></span>` : ''}
+                      · <span style="color: #6ee7b7;">सुविधा शुल्क: <strong style="color: #10b981;">₹${visibleServ}</strong></span>
+                    `;
+                  })()}
                 </div>
               </div>
               <button class="btn-apply-card" onclick="handleServiceApplyClick('${item.id}')" style="white-space: nowrap; padding: 9px 18px; font-weight: 700; border-radius: 8px;">
@@ -4152,7 +4161,7 @@
 
         const serviceItem = (typeof servicesList !== 'undefined') ? servicesList.find(s => s.id === sId) : null;
 
-        // State-governed services that genuinely vary by state (DL, RC, Caste, Domicile, Land, Income, Birth/Death, Ration, Welfare, Affidavits, Local Utility):
+        // State-governed services check
         const isCentralOnly = (
           sId === 'new-pan' ||
           sId === 'pan-correction' ||
@@ -4169,36 +4178,30 @@
         const appState = document.getElementById('applicantState') ? document.getElementById('applicantState').value : currentSelectedState;
         renderStateIntelligenceBadge(appState);
 
-        let govtFee = serviceItem ? Number(serviceItem.govtFee || 0) : 0;
-        let serviceFee = serviceItem ? Number(serviceItem.serviceFee || 0) : 0;
         let basePackageFee = serviceItem ? Number(serviceItem.fee) : (selectedOpt ? Number(selectedOpt.getAttribute('data-price') || 0) : 0);
 
         // Specific service overrides & custom subtypes
-        if (sId === 'permanent-dl-4w') { govtFee = 400; serviceFee = 900; basePackageFee = 1300; }
-        else if (sId === 'permanent-dl-combo') { govtFee = 400; serviceFee = 1050; basePackageFee = 1450; }
-        else if (sId === 'permanent-dl-heavy') { govtFee = 500; serviceFee = 1200; basePackageFee = 1700; }
-        else if (sId === 'dl-international') { govtFee = 500; serviceFee = 1000; basePackageFee = 1500; }
-        else if (sId === 'passport-fresh') { govtFee = 1500; serviceFee = 1000; basePackageFee = 2500; }
-        else if (sId === 'passport-tatkaal') { govtFee = 2000; serviceFee = 1500; basePackageFee = 3500; }
-        else if (sId === 'pvc-aadhaar') { govtFee = 50; serviceFee = 50; basePackageFee = 100; }
-        else if (sId === 'aadhaar-mobile') { govtFee = 0; serviceFee = 75; basePackageFee = 75; }
-        else if (sId === 'aadhaar-bio') { govtFee = 0; serviceFee = 125; basePackageFee = 125; }
-        else if (sId === 'aadhaar-update') { govtFee = 50; serviceFee = 50; basePackageFee = 100; }
-        else if (sId === 'new-pan') { govtFee = 107; serviceFee = 93; basePackageFee = 200; }
-        else if (sId === 'pan-correction') { govtFee = 107; serviceFee = 73; basePackageFee = 180; }
+        if (sId === 'permanent-dl-4w') basePackageFee = 1300;
+        else if (sId === 'permanent-dl-combo') basePackageFee = 1450;
+        else if (sId === 'permanent-dl-heavy') basePackageFee = 1700;
+        else if (sId === 'dl-international') basePackageFee = 1500;
+        else if (sId === 'passport-fresh') basePackageFee = 2500;
+        else if (sId === 'passport-tatkaal') basePackageFee = 3500;
+        else if (sId === 'pvc-aadhaar') basePackageFee = 100;
+        else if (sId === 'aadhaar-mobile') basePackageFee = 75;
+        else if (sId === 'aadhaar-bio') basePackageFee = 125;
+        else if (sId === 'aadhaar-update') basePackageFee = 100;
+        else if (sId === 'new-pan') basePackageFee = 200;
+        else if (sId === 'pan-correction') basePackageFee = 180;
         else if (sId === 'traffic-challan') {
           const fineInp = document.getElementById('esevaChallanFineAmount');
           let challanFine = fineInp ? Math.max(0, parseInt(fineInp.value, 10) || 0) : 0;
-          govtFee = challanFine;
-          serviceFee = 150;
-          basePackageFee = challanFine + serviceFee;
+          basePackageFee = challanFine + 150;
         } else if (currentSelectedSubtypeBasePrice > 0 && sId !== 'traffic-challan') {
           basePackageFee = currentSelectedSubtypeBasePrice;
-          serviceFee = Math.max(50, basePackageFee - govtFee);
         }
 
         // State Portal Processing Fee:
-        // Punjab = ₹40; Haryana, UP, Bihar, Delhi, etc. = ₹50; Central services = ₹0
         let statePortalFee = 0;
         let statePortalDesc = '';
         const stateKey = (appState && appState !== 'all') ? appState : 'Punjab';
@@ -4216,12 +4219,27 @@
           else statePortalDesc = `${stateKey} ई-डिस्ट्रिक्ट`;
         }
 
-        // State distance offset: Punjab (Home Base) has 0 extra surcharge; other states have small offset (+₹10)
+        // Distance offset for states outside home base (Punjab = ₹0 extra)
         const isHomeBase = (!appState || appState.toLowerCase().includes('punjab') || appState === 'all');
         const stateDistanceSurcharge = isCentralOnly ? 0 : (isHomeBase ? 0 : Math.max(0, (stateFeeOffsets[appState] || 50) - 40));
 
         const grandTotal = basePackageFee ? (basePackageFee + stateDistanceSurcharge) : 0;
         currentBaseTotal = grandTotal;
+
+        // Customer-friendly service fee capping: visible service charge is strictly capped <= ₹100 (₹50 to ₹90).
+        // Any charge exceeding ₹100 is integrated directly into the core Application & Documentation Package.
+        let visibleServiceFee = 80;
+        if (grandTotal <= 100) {
+          visibleServiceFee = 50;
+        } else if (grandTotal <= 150) {
+          visibleServiceFee = 60;
+        } else if (grandTotal >= 3000) {
+          visibleServiceFee = 100;
+        } else {
+          visibleServiceFee = 80;
+        }
+
+        let applicationPackageFee = Math.max(0, grandTotal - statePortalFee - visibleServiceFee);
 
         // Update UI Elements with explicit numerical values
         const baseEl = document.getElementById('feeBreakdownBase');
@@ -4230,7 +4248,7 @@
         const servEl = document.getElementById('feeBreakdownService');
         const totalEl = document.getElementById('feeBreakdownTotal');
         
-        if (baseEl) baseEl.innerText = `₹${govtFee}`;
+        if (baseEl) baseEl.innerText = `₹${applicationPackageFee}`;
         if (stateEl) {
           stateEl.innerText = isCentralOnly ? `₹0 (All India)` : `₹${statePortalFee} (${statePortalDesc})`;
         }
@@ -4239,7 +4257,7 @@
             ? `🇮🇳 राज्य पोर्टल शुल्क (केंद्रीय सेवा):` 
             : `🌐 ${stateKey} सेवा केंद्र / ई-डिस्ट्रिक्ट पोर्टल शुल्क:`;
         }
-        if (servEl) servEl.innerText = `₹${serviceFee}`;
+        if (servEl) servEl.innerText = `₹${visibleServiceFee}`;
         if (totalEl) totalEl.innerText = `₹${grandTotal}`;
 
         // Live calculation formula note
@@ -4256,8 +4274,8 @@
         if (formulaNoteEl) {
           formulaNoteEl.innerText = grandTotal 
             ? (isCentralOnly 
-                ? `(🇮🇳 सरकारी शुल्क ₹${govtFee} + सर्विस चार्ज ₹${serviceFee} = कुल देय ₹${grandTotal})`
-                : `(🏛️ सरकारी शुल्क ₹${govtFee} + ${statePortalDesc} ₹${statePortalFee} + सर्विसिंग चार्ज ₹${serviceFee} = कुल देय ₹${grandTotal})`)
+                ? `(📦 आवेदन पैकेज ₹${applicationPackageFee} + सुविधा शुल्क ₹${visibleServiceFee} = कुल देय ₹${grandTotal})`
+                : `(📦 आवेदन पैकेज ₹${applicationPackageFee} + ${statePortalDesc} ₹${statePortalFee} + सुविधा शुल्क ₹${visibleServiceFee} = कुल देय ₹${grandTotal})`)
             : '';
         }
 
@@ -4266,11 +4284,9 @@
           : ` (${appState} राज्य प्रोसेसिंग +₹${stateDistanceSurcharge} सम्मिलित)`;
 
         if (currentPaymentMethod === 'upi') {
-          // UPI is 100% Free: ₹0 Gateway Surcharge
           document.getElementById('displayTotalFee').innerText = grandTotal ? `₹${grandTotal}` : '₹0';
           document.getElementById('gatewayFeeBreakdownNotice').innerText = `UPI भुगतान 100% फ्री है (0% अतिरिक्त शुल्क)${stateNotice}`;
         } else {
-          // Razorpay has 2% gateway convenience surcharge
           const rzpSurcharge = Math.round(grandTotal * 0.02);
           const rzpTotal = grandTotal + rzpSurcharge;
           document.getElementById('displayTotalFee').innerText = rzpTotal ? `₹${rzpTotal}` : '₹0';
