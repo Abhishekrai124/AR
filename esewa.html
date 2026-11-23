@@ -804,8 +804,8 @@
           </div>
           <div style="min-width:240px;">
             <select id="stateFilterSelect" class="form-select" style="padding:10px 14px; border-radius:999px; background:#0f172a; border-color:var(--eseva-gold); color:#fde68a; font-weight:700; font-size:0.88rem;" onchange="onStateFilterChange()">
-              <option value="Punjab" selected>Punjab (ਪੰਜਾਬ - Sewa Kendra &amp; Saanjh)</option>
-              <option value="all">🇮🇳 All India / Central Services</option>
+              <option value="all" selected>🇮🇳 All India (सभी राज्य व केंद्रीय सेवाएं)</option>
+              <option value="Punjab">Punjab (ਪੰਜਾਬ - Sewa Kendra &amp; Saanjh)</option>
               <option value="Chandigarh">Chandigarh (e-Jan Sampark)</option>
               <option value="Haryana">Haryana (Antyodaya Saral)</option>
               <option value="Delhi">Delhi NCT (e-District Delhi)</option>
@@ -1401,6 +1401,15 @@
 
       // State-Adaptive Multilingual Configuration & State Mapping
       const stateConfigMap = {
+        "all": {
+          langCode: "hi",
+          langName: "हिंदी (Hindi)",
+          tagline: "🇮🇳 अखिल भारतीय डिजिटल ई-सेवा, पासपोर्ट, पैन, आधार, ड्राइविंग लाइसेंस व राज्य ई-डिस्ट्रिक्ट पोर्टल",
+          rtoPrefix: "IN",
+          samplePlate: "PB65AB1234",
+          sampleRTO: "All India Portal",
+          primaryServices: ["passport-fresh", "new-pan", "learning-licence", "pvc-aadhaar", "traffic-challan", "ayushman-card"]
+        },
         "Punjab": {
           langCode: "pa",
           langName: "ਪੰਜਾਬੀ (Punjabi)",
@@ -1590,7 +1599,7 @@
       let currentLang = "en"; // Default primary English
       let activeRegionalLang = "pa"; // Regional language for detected state
       let activeRegionalName = "ਪੰਜਾਬੀ (Punjabi)";
-      let activeStateConfig = stateConfigMap["Punjab"];
+      let activeStateConfig = stateConfigMap["all"];
 
       function toggleLanguage() {
         // Toggle between English and active regional language
@@ -1733,11 +1742,12 @@
 
             // State & Search Filters
       let currentActiveCategory = "all";
-      let currentSelectedState = "Punjab";
+      let currentSelectedState = "all";
       let currentSearchQuery = "";
 
       // State-wise Portal Processing Fee Offsets (Every state has min +₹40/₹50, scaling up to +₹60)
       const stateFeeOffsets = {
+        "all": 40,
         // Tier 1: Home Base (Punjab) - Local Sewa Kendra & Saanjh facilitation
         "Punjab": 40,
 
@@ -1848,9 +1858,10 @@
           const totalFee = Number(item.fee) + regionalOffset;
           const docsText = (item.docs && item.docs.length > 0) ? item.docs.join(' · ') : 'मूल पहचान व संबंधित दस्तावेज';
 
+          const stateDisplayName = (currentSelectedState === 'all') ? 'All States' : currentSelectedState;
           const govBadge = isCentral
             ? `<span style="background:rgba(99,102,241,0.18); border:1px solid #6366f1; color:#c7d2fe; font-size:0.68rem; font-weight:700; padding:2px 8px; border-radius:999px;">🇮🇳 All India Service (केंद्रीय सेवा)</span>`
-            : `<span style="background:rgba(245,158,11,0.15); border:1px solid #f59e0b; color:#fde68a; font-size:0.68rem; font-weight:700; padding:2px 8px; border-radius:999px;">🏛️ राज्य सेवा (${currentSelectedState})</span>`;
+            : `<span style="background:rgba(245,158,11,0.15); border:1px solid #f59e0b; color:#fde68a; font-size:0.68rem; font-weight:700; padding:2px 8px; border-radius:999px;">🏛️ राज्य सेवा (${stateDisplayName})</span>`;
 
           card.innerHTML = `
             <div style="flex: 1 1 auto; display: flex; flex-direction: column;">
@@ -1872,7 +1883,7 @@
             <div class="service-footer" style="display: flex; justify-content: space-between; align-items: center; padding-top: 12px; margin-top: auto; border-top: 1px solid rgba(255,255,255,0.08);">
               <div class="service-fee" style="text-align: left;">
                 <span style="font-size: 1.35rem; font-weight: 800; color: #38bdf8;">₹${totalFee}</span>
-                <small style="display: block; font-size: 0.68rem; color: #94a3b8;">${isCentral ? 'ऑल इंडिया कुल शुल्क' : 'कुल सेवा शुल्क (' + currentSelectedState + ')'}</small>
+                <small style="display: block; font-size: 0.68rem; color: #94a3b8;">${isCentral ? 'ऑल इंडिया कुल शुल्क' : 'कुल सेवा शुल्क (' + ((currentSelectedState === 'all') ? 'All States' : currentSelectedState) + ')'}</small>
               </div>
               <button class="btn-apply-card" onclick="handleServiceApplyClick('${item.id}')" style="white-space: nowrap; padding: 9px 18px; font-weight: 700; border-radius: 8px;">
                 ${i18n.applyBtnCard || "आवेदन करें ➔"}
@@ -1939,12 +1950,22 @@
 
       function onStateFilterChange() {
         const stateSelect = document.getElementById("stateFilterSelect");
-        currentSelectedState = stateSelect ? stateSelect.value : "Punjab";
+        currentSelectedState = stateSelect ? stateSelect.value : "all";
+        if (currentSelectedState !== "all" && typeof stateConfigMap !== "undefined" && stateConfigMap[currentSelectedState]) {
+          activeStateConfig = stateConfigMap[currentSelectedState];
+        } else {
+          activeStateConfig = (typeof stateConfigMap !== "undefined" && stateConfigMap["all"]) ? stateConfigMap["all"] : null;
+        }
         const applicantState = document.getElementById("applicantState");
         if (applicantState && currentSelectedState !== "all") {
           applicantState.value = currentSelectedState;
         }
+        const quickChallan = document.getElementById("quickChallanNumber");
+        if (quickChallan && activeStateConfig && activeStateConfig.samplePlate) {
+          quickChallan.placeholder = `e.g. ${activeStateConfig.samplePlate} or Challan No...`;
+        }
         renderServicesGrid(currentActiveCategory);
+        renderDynamicServiceFields();
         recalculateFees();
         attachAtmVoiceToEsewaInputs();
       }
@@ -2070,7 +2091,7 @@
 
       let activeCustomizerServiceKey = "passport";
       let activeCustomizerSubId = "passport-fresh";
-      let activeCustomizerBaseFee = 4500;
+      let activeCustomizerBaseFee = 2500;
 
       // Handle Apply Click on Service Card (No Redirect to apply.html!)
       function handleServiceApplyClick(serviceId) {
@@ -2388,20 +2409,199 @@
 
       function renderDynamicServiceFields() {
         const select = document.getElementById('selectedService');
-        const selectedOpt = select.options[select.selectedIndex];
+        const selectedOpt = select && select.selectedIndex >= 0 ? select.options[select.selectedIndex] : null;
         const sId = selectedOpt ? (selectedOpt.getAttribute('data-service-id') || '') : '';
-        const cat = selectedOpt ? selectedOpt.getAttribute('data-cat') : '';
-        const serviceVal = (select.value || '').toLowerCase();
+        const cat = selectedOpt ? (selectedOpt.getAttribute('data-cat') || '') : '';
+        const serviceVal = (select ? select.value : '').toLowerCase();
         const container = document.getElementById('dynamicServiceFieldsContainer');
         const grid = document.getElementById('dynamicFieldsGrid');
 
-        if (!select.value) {
+        if (!select || !select.value) {
           if (container) container.style.display = 'none';
           return;
         }
 
+        const appState = document.getElementById('applicantState') ? document.getElementById('applicantState').value : currentSelectedState;
+
         let html = '';
-        if (serviceVal.includes('police') || serviceVal.includes('character') || serviceVal.includes('चरित्र')) {
+        
+        // 1. Land Records / Jamabandi / Khatauni / Fard
+        if (sId === 'punjab-fard-jamabandi' || sId === 'land-khatauni' || serviceVal.includes('fard') || serviceVal.includes('jamabandi') || serviceVal.includes('khatauni') || serviceVal.includes('खतौनी') || serviceVal.includes('जमाबंदी') || serviceVal.includes('भूलेख') || serviceVal.includes('फ़ਰਦ')) {
+          const portalName = (appState && appState.includes('Punjab')) ? 'Punjab Land Records Society (PLRS Fard)' : ((appState && appState.includes('Uttar Pradesh')) ? 'UP Bhulekh (भूलेख खतौनी)' : ((appState && appState.includes('Bihar')) ? 'Bihar Bhumi (राजस्व एवं भूमि सुधार)' : `${appState} Land Records`));
+          html = `
+            <div style="grid-column: 1 / -1; background:rgba(56, 189, 248, 0.08); border:1px solid rgba(56, 189, 248, 0.25); border-radius:8px; padding:8px 12px; font-size:0.8rem; color:#bae6fd;">
+              🏛️ <strong>राज्य भूलेख पोर्टल:</strong> ${portalName} · आधिकारिक राजस्व खसरा/खतौनी नकल (₹120 कुल शुल्क)
+            </div>
+            <div>
+              <label class="form-label">संबंधित जिला (District) *</label>
+              <input class="form-input dynamic-field" data-label="Land District" type="text" placeholder="e.g. SAS Nagar / आजमगढ़ / पटना" required />
+            </div>
+            <div>
+              <label class="form-label">तहसील / उप-तहसील (Tehsil / Sub-Division) *</label>
+              <input class="form-input dynamic-field" data-label="Land Tehsil" type="text" placeholder="e.g. Mohali / सदर / लालगंज" required />
+            </div>
+            <div>
+              <label class="form-label">गाँव / मौज़ा / हदबस्त संख्या (Village / Mauza) *</label>
+              <input class="form-input dynamic-field" data-label="Village Mauza" type="text" placeholder="गाँव का नाम व हदबस्त संख्या" required />
+            </div>
+            <div>
+              <label class="form-label">खाता / खेवट / खसरा नंबर (Khata / Khewat / Khasra No.) *</label>
+              <input class="form-input dynamic-field" data-label="Khasra Khewat No" type="text" placeholder="खसरा / खाता या ज़मीन मालिक का नाम" required />
+            </div>
+            <div>
+              <label class="form-label">जमाबंदी / खतौनी वर्ष (Record Year)</label>
+              <input class="form-input dynamic-field" data-label="Jamabandi Year" type="text" placeholder="उदा. 2021-2022 या नवीनतम" />
+            </div>
+          `;
+        }
+
+        // 2. Caste Certificate (OBC, SC, ST, EWS, NCL)
+        else if (sId.includes('caste') || serviceVal.includes('caste') || serviceVal.includes('जाति') || serviceVal.includes('ओबीसी') || serviceVal.includes('एससी') || serviceVal.includes('एसटी') || serviceVal.includes('नॉन-क्रीमी')) {
+          html = `
+            <div>
+              <label class="form-label">प्रक्रिया गति व प्रमाण पत्र प्रकार *</label>
+              <select class="form-select dynamic-field" id="certProcessingTypeSelect" data-label="Caste Speed/Type" required onchange="onDynamicSubtypePriceChange(this)">
+                <option value="Normal Caste Application" data-base-price="150" selected>सामान्य ऑनलाइन आवेदन (Normal Processing) - Base: ₹150</option>
+                <option value="Urgent Fast-Track Verification" data-base-price="250">तत्काल / प्राथमिकता राजस्व सत्यापन (Fast-Track) - Base: ₹250</option>
+                <option value="Objection Clear / Re-Apply" data-base-price="180">आपत्ति निस्तारण व पुनः आवेदन - Base: ₹180</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">आरक्षण वर्ग (Category) *</label>
+              <select class="form-select dynamic-field" data-label="Caste Category" required>
+                <option value="OBC (Other Backward Class / अन्य पिछड़ा वर्ग)">ओबीसी (OBC - अन्य पिछड़ा वर्ग)</option>
+                <option value="SC (Scheduled Caste / अनुसूचित जाति)">अनुसूचित जाति (SC)</option>
+                <option value="ST (Scheduled Tribe / अनुसूचित जनजाति)">अनुसूचित जनजाति (ST)</option>
+                <option value="EWS (Economically Weaker Section)">ईडब्ल्यूएस (EWS सामान्य वर्ग)</option>
+                <option value="General / Minority">सामान्य / अल्पसंख्यक (General / Minority)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">उप-जाति (Sub-Caste) *</label>
+              <input class="form-input dynamic-field" data-label="Sub Caste" type="text" placeholder="उदा. यादव, मौर्य, जाट, कुर्मि, जाटव, सैनी, अंसारी" required />
+            </div>
+            <div>
+              <label class="form-label">क्रीमी लेयर स्थिति (Creamy Layer Status) *</label>
+              <select class="form-select dynamic-field" data-label="Creamy Layer Status" required>
+                <option value="Non-Creamy Layer (वार्षिक आय ₹8 लाख से कम - आरक्षण मान्य)">Non-Creamy Layer (वार्षिक आय ₹8 लाख से कम - आरक्षण पात्र)</option>
+                <option value="Creamy Layer (वार्षिक आय ₹8 लाख से अधिक)">Creamy Layer (वार्षिक आय ₹8 लाख से अधिक)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">वार्षिक पारिवारिक आय (Annual Family Income ₹) *</label>
+              <input class="form-input dynamic-field" data-label="Annual Family Income" type="number" min="10000" step="5000" placeholder="₹ में कुल वार्षिक आय" required />
+            </div>
+            <div>
+              <label class="form-label">पिता का व्यवसाय (Father's Occupation) *</label>
+              <select class="form-select dynamic-field" data-label="Father Occupation" required>
+                <option value="कृषि / काश्तकारी (Agriculture)">कृषि / काश्तकारी (Agriculture)</option>
+                <option value="दैनिक मजदूरी / श्रमिक (Labor)">दैनिक मजदूरी / श्रमिक (Labor)</option>
+                <option value="प्राइवेट नौकरी / सेवा (Private Job)">प्राइवेट नौकरी (Private Job)</option>
+                <option value="सरकारी सेवा (Govt Service)">सरकारी सेवा (Govt Service)</option>
+                <option value="स्व-रोजगार / दूकान (Self-Employed / Business)">स्व-रोजगार / दूकान (Business)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">तहसील / उप-प्रभाग (Tehsil) *</label>
+              <input class="form-input dynamic-field" data-label="Revenue Tehsil" type="text" placeholder="संबंधित तहसील दर्ज करें" required />
+            </div>
+            <div>
+              <label class="form-label">पटवारी हल्का / लेखपाल वृत्त / ग्राम पंचायत / वार्ड *</label>
+              <input class="form-input dynamic-field" data-label="Lekhpal Patwari Circle" type="text" placeholder="पटवारी हल्का या वार्ड संख्या" required />
+            </div>
+          `;
+        }
+
+        // 3. Income Certificate (आय प्रमाण पत्र)
+        else if (sId.includes('income') || serviceVal.includes('income') || serviceVal.includes('आय प्रमाण')) {
+          html = `
+            <div>
+              <label class="form-label">प्रक्रिया गति व सेवा स्तर *</label>
+              <select class="form-select dynamic-field" id="certProcessingTypeSelect" data-label="Income Speed/Type" required onchange="onDynamicSubtypePriceChange(this)">
+                <option value="Normal Online Filing" data-base-price="150" selected>सामान्य ऑनलाइन आवेदन (Normal Processing) - Base: ₹150</option>
+                <option value="Urgent Fast-Track Verification" data-base-price="250">तत्काल / प्राथमिकता सत्यापन (Fast-Track) - Base: ₹250</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">कुल वार्षिक पारिवारिक आय (Total Annual Family Income ₹) *</label>
+              <input class="form-input dynamic-field" data-label="Total Annual Income" type="number" min="10000" step="5000" placeholder="उदा. 48000, 60000, 96000" required />
+            </div>
+            <div>
+              <label class="form-label">परिवार के मुखिया का नाम व संबंध *</label>
+              <input class="form-input dynamic-field" data-label="Head of Family" type="text" placeholder="मुखिया का नाम व आवेदक से संबंध" required />
+            </div>
+            <div>
+              <label class="form-label">आय का मुख्य स्रोत (Primary Income Source) *</label>
+              <select class="form-select dynamic-field" data-label="Income Source" required>
+                <option value="कृषि व पशुपालन (Agriculture)">कृषि व पशुपालन (Agriculture)</option>
+                <option value="दैनिक मजदूरी (Daily Wage / Labor)">दैनिक मजदूरी (Labor)</option>
+                <option value="वेतनभोगी / नौकरी (Salary / Employment)">वेतनभोगी / प्राइवेट नौकरी (Salary)</option>
+                <option value="दूकान / छोटा व्यापार (Retail / Business)">दूकान / छोटा व्यापार (Business)</option>
+                <option value="पेंशन / अन्य स्रोत (Pension / Other)">पेंशन / अन्य स्रोत (Pension)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">प्रमाण पत्र का प्रयोजन (Purpose of Certificate) *</label>
+              <select class="form-select dynamic-field" data-label="Income Purpose" required>
+                <option value="छात्रवृत्ति / फीस माफी (Scholarship / Fee Waiver)">छात्रवृत्ति / फीस माफी (Scholarship)</option>
+                <option value="स्कूल / कॉलेज प्रवेश (School / College Admission)">स्कूल / कॉलेज प्रवेश (Admission)</option>
+                <option value="राशन कार्ड / सरकारी योजना (Ration Card / Govt Scheme)">राशन कार्ड / सरकारी योजना (Scheme)</option>
+                <option value="कोर्ट / कानूनी सहायता (Court / Legal Purpose)">कोर्ट / कानूनी सहायता (Court)</option>
+                <option value="बैंक लोन / वित्तीय सहायता (Bank Loan / Subsidy)">बैंक लोन / सब्सिडी (Loan)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">तहसील व लेखपाल / पटवारी क्षेत्र *</label>
+              <input class="form-input dynamic-field" data-label="Tehsil and Circle" type="text" placeholder="तहसील व पटवारी / लेखपाल हल्का" required />
+            </div>
+          `;
+        }
+
+        // 4. Domicile / Residence / Niwas Certificate (निवास प्रमाण पत्र)
+        else if (sId.includes('domicile') || sId.includes('residence') || serviceVal.includes('domicile') || serviceVal.includes('निवास') || serviceVal.includes('अधिवास')) {
+          html = `
+            <div>
+              <label class="form-label">प्रक्रिया गति व सेवा स्तर *</label>
+              <select class="form-select dynamic-field" id="certProcessingTypeSelect" data-label="Domicile Speed/Type" required onchange="onDynamicSubtypePriceChange(this)">
+                <option value="Normal Online Filing" data-base-price="150" selected>सामान्य ऑनलाइन आवेदन (Normal Processing) - Base: ₹150</option>
+                <option value="Urgent Fast-Track Verification" data-base-price="250">तत्काल / प्राथमिकता सत्यापन (Fast-Track) - Base: ₹250</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">राज्य में निवास अवधि (Years Residing in State) *</label>
+              <select class="form-select dynamic-field" data-label="Years of Residence" required>
+                <option value="जन्म से (Since Birth)" selected>जन्म से (Since Birth)</option>
+                <option value="15 वर्ष से अधिक (Over 15 Years)">15 वर्ष से अधिक (Over 15 Years)</option>
+                <option value="10 वर्ष से 15 वर्ष (10 to 15 Years)">10 वर्ष से 15 वर्ष</option>
+                <option value="5 वर्ष से 10 वर्ष (5 to 10 Years)">5 वर्ष से 10 वर्ष</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">मकान व संपत्ति का स्वामित्व (Property Ownership) *</label>
+              <select class="form-select dynamic-field" data-label="Property Status" required>
+                <option value="पैतृक मकान (Ancestral Family House)">पैतृक मकान (Ancestral Family House)</option>
+                <option value="निजी खरीदा मकान (Self-Owned House)">निजी खरीदा मकान (Self-Owned)</option>
+                <option value="किरायेदार (Rented Accommodation)">किरायेदार (Rented Accommodation)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">निवास प्रमाण पत्र का प्रयोजन (Purpose) *</label>
+              <select class="form-select dynamic-field" data-label="Domicile Purpose" required>
+                <option value="सरकारी / रक्षा नौकरी (Govt / Defense Recruitment)">सरकारी / रक्षा भर्ती (Govt / Defense)</option>
+                <option value="कॉलेज / तकनीकी प्रवेश (College / Technical Admission)">कॉलेज प्रवेश (College Admission)</option>
+                <option value="स्थानीय राज्य कोटा / आरक्षण (State Quota / Scheme)">राज्य कोटा / स्थानीय योजना (State Quota)</option>
+                <option value="पहचान व अन्य प्रमाण (General Identity / Other)">सामान्य पहचान (General Identity)</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">तहसील व ग्राम पंचायत / नगर निकाय वार्ड *</label>
+              <input class="form-input dynamic-field" data-label="Tehsil Ward" type="text" placeholder="तहसील व गाँव / वार्ड संख्या" required />
+            </div>
+          `;
+        }
+
+        // 5. Police Character / Saanjh PCC
+        else if (serviceVal.includes('police') || serviceVal.includes('character') || serviceVal.includes('चरित्र') || serviceVal.includes('saanjh') || serviceVal.includes('ਸਾਂਝ')) {
           html = `
             <div>
               <label class="form-label">प्रक्रिया प्रकार व सेवा गति *</label>
@@ -2413,129 +2613,27 @@
             </div>
             <div>
               <label class="form-label">नजदीकी पुलिस थाना (Police Station) *</label>
-              <input class="form-input dynamic-field" data-label="Police Station" type="text" placeholder="e.g. Kotwali, Azamgarh / Cantt PS" required />
+              <input class="form-input dynamic-field" data-label="Police Station" type="text" placeholder="e.g. Kotwali, SAS Nagar / Azamgarh PS" required />
             </div>
             <div>
               <label class="form-label">सत्यापन का उद्देश्य (Purpose of Verification) *</label>
               <select class="form-select dynamic-field" data-label="Verification Purpose" required>
                 <option value="Govt / Private Job (सरकारी / प्राइवेट नौकरी)">Govt / Private Job (सरकारी या प्राइवेट नौकरी)</option>
                 <option value="Contract / Govt Tender (ठेकेदारी / टेंडर)">Contract / Tender (सरकारी ठेकेदारी)</option>
-                <option value="Passport / Visa Travel (पासपोर्ट / वीज़ा)">Passport / Visa Travel (पासपोर्ट / विदेश यात्रा)</option>
+                <option value="Passport / Visa Travel (पासपोर्ट / विदेश यात्रा)">Passport / Visa Travel (विदेश यात्रा)</option>
                 <option value="Arms License / Security (हथियार लाइसेंस)">Arms License / Security (हथियार लाइसेंस)</option>
                 <option value="Tenant / Rental Verification (किरायेदार)">Tenant / Rental Verification (किरायेदार सत्यापन)</option>
               </select>
             </div>
             <div>
               <label class="form-label">स्थानीय दो गवाहों के नाम व फोन (2 Local References) *</label>
-              <input class="form-input dynamic-field" data-label="Local References" type="text" placeholder="Name 1 & Phone, Name 2 & Phone" required />
+              <input class="form-input dynamic-field" data-label="Local References" type="text" placeholder="गवाह 1 नाम व फोन, गवाह 2 नाम व फोन" required />
             </div>
           `;
-        } else if (cat === 'legal' || serviceVal.includes('affidavit') || serviceVal.includes('शपथ पत्र')) {
-          html = `
-            <div>
-              <label class="form-label">शपथ पत्र प्रयोजन व प्रारूप *</label>
-              <select class="form-select dynamic-field" id="affidavitTypeSelect" data-label="Affidavit Action Type" required onchange="onDynamicSubtypePriceChange(this)">
-                <option value="Name & Spelling Correction Affidavit" data-base-price="550" selected>नाम व वर्तनी सुधार शपथ पत्र - Base: ₹550</option>
-                <option value="Marriage Joint Sworn Affidavit" data-base-price="650">विवाह पंजीकरण व संयुक्त कोर्ट शपथ पत्र - Base: ₹650</option>
-                <option value="Address Proof Affidavit" data-base-price="550">निवास व पता परिवर्तन शपथ पत्र - Base: ₹550</option>
-                <option value="Education Gap Year Affidavit" data-base-price="550">छात्र गैप ईयर शपथ पत्र - Base: ₹550</option>
-                <option value="Income Self Declaration Affidavit" data-base-price="550">आय स्व-घोषणा शपथ पत्र - Base: ₹550</option>
-                <option value="Notary Legal Drafting Agreement" data-base-price="750">रेंट एग्रीमेंट व नोटरी ड्राफ्टिंग सहायता - Base: ₹750</option>
-              </select>
-            </div>
-            <div>
-              <label class="form-label">शपथकर्ता का नाम (Deponent Full Name) *</label>
-              <input class="form-input dynamic-field" data-label="Deponent Name" type="text" placeholder="Name of person swearing affidavit" required />
-            </div>
-            <div>
-              <label class="form-label">स्टाम्प पेपर मूल्य (Stamp Paper Value) *</label>
-              <select class="form-select dynamic-field" data-label="Stamp Value" required>
-                <option value="₹10 E-Stamp (सामान्य)">₹10 ई-स्टाम्प (सामान्य उपयोग)</option>
-                <option value="₹50 E-Stamp (एग्रीमेंट/कॉलेज)">₹50 ई-स्टाम्प (एग्रीमेंट / कॉलेज)</option>
-                <option value="₹100 E-Stamp (विवाह / संपत्ति)">₹100 ई-स्टाम्प (विवाह / संपत्ति / कोर्ट)</option>
-              </select>
-            </div>
-          `;
-        } else if (serviceVal.includes('passport')) {
-          html = `
-            <div>
-              <label class="form-label">पासपोर्ट सेवा प्रकार *</label>
-              <select class="form-select dynamic-field" id="passportTypeSelect" data-label="Passport Action Type" required onchange="onDynamicSubtypePriceChange(this)">
-                <option value="Normal Fresh / Reissue (36 Pages)" data-base-price="4500" selected>सामान्य नया पासपोर्ट / नवीनीकरण (36 पेज) - Base: ₹4,500</option>
-                <option value="Tatkaal Priority Slot" data-base-price="6000">तत्काल पासपोर्ट प्राथमिकता स्लॉट (Tatkaal Priority) - Base: ₹6,000</option>
-                <option value="Passport Reissue (Lost/Damaged)" data-base-price="5000">खोया / क्षतिग्रस्त पासपोर्ट पुनः जारी - Base: ₹5,000</option>
-                <option value="PCC Police Clearance Slot" data-base-price="800">पुलिस क्लीयरेंस सर्टिफिकेट (PCC Slot) - Base: ₹800</option>
-              </select>
-            </div>
-            <div>
-              <label class="form-label">नजदीकी पुलिस थाना (Police Station) *</label>
-              <input class="form-input dynamic-field" data-label="Police Station" type="text" placeholder="e.g. Kotwali / Cantt PS" required />
-            </div>
-            <div>
-              <label class="form-label">पुराना पासपोर्ट नंबर (यदि हो)</label>
-              <input class="form-input dynamic-field" data-label="Previous Passport No" type="text" placeholder="Old Passport No (If renewal)" />
-            </div>
-          `;
-        } else if (serviceVal.includes('aadhaar')) {
-          html = `
-            <div>
-              <label class="form-label">आधार सेवा / अपडेट का सटीक प्रकार *</label>
-              <select class="form-select dynamic-field" id="aadhaarUpdateTypeSelect" data-label="Aadhaar Action Type" required onchange="onDynamicSubtypePriceChange(this)">
-                <option value="Mobile / Email Linkage" data-base-price="150" selected>मोबाइल व ईमेल लिंक सहायता - Base: ₹150</option>
-                <option value="Address Update" data-base-price="180">पता सुधार / अपडेट (Address Update) - Base: ₹180</option>
-                <option value="Name / DOB Correction" data-base-price="200">नाम / जन्मतिथि / लिंग सुधार (Demographic Update) - Base: ₹200</option>
-                <option value="Smart PVC Card Order" data-base-price="150">पीवीसी वाटरप्रूफ स्मार्ट कार्ड आर्डर - Base: ₹150</option>
-                <option value="Biometric Iris Fingerprint Update" data-base-price="200">बायोमेट्रिक फिंगरप्रिंट व आईरिस स्लॉट - Base: ₹200</option>
-                <option value="Document Revalidation (POI/POA)" data-base-price="150">दस्तावेज़ पुनः सत्यापन (POI/POA Revalidation) - Base: ₹150</option>
-              </select>
-            </div>
-            <div>
-              <label class="form-label">मौजूदा आधार कार्ड के अंतिम 4 अंक *</label>
-              <input class="form-input dynamic-field" data-label="Aadhaar Last 4" type="text" maxlength="4" placeholder="XXXX" required />
-            </div>
-          `;
-        } else if (serviceVal.includes('pan')) {
-          html = `
-            <div>
-              <label class="form-label">पैन कार्ड सेवा प्रकार *</label>
-              <select class="form-select dynamic-field" id="panUpdateTypeSelect" data-label="PAN Action Type" required onchange="onDynamicSubtypePriceChange(this)">
-                <option value="New PAN Application (Physical + Digital)" data-base-price="250" selected>नया पैन कार्ड (फिजिकल + डिजिटल ई-पैन) - Base: ₹250</option>
-                <option value="PAN Correction (Name/DOB/Father Name)" data-base-price="200">पैन कार्ड संशोधन (नाम / पिता नाम / जन्मतिथि सुधार) - Base: ₹200</option>
-                <option value="Lost PAN Reprint / Duplicate" data-base-price="180">खोए हुए पैन का रिप्रिंट (Duplicate PAN) - Base: ₹180</option>
-                <option value="Minor to Major Conversion" data-base-price="220">माइनर से मेजर पैन कार्ड अपडेशन (18+ वर्ष) - Base: ₹220</option>
-                <option value="PAN-Aadhaar Link Penalty Filing" data-base-price="150">पैन-आधार लिंक चालान व फाइलिंग सहायता - Base: ₹150</option>
-              </select>
-            </div>
-            <div>
-              <label class="form-label">पैन नंबर (यदि पहले से बना हो)</label>
-              <input class="form-input dynamic-field" data-label="Existing PAN" type="text" maxlength="10" placeholder="ABCDE1234F (यदि सुधार/रिप्रिंट हो)" />
-            </div>
-          `;
-        } else if (cat === 'business' || serviceVal.includes('gst') || serviceVal.includes('msme') || serviceVal.includes('udyam')) {
-          html = `
-            <div>
-              <label class="form-label">GST व व्यापार सेवा प्रकार *</label>
-              <select class="form-select dynamic-field" id="gstUpdateTypeSelect" data-label="GST Action Type" required onchange="onDynamicSubtypePriceChange(this)">
-                <option value="New GST Registration" data-base-price="1200" selected>नया GST 15-अंकों का रजिस्ट्रेशन (New Registration) - Base: ₹1,200</option>
-                <option value="GST Core Amendment (Address/Partners)" data-base-price="600">GST कोर संशोधन (दूकान का पता / पार्टनर बदलाव) - Base: ₹600</option>
-                <option value="GST Non-Core Amendment" data-base-price="400">GST नॉन-कोर संशोधन (मोबाइल / ईमेल / अतिरिक्त शाखा) - Base: ₹400</option>
-                <option value="GST Nil Return Filing" data-base-price="300">GST निल रिटर्न फाइलिंग सहायता - Base: ₹300</option>
-                <option value="GST Cancellation / Surrender" data-base-price="500">GST नंबर सरेंडर / कैंसिलेशन आवेदन - Base: ₹500</option>
-                <option value="Udyam MSME Registration" data-base-price="300">उद्यम / MSME रजिस्ट्रेशन सर्टिफिकेट - Base: ₹300</option>
-                <option value="FSSAI Food License" data-base-price="800">FSSAI खाद्य सुरक्षा 14-अंकीय लाइसेंस - Base: ₹800</option>
-                <option value="Shop & Establishment License" data-base-price="650">दुकान लाइसेंस (गुमाश्ता प्रमाण पत्र) - Base: ₹650</option>
-              </select>
-            </div>
-            <div>
-              <label class="form-label">व्यापार / दूकान का नाम (Firm / Trade Name) *</label>
-              <input class="form-input dynamic-field" data-label="Trade Name" type="text" placeholder="e.g. Shan Enterprises" required />
-            </div>
-            <div>
-              <label class="form-label">व्यापारिक पता (Business Location Address)</label>
-              <input class="form-input dynamic-field" data-label="Business Address" type="text" placeholder="Shop No, Market, City" />
-            </div>
-          `;
-        } else if (cat === 'transport' || serviceVal.includes('licence') || serviceVal.includes('license') || serviceVal.includes('rc') || serviceVal.includes('driving') || serviceVal.includes('सारथी')) {
+        }
+
+        // 6. Driving License & Transport (LL, DL, RC, Sarathi, Parivahan)
+        else if (cat === 'transport' || serviceVal.includes('licence') || serviceVal.includes('license') || serviceVal.includes('rc') || serviceVal.includes('driving') || serviceVal.includes('सारथी') || serviceVal.includes('वाहन')) {
           const isLL = sId === 'learning-licence' || serviceVal.includes('learner') || serviceVal.includes('लर्निंग');
           const isPermDL = sId.startsWith('permanent-dl') || serviceVal.includes('permanent') || serviceVal.includes('पक्का') || serviceVal.includes('स्थाई');
           const isIDP = sId === 'dl-international' || serviceVal.includes('international') || serviceVal.includes('इंटरनेशनल');
@@ -2548,6 +2646,7 @@
                   <option value="MCWG (2-Wheeler Bike/Scooter)" data-base-price="900" selected>MCWG (2-व्हीलर बाइक / स्कूटर) - Base: ₹900</option>
                   <option value="LMV (4-Wheeler Car)" data-base-price="1050">LMV (4-व्हीलर कार) - Base: ₹1,050</option>
                   <option value="MCWG + LMV (Bike + Car Both)" data-base-price="1200">MCWG + LMV (बाइक + कार दोनों) - Base: ₹1,200</option>
+                  <option value="Commercial / Heavy Transport" data-base-price="1500">Commercial / Heavy Transport - Base: ₹1,500</option>
                 </select>
               </div>
               <div>
@@ -2565,8 +2664,21 @@
                 </select>
               </div>
               <div>
+                <label class="form-label">उच्चतम शैक्षणिक योग्यता (Qualification) *</label>
+                <select class="form-select dynamic-field" data-label="Education Qualification" required>
+                  <option value="10th High School" selected>10वीं (10th High School)</option>
+                  <option value="12th Intermediate">12वीं (12th Intermediate)</option>
+                  <option value="Graduate / Higher">स्नातक या उच्च (Graduate / Higher)</option>
+                  <option value="8th Pass">8वीं पास (8th Pass)</option>
+                </select>
+              </div>
+              <div>
                 <label class="form-label">संबंधित आरटीओ ऑफिस (RTO Office Jurisdiction) *</label>
-                <input class="form-input dynamic-field" data-label="RTO Jurisdiction" type="text" placeholder="e.g. RTO SAS Nagar (PB65) / RTO Ludhiana (PB10)" required />
+                <input class="form-input dynamic-field" data-label="RTO Jurisdiction" type="text" placeholder="e.g. RTO SAS Nagar (PB65) / RTO Azamgarh (UP50)" required />
+              </div>
+              <div>
+                <label class="form-label">शारीरिक पहचान चिह्न (Identification Marks) *</label>
+                <input class="form-input dynamic-field" data-label="Identification Marks" type="text" placeholder="उदा. तिल, चेहरे पर कट या निशान" required />
               </div>
             `;
           } else if (isPermDL) {
@@ -2585,7 +2697,7 @@
               </div>
               <div>
                 <label class="form-label">लर्निंग लाइसेंस नंबर (Existing LL Number) *</label>
-                <input class="form-input dynamic-field" data-label="Existing LL No" type="text" placeholder="PB-XXXX-LL-XXXX" required />
+                <input class="form-input dynamic-field" data-label="Existing LL No" type="text" placeholder="PB-XXXX-LL-XXXX या UP-XXXX-LL-XXXX" required />
               </div>
               <div>
                 <label class="form-label">संबंधित आरटीओ ऑफिस (RTO Office) *</label>
@@ -2608,118 +2720,211 @@
               </div>
               <div>
                 <label class="form-label">पासपोर्ट नंबर व यात्रा का देश *</label>
-                <input class="form-input dynamic-field" data-label="Passport & Country" type="text" placeholder="Passport No & Country (e.g. USA, Canada, UAE)" required />
+                <input class="form-input dynamic-field" data-label="Passport & Country" type="text" placeholder="Passport No & Country (USA, Canada, UAE)" required />
               </div>
             `;
           } else {
             html = `
               <div>
-                <label class="form-label">सारथी ड्राइविंग सेवा प्रकार *</label>
+                <label class="form-label">सारथी / परिवहन सेवा प्रकार *</label>
                 <select class="form-select dynamic-field" id="transportTypeSelect" data-label="Transport Action Type" required onchange="onDynamicSubtypePriceChange(this)">
-                  <option value="DL Renewal / Validity Extension" data-base-price="550" selected>डीएल नवीनीकरण व पता संशोधन - Base: ₹550</option>
-                  <option value="RC Ownership Transfer" data-base-price="550">वाहन आरसी मालिकाना हक ट्रांसफर - Base: ₹550</option>
-                  <option value="RC Hypothecation Removal (HPA/HPT)" data-base-price="450">आरसी बैंक लोन हटाना (HPA/HPT) - Base: ₹450</option>
-                  <option value="Duplicate RC Order" data-base-price="400">खोई हुई आरसी की डुप्लीकेट कॉपी - Base: ₹400</option>
+                  <option value="RC Ownership Transfer" data-base-price="550" ${sId === 'rc-transfer' ? 'selected' : ''}>वाहन आरसी मालिकाना हक ट्रांसफर - Base: ₹550</option>
+                  <option value="RC Hypothecation Removal (HPA/HPT)" data-base-price="450" ${sId === 'rc-hypo' ? 'selected' : ''}>आरसी बैंक लोन हटाना (HPA/HPT) - Base: ₹450</option>
+                  <option value="Duplicate RC Order" data-base-price="400" ${sId === 'rc-duplicate' ? 'selected' : ''}>खोई हुई आरसी की डुप्लीकेट कॉपी - Base: ₹400</option>
+                  <option value="DL Renewal / Validity Extension" data-base-price="550" ${sId === 'dl-renewal' ? 'selected' : ''}>डीएल नवीनीकरण व पता संशोधन - Base: ₹550</option>
+                  <option value="Vehicle Fitness Certificate Renewal" data-base-price="600">वाहन फिटनेस प्रमाण पत्र नवीनीकरण - Base: ₹600</option>
                 </select>
               </div>
               <div>
-                <label class="form-label">वाहन श्रेणी (Vehicle Class)</label>
-                <select class="form-select dynamic-field" data-label="Vehicle Class">
-                  <option value="MCWG (Bike / Scooter Only)">MCWG (मोटरसाइकिल / स्कूटर)</option>
-                  <option value="LMV (Car / 4-Wheeler Only)">LMV (कार / चौपहिया)</option>
-                  <option value="MCWG + LMV (Bike + Car Both)">MCWG + LMV (बाइक + कार दोनों)</option>
-                  <option value="Commercial / Transport">कमर्शियल / ट्रांसपोर्ट</option>
-                </select>
+                <label class="form-label">वाहन पंजीकरण संख्या (Vehicle Reg Number) *</label>
+                <input class="form-input dynamic-field" data-label="Vehicle Reg No" type="text" placeholder="e.g. PB65AB1234 या UP50AB1234" required />
               </div>
               <div>
-                <label class="form-label">मौजूदा RC या DL नंबर (यदि हो)</label>
-                <input class="form-input dynamic-field" data-label="Existing LL/DL No" type="text" placeholder="Registration or Licence No." />
+                <label class="form-label">चेसिस नंबर के अंतिम 5 अंक (Chassis Last 5 Digits) *</label>
+                <input class="form-input dynamic-field" data-label="Chassis Last 5" type="text" maxlength="5" placeholder="e.g. 12345" required />
+              </div>
+              <div>
+                <label class="form-label">बीमा वैधता व कंपनी (Insurance Details)</label>
+                <input class="form-input dynamic-field" data-label="Insurance Validity" type="text" placeholder="बीमा समाप्ति तिथि व कंपनी नाम" />
               </div>
             `;
           }
-        } else if (cat === 'certificate' || serviceVal.includes('certificate') || serviceVal.includes('प्रमाण पत्र')) {
+        }
+
+        // 7. Passport Services (Fresh, Tatkaal, Jumbo, PCC)
+        else if (serviceVal.includes('passport')) {
           html = `
             <div>
-              <label class="form-label">प्रमाण पत्र प्रक्रिया प्रकार (Processing Speed & Priority) *</label>
-              <select class="form-select dynamic-field" id="certProcessingTypeSelect" data-label="Certificate Speed/Type" required onchange="onDynamicSubtypePriceChange(this)">
-                <option value="Normal Processing (सामान्य ऑनलाइन)" data-base-price="150" selected>सामान्य ऑनलाइन आवेदन (Normal Processing) - Base: ₹150</option>
-                <option value="Urgent / Priority Processing (तत्काल प्राथमिकता)" data-base-price="250">तत्काल / प्राथमिकता राजस्व सत्यापन - Base: ₹250</option>
-                <option value="Correction / Re-verification (संशोधन / पुनः सत्यापन)" data-base-price="180">संशोधन / निरस्त आवेदन पुनः सत्यापन - Base: ₹180</option>
+              <label class="form-label">पासपोर्ट सेवा प्रकार *</label>
+              <select class="form-select dynamic-field" id="passportTypeSelect" data-label="Passport Action Type" required onchange="onDynamicSubtypePriceChange(this)">
+                <option value="Normal Fresh / Reissue (36 Pages)" data-base-price="2500" ${sId !== 'passport-tatkaal' ? 'selected' : ''}>सामान्य नया पासपोर्ट / नवीनीकरण (36 पेज) - Base: ₹2,500</option>
+                <option value="Tatkaal Priority Slot" data-base-price="3500" ${sId === 'passport-tatkaal' ? 'selected' : ''}>तत्काल पासपोर्ट प्राथमिकता स्लॉट (Tatkaal Priority) - Base: ₹3,500</option>
+                <option value="Jumbo 60 Pages Passport" data-base-price="3000">जंबो 60 पेज पासपोर्ट स्लॉट - Base: ₹3,000</option>
+                <option value="PCC Police Clearance Slot" data-base-price="800">पुलिस क्लीयरेंस सर्टिफिकेट (PCC Slot) - Base: ₹800</option>
               </select>
             </div>
             <div>
-              <label class="form-label">वार्षिक पारिवारिक आय (Annual Income) *</label>
-              <input class="form-input dynamic-field" data-label="Family Annual Income" type="number" placeholder="₹ में अनुमानित वार्षिक आय" required />
+              <label class="form-label">ECNR पात्रता (Non-ECR 10th Pass or Higher) *</label>
+              <select class="form-select dynamic-field" data-label="ECNR Status" required>
+                <option value="Yes - 10th Pass or Higher (Non-ECR Eligible)" selected>हाँ - 10वीं पास या उच्च (Non-ECR मान्य)</option>
+                <option value="No - Below 10th Pass (ECR Required)">नहीं - 10वीं से कम (ECR आवश्यक)</option>
+              </select>
             </div>
             <div>
-              <label class="form-label">जाति / उप-जाति (Caste / Sub-caste)</label>
-              <input class="form-input dynamic-field" data-label="Sub-Caste" type="text" placeholder="जैसे: राजपूत, मौर्य, यादव, आदि" />
+              <label class="form-label">नजदीकी पुलिस थाना (Police Station Jurisdiction) *</label>
+              <input class="form-input dynamic-field" data-label="Police Station" type="text" placeholder="e.g. Kotwali / Cantt PS" required />
+            </div>
+            <div>
+              <label class="form-label">पुराना पासपोर्ट नंबर (यदि नवीनीकरण हो)</label>
+              <input class="form-input dynamic-field" data-label="Previous Passport No" type="text" placeholder="Old Passport No (If renewal)" />
+            </div>
+            <div>
+              <label class="form-label">रोजगार प्रकार (Employment Type) *</label>
+              <select class="form-select dynamic-field" data-label="Employment Type" required>
+                <option value="Private Sector (प्राइवेट नौकरी)">प्राइवेट सेक्टर (Private Sector)</option>
+                <option value="Self Employed / Business (स्व-रोजगार)">स्व-रोजगार / व्यापार (Business)</option>
+                <option value="Student (छात्र / छात्रा)">विद्यार्थी (Student)</option>
+                <option value="Govt / PSU Service (सरकारी सेवा)">सरकारी सेवा (Govt Service)</option>
+                <option value="Homemaker (गृहिणी)">गृहिणी (Homemaker)</option>
+              </select>
             </div>
           `;
-        } else if (cat === 'exam' || serviceVal.includes('job') || serviceVal.includes('upsc') || serviceVal.includes('railway') || serviceVal.includes('ssc')) {
+        }
+
+        // 8. Aadhaar Services
+        else if (serviceVal.includes('aadhaar')) {
           html = `
             <div>
-              <label class="form-label">उच्चतम योग्यता (Highest Qualification) *</label>
-              <select class="form-select dynamic-field" data-label="Highest Qualification" required>
-                <option value="10th High School">10वीं (10th High School)</option>
-                <option value="12th Intermediate">12वीं (12th Intermediate)</option>
-                <option value="Diploma / ITI">डिप्लोमा / ITI</option>
-                <option value="Graduation (BA/BSc/BCom/BTech)">स्नातक (Graduation)</option>
-                <option value="Post Graduation (MA/MSc/MTech)">परास्नातक (Post Graduation)</option>
+              <label class="form-label">आधार सेवा / अपडेट का सटीक प्रकार *</label>
+              <select class="form-select dynamic-field" id="aadhaarUpdateTypeSelect" data-label="Aadhaar Action Type" required onchange="onDynamicSubtypePriceChange(this)">
+                <option value="Smart PVC Card Order" data-base-price="100" ${sId === 'pvc-aadhaar' ? 'selected' : ''}>पीवीसी वाटरप्रूफ स्मार्ट कार्ड आर्डर - Base: ₹100</option>
+                <option value="Mobile / Email Linkage" data-base-price="75" ${sId === 'aadhaar-mobile' ? 'selected' : ''}>मोबाइल व ईमेल लिंक सहायता - Base: ₹75</option>
+                <option value="Biometric Iris Fingerprint Update" data-base-price="125" ${sId === 'aadhaar-bio' ? 'selected' : ''}>बायोमेट्रिक फिंगरप्रिंट व आईरिस स्लॉट - Base: ₹125</option>
+                <option value="Address Update" data-base-price="100" ${sId === 'aadhaar-update' ? 'selected' : ''}>पता सुधार / डेमोग्राफिक अपडेट - Base: ₹100</option>
+                <option value="Child Baal Aadhaar" data-base-price="100">बाल आधार (<5 वर्ष) ऑनलाइन स्लॉट - Base: ₹100</option>
               </select>
             </div>
             <div>
-              <label class="form-label">श्रेणी / आरक्षण वर्ग (Category) *</label>
-              <select class="form-select dynamic-field" data-label="Reservation Category" required>
-                <option value="General / UR">सामान्य (General / UR)</option>
-                <option value="OBC (Non-Creamy Layer)">ओबीसी (OBC Non-Creamy)</option>
-                <option value="EWS (Economically Weaker)">EWS (ईडब्ल्यूएस)</option>
-                <option value="SC (Scheduled Caste)">अनुसूचित जाति (SC)</option>
-                <option value="ST (Scheduled Tribe)">अनुसूचित जनजाति (ST)</option>
-              </select>
+              <label class="form-label">मौजूदा आधार कार्ड के अंतिम 4 अंक *</label>
+              <input class="form-input dynamic-field" data-label="Aadhaar Last 4" type="text" maxlength="4" placeholder="XXXX" required />
             </div>
             <div>
-              <label class="form-label">रोल नंबर / OTR ID (यदि उपलब्ध हो)</label>
-              <input class="form-input dynamic-field" data-label="OTR / Registration No" type="text" placeholder="OTR / Registration ID (Optional)" />
+              <label class="form-label">आधार में पंजीकृत मोबाइल नंबर *</label>
+              <input class="form-input dynamic-field" data-label="Registered Mobile" type="tel" maxlength="10" placeholder="10-digit Mobile No." required />
             </div>
           `;
-        } else if (cat === 'welfare' || serviceVal.includes('ration') || serviceVal.includes('pension') || serviceVal.includes('senior')) {
+        }
+
+        // 9. PAN Card Services
+        else if (serviceVal.includes('pan')) {
+          html = `
+            <div>
+              <label class="form-label">पैन कार्ड सेवा प्रकार *</label>
+              <select class="form-select dynamic-field" id="panUpdateTypeSelect" data-label="PAN Action Type" required onchange="onDynamicSubtypePriceChange(this)">
+                <option value="New PAN Application (Physical + Digital)" data-base-price="200" ${sId !== 'pan-correction' ? 'selected' : ''}>नया पैन कार्ड (फिजिकल प्लास्टिक + डिजिटल ई-पैन) - Base: ₹200</option>
+                <option value="PAN Correction (Name/DOB/Father Name)" data-base-price="180" ${sId === 'pan-correction' ? 'selected' : ''}>पैन कार्ड संशोधन (नाम / पिता नाम / जन्मतिथि सुधार) - Base: ₹180</option>
+                <option value="Lost PAN Reprint / Duplicate" data-base-price="150">खोए हुए पैन का रिप्रिंट (Duplicate PAN) - Base: ₹150</option>
+                <option value="Minor PAN Card (<18 Years)" data-base-price="220">माइनर पैन कार्ड अपडेशन (18 वर्ष से कम) - Base: ₹220</option>
+                <option value="PAN-Aadhaar Link Penalty Filing" data-base-price="150">पैन-आधार लिंक चालान व फाइलिंग सहायता - Base: ₹150</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">पैन कार्ड पर वांछित पूरा नाम (Name on Card) *</label>
+              <input class="form-input dynamic-field" data-label="Name on PAN" type="text" placeholder="As per Aadhaar Card" required />
+            </div>
+            <div>
+              <label class="form-label">पिता का पूरा नाम (Father's Name) *</label>
+              <input class="form-input dynamic-field" data-label="Father Name on PAN" type="text" placeholder="Father's Full Name" required />
+            </div>
+            <div>
+              <label class="form-label">मौजूदा 10-अंकीय पैन नंबर (यदि सुधार / रिप्रिंट हो)</label>
+              <input class="form-input dynamic-field" data-label="Existing PAN" type="text" maxlength="10" placeholder="ABCDE1234F" />
+            </div>
+          `;
+        }
+
+        // 10. Legal Affidavits & Court Stamp
+        else if (cat === 'legal' || serviceVal.includes('affidavit') || serviceVal.includes('शपथ पत्र')) {
+          html = `
+            <div>
+              <label class="form-label">शपथ पत्र प्रयोजन व प्रारूप *</label>
+              <select class="form-select dynamic-field" id="affidavitTypeSelect" data-label="Affidavit Action Type" required onchange="onDynamicSubtypePriceChange(this)">
+                <option value="Name & Spelling Correction Affidavit" data-base-price="200" selected>नाम व वर्तनी सुधार शपथ पत्र - Base: ₹200</option>
+                <option value="Education Gap Year Affidavit" data-base-price="200">छात्र गैप ईयर शपथ पत्र - Base: ₹200</option>
+                <option value="Address Proof Affidavit" data-base-price="200">निवास व पता परिवर्तन शपथ पत्र - Base: ₹200</option>
+                <option value="Income Self Declaration Affidavit" data-base-price="200">आय स्व-घोषणा शपथ पत्र - Base: ₹200</option>
+                <option value="Marriage Joint Sworn Affidavit" data-base-price="250">विवाह पंजीकरण व संयुक्त कोर्ट शपथ पत्र - Base: ₹250</option>
+                <option value="Notary Legal Drafting Agreement" data-base-price="350">रेंट एग्रीमेंट व नोटरी ड्राफ्टिंग सहायता - Base: ₹350</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">शपथकर्ता का नाम (Deponent Full Name) *</label>
+              <input class="form-input dynamic-field" data-label="Deponent Name" type="text" placeholder="Name of person swearing affidavit" required />
+            </div>
+            <div>
+              <label class="form-label">स्टाम्प पेपर मूल्य (Stamp Paper Value) *</label>
+              <select class="form-select dynamic-field" data-label="Stamp Value" required>
+                <option value="₹10 E-Stamp (सामान्य)">₹10 ई-स्टाम्प (सामान्य उपयोग)</option>
+                <option value="₹50 E-Stamp (एग्रीमेंट/कॉलेज)">₹50 ई-स्टाम्प (एग्रीमेंट / कॉलेज)</option>
+                <option value="₹100 E-Stamp (विवाह / संपत्ति)">₹100 ई-स्टाम्प (विवाह / संपत्ति / कोर्ट)</option>
+                <option value="₹500 E-Stamp (पार्टनरशिप/डीड)">₹500 ई-स्टाम्प (डीड / लीज)</option>
+              </select>
+            </div>
+          `;
+        }
+
+        // 11. Ration Card Services
+        else if (serviceVal.includes('ration') || serviceVal.includes('राशन')) {
+          html = `
+            <div>
+              <label class="form-label">राशन कार्ड सेवा प्रकार *</label>
+              <select class="form-select dynamic-field" id="welfareTypeSelect" data-label="Ration Action Type" required onchange="onDynamicSubtypePriceChange(this)">
+                <option value="New Digital Ration Card" data-base-price="180" selected>नया डिजिटल राशन कार्ड आवेदन - Base: ₹180</option>
+                <option value="Ration Card Member Addition" data-base-price="120">राशन कार्ड में सदस्य जोड़ना / यूनिट संशोधन - Base: ₹120</option>
+                <option value="Ration Card FPS Shop Transfer" data-base-price="150">राशन दुकान / डीलर स्थानांतरण - Base: ₹150</option>
+                <option value="Ration Card Surrender" data-base-price="100">राशन कार्ड सरेंडर / विलोपन - Base: ₹100</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">परिवार के कुल सदस्यों की संख्या (Family Members) *</label>
+              <input class="form-input dynamic-field" data-label="Family Member Count" type="number" min="1" max="20" placeholder="e.g. 4" required />
+            </div>
+            <div>
+              <label class="form-label">मौजूदा राशन कार्ड नंबर (यदि संशोधन हो)</label>
+              <input class="form-input dynamic-field" data-label="Existing Ration No" type="text" placeholder="Existing Ration Card Number" />
+            </div>
+            <div>
+              <label class="form-label">गैस कनेक्शन विवरण (LPG Connection Consumer No)</label>
+              <input class="form-input dynamic-field" data-label="LPG Consumer No" type="text" placeholder="उपभोक्ता संख्या व गैस एजेंसी नाम" />
+            </div>
+          `;
+        }
+
+        // 12. Ayushman & Welfare Schemes
+        else if (cat === 'welfare' || serviceVal.includes('ayushman') || serviceVal.includes('आयुष्मान') || serviceVal.includes('senior') || serviceVal.includes('pension')) {
           html = `
             <div>
               <label class="form-label">कल्याणकारी योजना सेवा प्रकार *</label>
               <select class="form-select dynamic-field" id="welfareTypeSelect" data-label="Welfare Action Type" required onchange="onDynamicSubtypePriceChange(this)">
-                <option value="Senior Citizen Identity Card" data-base-price="150">वरिष्ठ नागरिक पहचान पत्र (Senior Citizen Card) - Base: ₹150</option>
-                <option value="New Digital Ration Card" data-base-price="180">नया डिजिटल राशन कार्ड आवेदन - Base: ₹180</option>
-                <option value="Ration Card Member Addition" data-base-price="150">राशन कार्ड में सदस्य जोड़ना / यूनिट संशोधन - Base: ₹150</option>
+                <option value="Ayushman Bharat Health Card" data-base-price="100" selected>आयुष्मान भारत ₹5 लाख गोल्डन कार्ड - Base: ₹100</option>
+                <option value="Senior Citizen Identity Card" data-base-price="100">वरिष्ठ नागरिक पहचान पत्र (Senior Citizen Card) - Base: ₹100</option>
                 <option value="Old Age / Widow / Disability Pension" data-base-price="150">वृद्धा / विधवा / दिव्यांग पेंशन फॉर्म - Base: ₹150</option>
-                <option value="Ayushman Bharat Health Card" data-base-price="150">आयुष्मान भारत ₹5 लाख गोल्डन कार्ड - Base: ₹150</option>
-                <option value="PM-Kisan Registration &amp; e-KYC" data-base-price="150">पीएम किसान ई-केवाईसी व आवेदन - Base: ₹150</option>
+                <option value="PM-Kisan Registration & e-KYC" data-base-price="100">पीएम किसान ई-केवाईसी व आवेदन - Base: ₹100</option>
               </select>
             </div>
             <div>
-              <label class="form-label">राशन कार्ड / परिवार / पेंशनर आईडी (यदि हो)</label>
-              <input class="form-input dynamic-field" data-label="Welfare ID" type="text" placeholder="Ration / Pension / Family ID" />
-            </div>
-          `;
-        } else if (cat === 'finance' || serviceVal.includes('lic') || serviceVal.includes('bima') || serviceVal.includes('insurance') || serviceVal.includes('pf')) {
-          html = `
-            <div>
-              <label class="form-label">बीमा व वित्तीय सेवा प्रकार *</label>
-              <select class="form-select dynamic-field" id="financeTypeSelect" data-label="Finance Action Type" required onchange="onDynamicSubtypePriceChange(this)">
-                <option value="LIC Policy Premium Payment &amp; Services" data-base-price="150">LIC पॉलिसी प्रीमियम व सेवाएँ - Base: ₹150</option>
-                <option value="PM Jeevan Jyoti &amp; Suraksha Bima" data-base-price="150">PMJJBY / PMSBY सरकारी ₹2 लाख बीमा - Base: ₹150</option>
-                <option value="Vehicle Insurance Policy Renewal" data-base-price="250">वाहन बीमा रिन्युअल (बाइक / कार) - Base: ₹250</option>
-                <option value="PF Full Withdrawal (19 &amp; 10C)" data-base-price="350">पीएफ पूरा निकासी (Form 19 &amp; 10C) - Base: ₹350</option>
-                <option value="PF Advance Claim (Form 31)" data-base-price="250">पीएफ इमरजेंसी एडवांस (Form 31) - Base: ₹250</option>
-                <option value="UAN Activation &amp; KYC" data-base-price="150">UAN एक्टिवेशन व बैंक केवाईसी लिंक - Base: ₹150</option>
-              </select>
+              <label class="form-label">राशन / परिवार / पीएमजेएवाई आईडी नंबर *</label>
+              <input class="form-input dynamic-field" data-label="Welfare Family ID" type="text" placeholder="Ration Card / PMJAY ID / HH ID" required />
             </div>
             <div>
-              <label class="form-label">पॉलिसी / UAN / वाहन नंबर *</label>
-              <input class="form-input dynamic-field" data-label="Policy / UAN / Vehicle No" type="text" placeholder="Policy / UAN / Vehicle No." required />
+              <label class="form-label">लाभार्थी का आधार नंबर *</label>
+              <input class="form-input dynamic-field" data-label="Beneficiary Aadhaar" type="text" maxlength="12" placeholder="12-digit Aadhaar No." required />
             </div>
           `;
-        } else if (serviceVal.includes('challan') || serviceVal.includes('चालान')) {
+        }
+
+        // 13. Challan Lookup & Fine
+        else if (serviceVal.includes('challan') || serviceVal.includes('चालान')) {
           html = `
             <div>
               <label class="form-label">सर्च का आधार (Search Challan By) *</label>
@@ -2731,7 +2936,7 @@
             </div>
             <div>
               <label class="form-label">वाहन या चालान नंबर (Vehicle / Challan No.) *</label>
-              <input class="form-input dynamic-field" id="esevaChallanSearchInput" data-label="Vehicle or Challan No" type="text" placeholder="e.g. UP50AB1234 or UP1234567890" required onchange="lookupVehicleChallan('eseva')" />
+              <input class="form-input dynamic-field" id="esevaChallanSearchInput" data-label="Vehicle or Challan No" type="text" placeholder="e.g. PB65AB1234 or UP50AB1234" required onchange="lookupVehicleChallan('eseva')" />
               <button type="button" class="btn-lookup" onclick="lookupVehicleChallan('eseva')" style="margin-top:6px; background:linear-gradient(135deg, #0284c7, #0369a1); border:1px solid #38bdf8; color:#fff; font-weight:700; padding:8px 12px; border-radius:8px; cursor:pointer; width:100%; display:flex; align-items:center; justify-content:center; gap:6px; font-size:0.85rem; box-shadow:0 4px 12px rgba(2, 132, 199, 0.3);">
                 🔍 चालान विवरण स्वतः खोजें (Auto-Fetch Challan Details)
               </button>
@@ -2762,30 +2967,66 @@
               </a>
             </div>
           `;
-        } else if (cat === 'transport' || serviceVal.includes('licence') || serviceVal.includes('rc') || serviceVal.includes('वाहन')) {
+        }
+
+        // 14. Business, GST & MSME
+        else if (cat === 'business' || serviceVal.includes('gst') || serviceVal.includes('msme') || serviceVal.includes('udyam')) {
           html = `
             <div>
-              <label class="form-label">वाहन / लाइसेंस नंबर (Vehicle Reg / DL No.) *</label>
-              <input class="form-input dynamic-field" data-label="Vehicle or DL Number" type="text" placeholder="e.g. UP50-AB-1234 or DL No." required />
-            </div>
-            <div>
-              <label class="form-label">आरटीओ कार्यालय या जिला (RTO Office / District) *</label>
-              <input class="form-input dynamic-field" data-label="RTO Office" type="text" placeholder="e.g. RTO Azamgarh / Lucknow" required />
-            </div>
-            <div>
-              <label class="form-label">वाहन श्रेणी (Vehicle Class / Type)</label>
-              <select class="form-select dynamic-field" data-label="Vehicle Class">
-                <option value="2-Wheeler (Motorcycle / Scooter)">दोपहिया (2-Wheeler Motorcycle/Scooter)</option>
-                <option value="4-Wheeler Car / SUV (LMV)">चौपहिया कार / जीप (LMV)</option>
-                <option value="Commercial / Transport (HMV/Transport)">कमर्शियल / भारी वाहन (Commercial / HMV)</option>
+              <label class="form-label">GST व व्यापार सेवा प्रकार *</label>
+              <select class="form-select dynamic-field" id="gstUpdateTypeSelect" data-label="GST Action Type" required onchange="onDynamicSubtypePriceChange(this)">
+                <option value="New GST Registration" data-base-price="1200" selected>नया GST 15-अंकों का रजिस्ट्रेशन (New Registration) - Base: ₹1,200</option>
+                <option value="GST Core Amendment (Address/Partners)" data-base-price="600">GST कोर संशोधन (दूकान का पता / पार्टनर बदलाव) - Base: ₹600</option>
+                <option value="Udyam MSME Registration" data-base-price="300">उद्यम / MSME रजिस्ट्रेशन सर्टिफिकेट - Base: ₹300</option>
+                <option value="FSSAI Food License" data-base-price="800">FSSAI खाद्य सुरक्षा 14-अंकीय लाइसेंस - Base: ₹800</option>
+                <option value="Shop & Establishment License" data-base-price="650">दुकान लाइसेंस (गुमाश्ता प्रमाण पत्र) - Base: ₹650</option>
               </select>
             </div>
+            <div>
+              <label class="form-label">व्यापार / दूकान का नाम (Firm / Trade Name) *</label>
+              <input class="form-input dynamic-field" data-label="Trade Name" type="text" placeholder="e.g. Shan Enterprises" required />
+            </div>
+            <div>
+              <label class="form-label">व्यापारिक पता (Business Location Address) *</label>
+              <input class="form-input dynamic-field" data-label="Business Address" type="text" placeholder="Shop No, Market, City" required />
+            </div>
           `;
-        } else {
+        }
+
+        // 15. Finance, PF / EPFO & Insurance
+        else if (cat === 'finance' || serviceVal.includes('pf') || serviceVal.includes('uan') || serviceVal.includes('insurance') || serviceVal.includes('lic')) {
           html = `
             <div>
-              <label class="form-label">आवश्यक सेवा विवरण (Specific Requirement)</label>
-              <input class="form-input dynamic-field" data-label="Requirement Details" type="text" placeholder="सेवा से जुड़ा कोई खास विवरण" />
+              <label class="form-label">बीमा व वित्तीय सेवा प्रकार *</label>
+              <select class="form-select dynamic-field" id="financeTypeSelect" data-label="Finance Action Type" required onchange="onDynamicSubtypePriceChange(this)">
+                <option value="PF Full Withdrawal (19 & 10C)" data-base-price="350" selected>पीएफ पूरा निकासी (Form 19 & 10C) - Base: ₹350</option>
+                <option value="PF Advance Claim (Form 31)" data-base-price="250">पीएफ इमरजेंसी एडवांस (Form 31) - Base: ₹250</option>
+                <option value="UAN Activation & KYC" data-base-price="150">UAN एक्टिवेशन व बैंक केवाईसी लिंक - Base: ₹150</option>
+                <option value="LIC Policy Premium Payment & Services" data-base-price="150">LIC पॉलिसी प्रीमियम व सेवाएँ - Base: ₹150</option>
+                <option value="Vehicle Insurance Policy Renewal" data-base-price="250">वाहन बीमा रिन्युअल (बाइक / कार) - Base: ₹250</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">UAN नंबर / पॉलिसी नंबर / वाहन नंबर *</label>
+              <input class="form-input dynamic-field" data-label="UAN or Policy Number" type="text" placeholder="12-digit UAN / Policy No." required />
+            </div>
+            <div>
+              <label class="form-label">लिंक्ड बैंक खाता अंतिम 4 अंक व IFSC *</label>
+              <input class="form-input dynamic-field" data-label="Bank Details" type="text" placeholder="e.g. A/C XXXX1234 & IFSC SBIN0001234" required />
+            </div>
+          `;
+        }
+
+        // 16. Fallback General
+        else {
+          html = `
+            <div>
+              <label class="form-label">आवेदन का उद्देश्य / प्रयोजन (Purpose of Application) *</label>
+              <input class="form-input dynamic-field" data-label="Requirement Details" type="text" placeholder="सेवा से जुड़ा मुख्य विवरण दर्ज करें" required />
+            </div>
+            <div>
+              <label class="form-label">संबंधित स्थानीय तहसील / कार्यालय (Local Tehsil / Office)</label>
+              <input class="form-input dynamic-field" data-label="Local Office" type="text" placeholder="उदा. तहसील सदर / सेवा केंद्र" />
             </div>
           `;
         }
@@ -4415,8 +4656,8 @@
             badgeEl.title = `Your Location: ${displayLoc}. Click to refresh.`;
           }
 
-          // Sync dropdowns to visitor's detected state
-          const stateSelects = ['applicantState', 'stateFilterSelect', 'custModalStateSelect'];
+          // Sync dropdowns to visitor's detected state (only sync filter if user explicitly clicks detect)
+          const stateSelects = promptUser ? ['applicantState', 'stateFilterSelect', 'custModalStateSelect'] : ['applicantState', 'custModalStateSelect'];
           stateSelects.forEach(selId => {
             const el = document.getElementById(selId);
             if (el) {
