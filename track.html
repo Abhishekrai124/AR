@@ -250,7 +250,7 @@
       <!-- Navigation Header -->
       <div class="track-header-nav">
         <div style="display:flex; align-items:center; gap:8px;">
-          <a href="eseva.html" class="btn-nav">⬅ ई-सेवा पोर्टल</a>
+          <a href="esewa.html" class="btn-nav">⬅ ई-सेवा पोर्टल</a>
           <a href="index.html" class="btn-nav" style="background:transparent; border-color:transparent;">🏠 होम</a>
         </div>
         <div>
@@ -462,7 +462,7 @@
         const status = order.status || 'Pending';
 
         document.getElementById('orderRefId').textContent = '#' + (order.refId || 'SHAN-XXXXXX');
-        document.getElementById('orderServiceTitle').textContent = order.service || 'Citizen E-Seva';
+        document.getElementById('orderServiceTitle').textContent = order.service || 'Citizen E-Sewa';
         document.getElementById('orderFeeDisplay').textContent = order.fee || '₹0';
         document.getElementById('orderPaymentMode').textContent = `${order.paymentMethod || 'ONLINE'} - ${order.utr || 'VERIFIED'}`;
 
@@ -546,7 +546,7 @@
               <div class="hdr">
                 <h2 style="margin:0; font-size:20px; color:#0f172a;">🏛️ SHAN CYBER CAFE &amp; CITIZEN E-SEVA CENTER</h2>
                 <p style="margin:4px 0; font-size:13px; color:#475569;">Official Citizen Application &amp; Verification Slip · Ref #${r.refId}</p>
-                <small style="color:#64748b;">Helpline: +91 7009446821 | Email: abhishekrai6897@gmail.com</small>
+                <small style="color:#64748b;">Helpline: +91 7009446821 | Email: <a href="mailto:abhishekrai6897@gmail.com?subject=Order%20Tracking%20Support" style="color:#94a3b8; text-decoration:underline;">support@arrai.in</a></small>
                 <div><span class="stamp-tag">✓ VERIFIED &amp; RECORDED ON PORTAL</span></div>
               </div>
               <table>

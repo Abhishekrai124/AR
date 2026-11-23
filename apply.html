@@ -303,7 +303,7 @@
       <!-- Header Nav -->
       <div class="apply-header-nav">
         <div class="portal-brand">
-          <a href="eseva.html" class="btn-back">⬅ ई-सेवा मुख्य पोर्टल</a>
+          <a href="esewa.html" class="btn-back">⬅ E-Sewa Portal</a>
           <a href="index.html" class="btn-back" style="background:transparent; border-color:transparent;">🏠 होम</a>
         </div>
         <div style="display:flex; align-items:center; flex-wrap:wrap; gap:8px;">
@@ -353,7 +353,7 @@
                 <option value="transport">🚗 ड्राइविंग लाइसेंस व वाहन (Transport Sarathi)</option>
                 <option value="welfare">🌾 सरकारी योजनाएँ, राशन व पेंशन (Welfare Schemes)</option>
                 <option value="finance">💼 बीमा, पेंशन व पीएफ क्लेम (Insurance &amp; EPFO)</option>
-                <option value="passport">✈️ पासपोर्ट सेवा (Passport Seva ₹4500 / ₹6000)</option>
+                <option value="passport">✈️ पासपोर्ट सेवा (Passport Sewa ₹4500 / ₹6000)</option>
                 <option value="aadhaar">🆔 आधार कार्ड सेवाएँ (Aadhaar Services)</option>
                 <option value="pan">💳 पैन कार्ड सेवाएँ (PAN Services)</option>
                 <option value="voter">🗳️ वोटर आईडी कार्ड (Voter ID)</option>
@@ -796,7 +796,7 @@
         },
 
         passport: {
-          title: "पासपोर्ट सेवा (Passport Seva)",
+          title: "पासपोर्ट सेवा (Passport Sewa)",
           subServices: [
             {
               id: "passport-normal",
@@ -1213,9 +1213,7 @@
               ]
             },
             {
-              id: "caste-ncl",
-              name: "नॉन-क्रीमी लेयर (OBC-NCL) प्रमाण पत्र",
-              fee: 240,
+              id: "caste-ncl", name: "नॉन-क्रीमी लेयर (OBC-NCL) प्रमाण पत्र", fee: 160,
               desc: "केंद्रीय व राज्य स्तरीय सरकारी नौकरियों हेतु नॉन-क्रीमी लेयर प्रमाण पत्र",
               docs: ["आय प्रमाण पत्र", "जाति प्रमाण पत्र", "आधार कार्ड"],
               fields: [
@@ -1442,7 +1440,7 @@
             {
               id: "pan-new",
               name: "नया पैन कार्ड (Physical Plastic + Digital e-PAN)",
-              fee: 325,
+              fee: 200,
               desc: "NSDL/UTIITSL से नया पैन कार्ड, 48 घंटे में ई-पैन और 10 दिन में घर पर डिलीवरी",
               docs: ["आधार कार्ड (मोबाइल लिंक)", "2 पासपोर्ट फोटो"],
               fields: [
@@ -1452,7 +1450,7 @@
             {
               id: "pan-correction",
               name: "पैन कार्ड संशोधन (Name / DOB / Photo Correction)",
-              fee: 260,
+              fee: 180,
               desc: "पैन कार्ड में नाम, पिता का नाम, फोटो या जन्मतिथि में बदलाव",
               docs: ["मौजूदा पैन कार्ड", "आधार कार्ड", "संशोधन का वैध प्रमाण"],
               fields: [
@@ -2369,56 +2367,56 @@
       }
 
       // State-wise Portal Processing Fee Offsets (Every state has min +₹50, scaling up to +₹150 and +₹200)
-      const stateFeeOffsets = {
-        // Tier 1: Home State (Base local processing, lowest surcharge)
-        "Punjab": 40,
+      const const stateFeeOffsets = {
+        // Home State (Punjab - 0 interstate coordination surcharge, local base ₹110)
+        "Punjab": 0,
 
-        // Tier 2: Neighboring Northern States & UTs (+₹60 to +₹90)
-        "Chandigarh": 60,
-        "Haryana": 80,
-        "Himachal Pradesh": 80,
-        "Delhi": 90,
-        "Jammu and Kashmir": 90,
+        // Tier 1: Neighboring States & UTs (+₹20 minor interstate coordination)
+        "Chandigarh": 20,
+        "Haryana": 20,
+        "Himachal Pradesh": 20,
+        "Delhi": 20,
+        "Jammu and Kashmir": 20,
 
-        // Tier 3: Major North & Central States (+₹120 to +₹130 - Remote State Portal Coordination)
-        "Uttarakhand": 120,
-        "Rajasthan": 130,
-        "Uttar Pradesh": 130,
-        "Madhya Pradesh": 130,
-        "Bihar": 130,
-        "Jharkhand": 130,
-        "Chhattisgarh": 130,
+        // Tier 2: Northern & Central States (+₹30 minor interstate coordination)
+        "Uttarakhand": 30,
+        "Rajasthan": 30,
+        "Uttar Pradesh": 30,
+        "Madhya Pradesh": 30,
+        "Bihar": 30,
+        "Jharkhand": 30,
+        "Chhattisgarh": 30,
 
-        // Tier 4: Western, Eastern & Southern Distant States (+₹170 to +₹190 - Interstate Remote Liasoning)
-        "Gujarat": 170,
-        "Maharashtra": 180,
-        "Goa": 180,
-        "West Bengal": 180,
-        "Odisha": 180,
-        "Karnataka": 180,
-        "Telangana": 180,
-        "Andhra Pradesh": 180,
-        "Tamil Nadu": 190,
-        "Kerala": 190,
+        // Tier 3: Western, Southern & Eastern States (+₹40 minor interstate coordination)
+        "Gujarat": 40,
+        "Maharashtra": 40,
+        "Goa": 40,
+        "West Bengal": 40,
+        "Odisha": 40,
+        "Karnataka": 40,
+        "Telangana": 40,
+        "Andhra Pradesh": 40,
+        "Tamil Nadu": 40,
+        "Kerala": 40,
 
-        // Tier 5: North-Eastern States & Remote Island UTs (+₹200 to +₹240 - Special Remote Jurisdiction)
-        "Assam": 200,
-        "Sikkim": 200,
-        "Puducherry": 200,
-        "Dadra and Nagar Haveli and Daman and Diu": 200,
-        "Tripura": 220,
-        "Meghalaya": 220,
-        "Manipur": 220,
-        "Nagaland": 220,
-        "Mizoram": 220,
-        "Arunachal Pradesh": 220,
-        "Ladakh": 220,
-        "Andaman and Nicobar": 240,
-        "Lakshadweep": 240,
+        // Tier 4: North-Eastern States & Remote UTs (+₹50 minor interstate coordination)
+        "Assam": 50,
+        "Sikkim": 50,
+        "Tripura": 50,
+        "Meghalaya": 50,
+        "Manipur": 50,
+        "Nagaland": 50,
+        "Mizoram": 50,
+        "Arunachal Pradesh": 50,
+        "Ladakh": 50,
+        "Puducherry": 50,
+        "Dadra and Nagar Haveli and Daman and Diu": 50,
+        "Andaman and Nicobar": 50,
+        "Lakshadweep": 50,
 
         // Fallbacks
-        "all": 50,
-        "other": 130
+        "all": 20,
+        "other": 30
       };
 
       let activeRazorpayKey = null;
@@ -2438,24 +2436,28 @@
         let baseFee = Number(activeSubService.fee);
         let challanFine = 0;
 
+        const isCentral = currentCategory === 'central' || activeSubService.id.startsWith('pan-') || activeSubService.id.startsWith('passport-') || activeSubService.id === 'traffic-challan' || activeSubService.id.startsWith('pf-') || activeSubService.id.startsWith('aadhaar-') || activeSubService.id.startsWith('voter-');
+
         if (activeSubService.id === 'traffic-challan') {
           const fineInp = document.getElementById('challanPenaltyAmount');
           if (fineInp) {
             challanFine = Math.max(0, parseInt(fineInp.value, 10) || 0);
           }
-          baseFee = 200 + challanFine;
-        } else if (currentCategory === 'legal' && baseFee < 550) {
-          baseFee = 550;
-        } else if (baseFee < 200 && activeSubService.id !== 'exam-admit') {
-          baseFee = 200;
+          baseFee = 150 + challanFine; // ₹150 cafe settlement & receipt fee + verified fine
+        } else if (activeSubService.id === 'pan-new') {
+          baseFee = 200; // Flat ₹200 for Fresh PAN Card
+        } else if (activeSubService.id === 'pan-correction') {
+          baseFee = 180; // Flat ₹180 for PAN Correction
+        } else if (currentCategory === 'legal' && baseFee < 250) {
+          baseFee = 250;
         }
 
         const stateEl = document.getElementById('applicantState');
         const chosenState = stateEl ? stateEl.value : (localStorage.getItem('userDetectedState') || 'Punjab');
-        const stateOffset = stateFeeOffsets[chosenState] || 0;
+        const stateOffset = isCentral ? 0 : (stateFeeOffsets[chosenState] || 0);
         const totalBaseFee = baseFee + stateOffset;
 
-        const serviceHandlingFee = (baseFee >= 200 && activeSubService.id !== 'exam-admit') ? 60 : 0;
+        const serviceHandlingFee = isCentral ? (activeSubService.id === 'pan-new' ? 93 : (activeSubService.id === 'pan-correction' ? 73 : (baseFee >= 150 ? 50 : 20))) : 30;
         const pureBaseFee = Math.max(0, baseFee - serviceHandlingFee);
 
         // Update transparent breakdown box
@@ -2466,36 +2468,35 @@
         const applyTot = document.getElementById('applyFeeTotal');
 
         if (activeSubService.id === 'traffic-challan') {
-          if (applyBase) applyBase.innerText = challanFine > 0 ? `₹${challanFine} (सरकारी जुर्माना)` : `₹100 (पोर्टल चार्ज)`;
-          if (applyServ) applyServ.innerText = challanFine > 0 ? `+₹200 (ई-चालान निपटान व ऑपरेटर शुल्क)` : `+₹60 (सेवा शुल्क)`;
+          if (applyBase) applyBase.innerText = challanFine > 0 ? ("₹" + challanFine + " (सरकारी जुर्माना)") : "₹0 (जुर्माना)";
+          if (applyServ) applyServ.innerText = "+₹150 (ई-चालान निपटान व ऑपरेटर शुल्क)";
         } else {
-          if (applyBase) applyBase.innerText = `₹${pureBaseFee}`;
-          if (applyServ) applyServ.innerText = `+₹${serviceHandlingFee}`;
+          if (applyBase) applyBase.innerText = "₹" + pureBaseFee;
+          if (applyServ) applyServ.innerText = "+₹" + serviceHandlingFee;
         }
-        if (applyState) applyState.innerText = `+₹${stateOffset}`;
+        if (applyState) applyState.innerText = isCentral ? "₹0 (National)" : ("+₹" + stateOffset);
         if (applyStateLbl) {
-          const isHome = chosenState.toLowerCase().includes('punjab');
-          applyStateLbl.innerText = isHome ? `राज्य पोर्टल व स्थानीय फाइलिंग शुल्क (${chosenState}):` : `अन्य राज्य रिमोट समन्वय व पोर्टल शुल्क (${chosenState}):`;
+          applyStateLbl.innerText = isCentral ? "राज्य शुल्क (केंद्रीय सेवा हेतु शून्य):" : ("राज्य पोर्टल व रिमोट सुविधा शुल्क (" + chosenState + "):");
         }
-        if (applyTot) applyTot.innerText = `₹${totalBaseFee}`;
+        if (applyTot) applyTot.innerText = "₹" + totalBaseFee;
         
-        const stateNotice = stateOffset > 0 ? ` (${chosenState} राज्य सुविधा शुल्क +₹${stateOffset} सम्मिलित)` : '';
+        const stateNotice = isCentral ? " (केंद्रीय सेवा - कोई राज्य अतिरिक्त शुल्क नहीं)" : (stateOffset > 0 ? (" (" + chosenState + " राज्य सुविधा शुल्क +₹" + stateOffset + " सम्मिलित)") : " (पंजाब राज्य दर - ₹0 अतिरिक्त समायोजन)");
 
         if (currentPayMethod === 'upi') {
-          document.getElementById('topFeeBadge').textContent = `₹${totalBaseFee}`;
-          document.getElementById('paymentPayableFee').textContent = `₹${totalBaseFee}`;
-          document.getElementById('gatewayFeeNote').textContent = `UPI भुगतान 100% फ्री है (0% अतिरिक्त शुल्क)${stateNotice}`;
+          document.getElementById('topFeeBadge').textContent = "₹" + totalBaseFee;
+          document.getElementById('paymentPayableFee').textContent = "₹" + totalBaseFee;
+          document.getElementById('gatewayFeeNote').textContent = "UPI भुगतान 100% फ्री है (0% अतिरिक्त शुल्क)" + stateNotice;
           
           // Update QR Code
-          const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(`upi://pay?pa=kuzu@ptyes&pn=Shan%20Cyber%20Cafe&am=${totalBaseFee}&cu=INR&tn=${encodeURIComponent(activeSubService.name + ' - ' + chosenState)}`)}`;
+          const qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + encodeURIComponent("upi://pay?pa=kuzu@ptyes&pn=Shan%20Cyber%20Cafe&am=" + totalBaseFee + "&cu=INR&tn=" + encodeURIComponent(activeSubService.name + " - " + chosenState));
           document.getElementById('upiDynamicQr').src = qrUrl;
         } else {
           const surcharge = Math.round(totalBaseFee * 0.02);
           const totalWithSurcharge = totalBaseFee + surcharge;
-          document.getElementById('topFeeBadge').textContent = `₹${totalWithSurcharge}`;
-          document.getElementById('paymentPayableFee').textContent = `₹${totalWithSurcharge}`;
-          document.getElementById('gatewayFeeNote').textContent = `Razorpay: कुल देय राशि ₹${totalBaseFee}${stateNotice} + 2% गेटवे शुल्क ₹${surcharge} = ₹${totalWithSurcharge}`;
-          document.getElementById('rzpPayableText').textContent = `₹${totalWithSurcharge}`;
+          document.getElementById('topFeeBadge').textContent = "₹" + totalWithSurcharge;
+          document.getElementById('paymentPayableFee').textContent = "₹" + totalWithSurcharge;
+          document.getElementById('gatewayFeeNote').textContent = "Razorpay: कुल देय राशि ₹" + totalBaseFee + stateNotice + " + 2% गेटवे शुल्क ₹" + surcharge + " = ₹" + totalWithSurcharge;
+          document.getElementById('rzpPayableText').textContent = "₹" + totalWithSurcharge;
         }
       }
 
@@ -2844,7 +2845,7 @@
               <div class="receipt-card">
                 <div class="hdr">
                   <div>
-                    <h1 class="brand-title">${isEn ? '🏛️ SHAN CYBER CAFE & CITIZEN E-SEVA CENTER' : '🏛️ शान साइबर कैफे एवं ई-सेवा केंद्र'}</h1>
+                    <h1 class="brand-title">${isEn ? '🏛️ SHAN CYBER CAFE & CITIZEN E-SEWA CENTER' : '🏛️ शान साइबर कैफे एवं ई-सेवा केंद्र'}</h1>
                     <div class="brand-sub">Authorised Citizen Facilitation & Digital e-District Center</div>
                     <div style="font-size:12px; color:#334155; margin-top:4px;">${isEn ? 'Helpline' : 'हेल्पलाइन'}: +91 7009446821 | Email: support@arrai.in</div>
                     <div class="stamp-seal">✓ VERIFIED & DIGITALLY ACKNOWLEDGED</div>

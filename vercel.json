@@ -30,7 +30,7 @@
       "destination": "/api/account?type=staff"
     },
     {
-      "source": "/:username((?!dm$|community$|about$|services$|projects$|contact$|music$|chess$|auth$|owner$|payments$|privacy$|index$|makima-core$|eseva$)[a-zA-Z0-9_]+)",
+      "source": "/:username((?!dm$|community$|about$|services$|projects$|contact$|music$|chess$|auth$|owner$|payments$|privacy$|index$|makima-core$|eseva$|esewa$|apply$|resume$|track$)[a-zA-Z0-9_]+)",
       "destination": "/profile.html"
     }
   ]
