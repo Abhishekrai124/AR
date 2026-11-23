@@ -3492,6 +3492,255 @@
         }
       }
 
+      
+      // ==========================================
+      // STATE & DISTRICT PROCESSING INTELLIGENCE MATRIX
+      // ==========================================
+      const statePortalIntelligence = {
+        "Punjab": {
+          name: "Punjab (ਪੰਜਾਬ)",
+          portal: "Punjab e-Sewa & Citizen Kendra / Sarathi MoRTH",
+          tier: "Home Base (0 km)",
+          stateFee: 40,
+          certDays: "2–4 कार्य दिवस (Working Days)",
+          dlDays: "2–3 दिन (LL) / 7–10 दिन (स्थाई DL)",
+          verificationMode: "Direct Sub-Division SDM / Tehsildar (फास्ट-ट्रैक)",
+          complexity: "लोकल बेस (न्यूनतम समय व शुल्क)"
+        },
+        "Chandigarh": {
+          name: "Chandigarh (UT)",
+          portal: "e-Sampark Chandigarh / Sector 17 RTO",
+          tier: "Neighboring Zone (~250 km)",
+          stateFee: 50,
+          certDays: "3–5 कार्य दिवस",
+          dlDays: "2–3 दिन (LL) / 5–7 दिन (DL)",
+          verificationMode: "e-Sampark Direct Verification",
+          complexity: "सुगम डिजिटल प्रक्रिया"
+        },
+        "Haryana": {
+          name: "Haryana (हरियाणा)",
+          portal: "Antyodaya Saral Portal / Sarathi HR",
+          tier: "Neighboring Zone (~150–300 km)",
+          stateFee: 50,
+          certDays: "3–5 कार्य दिवस",
+          dlDays: "3–4 दिन (LL) / 7–10 दिन (DL)",
+          verificationMode: "Parivar Pehchan Patra (PPP) & Saral e-District",
+          complexity: "सरल ऑटो-वेरिफिकेशन"
+        },
+        "Himachal Pradesh": {
+          name: "Himachal Pradesh (हिमाचल प्रदेश)",
+          portal: "e-District HP / Parivahan HP",
+          tier: "Neighboring Zone (~150–350 km)",
+          stateFee: 50,
+          certDays: "4–6 कार्य दिवस",
+          dlDays: "3–5 दिन (LL) / 10–12 दिन (DL)",
+          verificationMode: "Tehsil e-Pramaan Patra",
+          complexity: "पर्वतीय क्षेत्रीय सत्यापन"
+        },
+        "Delhi": {
+          name: "Delhi (NCT)",
+          portal: "e-District Delhi (Revenue Dept) / Automated RTO",
+          tier: "Northern Zone (~320 km)",
+          stateFee: 50,
+          certDays: "3–6 कार्य दिवस",
+          dlDays: "1–2 दिन (Faceless e-LL) / 7–10 दिन (DL)",
+          verificationMode: "SDM Faceless Portal Online",
+          complexity: "फेसलेस डिजिटल डिलीवरी"
+        },
+        "Uttar Pradesh": {
+          name: "Uttar Pradesh (उत्तर प्रदेश)",
+          portal: "e-District UP (edistrict.up.gov.in) / Sarthi UP",
+          tier: "Central-North Zone (~450–900 km)",
+          stateFee: 50,
+          certDays: "5–8 कार्य दिवस",
+          dlDays: "3–5 दिन (LL) / 10–14 दिन (DL)",
+          verificationMode: "लेखपाल / कानूनगो व तहसीलदार डिजिटल आख्या",
+          complexity: "तहसील स्तरीय जांच व सत्यापन"
+        },
+        "Bihar": {
+          name: "Bihar (बिहार)",
+          portal: "RTPS Bihar (ServicePlus) / Sarthi Bihar",
+          tier: "Eastern Zone (~1,100–1,400 km)",
+          stateFee: 50,
+          certDays: "6–10 कार्य दिवस",
+          dlDays: "4–6 दिन (LL) / 12–15 दिन (DL)",
+          verificationMode: "प्रखंड (Block) स्तर राजस्व अधिकारी / CO जांच",
+          complexity: "ब्लॉक व अंचल स्तरीय प्रक्रिया"
+        },
+        "Rajasthan": {
+          name: "Rajasthan (राजस्थान)",
+          portal: "e-Mitra Rajasthan / Transport Sarathi",
+          tier: "Western-North Zone (~400–700 km)",
+          stateFee: 50,
+          certDays: "4–7 कार्य दिवस",
+          dlDays: "3–5 दिन (LL) / 10–14 दिन (DL)",
+          verificationMode: "पटवारी रिपोर्ट व तहसीलदार अप्रूवल",
+          complexity: "जन आधार व पटवारी सत्यापन"
+        },
+        "Madhya Pradesh": {
+          name: "Madhya Pradesh (मध्य प्रदेश)",
+          portal: "MP Lok Seva Guarantee (mpedistrict.gov.in)",
+          tier: "Central Zone (~800–1,200 km)",
+          stateFee: 50,
+          certDays: "5–8 कार्य दिवस",
+          dlDays: "4–6 दिन (LL) / 10–14 दिन (DL)",
+          verificationMode: "लोक सेवा केंद्र व एसडीएम सत्यापन",
+          complexity: "समाधान ऑनलाइन प्रक्रिया"
+        },
+        "Jharkhand": {
+          name: "Jharkhand (झारखंड)",
+          portal: "JharSewa (jharsewa.jharkhand.gov.in)",
+          tier: "Eastern Zone (~1,300–1,600 km)",
+          stateFee: 50,
+          certDays: "6–10 कार्य दिवस",
+          dlDays: "4–6 दिन (LL) / 12–15 दिन (DL)",
+          verificationMode: "अंचल अधिकारी (CO) व डीसी कार्यालय जांच",
+          complexity: "ब्लॉक व जिला स्तरीय अप्रूवल"
+        },
+        "Maharashtra": {
+          name: "Maharashtra (महाराष्ट्र)",
+          portal: "Aaple Sarkar (aaplesarkar.mahaonline.gov.in)",
+          tier: "Western Zone (~1,400–1,800 km)",
+          stateFee: 60,
+          certDays: "6–10 कार्य दिवस",
+          dlDays: "3–5 दिन (LL) / 10–15 दिन (DL)",
+          verificationMode: "तलाठी व तहसीलदार डिजिटल स्वाक्षरी",
+          complexity: "महा-ऑनलाइन डिजिटल समन्वय"
+        },
+        "Gujarat": {
+          name: "Gujarat (गुजरात)",
+          portal: "Digital Gujarat (digitalgujarat.gov.in)",
+          tier: "Western Zone (~1,100–1,500 km)",
+          stateFee: 50,
+          certDays: "5–8 कार्य दिवस",
+          dlDays: "3–5 दिन (LL) / 8–12 दिन (DL)",
+          verificationMode: "मामलतदार व तलाठी जांच",
+          complexity: "डिजिटल गुजरात अप्रूवल"
+        },
+        "West Bengal": {
+          name: "West Bengal (পশ্চিমবঙ্গ)",
+          portal: "e-District West Bengal / Parivahan WB",
+          tier: "Eastern Zone (~1,600–2,000 km)",
+          stateFee: 60,
+          certDays: "7–12 कार्य दिवस",
+          dlDays: "4–6 दिन (LL) / 12–16 दिन (DL)",
+          verificationMode: "BDO / SDO कार्यालय जांच",
+          complexity: "बीडीओ व ब्लॉक रिपोर्ट"
+        },
+        "Telangana": {
+          name: "Telangana (తెలంగాణ)",
+          portal: "MeeSeva Telangana / T-App Folio",
+          tier: "Southern Zone (~1,600–1,900 km)",
+          stateFee: 60,
+          certDays: "5–8 कार्य दिवस",
+          dlDays: "3–5 दिन (LL) / 10–14 दिन (DL)",
+          verificationMode: "MRO (Mandal Revenue Officer) Verification",
+          complexity: "मी-सेवा मंडल स्तर समन्वय"
+        },
+        "Andhra Pradesh": {
+          name: "Andhra Pradesh (ఆంధ్ర ప్రదేశ్)",
+          portal: "MeeSeva AP / Grama Ward Sachivalayam",
+          tier: "Southern Zone (~1,800–2,200 km)",
+          stateFee: 60,
+          certDays: "6–9 कार्य दिवस",
+          dlDays: "4–6 दिन (LL) / 10–14 दिन (DL)",
+          verificationMode: "VRO / Tahsildar Digital Verification",
+          complexity: "सचिवालय व मंडल समन्वय"
+        },
+        "Karnataka": {
+          name: "Karnataka (ಕರ್ನಾಟಕ)",
+          portal: "Seva Sindhu Karnataka / Nadakacheri",
+          tier: "Southern Zone (~1,900–2,300 km)",
+          stateFee: 60,
+          certDays: "6–10 कार्य दिवस",
+          dlDays: "3–5 दिन (LL) / 10–15 दिन (DL)",
+          verificationMode: "Revenue Inspector (RI) & Tahsildar",
+          complexity: "नाडकचेरी व सेवा सिंधु अप्रूवल"
+        },
+        "Tamil Nadu": {
+          name: "Tamil Nadu (தமிழ்நாடு)",
+          portal: "TNeGA e-Sevai / TN Transport",
+          tier: "Southern Zone (~2,400–2,800 km)",
+          stateFee: 60,
+          certDays: "7–12 कार्य दिवस",
+          dlDays: "4–6 दिन (LL) / 12–16 दिन (DL)",
+          verificationMode: "VAO (Village Admin Officer) & Tahsildar",
+          complexity: "वीएओ व ई-सेवई समन्वय"
+        },
+        "Assam": {
+          name: "Assam (অসম)",
+          portal: "Sewa Setu Assam (sewasetu.assam.gov.in)",
+          tier: "North-Eastern Zone (>2,000 km)",
+          stateFee: 60,
+          certDays: "8–12 कार्य दिवस",
+          dlDays: "5–7 दिन (LL) / 12–16 दिन (DL)",
+          verificationMode: "Circle Officer (CO) & Lot Mandal",
+          complexity: "सेवा सेतु सर्कल अप्रूवल"
+        },
+        "Odisha": {
+          name: "Odisha (ଓଡ଼ିଶା)",
+          portal: "Odisha e-District (edistrict.odisha.gov.in)",
+          tier: "Eastern Zone (~1,600–2,000 km)",
+          stateFee: 50,
+          certDays: "6–10 कार्य दिवस",
+          dlDays: "4–6 दिन (LL) / 12–15 दिन (DL)",
+          verificationMode: "RI & Tahsildar Verification",
+          complexity: "ई-डिस्ट्रिक्ट तहसील समन्वय"
+        }
+      };
+
+      function renderStateIntelligenceBadge(chosenState) {
+        const info = statePortalIntelligence[chosenState] || {
+          name: chosenState,
+          portal: `${chosenState} e-District & State Portal`,
+          tier: "Interstate Distance Zone",
+          stateFee: 50,
+          certDays: "5–8 कार्य दिवस",
+          dlDays: "4–6 दिन (LL) / 10–14 दिन (DL)",
+          verificationMode: "तहसील / ब्लॉक डिजिटल सत्यापन",
+          complexity: "राज्य स्तरीय समन्वय"
+        };
+
+        const targetDiv = document.getElementById('stateIntelligenceCard');
+        if (!targetDiv) return;
+
+        targetDiv.style.display = 'block';
+        targetDiv.innerHTML = `
+          <div style="background:rgba(15, 23, 42, 0.85); border:1.5px solid #0284c7; border-radius:12px; padding:14px 16px; margin:14px 0; box-shadow:0 8px 24px rgba(0,0,0,0.4);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:8px; margin-bottom:10px;">
+              <span style="color:#38bdf8; font-weight:800; font-size:0.92rem; display:flex; align-items:center; gap:6px;">
+                🏛️ ${info.name} — सरकारी पोर्टल व कार्यवाही शेड्यूल
+              </span>
+              <span style="background:rgba(56, 189, 248, 0.15); border:1px solid #38bdf8; color:#bae6fd; font-size:0.75rem; font-weight:700; padding:2px 10px; border-radius:999px;">
+                📍 ${info.tier}
+              </span>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; font-size:0.83rem; color:#cbd5e1;">
+              <div>
+                <span style="color:#94a3b8; display:block; font-size:0.75rem;">नोडल सरकारी पोर्टल:</span>
+                <strong style="color:#fff;">${info.portal}</strong>
+              </div>
+              <div>
+                <span style="color:#94a3b8; display:block; font-size:0.75rem;">सत्यापन कार्यवाही स्तर:</span>
+                <strong style="color:#fde68a;">${info.verificationMode}</strong>
+              </div>
+              <div>
+                <span style="color:#94a3b8; display:block; font-size:0.75rem;">प्रमाण पत्र अनुमानित समय:</span>
+                <strong style="color:#34d399;">⏱️ ${info.certDays}</strong>
+              </div>
+              <div>
+                <span style="color:#94a3b8; display:block; font-size:0.75rem;">लाइसेंस (LL / DL) समय:</span>
+                <strong style="color:#38bdf8;">🚦 ${info.dlDays}</strong>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; padding-top:8px; border-top:1px dashed rgba(255,255,255,0.1); font-size:0.78rem;">
+              <span style="color:#94a3b8;">सरकारी समन्वय व कार्यवाही स्तर: <strong style="color:#fde68a;">${info.complexity}</strong></span>
+              <span style="color:#10b981; font-weight:700;">आधिकारिक राज्य पोर्टल शुल्क: ₹${info.stateFee}</span>
+            </div>
+          </div>
+        `;
+      }
+
       function recalculateFees() {
         const select = document.getElementById('selectedService');
         const selectedOpt = select.options[select.selectedIndex];
@@ -3531,6 +3780,7 @@
 
         // Dynamic State Offset Adjustment (only for state-governed services)
         const appState = document.getElementById('applicantState') ? document.getElementById('applicantState').value : currentSelectedState;
+        renderStateIntelligenceBadge(appState);
         const stateOffset = isStateGoverned ? (stateFeeOffsets[appState] || stateFeeOffsets[currentSelectedState] || 50) : 0;
         
         currentBaseTotal = basePrice ? (basePrice + stateOffset) : 0;
