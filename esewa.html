@@ -3924,18 +3924,6 @@
 
         const appState = document.getElementById('applicantState') ? document.getElementById('applicantState').value : currentSelectedState;
         renderStateIntelligenceBadge(appState);
-        const stateOffset = isStateGoverned ? (stateFeeOffsets[appState] || stateFeeOffsets[currentSelectedState] || 50) : 0;
-
-        let govtFee = 0;
-        let serviceFee = 40;
-
-        if (serviceItem) {
-          govtFee = Number(serviceItem.govtFee !== undefined ? serviceItem.govtFee : (serviceItem.fee - 50));
-          serviceFee = Number(serviceItem.serviceFee !== undefined ? serviceItem.serviceFee : 50);
-        } else if (selectedOpt) {
-          govtFee = Number(selectedOpt.getAttribute('data-govt-fee') || selectedOpt.getAttribute('data-price') || 0);
-          serviceFee = Number(selectedOpt.getAttribute('data-service-fee') || 40);
-        }
 
         let baseFee = serviceItem ? Number(serviceItem.fee) : (selectedOpt ? Number(selectedOpt.getAttribute('data-price') || 0) : 0);
 
