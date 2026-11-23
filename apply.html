@@ -2772,46 +2772,52 @@
 
       function updatePricingDisplay() {
         if (!activeSubService) return;
-        let baseFee = Number(activeSubService.fee);
+        let basePackageFee = Number(activeSubService.fee);
+        let govtFee = Number(activeSubService.govtFee || 0);
+        let serviceFee = Number(activeSubService.serviceFee || 0);
         let challanFine = 0;
 
         // Dynamic DL Vehicle Type Modifier:
         if (activeSubService.id === 'dl-permanent') {
           const vTypeEl = document.getElementById('dlVehicleType');
           const vVal = vTypeEl ? vTypeEl.value : '';
-          if (vVal.includes('4-Wheeler Car')) baseFee = 1300;
-          else if (vVal.includes('Both 2-Wheeler')) baseFee = 1450;
-          else if (vVal.includes('Commercial') || vVal.includes('6-Wheeler')) baseFee = 1700;
-          else baseFee = 1100; // 2-Wheeler default
+          if (vVal.includes('4-Wheeler Car')) { govtFee = 400; serviceFee = 900; basePackageFee = 1300; }
+          else if (vVal.includes('Both 2-Wheeler')) { govtFee = 400; serviceFee = 1050; basePackageFee = 1450; }
+          else if (vVal.includes('Commercial') || vVal.includes('6-Wheeler')) { govtFee = 500; serviceFee = 1200; basePackageFee = 1700; }
+          else { govtFee = 400; serviceFee = 700; basePackageFee = 1100; }
         } else if (activeSubService.id === 'dl-international') {
           const idpEl = document.getElementById('idpVehicleClass');
           const idpVal = idpEl ? idpEl.value : '';
-          if (idpVal.includes('4-Wheeler')) baseFee = 1800;
-          else if (idpVal.includes('Commercial')) baseFee = 2200;
-          else baseFee = 1500;
+          if (idpVal.includes('4-Wheeler')) { govtFee = 500; serviceFee = 1300; basePackageFee = 1800; }
+          else if (idpVal.includes('Commercial')) { govtFee = 500; serviceFee = 1700; basePackageFee = 2200; }
+          else { govtFee = 500; serviceFee = 1000; basePackageFee = 1500; }
         } else if (activeSubService.id === 'dl-learning') {
           const vClassEl = document.getElementById('vehicleClass');
           const vVal = vClassEl ? vClassEl.value : '';
-          if (vVal.includes('LMV') && !vVal.includes('MCWG')) baseFee = 1050;
-          else if (vVal.includes('MCWG + LMV')) baseFee = 1200;
-          else baseFee = 900;
+          if (vClassEl && vVal.includes('LMV') && !vVal.includes('MCWG')) { govtFee = 200; serviceFee = 850; basePackageFee = 1050; }
+          else if (vClassEl && vVal.includes('MCWG + LMV')) { govtFee = 200; serviceFee = 1000; basePackageFee = 1200; }
+          else { govtFee = 200; serviceFee = 700; basePackageFee = 900; }
         } else if (activeSubService.id === 'passport-normal' || activeSubService.alias === 'passport-fresh') {
-          baseFee = 2500;
+          govtFee = 1500; serviceFee = 1000; basePackageFee = 2500;
         } else if (activeSubService.id === 'aadhaar-address') {
-          baseFee = 100;
+          govtFee = 50; serviceFee = 50; basePackageFee = 100;
         } else if (activeSubService.id === 'traffic-challan') {
           const fineInp = document.getElementById('challanPenaltyAmount');
           if (fineInp) {
             challanFine = Math.max(0, parseInt(fineInp.value, 10) || 0);
           }
-          baseFee = 150 + challanFine;
+          govtFee = challanFine;
+          serviceFee = 150;
+          basePackageFee = 150 + challanFine;
         } else if (activeSubService.id === 'pan-new') {
-          baseFee = 200;
+          govtFee = 107; serviceFee = 93; basePackageFee = 200;
         } else if (activeSubService.id === 'pan-correction') {
-          baseFee = 180;
+          govtFee = 107; serviceFee = 73; basePackageFee = 180;
+        } else {
+          if (!serviceFee) serviceFee = Math.max(50, basePackageFee - govtFee);
         }
 
-        // State-governed services that genuinely vary by state:
+        // State-governed services check
         const isCentralOnly = (
           activeSubService.id === 'pan-new' ||
           activeSubService.id === 'pan-correction' ||
@@ -2824,36 +2830,54 @@
           activeSubService.id === 'resume-cv-builder' ||
           currentCategory === 'global'
         );
-        const isStateGoverned = !isCentralOnly;
 
         const stateEl = document.getElementById('applicantState');
         const chosenState = stateEl ? stateEl.value : (localStorage.getItem('userDetectedState') || 'Punjab');
         if (typeof renderStateIntelligenceBadge === 'function') renderStateIntelligenceBadge(chosenState);
 
-        const isHomeBase = (!chosenState || chosenState.toLowerCase().includes('punjab') || chosenState === 'all');
-        const stateOffset = isCentralOnly ? 0 : (isHomeBase ? 0 : Math.max(0, (stateFeeOffsets[chosenState] || 50) - 40));
-        const totalBaseFee = baseFee + stateOffset;
+        let statePortalFee = 0;
+        let statePortalDesc = '';
+        const stateKey = (chosenState && chosenState !== 'all') ? chosenState : 'Punjab';
 
-        // Update transparent breakdown box
+        if (isCentralOnly) {
+          statePortalFee = 0;
+          statePortalDesc = '🇮🇳 केंद्रीय सेवा (राज्य शुल्क शून्य)';
+        } else {
+          statePortalFee = (typeof stateFeeOffsets !== 'undefined' && stateFeeOffsets[stateKey]) ? stateFeeOffsets[stateKey] : 40;
+          if (stateKey.toLowerCase().includes('punjab')) statePortalDesc = 'ਪੰਜਾਬ ਸੇਵਾ ਕੇਂਦਰ (Sewa Kendra)';
+          else if (stateKey.toLowerCase().includes('uttar pradesh')) statePortalDesc = 'e-District UP पोर्टल';
+          else if (stateKey.toLowerCase().includes('bihar')) statePortalDesc = 'बिहार RTPS ServicePlus';
+          else if (stateKey.toLowerCase().includes('haryana')) statePortalDesc = 'हरियाणा अंत्योदय सरल';
+          else if (stateKey.toLowerCase().includes('delhi')) statePortalDesc = 'Delhi e-District';
+          else statePortalDesc = `${stateKey} ई-डिस्ट्रिक्ट`;
+        }
+
+        const isHomeBase = (!chosenState || chosenState.toLowerCase().includes('punjab') || chosenState === 'all');
+        const stateDistanceSurcharge = isCentralOnly ? 0 : (isHomeBase ? 0 : Math.max(0, (stateFeeOffsets[chosenState] || 50) - 40));
+        const totalBaseFee = basePackageFee + stateDistanceSurcharge;
+
+        // Update transparent breakdown box elements
         const applyBase = document.getElementById('applyFeeBase');
         const applyState = document.getElementById('applyFeeState');
         const applyStateLbl = document.getElementById('applyFeeStateLabel');
         const applyServ = document.getElementById('applyFeeService');
         const applyTot = document.getElementById('applyFeeTotal');
 
-        if (applyBase) applyBase.innerText = "₹" + baseFee;
-        if (applyServ) applyServ.innerText = "✓ पैकेज में सम्मिलित (All-Inclusive)";
-        if (applyState) applyState.innerText = isCentralOnly ? "₹0 (ऑल इंडिया सेवा)" : (stateOffset > 0 ? ("+₹" + stateOffset) : "₹0 (होम बेस पंजाब)");
+        if (applyBase) applyBase.innerText = "₹" + govtFee;
+        if (applyState) {
+          applyState.innerText = isCentralOnly ? "₹0 (All India)" : `₹${statePortalFee} (${statePortalDesc})`;
+        }
         if (applyStateLbl) {
           applyStateLbl.innerText = isCentralOnly 
-            ? "🇮🇳 राज्य अधिभार (केंद्रीय सेवा हेतु शून्य):" 
-            : `🏛️ राज्य प्रोसेसिंग अधिभार (${chosenState}):`;
+            ? "🇮🇳 राज्य पोर्टल शुल्क (केंद्रीय सेवा):" 
+            : `🌐 ${stateKey} सेवा केंद्र / ई-डिस्ट्रिक्ट पोर्टल शुल्क:`;
         }
+        if (applyServ) applyServ.innerText = "₹" + serviceFee;
         if (applyTot) applyTot.innerText = "₹" + totalBaseFee;
-        
-        const stateNotice = isStateGoverned 
-          ? (" (" + chosenState + " राज्य RTO शुल्क +₹" + stateOffset + " सम्मिलित)") 
-          : " (केंद्रीय/अखिल भारतीय सेवा - कोई राज्य अतिरिक्त शुल्क नहीं)";
+
+        const stateNotice = isCentralOnly 
+          ? " (केंद्रीय/अखिल भारतीय सेवा - कोई राज्य अतिरिक्त शुल्क नहीं)"
+          : (" (" + stateKey + " राज्य पोर्टल शुल्क ₹" + statePortalFee + " सम्मिलित)");
 
         if (currentPayMethod === 'upi') {
           document.getElementById('topFeeBadge').textContent = "₹" + totalBaseFee;
