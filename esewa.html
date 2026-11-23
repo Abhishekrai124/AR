@@ -3848,25 +3848,20 @@
         const sId = selectedOpt ? (selectedOpt.getAttribute('data-service-id') || '') : '';
         const sCat = selectedOpt ? (selectedOpt.getAttribute('data-cat') || '') : '';
 
-        // State-governed services that genuinely vary by state (Caste, Domicile, DL, RC, Land, Income, Birth/Death):
-        const isStateGoverned = (
-          sCat === 'certificate' ||
-          sCat === 'transport' ||
-          sCat === 'welfare' ||
-          sId.includes('caste') ||
-          sId.includes('domicile') ||
-          sId.includes('income') ||
-          sId.includes('residence') ||
-          sId.includes('driving') ||
-          sId.includes('licence') ||
-          sId.includes('license') ||
-          sId.includes('dl') ||
-          sId.includes('rc') ||
-          sId.includes('land-') ||
-          sId.includes('ration-') ||
-          sId.includes('birth-') ||
-          sId.includes('death-')
+        // State-governed services that genuinely vary by state (DL, RC, Caste, Domicile, Land, Income, Birth/Death, Ration, Welfare, Affidavits, Local Utility):
+        const isCentralOnly = (
+          sId === 'new-pan' ||
+          sId === 'pan-correction' ||
+          sId.startsWith('passport') ||
+          sId.startsWith('aadhaar') ||
+          sId.startsWith('pvc-aadhaar') ||
+          sId.startsWith('voter') ||
+          sId.startsWith('pf-') ||
+          sId.startsWith('uan-') ||
+          sId === 'resume-cv-builder' ||
+          sCat === 'global'
         );
+        const isStateGoverned = !isCentralOnly;
 
         // Fixed rates for Central documents (No state fee):
         if (sId === 'new-pan') {
@@ -3907,8 +3902,10 @@
           else if (sId === 'pan-correction') serviceHandlingFee = 73;
           else if (sId === 'traffic-challan') serviceHandlingFee = 150;
           else serviceHandlingFee = (basePrice >= 200 ? 50 : 20);
+        } else {
+          serviceHandlingFee = (basePrice >= 500 ? 50 : 30);
         }
-        const pureBaseFee = Math.max(0, basePrice - (isStateGoverned ? 0 : serviceHandlingFee));
+        const pureBaseFee = Math.max(0, basePrice - serviceHandlingFee);
 
         // Update Transparent Breakdown in UI
         const baseEl = document.getElementById('feeBreakdownBase');

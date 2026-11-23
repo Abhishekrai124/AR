@@ -2461,7 +2461,7 @@
       }
 
       // State-wise Portal Processing Fee Offsets (Every state has min +₹50, scaling up to +₹150 and +₹200)
-      const const const stateFeeOffsets = {
+      const stateFeeOffsets = {
         // Punjab Home State (Base state fee ₹40)
         "Punjab": 40,
 
@@ -2801,22 +2801,20 @@
           else baseFee = 900;
         }
 
-        // State-governed services that genuinely vary by state (Caste, Domicile, DL, RC, Land, Income, Birth/Death):
-        const isStateGoverned = (
-          currentCategory === 'certificate' ||
-          currentCategory === 'welfare' ||
-          currentCategory === 'transport' ||
-          activeSubService.id.includes('caste') ||
-          activeSubService.id.includes('domicile') ||
-          activeSubService.id.includes('income') ||
-          activeSubService.id.includes('residence') ||
-          activeSubService.id.includes('dl-') ||
-          activeSubService.id.includes('rc-') ||
-          activeSubService.id.includes('land-') ||
-          activeSubService.id.includes('ration-') ||
-          activeSubService.id.includes('birth-') ||
-          activeSubService.id.includes('death-')
+        // State-governed services that genuinely vary by state (DL, RC, Caste, Domicile, Land, Income, Birth/Death, Ration, Welfare, Affidavits, Local Utility):
+        const isCentralOnly = (
+          activeSubService.id === 'pan-new' ||
+          activeSubService.id === 'pan-correction' ||
+          activeSubService.id.startsWith('passport') ||
+          activeSubService.id.startsWith('aadhaar') ||
+          activeSubService.id.startsWith('pvc-aadhaar') ||
+          activeSubService.id.startsWith('voter') ||
+          activeSubService.id.startsWith('pf-') ||
+          activeSubService.id.startsWith('uan-') ||
+          activeSubService.id === 'resume-cv-builder' ||
+          currentCategory === 'global'
         );
+        const isStateGoverned = !isCentralOnly;
 
         if (activeSubService.id === 'traffic-challan') {
           const fineInp = document.getElementById('challanPenaltyAmount');
