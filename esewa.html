@@ -879,8 +879,11 @@
           <div class="app-form-grid">
             <!-- Service Selection -->
             <div class="form-group-full">
-              <label class="form-label" for="selectedService">
-                <span id="lblSelectService">चयनित सेवा (Selected Service)</span> *
+              <label class="form-label" for="selectedService" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div><span id="lblSelectService">चयनित सेवा (Selected Service)</span> *</div>
+                <button type="button" onclick="copyEsewaShareLink()" style="background:rgba(56,189,248,0.15); border:1px solid #38bdf8; color:#38bdf8; padding:4px 12px; border-radius:6px; font-size:0.78rem; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:5px;">
+                  🔗 Share Direct Link for Selected Document
+                </button>
               </label>
               <select class="form-select" id="selectedService" required onchange="onServiceDropdownChange()">
                 <option value="" disabled selected>-- Select a Service / सेवा का चयन करें --</option>
@@ -4371,9 +4374,33 @@
       // URL PARAMETER AUTO-SELECT & ROUTING
       function initEsevaFromUrlParams() {
         const params = new URLSearchParams(window.location.search);
-        const sParam = (params.get('service') || params.get('cat') || '').toLowerCase();
+        const sParam = (params.get('service') || params.get('doc') || params.get('cat') || '').toLowerCase().trim();
         if (!sParam) return;
 
+        // 1. Direct ID match in servicesList
+        const direct = typeof servicesList !== 'undefined' ? servicesList.find(s => s.id.toLowerCase() === sParam) : null;
+        if (direct) {
+          selectServiceDirectly(direct.id);
+          return;
+        }
+
+        // 2. Direct match with select option attributes
+        const select = document.getElementById('selectedService');
+        if (select) {
+          for (let i = 0; i < select.options.length; i++) {
+            const opt = select.options[i];
+            const sId = (opt.getAttribute('data-service-id') || '').toLowerCase();
+            if (sId === sParam) {
+              select.selectedIndex = i;
+              onServiceDropdownChange();
+              const formSection = document.getElementById('apply-section');
+              if (formSection) formSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              return;
+            }
+          }
+        }
+
+        // 3. Fallback fuzzy category / keyword lookup
         let targetId = '';
         if (sParam.includes('challan') || sParam.includes('traffic')) {
           targetId = 'traffic-challan';
@@ -4391,11 +4418,11 @@
           targetId = sParam.includes('lic') ? 'lic-services' : 'bima-schemes';
         } else if (sParam.includes('police') || sParam.includes('character')) {
           targetId = 'police-character';
-        } else if (sParam.includes('income')) {
+        } else if (sParam.includes('income') || sParam.includes('aay')) {
           targetId = 'income-cert';
-        } else if (sParam.includes('caste')) {
+        } else if (sParam.includes('caste') || sParam.includes('jati') || sParam.includes('obc') || sParam.includes('sc') || sParam.includes('st')) {
           targetId = 'caste-cert';
-        } else if (sParam.includes('domicile') || sParam.includes('niwas')) {
+        } else if (sParam.includes('domicile') || sParam.includes('niwas') || sParam.includes('residence')) {
           targetId = 'domicile-cert';
         } else if (sParam.includes('birth')) {
           targetId = 'birth-cert';
@@ -4404,11 +4431,11 @@
         } else if (sParam.includes('affidavit') || sParam.includes('notary') || sParam.includes('legal')) {
           targetId = 'affidavit-notary';
         } else if (sParam.includes('passport')) {
-          targetId = 'passport-fresh';
+          targetId = sParam.includes('tatkaal') ? 'passport-tatkaal' : 'passport-fresh';
         } else if (sParam.includes('pan')) {
           targetId = 'new-pan';
-        } else if (sParam.includes('aadhaar')) {
-          targetId = 'aadhaar-address';
+        } else if (sParam.includes('aadhaar') || sParam.includes('pvc')) {
+          targetId = sParam.includes('pvc') ? 'aadhaar-pvc' : 'aadhaar-address';
         } else if (sParam.includes('voter')) {
           targetId = 'voter-new';
         } else if (sParam.includes('pf') || sParam.includes('epfo')) {
@@ -4417,6 +4444,26 @@
 
         if (targetId) {
           selectServiceDirectly(targetId);
+        }
+      }
+
+      function copyEsewaShareLink() {
+        const select = document.getElementById('selectedService');
+        const opt = select && select.selectedIndex >= 0 ? select.options[select.selectedIndex] : null;
+        const sId = opt ? (opt.getAttribute('data-service-id') || 'caste-cert') : 'caste-cert';
+        
+        const currentOrigin = window.location.origin || (window.location.protocol + '//' + window.location.host);
+        const currentPath = window.location.pathname;
+        const directUrl = currentOrigin + currentPath + '?service=' + encodeURIComponent(sId);
+
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(directUrl).then(function() {
+            alert('✓ डायरेक्ट ई-सेवा लिंक कॉपी हो गया!\n\n📋 लिंक: ' + directUrl + '\n\nग्राहक को भेजें, सीधे यही दस्तावेज़ फॉर्म खुलेगा।');
+          }).catch(function() {
+            prompt('कॉपी करने हेतु लिंक:', directUrl);
+          });
+        } else {
+          prompt('कॉपी करने हेतु लिंक:', directUrl);
         }
       }
 

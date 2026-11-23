@@ -340,6 +340,34 @@
         </div>
 
         <form id="applyMainForm" onsubmit="handleApplicationSubmit(event)">
+        <!-- Direct Service Focus Banner (Shown when loaded via direct document link) -->
+        <div id="directServiceBanner" style="display:none; background:linear-gradient(135deg, rgba(2, 132, 199, 0.25), rgba(15, 23, 42, 0.95)); border:2px solid #38bdf8; border-radius:14px; padding:16px 20px; margin-bottom:20px; box-shadow:0 8px 30px rgba(2, 132, 199, 0.35);">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div style="display:flex; align-items:center; gap:14px;">
+              <span style="font-size:2.2rem; filter:drop-shadow(0 2px 8px rgba(56, 189, 248, 0.5));">🎯</span>
+              <div>
+                <span style="font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:#38bdf8; font-weight:800; background:rgba(56, 189, 248, 0.15); border:1px solid #38bdf8; padding:2px 8px; border-radius:999px;">
+                  Direct Document Registration Mode
+                </span>
+                <h3 style="margin:4px 0 2px; color:#fff; font-size:1.25rem; font-weight:800;" id="directServiceTitle">
+                  <!-- Dynamically set -->
+                </h3>
+                <p style="margin:0; color:#cbd5e1; font-size:0.84rem;">
+                  आप सीधे इसी दस्तावेज़ के विशिष्ट ऑनलाइन आवेदन फॉर्म पर हैं। बिना किसी उलझन के केवल आवश्यक विवरण भरें।
+                </p>
+              </div>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <button type="button" onclick="copyDirectShareLink()" style="padding:9px 16px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; font-weight:800; font-size:0.84rem; border:none; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:6px; box-shadow:0 4px 14px rgba(16, 185, 129, 0.4);">
+                📋 Copy Shareable Link
+              </button>
+              <button type="button" onclick="resetToAllCategories()" style="padding:9px 14px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); color:#cbd5e1; font-size:0.82rem; border-radius:8px; cursor:pointer;">
+                🔄 Change Service
+              </button>
+            </div>
+          </div>
+        </div>
+
           <!-- 1. Category & Major Service Selector -->
           <div class="form-grid" style="margin-bottom:18px;">
             <div>
@@ -347,8 +375,8 @@
                 <span>सेवा वर्ग (Service Category)</span> *
               </label>
               <select class="form-select" id="categorySelect" onchange="onCategorySelectChange()">
-                <option value="challan" selected>🚦 ट्रैफिक ई-चालान भुगतान व रसीद (Traffic e-Challan)</option>
-                <option value="certificate">📜 सरकारी प्रमाण पत्र (Certificates &amp; Revenue)</option>
+                <option value="certificate" selected>📜 सरकारी प्रमाण पत्र (Certificates &amp; Revenue)</option>
+                <option value="challan">🚦 ट्रैफिक ई-चालान भुगतान व रसीद (Traffic e-Challan)</option>
                 <option value="legal">⚖️ कोर्ट शपथ पत्र व नोटरी (Court Affidavits)</option>
                 <option value="transport">🚗 ड्राइविंग लाइसेंस व वाहन (Transport Sarathi)</option>
                 <option value="welfare">🌾 सरकारी योजनाएँ, राशन व पेंशन (Welfare Schemes)</option>
@@ -378,6 +406,9 @@
           <div class="service-type-box" id="subServiceBox">
             <label class="form-label" style="color:#38bdf8; display:flex; justify-content:space-between; align-items:center;">
               <span>विशिष्ट कार्रवाई व शुल्क चयन (Select Exact Action &amp; Fee)</span>
+              <button type="button" onclick="copyDirectShareLink()" style="padding:5px 12px; background:rgba(56, 189, 248, 0.15); border:1px solid #38bdf8; color:#38bdf8; font-size:0.75rem; font-weight:700; border-radius:6px; cursor:pointer; display:flex; align-items:center; gap:4px;">
+                🔗 Share Direct Link for this Document
+              </button>
               <small style="color:#94a3b8; font-size:0.75rem;">(चुनी गई कार्रवाई अनुसार फीस तय होती है)</small>
             </label>
             <div class="subservice-radio-grid" id="subServiceGrid">
@@ -2026,118 +2057,159 @@
       // Parse Query Params to automatically select category or service
       function initFromUrlParams() {
         const params = new URLSearchParams(window.location.search);
-        const sParam = (params.get('service') || params.get('cat') || '').toLowerCase().trim();
+        const sParam = (params.get('service') || params.get('cat') || params.get('doc') || '').toLowerCase().trim();
         
         let foundCat = '';
         let foundSubId = '';
 
         if (!sParam) {
+          // Default to Certificate category so document upload and applicant details are visible immediately
+          foundCat = 'certificate';
+          foundSubId = 'caste-cert';
           const catSelect = document.getElementById('categorySelect');
-          foundCat = (catSelect && catSelect.value) ? catSelect.value : 'challan';
-          foundSubId = serviceCatalog[foundCat]?.subServices[0]?.id || 'traffic-challan';
           if (catSelect) catSelect.value = foundCat;
           onCategorySelectChange(foundSubId);
           return;
         }
 
-        if (sParam.includes('challan') || sParam.includes('traffic')) {
-          foundCat = 'challan';
-          foundSubId = 'traffic-challan';
-        } else if (sParam.includes('ration') || sParam.includes('ayushman') || sParam.includes('kisan') || sParam.includes('eshram') || sParam.includes('welfare') || sParam.includes('pension')) {
-          foundCat = 'welfare';
-          if (sParam.includes('ayushman')) foundSubId = 'ayushman-card';
-          else if (sParam.includes('kisan')) foundSubId = 'pm-kisan';
-          else if (sParam.includes('eshram')) foundSubId = 'eshram-card';
-          else if (sParam.includes('member')) foundSubId = 'ration-member';
-          else if (sParam.includes('pension')) foundSubId = 'pension-scheme';
-          else if (sParam.includes('senior')) foundSubId = 'senior-citizen-card';
-          else foundSubId = 'ration-new';
-        } else if (sParam.includes('lic') || sParam.includes('bima')) {
-          foundCat = 'finance';
-          foundSubId = sParam.includes('lic') ? 'lic-services' : 'bima-schemes';
-        } else if (sParam.includes('police') || sParam.includes('character') || sParam.includes('verif')) {
-          foundCat = 'certificate';
-          foundSubId = 'character-cert';
-        } else if (sParam.includes('birth')) {
-          foundCat = 'certificate';
-          foundSubId = 'birth-cert';
-        } else if (sParam.includes('death')) {
-          foundCat = 'certificate';
-          foundSubId = 'death-cert';
-        } else if (sParam.includes('income')) {
-          foundCat = 'certificate';
-          foundSubId = 'income-cert';
-        } else if (sParam.includes('caste') || sParam.includes('obc') || sParam.includes('sc') || sParam.includes('st')) {
-          foundCat = 'certificate';
-          foundSubId = sParam.includes('ncl') ? 'caste-ncl' : 'caste-cert';
-        } else if (sParam.includes('domicile') || sParam.includes('niwas')) {
-          foundCat = 'certificate';
-          foundSubId = 'domicile-cert';
-        } else if (sParam.includes('affidavit') || sParam.includes('legal') || sParam.includes('marriage')) {
-          foundCat = 'legal';
-          foundSubId = sParam.includes('marriage') ? 'affidavit-marriage' : 'affidavit-name';
-        } else if (sParam.includes('passport')) {
-          foundCat = 'passport';
-          foundSubId = sParam.includes('tatkaal') ? 'passport-tatkaal' : 'passport-normal';
-        } else if (sParam.includes('insurance')) {
-          foundCat = 'transport';
-          foundSubId = 'vehicle-insurance';
-        } else if (sParam.includes('senior') || sParam.includes('old age') || sParam.includes('elder')) {
-          foundCat = 'welfare';
-          foundSubId = 'senior-citizen-card';
-        } else if (sParam.includes('dl') || sParam.includes('licence') || sParam.includes('transport') || sParam.includes('rc')) {
-          foundCat = 'transport';
-          if (sParam.includes('rc') && sParam.includes('hypo')) foundSubId = 'rc-hypo';
-          else if (sParam.includes('rc')) foundSubId = 'rc-transfer';
-          else if (sParam.includes('renewal')) foundSubId = 'dl-renewal';
-          else if (sParam.includes('permanent')) foundSubId = 'dl-permanent';
-          else foundSubId = 'dl-learning';
-        } else if (sParam.includes('pan')) {
-          foundCat = 'pan';
-          foundSubId = 'pan-new';
-        } else if (sParam.includes('voter')) {
-          foundCat = 'voter';
-          foundSubId = 'voter-form6';
-        } else if (sParam.includes('pf') || sParam.includes('epfo') || sParam.includes('uan')) {
-          foundCat = 'finance';
-          foundSubId = 'pf-full';
-        } else if (sParam.includes('job') || sParam.includes('exam') || sParam.includes('scholarship')) {
-          foundCat = 'exam';
-          foundSubId = 'exam-central';
-        } else if (sParam.includes('msme') || sParam.includes('udyam') || sParam.includes('gst')) {
-          foundCat = 'udyam';
-          foundSubId = 'udyam-new';
-        } else if (sParam.includes('aadhaar') || sParam.includes('pvc')) {
-          foundCat = 'aadhaar';
-          foundSubId = sParam.includes('pvc') ? 'aadhaar-pvc' : 'aadhaar-address';
-        } else {
-          for (const [catKey, catData] of Object.entries(serviceCatalog)) {
-            if (sParam.includes(catKey)) {
-              foundCat = catKey;
-              break;
-            }
-            const matchedSub = catData.subServices.find(sub => 
-              sParam.includes(sub.id.toLowerCase()) || 
-              (sub.alias && sParam.includes(sub.alias.toLowerCase())) ||
-              sub.name.toLowerCase().includes(sParam)
-            );
-            if (matchedSub) {
-              foundCat = catKey;
-              foundSubId = matchedSub.id;
-              break;
-            }
+        // Direct Service ID & Alias Lookup in Catalog
+        for (const [catKey, catData] of Object.entries(serviceCatalog)) {
+          const directMatch = catData.subServices.find(s => 
+            s.id.toLowerCase() === sParam || 
+            (s.alias && s.alias.toLowerCase() === sParam)
+          );
+          if (directMatch) {
+            foundCat = catKey;
+            foundSubId = directMatch.id;
+            break;
           }
         }
 
-        if (!foundCat || !serviceCatalog[foundCat]) {
-          foundCat = 'certificate';
-          foundSubId = serviceCatalog.certificate ? serviceCatalog.certificate.subServices[0].id : '';
+        // Fuzzy Keyword Matching:
+        if (!foundCat) {
+          if (sParam.includes('pan')) {
+            foundCat = 'pan';
+            foundSubId = (sParam.includes('correction') || sParam.includes('update') || sParam.includes('reprint')) ? 'pan-correction' : 'pan-new';
+          } else if (sParam.includes('caste') || sParam.includes('jati') || sParam.includes('obc') || sParam.includes('sc') || sParam.includes('st')) {
+            foundCat = 'certificate';
+            foundSubId = sParam.includes('ncl') ? 'caste-ncl' : 'caste-cert';
+          } else if (sParam.includes('domicile') || sParam.includes('niwas') || sParam.includes('residence')) {
+            foundCat = 'certificate';
+            foundSubId = 'domicile-cert';
+          } else if (sParam.includes('income') || sParam.includes('aay')) {
+            foundCat = 'certificate';
+            foundSubId = 'income-cert';
+          } else if (sParam.includes('birth')) {
+            foundCat = 'certificate';
+            foundSubId = 'birth-cert';
+          } else if (sParam.includes('death')) {
+            foundCat = 'certificate';
+            foundSubId = 'death-cert';
+          } else if (sParam.includes('challan') || sParam.includes('traffic')) {
+            foundCat = 'challan';
+            foundSubId = 'traffic-challan';
+          } else if (sParam.includes('dl') || sParam.includes('driving') || sParam.includes('licence') || sParam.includes('license')) {
+            foundCat = 'transport';
+            if (sParam.includes('international') || sParam.includes('idp')) foundSubId = 'dl-international';
+            else if (sParam.includes('renewal')) foundSubId = 'dl-renewal';
+            else if (sParam.includes('permanent')) foundSubId = 'dl-permanent';
+            else foundSubId = 'dl-learning';
+          } else if (sParam.includes('rc')) {
+            foundCat = 'transport';
+            foundSubId = sParam.includes('hypo') ? 'rc-hypo' : 'rc-transfer';
+          } else if (sParam.includes('passport')) {
+            foundCat = 'passport';
+            foundSubId = sParam.includes('tatkaal') ? 'passport-tatkaal' : 'passport-normal';
+          } else if (sParam.includes('aadhaar') || sParam.includes('pvc')) {
+            foundCat = 'aadhaar';
+            foundSubId = sParam.includes('pvc') ? 'aadhaar-pvc' : 'aadhaar-address';
+          } else if (sParam.includes('ration')) {
+            foundCat = 'welfare';
+            foundSubId = sParam.includes('member') ? 'ration-member' : 'ration-new';
+          } else if (sParam.includes('ayushman')) {
+            foundCat = 'welfare';
+            foundSubId = 'ayushman-card';
+          } else if (sParam.includes('kisan')) {
+            foundCat = 'welfare';
+            foundSubId = 'pm-kisan';
+          } else if (sParam.includes('eshram')) {
+            foundCat = 'welfare';
+            foundSubId = 'eshram-card';
+          } else if (sParam.includes('pf') || sParam.includes('epfo') || sParam.includes('uan')) {
+            foundCat = 'finance';
+            foundSubId = sParam.includes('advance') ? 'pf-advance' : 'pf-full';
+          } else if (sParam.includes('affidavit') || sParam.includes('legal')) {
+            foundCat = 'legal';
+            foundSubId = sParam.includes('marriage') ? 'affidavit-marriage' : 'affidavit-name';
+          } else if (sParam.includes('exam') || sParam.includes('job')) {
+            foundCat = 'exam';
+            foundSubId = 'exam-central';
+          } else if (sParam.includes('udyam') || sParam.includes('msme') || sParam.includes('gst')) {
+            foundCat = 'udyam';
+            foundSubId = sParam.includes('gst') ? 'gst-reg' : 'udyam-new';
+          } else {
+            foundCat = 'certificate';
+            foundSubId = 'caste-cert';
+          }
         }
 
         const catSelect = document.getElementById('categorySelect');
         if (catSelect) catSelect.value = foundCat;
         onCategorySelectChange(foundSubId);
+
+        // Show direct application focus mode banner
+        showDirectServiceBanner(foundSubId);
       }
+
+      function showDirectServiceBanner(subId) {
+        const banner = document.getElementById('directServiceBanner');
+        const titleEl = document.getElementById('directServiceTitle');
+        if (!banner || !titleEl) return;
+
+        let matched = null;
+        for (const cat of Object.values(serviceCatalog)) {
+          matched = cat.subServices.find(s => s.id === subId);
+          if (matched) break;
+        }
+
+        if (matched) {
+          banner.style.display = 'block';
+          titleEl.textContent = `${matched.name} (Direct Registration Form)`;
+          setTimeout(() => {
+            banner.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 300);
+          if (typeof atmVoiceAssistant !== 'undefined') {
+            atmVoiceAssistant.playBeep('select');
+            atmVoiceAssistant.speak(`${matched.name} का डायरेक्ट आवेदन खुला है। कृपया अपना विवरण दर्ज करें।`, `Direct registration loaded for ${matched.name}. Please enter your details.`);
+          }
+        }
+      }
+
+      function copyDirectShareLink() {
+        if (!activeSubService) return;
+        const currentOrigin = window.location.origin || (window.location.protocol + '//' + window.location.host);
+        const currentPath = window.location.pathname;
+        const directUrl = `${currentOrigin}${currentPath}?service=${activeSubService.id}`;
+
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(directUrl).then(() => {
+            alert(`✓ डायरेक्ट रजिस्ट्रेशन लिंक कॉपी हो गया!\n\n📋 लिंक: ${directUrl}\n\nआप यह लिंक सीधे ग्राहक को WhatsApp/SMS से भेज सकते हैं। ग्राहक के खोलते ही सिर्फ यही दस्तावेज़ फॉर्म खुलेगा!`);
+          }).catch(() => {
+            prompt("कॉपी करने हेतु लिंक:", directUrl);
+          });
+        } else {
+          prompt("कॉपी करने हेतु लिंक:", directUrl);
+        }
+      }
+
+      function resetToAllCategories() {
+        const banner = document.getElementById('directServiceBanner');
+        if (banner) banner.style.display = 'none';
+        const catSelect = document.getElementById('categorySelect');
+        if (catSelect) catSelect.value = 'certificate';
+        onCategorySelectChange();
+      }
+
 
       function onCategorySelectChange(preSelectedSubId = '') {
         const catSelect = document.getElementById('categorySelect');
