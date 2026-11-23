@@ -3851,14 +3851,17 @@
         // State-governed services that genuinely vary by state (Caste, Domicile, DL, RC, Land, Income, Birth/Death):
         const isStateGoverned = (
           sCat === 'certificate' ||
+          sCat === 'transport' ||
+          sCat === 'welfare' ||
           sId.includes('caste') ||
           sId.includes('domicile') ||
           sId.includes('income') ||
           sId.includes('residence') ||
           sId.includes('driving') ||
           sId.includes('licence') ||
-          sId.includes('dl-') ||
-          sId.includes('rc-') ||
+          sId.includes('license') ||
+          sId.includes('dl') ||
+          sId.includes('rc') ||
           sId.includes('land-') ||
           sId.includes('ration-') ||
           sId.includes('birth-') ||
