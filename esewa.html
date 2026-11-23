@@ -156,6 +156,8 @@
         align-items: center;
         gap: 8px;
         margin: 0;
+        letter-spacing: 0.3px;
+        word-spacing: 2px;
       }
       .services-card-grid {
         display: grid;
@@ -429,9 +431,13 @@
         display: flex;
         gap: 8px;
         overflow-x: auto;
-        padding-bottom: 12px;
+        padding-bottom: 8px;
         margin-bottom: 20px;
-        scrollbar-width: thin;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE and Edge */
+      }
+      .filter-tabs-bar::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
       }
       .filter-tab-btn {
         padding: 8px 16px;
@@ -1723,104 +1729,12 @@
         { id: "fastag", title: "फास्टैग नया रिचार्ज व समाधान", titleEn: "Fastag Recharge & Blacklist Resolution", category: "utility", fee: 70, icon: "🚘", desc: "ब्लैकलिस्टेड फास्टैग एक्टिवेशन और सभी बैंकों के फास्टैग रिचार्ज।", descEn: "Fastag instant recharge, wallet linking, and blacklist unblocking." }
       ];
 
+            // State & Search Filters
       let currentActiveCategory = "all";
-
-      function renderServicesGrid(filterCat = 'all') {
-        currentActiveCategory = filterCat;
-        const grid = document.getElementById('servicesGrid');
-        grid.innerHTML = '';
-        let filtered = filterCat === 'all' ? servicesList : servicesList.filter(s => s.category === filterCat);
-
-        if (currentSearchQuery) {
-          filtered = filtered.filter(s => 
-            (s.title && s.title.toLowerCase().includes(currentSearchQuery)) ||
-            (s.titleEn && s.titleEn.toLowerCase().includes(currentSearchQuery)) ||
-            (s.desc && s.desc.toLowerCase().includes(currentSearchQuery)) ||
-            (s.descEn && s.descEn.toLowerCase().includes(currentSearchQuery))
-          );
-        }
-
-        const lang = currentLang;
-        const i18n = regionalI18n[lang] || regionalI18n.en;
-        const stateOffset = stateFeeOffsets[currentSelectedState] || 0;
-
-        // Dynamic State-Based Prioritization: Bring visitor's state-specific services to the top!
-        if (activeStateConfig && activeStateConfig.primaryServices) {
-          filtered.sort((a, b) => {
-            const aIsPrimary = activeStateConfig.primaryServices.includes(a.id);
-            const bIsPrimary = activeStateConfig.primaryServices.includes(b.id);
-            if (aIsPrimary && !bIsPrimary) return -1;
-            if (!aIsPrimary && bIsPrimary) return 1;
-            return 0;
-          });
-        }
-
-        if (filtered.length === 0) {
-          grid.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:32px; color:#94a3b8;">No matching documents or services found.</div>`;
-          return;
-        }
-
-        filtered.forEach(item => {
-          const card = document.createElement('div');
-          card.className = 'service-card';
-          const title = (lang === 'en') ? item.titleEn : item.title;
-          const desc = (lang === 'en') ? item.descEn : item.desc;
-          const isStateApplicable = (item.id !== 'resume-cv-builder' && item.category !== 'global');
-          const adjustedFee = isStateApplicable ? (item.fee + stateOffset) : item.fee;
-
-          card.innerHTML = `
-            <div>
-              <div class="service-header">
-                <span class="service-icon">${item.icon}</span>
-                <span class="service-tag">${item.category.toUpperCase()}</span>
-              </div>
-              <h3 class="service-title">${title}</h3>
-              <p class="service-desc">${desc}</p>
-            </div>
-            <div class="service-footer">
-              <div class="service-fee">
-                ₹${adjustedFee}
-                <small>${i18n.feeLabel || "Total Fee"}</small>
-              </div>
-              <button class="btn-apply-card" onclick="handleServiceApplyClick('${item.id}')">
-                ${i18n.applyBtnCard || "Apply Now ➔"}
-              </button>
-            </div>
-          `;
-          grid.appendChild(card);
-        });
-      }
-
-      // Filter Tabs Handling
-      document.getElementById('categoryTabs').addEventListener('click', (e) => {
-        if (e.target.classList.contains('filter-tab-btn')) {
-          document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
-          e.target.classList.add('active');
-          renderServicesGrid(e.target.getAttribute('data-cat'));
-        }
-      });
-
-      // State & Search Filters
-      let currentSelectedState = "all";
+      let currentSelectedState = "Punjab";
       let currentSearchQuery = "";
 
-      function onServiceSearchChange() {
-        currentSearchQuery = (document.getElementById('serviceSearchInput').value || '').toLowerCase().trim();
-        renderServicesGrid(currentActiveCategory);
-      }
-
-      function onStateFilterChange() {
-        currentSelectedState = document.getElementById('stateFilterSelect').value;
-        const applicantState = document.getElementById('applicantState');
-        if (applicantState && currentSelectedState !== 'all') {
-          applicantState.value = currentSelectedState;
-        }
-        renderServicesGrid(currentActiveCategory);
-        recalculateFees();
-        attachAtmVoiceToEsewaInputs();
-      }
-
-      // State-wise Portal Processing Fee Offsets (Every state has min +₹50, scaling up to +₹150 and +₹200)
+      // State-wise Portal Processing Fee Offsets (Every state has min +₹40/₹50, scaling up to +₹60)
       const stateFeeOffsets = {
         // Punjab Home State (Base state fee ₹40)
         "Punjab": 40,
@@ -1872,6 +1786,111 @@
         "all": 50,
         "other": 50
       };
+
+      function renderServicesGrid(filterCat = "all") {
+        currentActiveCategory = filterCat;
+        const grid = document.getElementById("servicesGrid");
+        if (!grid) return;
+        grid.innerHTML = "";
+        let filtered = filterCat === "all" ? [...servicesList] : servicesList.filter(s => s.category === filterCat);
+
+        if (currentSearchQuery) {
+          filtered = filtered.filter(s => 
+            (s.title && s.title.toLowerCase().includes(currentSearchQuery)) ||
+            (s.titleEn && s.titleEn.toLowerCase().includes(currentSearchQuery)) ||
+            (s.desc && s.desc.toLowerCase().includes(currentSearchQuery)) ||
+            (s.descEn && s.descEn.toLowerCase().includes(currentSearchQuery))
+          );
+        }
+
+        const lang = currentLang || "hi";
+        const i18n = (typeof regionalI18n !== "undefined" && (regionalI18n[lang] || regionalI18n.en)) ? (regionalI18n[lang] || regionalI18n.en) : {};
+        const stateOffset = (typeof stateFeeOffsets !== "undefined" && stateFeeOffsets[currentSelectedState] !== undefined) 
+          ? stateFeeOffsets[currentSelectedState] 
+          : (stateFeeOffsets["Punjab"] || 40);
+
+        // Dynamic State-Based Prioritization: Bring visitor's state-specific services to the top!
+        if (typeof activeStateConfig !== "undefined" && activeStateConfig && activeStateConfig.primaryServices) {
+          filtered.sort((a, b) => {
+            const aIsPrimary = activeStateConfig.primaryServices.includes(a.id);
+            const bIsPrimary = activeStateConfig.primaryServices.includes(b.id);
+            if (aIsPrimary && !bIsPrimary) return -1;
+            if (!aIsPrimary && bIsPrimary) return 1;
+            return 0;
+          });
+        }
+
+        if (filtered.length === 0) {
+          grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:32px; color:#94a3b8;">No matching documents or services found.</div>';
+          return;
+        }
+
+        filtered.forEach(item => {
+          const card = document.createElement("div");
+          card.className = "service-card";
+          const title = (lang === "en") ? (item.titleEn || item.title) : (item.title || item.titleEn);
+          const desc = (lang === "en") ? (item.descEn || item.desc) : (item.desc || item.descEn);
+          const isStateApplicable = (item.id !== "resume-cv-builder" && item.category !== "global");
+          const adjustedFee = isStateApplicable ? (item.fee + stateOffset) : item.fee;
+
+          card.innerHTML = `
+            <div>
+              <div class="service-header">
+                <span class="service-icon">${item.icon}</span>
+                <span class="service-tag">${item.category.toUpperCase()}</span>
+              </div>
+              <h3 class="service-title">${title}</h3>
+              <p class="service-desc">${desc}</p>
+            </div>
+            <div class="service-footer">
+              <div class="service-fee">
+                ₹${adjustedFee}
+                <small>${i18n.feeLabel || "Total Fee"}</small>
+              </div>
+              <button class="btn-apply-card" onclick="handleServiceApplyClick('${item.id}')">
+                ${i18n.applyBtnCard || "Apply Now ➔"}
+              </button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+      }
+
+      // Filter Tabs Handling
+      const catTabsEl = document.getElementById("categoryTabs");
+      if (catTabsEl) {
+        catTabsEl.addEventListener("click", (e) => {
+          const btn = e.target.closest(".filter-tab-btn");
+          if (btn) {
+            document.querySelectorAll(".filter-tab-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            renderServicesGrid(btn.getAttribute("data-cat"));
+          }
+        });
+        catTabsEl.addEventListener("wheel", (e) => {
+          if (e.deltaY !== 0) {
+            e.preventDefault();
+            catTabsEl.scrollLeft += e.deltaY;
+          }
+        }, { passive: false });
+      }
+
+      function onServiceSearchChange() {
+        currentSearchQuery = (document.getElementById("serviceSearchInput").value || "").toLowerCase().trim();
+        renderServicesGrid(currentActiveCategory);
+      }
+
+      function onStateFilterChange() {
+        const stateSelect = document.getElementById("stateFilterSelect");
+        currentSelectedState = stateSelect ? stateSelect.value : "Punjab";
+        const applicantState = document.getElementById("applicantState");
+        if (applicantState && currentSelectedState !== "all") {
+          applicantState.value = currentSelectedState;
+        }
+        renderServicesGrid(currentActiveCategory);
+        recalculateFees();
+        attachAtmVoiceToEsewaInputs();
+      }
 
       // Service Sub-Options & Customization Map
       const serviceCustomMap = {
@@ -4201,6 +4220,9 @@
         function applyStateToPortal(stateName, cityName, source = 'GPS') {
           if (!stateName || stateName === 'all') {
             if (badgeText) badgeText.innerHTML = '📍 <strong>All India &amp; Global Portal</strong> <small style="text-decoration:underline; font-size:0.75rem;">[Detect]</small>';
+            currentSelectedState = 'all';
+            renderServicesGrid(currentActiveCategory);
+            if (typeof recalculateFees === 'function') recalculateFees();
             return;
           }
 
@@ -4467,7 +4489,8 @@
         }
       }
 
-      // Initialize
+      // Initialize on load (Immediately render all services and setup listeners)
+      renderServicesGrid('all');
       setupPincodeLookup();
       detectVisitorRegion();
       initEsevaFromUrlParams();
