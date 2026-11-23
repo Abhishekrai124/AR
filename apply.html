@@ -2874,12 +2874,12 @@
           if (applyBase) applyBase.innerText = "₹" + pureGovtFee;
           if (applyServ) applyServ.innerText = "+₹" + serviceHandlingFee + " (कैफ़े सर्विस चार्ज)";
         }
-        if (applyState) applyState.innerText = isStateGoverned ? ("+₹" + stateOffset) : "₹0 (National)";
+        if (applyState) applyState.innerText = isStateGoverned ? ("+₹" + stateOffset) : "₹0 (अखिल भारतीय)";
         if (applyStateLbl) {
           const isHome = chosenState.toLowerCase().includes('punjab');
           applyStateLbl.innerText = isStateGoverned 
-            ? (isHome ? `राज्य RTO/पोर्टल शुल्क (${chosenState} बेस ₹40):` : `राज्य RTO समन्वय शुल्क (${chosenState}):`)
-            : "राज्य शुल्क (केंद्रीय सेवा हेतु शून्य):";
+            ? (isHome ? `🏛️ राज्य RTO/पोर्टल शुल्क (${chosenState} बेस ₹40):` : `🏛️ राज्य RTO समन्वय शुल्क (${chosenState}):`)
+            : "🇮🇳 राज्य शुल्क (केंद्रीय दस्तावेज़ हेतु शून्य):";
         }
         if (applyTot) applyTot.innerText = "₹" + totalBaseFee;
         
